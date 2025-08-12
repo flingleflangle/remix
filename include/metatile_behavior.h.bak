@@ -141,13 +141,19 @@ bool8 MetatileBehavior_IsTrashCan(u8 metatileBehavior);
 bool8 MetatileBehavior_IsShopShelf(u8 metatileBehavior);
 bool8 MetatileBehavior_IsBlueprint(u8 metatileBehavior);
 bool8 MetatileBehavior_IsBattlePyramidWarp(u8 metatileBehavior);
-bool8 MetatileBehavior_IsBattlePyramidWarp(u8);
 bool8 MetatileBehavior_IsPlayerFacingWirelessBoxResults(u8 tile, u8 playerDir);
 bool8 MetatileBehavior_IsCableBoxResults2(u8 tile, u8 playerDir);
+<<<<<<< HEAD
+bool8 MetatileBehavior_IsQuestionnaire(u8 metatileBehavior);
+bool8 MetatileBehavior_IsLongGrass_Duplicate(u8 metatileBehavior);
+bool8 MetatileBehavior_IsLongGrassSouthEdge(u8 metatileBehavior);
+bool8 MetatileBehavior_IsTrainerHillTimer(u8 metatileBehavior);
+=======
 bool8 MetatileBehavior_IsQuestionnaire(u8);
 bool8 MetatileBehavior_IsLongGrass_Duplicate(u8);
 bool8 MetatileBehavior_IsLongGrassSouthEdge(u8);
 bool8 MetatileBehavior_IsTrainerHillTimer(u8);
 bool8 MetatileBehavior_IsSignpost(u8 mb);
+>>>>>>> 5657f8369e5b733d962c83a9434e00e7ab90fadd
 
 #endif // GUARD_METATILE_BEHAVIOR_H

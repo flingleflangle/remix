@@ -795,6 +795,9 @@ void FishingWildEncounter(u8 rod)
     {
         species = GenerateFishingWildMon(gWildMonHeaders[GetCurrentMapWildMonHeaderId()].fishingMonsInfo, rod);
     }
+<<<<<<< HEAD
+    IncrementGameStat(GAME_STAT_FISHING_ENCOUNTERS);
+=======
     
     if (species == sLastFishingSpecies)
     {
@@ -807,7 +810,9 @@ void FishingWildEncounter(u8 rod)
     }
     
     sLastFishingSpecies = species;
-    IncrementGameStat(GAME_STAT_FISHING_CAPTURES);    SetPokemonAnglerSpecies(species);
+    IncrementGameStat(GAME_STAT_FISHING_CAPTURES);
+>>>>>>> 006fe6e28ab3d6c8d8c37ee224cc3b0cecc70701
+    SetPokemonAnglerSpecies(species);
     BattleSetup_StartWildBattle();
 }
 
