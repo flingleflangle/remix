@@ -188,6 +188,7 @@ static const u16 sKakunaLevelUpLearnset[] = {
 static const u16 sBeedrillLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_FURY_ATTACK),
     LEVEL_UP_MOVE(10, MOVE_FURY_ATTACK),
+    LEVEL_UP_MOVE(11, MOVE_FINAL_STING),
     LEVEL_UP_MOVE(15, MOVE_FOCUS_ENERGY),
     LEVEL_UP_MOVE(20, MOVE_TWINEEDLE),
     LEVEL_UP_MOVE(25, MOVE_RAGE),

@@ -232,6 +232,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectCalmMind               @ EFFECT_CALM_MIND
 	.4byte BattleScript_EffectDragonDance            @ EFFECT_DRAGON_DANCE
 	.4byte BattleScript_EffectCamouflage             @ EFFECT_CAMOUFLAGE
+	.4byte BattleScript_EffectFinalSting             @ EFFECT_FINAL_STING
 
 BattleScript_EffectHit::
 	jumpifnotmove MOVE_SURF, BattleScript_HitFromAtkCanceler
@@ -899,6 +900,31 @@ BattleScript_EffectRecoil::
 	jumpifnotmove MOVE_STRUGGLE, BattleScript_EffectHit
 	incrementgamestat GAME_STAT_USED_STRUGGLE
 	goto BattleScript_EffectHit
+	
+BattleScript_EffectFinalSting::
+	attackstring
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE 
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	typecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	setmoveeffect MOVE_EFFECT_TOXIC
+	seteffectprimary
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	setatkhptozero
+	healthbarupdate BS_ATTACKER
+	tryfaintmon BS_TARGET
+	tryfaintmon BS_ATTACKER
+	end
 
 BattleScript_EffectConfuse::
 	attackcanceler
