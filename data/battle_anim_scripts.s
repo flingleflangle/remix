@@ -372,6 +372,8 @@ gBattleAnims_Moves::
 	.4byte Move_DOOM_DESIRE
 	.4byte Move_PSYCHO_BOOST
 	.4byte Move_FINAL_STING
+	.4byte Move_FREEZE_RAY
+	.4byte Move_VILE_CUTTER
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -7282,6 +7284,31 @@ Move_POISON_TAIL:
 	call PoisonBubblesEffect
 	waitforvisualfinish
 	end
+	
+Move_VILE_CUTTER:
+	loadspritegfx ANIM_TAG_SLASH
+	loadspritegfx ANIM_TAG_POISON_BUBBLE
+	loopsewithpan SE_M_HARDEN, SOUND_PAN_ATTACKER, 28, 2
+	createvisualtask AnimTask_MetallicShine, 5, 1, 1, RGB(24, 6, 23)
+	waitforvisualfinish
+	monbg ANIM_TARGET
+	setalpha 12, 8
+	fadetobgfromset BG_GUILLOTINE_OPPONENT, BG_GUILLOTINE_PLAYER, BG_GUILLOTINE_CONTESTS
+	waitbgfadein
+	createsprite gHorizontalLungeSpriteTemplate, ANIM_ATTACKER, 2, 4, 4
+	createsprite gSlashSliceSpriteTemplate, ANIM_TARGET, 2, 1, 0, 0
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 3, 0, 6, 1
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	delay 8
+	call PoisonBubblesEffect
+	waitforvisualfinish
+	createvisualtask AnimTask_SetGrayscaleOrOriginalPal, 5, ANIM_ATTACKER, TRUE
+	clearmonbg ANIM_TARGET
+	blendoff
+	restorebg
+	waitbgfadein
+	waitforvisualfinish
+	end
 
 Move_METAL_CLAW:
 	loadspritegfx ANIM_TAG_CLAW_SLASH
@@ -9628,6 +9655,34 @@ Move_FINAL_STING:
 	waitbgfadeout
 	setarg 7, 0xFFFF
 	waitbgfadein
+	end
+	
+Move_FREEZE_RAY:
+	loadspritegfx ANIM_TAG_RAINBOW_RINGS
+	loadspritegfx ANIM_TAG_ICE_CRYSTALS
+	playsewithpan SE_M_BUBBLE_BEAM2, SOUND_PAN_ATTACKER
+	setarg 7, 0
+	createvisualtask AnimTask_RotateAuroraRingColors, 10, 130
+	call AuroraBeamCreateRings
+	createvisualtask AnimTask_ShakeMon2, 5, ANIM_TARGET, 1, 0, 17, 1
+	call AuroraBeamCreateRings
+	call AuroraBeamCreateRings
+	call AuroraBeamCreateRings
+	createvisualtask AnimTask_ShakeMon2, 5, ANIM_TARGET, 2, 0, 40, 1
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 2, 0, 9, RGB(12, 26, 31)
+	delay 12
+	playsewithpan SE_M_STRING_SHOT, SOUND_PAN_TARGET
+	createsprite gIceCrystalSpiralInwardSmall, ANIM_ATTACKER, 2, 0
+	createsprite gIceCrystalSpiralInwardSmall, ANIM_ATTACKER, 2, 64
+	createsprite gIceCrystalSpiralInwardSmall, ANIM_ATTACKER, 2, 128
+	createsprite gIceCrystalSpiralInwardSmall, ANIM_ATTACKER, 2, 192
+	delay 5
+	createsprite gIceCrystalSpiralInwardLarge, ANIM_ATTACKER, 2, 32
+	createsprite gIceCrystalSpiralInwardLarge, ANIM_ATTACKER, 2, 96
+	createsprite gIceCrystalSpiralInwardLarge, ANIM_ATTACKER, 2, 160
+	createsprite gIceCrystalSpiralInwardLarge, ANIM_ATTACKER, 2, 224
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 2, 9, 0, RGB(12, 26, 31)
 	end
 
 Move_SKY_UPPERCUT:

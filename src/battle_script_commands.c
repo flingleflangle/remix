@@ -249,6 +249,7 @@ static void Cmd_trychoosesleeptalkmove(void);
 static void Cmd_setdestinybond(void);
 static void Cmd_trysetdestinybondtohappen(void);
 static void Cmd_remaininghptopower(void);
+static void Cmd_remaininghptopowerevil(void);
 static void Cmd_tryspiteppreduce(void);
 static void Cmd_healpartystatus(void);
 static void Cmd_cursetarget(void);
@@ -576,7 +577,8 @@ void (*const gBattleScriptingCommandsTable[])(void) =
     Cmd_removeattackerstatus1,                   //0xF5
     Cmd_finishaction,                            //0xF6
     Cmd_finishturn,                              //0xF7
-    Cmd_trainerslideout                          //0xF8
+    Cmd_trainerslideout,                         //0xF8
+    Cmd_remaininghptopowerevil					 //0xF9
 };
 
 struct StatFractions
@@ -8342,6 +8344,21 @@ static void Cmd_remaininghptopower(void)
 {
     s32 i;
     s32 hpFraction = GetScaledHPFraction(gBattleMons[gBattlerAttacker].hp, gBattleMons[gBattlerAttacker].maxHP, 48);
+
+    for (i = 0; i < (s32) sizeof(sFlailHpScaleToPowerTable); i += 2)
+    {
+        if (hpFraction <= sFlailHpScaleToPowerTable[i])
+            break;
+    }
+
+    gDynamicBasePower = sFlailHpScaleToPowerTable[i + 1];
+    gBattlescriptCurrInstr++;
+}
+
+static void Cmd_remaininghptopowerevil(void)
+{
+    s32 i;
+    s32 hpFraction = GetScaledHPFraction(gBattleMons[gBattlerTarget].hp, gBattleMons[gBattlerTarget].maxHP, 48);
 
     for (i = 0; i < (s32) sizeof(sFlailHpScaleToPowerTable); i += 2)
     {

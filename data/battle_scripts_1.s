@@ -233,6 +233,9 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectDragonDance            @ EFFECT_DRAGON_DANCE
 	.4byte BattleScript_EffectCamouflage             @ EFFECT_CAMOUFLAGE
 	.4byte BattleScript_EffectFinalSting             @ EFFECT_FINAL_STING
+	.4byte BattleScript_EffectFreeze            	 @ EFFECT_FREEZE
+	.4byte BattleScript_EffectEvil            	 	 @ EFFECT_EVIL
+	
 
 BattleScript_EffectHit::
 	jumpifnotmove MOVE_SURF, BattleScript_HitFromAtkCanceler
@@ -295,6 +298,21 @@ BattleScript_EffectSleep::
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_SLEEP
+	seteffectprimary
+	goto BattleScript_MoveEnd
+	
+BattleScript_EffectFreeze::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_ButItFailed
+	jumpifstatus BS_TARGET, STATUS1_FREEZE, BattleScript_ButItFailed
+	jumpifstatus BS_TARGET, STATUS1_ANY, BattleScript_ButItFailed
+	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
+	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_SafeguardProtected
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_FREEZE
 	seteffectprimary
 	goto BattleScript_MoveEnd
 
@@ -1370,6 +1388,10 @@ BattleScript_EffectDestinyBond::
 
 BattleScript_EffectFlail::
 	remaininghptopower
+	goto BattleScript_EffectHit
+	
+BattleScript_EffectEvil::
+	remaininghptopowerevil
 	goto BattleScript_EffectHit
 
 BattleScript_EffectSpite::

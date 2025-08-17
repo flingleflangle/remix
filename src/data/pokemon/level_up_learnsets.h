@@ -188,7 +188,6 @@ static const u16 sKakunaLevelUpLearnset[] = {
 static const u16 sBeedrillLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_FURY_ATTACK),
     LEVEL_UP_MOVE(10, MOVE_FURY_ATTACK),
-    LEVEL_UP_MOVE(11, MOVE_FINAL_STING),
     LEVEL_UP_MOVE(15, MOVE_FOCUS_ENERGY),
     LEVEL_UP_MOVE(20, MOVE_TWINEEDLE),
     LEVEL_UP_MOVE(25, MOVE_RAGE),
@@ -196,6 +195,7 @@ static const u16 sBeedrillLevelUpLearnset[] = {
     LEVEL_UP_MOVE(35, MOVE_PIN_MISSILE),
     LEVEL_UP_MOVE(40, MOVE_AGILITY),
     LEVEL_UP_MOVE(45, MOVE_ENDEAVOR),
+    LEVEL_UP_MOVE(100, MOVE_FINAL_STING),
     LEVEL_UP_END
 };
 
@@ -4612,6 +4612,7 @@ static const u16 sCacturneLevelUpLearnset[] = {
 static const u16 sSnoruntLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_POWDER_SNOW),
     LEVEL_UP_MOVE( 1, MOVE_LEER),
+    LEVEL_UP_MOVE( 6, MOVE_FREEZE_RAY),
     LEVEL_UP_MOVE( 7, MOVE_DOUBLE_TEAM),
     LEVEL_UP_MOVE(10, MOVE_BITE),
     LEVEL_UP_MOVE(16, MOVE_ICY_WIND),
@@ -5118,6 +5119,7 @@ static const u16 sBanetteLevelUpLearnset[] = {
 
 static const u16 sSeviperLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_WRAP),
+    LEVEL_UP_MOVE( 7, MOVE_VILE_CUTTER),
     LEVEL_UP_MOVE( 7, MOVE_LICK),
     LEVEL_UP_MOVE(10, MOVE_BITE),
     LEVEL_UP_MOVE(16, MOVE_POISON_TAIL),

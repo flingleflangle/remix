@@ -1420,6 +1420,14 @@ static const u8 sPsychoBoostDescription[] = _(
 static const u8 sFinalStingDescription[] = _(
     "Strikes with highly venomous\n"
     "stingers, fainting the user.");
+	
+static const u8 sFreezeRayDescription[] = _(
+    "Fires sub-zero rays\n"
+    "that freeze the foe.");
+	
+static const u8 sVileCutterDescription[] = _(
+    "Vicious slashes that deal\n"
+    "more damage to weaker foes.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -1779,4 +1787,6 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_DOOM_DESIRE - 1] = sDoomDesireDescription,
     [MOVE_PSYCHO_BOOST - 1] = sPsychoBoostDescription,
     [MOVE_FINAL_STING - 1] = sFinalStingDescription,
+    [MOVE_FREEZE_RAY - 1] = sFreezeRayDescription,
+    [MOVE_VILE_CUTTER - 1] = sVileCutterDescription,
 };

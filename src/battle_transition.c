@@ -3741,7 +3741,9 @@ static void SpriteCB_WhiteBarFade(struct Sprite *sprite)
         u16 i;
         u16 *ptr1 = &gScanlineEffectRegBuffers[0][sprite->y];
         u16 *ptr2 = &gScanlineEffectRegBuffers[0][sprite->y + DISPLAY_HEIGHT];
-        for (i = 0; i < DISPLAY_HEIGHT / NUM_WHITE_BARS; i++)
+        //for (i = 0; i < DISPLAY_HEIGHT / NUM_WHITE_BARS; i++)
+		u32 stripeWidth = sprite->sIsMainSprite ? 0x19 : 0x1B;
+		for (i = 0; i < stripeWidth; ++i)
         {
             ptr1[i] = sprite->sFade >> 8;
             ptr2[i] = (u8)sprite->x;
@@ -3750,7 +3752,7 @@ static void SpriteCB_WhiteBarFade(struct Sprite *sprite)
             sprite->sFinished = TRUE;
 
         sprite->x -= 24;
-        sprite->sFade += FADE_TARGET / 192;
+        sprite->sFade += 192;
 
         if (sprite->x < 0)
             sprite->x = 0;
