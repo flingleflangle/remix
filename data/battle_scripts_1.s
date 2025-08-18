@@ -235,6 +235,9 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectFinalSting             @ EFFECT_FINAL_STING
 	.4byte BattleScript_EffectFreeze            	 @ EFFECT_FREEZE
 	.4byte BattleScript_EffectEvil            	 	 @ EFFECT_EVIL
+	.4byte BattleScript_EffectFireCrash            	 @ EFFECT_FIRE_CRASH
+	.4byte BattleScript_EffectThunderCrash           @ EFFECT_THUNDER_CRASH
+	.4byte BattleScript_EffectComboPunch             @ EFFECT_COMBO_PUNCH
 	
 
 BattleScript_EffectHit::
@@ -943,6 +946,85 @@ BattleScript_EffectFinalSting::
 	tryfaintmon BS_TARGET
 	tryfaintmon BS_ATTACKER
 	end
+	
+BattleScript_EffectFireCrash::
+	attackcanceler
+	attackstring
+	accuracycheck BattleScript_MoveMissedDoDamage, ACC_CURR_MOVE 
+	ppreduce
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	typecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	setmoveeffect MOVE_EFFECT_FLINCH 
+	seteffectprimary
+	setmoveeffect MOVE_EFFECT_BURN 
+	seteffectsecondary
+	tryfaintmon BS_TARGET
+	end
+	
+BattleScript_EffectThunderCrash::
+	attackcanceler
+	attackstring
+	accuracycheck BattleScript_MoveMissedDoDamage, ACC_CURR_MOVE 
+	ppreduce
+	typecalc
+	jumpifmovehadnoeffect BattleScript_HitFromAtkCanceler
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	seteffectprimary
+	setmoveeffect MOVE_EFFECT_FLINCH
+	seteffectprimary
+	tryfaintmon BS_TARGET
+	end
+	
+BattleScript_EffectComboPunch::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_ButItFailed
+	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
+	setalwayshitflag
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	typecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	printstring STRINGID_PKMNTOOKAIM
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
 
 BattleScript_EffectConfuse::
 	attackcanceler

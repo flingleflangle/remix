@@ -1428,6 +1428,18 @@ static const u8 sFreezeRayDescription[] = _(
 static const u8 sVileCutterDescription[] = _(
     "Vicious slashes that deal\n"
     "more damage to weaker foes.");
+	
+static const u8 sFireCrashDescription[] = _(
+    "Strong scorching flames.\n"
+    "Leaves user open if it misses.");
+	
+static const u8 sThunderCrashDescription[] = _(
+    "Powerful electrifying thunder.\n"
+    "Leaves user open if it misses.");
+	
+static const u8 sComboPunchDescription[] = _(
+    "Ensures the next move hits\n"
+    "with a stunning punch.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -1789,4 +1801,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_FINAL_STING - 1] = sFinalStingDescription,
     [MOVE_FREEZE_RAY - 1] = sFreezeRayDescription,
     [MOVE_VILE_CUTTER - 1] = sVileCutterDescription,
+	[MOVE_FIRE_CRASH - 1] = sFireCrashDescription,
+	[MOVE_THUNDER_CRASH - 1] = sThunderCrashDescription,
+	[MOVE_COMBO_PUNCH - 1] = sComboPunchDescription,
 };

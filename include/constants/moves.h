@@ -359,8 +359,11 @@
 #define MOVE_FINAL_STING 355
 #define MOVE_FREEZE_RAY 356
 #define MOVE_VILE_CUTTER 357
+#define MOVE_FIRE_CRASH 358
+#define MOVE_THUNDER_CRASH 359
+#define MOVE_COMBO_PUNCH 360
 
-#define MOVES_COUNT 358
+#define MOVES_COUNT 361
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

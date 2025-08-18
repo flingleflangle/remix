@@ -8366,7 +8366,7 @@ static void Cmd_remaininghptopowerevil(void)
             break;
     }
 
-    gDynamicBasePower = sFlailHpScaleToPowerTable[i + 1];
+    gDynamicBasePower = sFlailHpScaleToPowerTable[i + 1] ;
     gBattlescriptCurrInstr++;
 }
 
