@@ -4657,7 +4657,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_FIRE_CRASH] =
     {
         .effect = EFFECT_FIRE_CRASH,
-        .power = 20,
+        .power = 80,
         .type = TYPE_FIRE,
         .accuracy = 50,
         .pp = 5,
@@ -4680,16 +4680,29 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 	
-	[MOVE_COMBO_PUNCH] =
+	[MOVE_STAGGER] =
     {
-        .effect = EFFECT_COMBO_PUNCH,
-        .power = 20,
+        .effect = EFFECT_STAGGER,
+        .power = 25,
         .type = TYPE_FIGHTING,
-        .accuracy = 90,
-        .pp = 5,
+        .accuracy = 85,
+        .pp = 10,
         .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+	
+	[MOVE_TOMBSTONER] =
+    {
+        .effect = EFFECT_RECHARGE,
+        .power = 150,
+        .type = TYPE_ROCK,
+        .accuracy = 90,
+        .pp = 5,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 };

@@ -1256,6 +1256,10 @@
 	.macro remaininghptopowerevil
 	.byte 0xf9
 	.endm
+	
+	.macro remaininghptoaccuracy
+	.byte 0xfA
+	.endm
 
 @ various command changed to more readable macros
 	.macro cancelmultiturnmoves battler:req

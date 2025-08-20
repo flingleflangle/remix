@@ -1422,8 +1422,8 @@ static const u8 sFinalStingDescription[] = _(
     "stingers, fainting the user.");
 	
 static const u8 sFreezeRayDescription[] = _(
-    "Fires sub-zero rays\n"
-    "that freeze the foe.");
+    "Fires sub-zero rays that\n"
+    "encase the foe in ice.");
 	
 static const u8 sVileCutterDescription[] = _(
     "Vicious slashes that deal\n"
@@ -1431,15 +1431,19 @@ static const u8 sVileCutterDescription[] = _(
 	
 static const u8 sFireCrashDescription[] = _(
     "Strong scorching flames.\n"
-    "Leaves user open if it misses.");
+    "Hurts user if it misses.");
 	
 static const u8 sThunderCrashDescription[] = _(
-    "Powerful electrifying thunder.\n"
-    "Leaves user open if it misses.");
+    "Powerful shocking thunder.\n"
+    "Hurts user if it misses.");
 	
-static const u8 sComboPunchDescription[] = _(
+static const u8 sStaggerDescription[] = _(
     "Ensures the next move hits\n"
-    "with a stunning punch.");
+    "with a staggering blow.");
+	
+static const u8 sTombstonerDescription[] = _(
+    "Slams the foe with boulders.\n"
+    "User is immobile next turn.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -1803,5 +1807,6 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_VILE_CUTTER - 1] = sVileCutterDescription,
 	[MOVE_FIRE_CRASH - 1] = sFireCrashDescription,
 	[MOVE_THUNDER_CRASH - 1] = sThunderCrashDescription,
-	[MOVE_COMBO_PUNCH - 1] = sComboPunchDescription,
+	[MOVE_STAGGER - 1] = sStaggerDescription,
+	[MOVE_TOMBSTONER - 1] = sTombstonerDescription,
 };

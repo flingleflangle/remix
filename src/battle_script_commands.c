@@ -250,6 +250,7 @@ static void Cmd_setdestinybond(void);
 static void Cmd_trysetdestinybondtohappen(void);
 static void Cmd_remaininghptopower(void);
 static void Cmd_remaininghptopowerevil(void);
+static void Cmd_remaininghptoaccuracy(void);
 static void Cmd_tryspiteppreduce(void);
 static void Cmd_healpartystatus(void);
 static void Cmd_cursetarget(void);
@@ -578,7 +579,8 @@ void (*const gBattleScriptingCommandsTable[])(void) =
     Cmd_finishaction,                            //0xF6
     Cmd_finishturn,                              //0xF7
     Cmd_trainerslideout,                         //0xF8
-    Cmd_remaininghptopowerevil					 //0xF9
+    Cmd_remaininghptopowerevil,					 //0xF9
+    Cmd_remaininghptoaccuracy					 //0xFA
 };
 
 struct StatFractions
@@ -8367,6 +8369,22 @@ static void Cmd_remaininghptopowerevil(void)
     }
 
     gDynamicBasePower = sFlailHpScaleToPowerTable[i + 1] ;
+    gBattlescriptCurrInstr++;
+}
+
+static void Cmd_remaininghptoaccuracy(void)
+{
+	u8 type, moveAcc, holdEffect, param;
+    s32 i;
+    s32 hpFraction = GetScaledHPFraction(gBattleMons[gBattlerTarget].hp, gBattleMons[gBattlerTarget].maxHP, 48);
+
+    for (i = 0; i < (s32) sizeof(sFlailHpScaleToPowerTable); i += 1)
+    {
+        if (hpFraction <= sFlailHpScaleToPowerTable[i])
+            break;
+    }
+
+    moveAcc = sFlailHpScaleToPowerTable[i + 1] ;
     gBattlescriptCurrInstr++;
 }
 

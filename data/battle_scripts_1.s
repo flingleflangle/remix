@@ -237,7 +237,8 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectEvil            	 	 @ EFFECT_EVIL
 	.4byte BattleScript_EffectFireCrash            	 @ EFFECT_FIRE_CRASH
 	.4byte BattleScript_EffectThunderCrash           @ EFFECT_THUNDER_CRASH
-	.4byte BattleScript_EffectComboPunch             @ EFFECT_COMBO_PUNCH
+	.4byte BattleScript_EffectStagger                @ EFFECT_STAGGER
+	.4byte BattleScript_EffectTombstoner             @ EFFECT_TOMBSTONER
 	
 
 BattleScript_EffectHit::
@@ -924,6 +925,7 @@ BattleScript_EffectRecoil::
 	
 BattleScript_EffectFinalSting::
 	attackstring
+	ppreduce
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE 
 	attackanimation
 	waitanimation
@@ -1000,12 +1002,11 @@ BattleScript_EffectThunderCrash::
 	tryfaintmon BS_TARGET
 	end
 	
-BattleScript_EffectComboPunch::
+BattleScript_EffectStagger::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_ButItFailed
-	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	setalwayshitflag
 	attackanimation
 	waitanimation
@@ -1022,9 +1023,19 @@ BattleScript_EffectComboPunch::
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET
-	printstring STRINGID_PKMNTOOKAIM
-	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+	
+BattleScript_EffectTombstoner::
+	attackcanceler
+	attackstring
+	ppreduce
+	remaininghptoaccuracy
+	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC_CHECK_LOCK_ON
+	typecalc
+	jumpifmovehadnoeffect BattleScript_HitFromAtkAnimation
+	tryKO BattleScript_KOFail
+	trysetdestinybondtohappen
+	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectConfuse::
 	attackcanceler
