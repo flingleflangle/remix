@@ -363,8 +363,12 @@
 #define MOVE_THUNDER_CRASH 359
 #define MOVE_STAGGER 360
 #define MOVE_TOMBSTONER 361
+#define MOVE_SPROUT 362
+#define MOVE_SHRED 363
+#define MOVE_ENTWINE 364
+#define MOVE_DRAGON_FIST 365
 
-#define MOVES_COUNT 362
+#define MOVES_COUNT 366
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

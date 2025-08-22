@@ -239,6 +239,9 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectThunderCrash           @ EFFECT_THUNDER_CRASH
 	.4byte BattleScript_EffectStagger                @ EFFECT_STAGGER
 	.4byte BattleScript_EffectTombstoner             @ EFFECT_TOMBSTONER
+	.4byte BattleScript_EffectSprout             	 @ EFFECT_SPROUT
+	.4byte BattleScript_EffectShred             	 @ EFFECT_SHRED
+	.4byte BattleScript_EffectEntwine             	 @ EFFECT_ENTWINE
 	
 
 BattleScript_EffectHit::
@@ -811,6 +814,7 @@ BattleScript_TwoTurnMovesSecondTurn::
 	setbyte sB_ANIM_TURN, 1
 	clearstatusfromeffect BS_ATTACKER
 	orword gHitMarker, HITMARKER_NO_PPDEDUCT
+	jumpifmove MOVE_DRAGON_FIST, BattleScript_EffectDragonFist
 	jumpifnotmove MOVE_SKY_ATTACK, BattleScript_HitFromAccCheck
 	setmoveeffect MOVE_EFFECT_FLINCH
 	goto BattleScript_HitFromAccCheck
@@ -1027,15 +1031,117 @@ BattleScript_EffectStagger::
 	
 BattleScript_EffectTombstoner::
 	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	setmoveeffect MOVE_EFFECT_RECHARGE | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	attackstring
 	ppreduce
-	remaininghptoaccuracy
-	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC_CHECK_LOCK_ON
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
 	typecalc
-	jumpifmovehadnoeffect BattleScript_HitFromAtkAnimation
-	tryKO BattleScript_KOFail
-	trysetdestinybondtohappen
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	seteffectwithchance
+	end
+	
+BattleScript_EffectSprout::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifnostatus3 BS_TARGET, STATUS3_LEECHSEED, BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	typecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
+	
+BattleScript_EffectShred::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	typecalc
+	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	setword gBattleMoveDamage, 60
+	adjustsetdamage
 	goto BattleScript_HitFromAtkAnimation
+	
+BattleScript_EffectEntwine::
+	attackcanceler
+	attackstring
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	ppreduce
+	typecalc
+	jumpifstatus2 BS_TARGET, STATUS2_ESCAPE_PREVENTION, BattleScript_ButItFailed
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffectprimary
+	tryfaintmon BS_TARGET
+	printstring STRINGID_TARGETCANTESCAPENOW
+	waitmessage B_WAIT_TIME_LONG
+	end
+	
+BattleScript_EffectDragonFist::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	setmoveeffect MOVE_EFFECT_RECHARGE | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
+	attackstring
+	ppreduce
+	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	setword gBattleMoveDamage, 999
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	printstring STRINGID_ONEHITKO
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	end
+
 
 BattleScript_EffectConfuse::
 	attackcanceler
@@ -1204,6 +1310,7 @@ BattleScript_EffectSkyAttack::
 	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_SKY_ATTACK
 	call BattleScriptFirstChargingTurn
 	goto BattleScript_MoveEnd
+	
 
 BattleScript_EffectConfuseHit::
 	setmoveeffect MOVE_EFFECT_CONFUSION
@@ -2953,6 +3060,7 @@ BattleScript_FaintAttacker::
 	dofaintanimation BS_ATTACKER
 	cleareffectsonfaint BS_ATTACKER
 	printstring STRINGID_ATTACKERFAINTED
+	jumpifmove MOVE_TOMBSTONER, BattleScript_MoveEnd
 	return
 
 BattleScript_FaintTarget::
@@ -2961,6 +3069,7 @@ BattleScript_FaintTarget::
 	dofaintanimation BS_TARGET
 	cleareffectsonfaint BS_TARGET
 	printstring STRINGID_TARGETFAINTED
+	jumpifmove MOVE_TOMBSTONER, BattleScript_MoveEnd
 	return
 
 BattleScript_GiveExp::

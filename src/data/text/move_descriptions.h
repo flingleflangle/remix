@@ -1444,6 +1444,22 @@ static const u8 sStaggerDescription[] = _(
 static const u8 sTombstonerDescription[] = _(
     "Slams the foe with boulders.\n"
     "User is immobile next turn.");
+	
+static const u8 sSproutDescription[] = _(
+    "Raises up powerful roots\n"
+    "from a planted LEECH SEED.");
+	
+static const u8 sShredDescription[] = _(
+    "Rakes the foe with claws,\n"
+    "inflicting 60 HP damage.");
+
+static const u8 sEntwineDescription[] = _(
+    "Tangles the opponent in\n"
+    "vines, preventing escape.");
+	
+static const u8 sDragonFistDescription[] = _(
+    "A one-hit KO attack that\n"
+    "charges a finishing blow.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -1809,4 +1825,8 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_THUNDER_CRASH - 1] = sThunderCrashDescription,
 	[MOVE_STAGGER - 1] = sStaggerDescription,
 	[MOVE_TOMBSTONER - 1] = sTombstonerDescription,
+	[MOVE_SPROUT - 1] = sSproutDescription,
+	[MOVE_SHRED - 1] = sShredDescription,
+	[MOVE_ENTWINE - 1] = sEntwineDescription,
+	[MOVE_DRAGON_FIST - 1] = sDragonFistDescription,
 };

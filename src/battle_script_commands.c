@@ -8289,6 +8289,7 @@ static void Cmd_trychoosesleeptalkmove(void)
     {
         if (IsInvalidForSleepTalkOrAssist(gBattleMons[gBattlerAttacker].moves[i])
             || gBattleMons[gBattlerAttacker].moves[i] == MOVE_FOCUS_PUNCH
+            || gBattleMons[gBattlerAttacker].moves[i] == MOVE_DRAGON_FIST
             || gBattleMons[gBattlerAttacker].moves[i] == MOVE_UPROAR
             || IsTwoTurnsMove(gBattleMons[gBattlerAttacker].moves[i]))
         {

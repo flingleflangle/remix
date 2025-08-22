@@ -4695,8 +4695,8 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	
 	[MOVE_TOMBSTONER] =
     {
-        .effect = EFFECT_RECHARGE,
-        .power = 150,
+        .effect = EFFECT_TOMBSTONER,
+        .power = 135,
         .type = TYPE_ROCK,
         .accuracy = 90,
         .pp = 5,
@@ -4704,5 +4704,57 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+	
+	[MOVE_SPROUT] =
+    {
+        .effect = EFFECT_SPROUT,
+        .power = 100,
+        .type = TYPE_GRASS,
+        .accuracy = 0,
+        .pp = 10,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+	
+	[MOVE_SHRED] =
+    {
+        .effect = EFFECT_SHRED,
+        .power = 1,
+        .type = TYPE_NORMAL,
+        .accuracy = 80,
+        .pp = 10,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+	
+	[MOVE_ENTWINE] =
+    {
+        .effect = EFFECT_ENTWINE,
+        .power = 40,
+        .type = TYPE_GRASS,
+        .accuracy = 90,
+        .pp = 20,
+        .secondaryEffectChance = 10,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+	
+	[MOVE_DRAGON_FIST] =
+    {
+        .effect = EFFECT_SKY_ATTACK,
+        .power = 1,
+        .type = TYPE_DRAGON,
+        .accuracy = 70,
+        .pp = 5,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = -1,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MAKES_CONTACT
     },
 };
