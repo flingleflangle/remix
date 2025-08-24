@@ -4686,7 +4686,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .power = 25,
         .type = TYPE_FIGHTING,
         .accuracy = 85,
-        .pp = 10,
+        .pp = 15,
         .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
@@ -4750,11 +4750,102 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .effect = EFFECT_SKY_ATTACK,
         .power = 1,
         .type = TYPE_DRAGON,
-        .accuracy = 70,
+        .accuracy = 100,
         .pp = 5,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
         .priority = -1,
-        .flags = FLAG_PROTECT_AFFECTED | FLAG_MAKES_CONTACT
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MAKES_CONTACT,
+    },
+	
+	[MOVE_COBRA_CRUSH] =
+    {
+        .effect = EFFECT_COBRA_CRUSH,
+        .power = 30,
+        .type = TYPE_POISON,
+        .accuracy = 0,
+        .pp = 10,
+        .secondaryEffectChance = 50,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = -1,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED | FLAG_MAKES_CONTACT,
+    },
+	
+	[MOVE_ICE_SLASHER] =
+    {
+        .effect = EFFECT_ICE_SLASHER,
+        .power = 85,
+        .type = TYPE_ICE,
+        .accuracy = 90,
+        .pp = 10,
+        .secondaryEffectChance = 30,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
+	
+	[MOVE_SPIRIT_PURGE] =
+    {
+        .effect = EFFECT_SPIRIT_PURGE,
+        .power = 1,
+        .type = TYPE_GHOST,
+        .accuracy = 85,
+        .pp = 10,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT,
+    },
+	
+	[MOVE_CHISEL] =
+    {
+        .effect = EFFECT_CHISEL,
+        .power = 50,
+        .type = TYPE_STEEL,
+        .accuracy = 90,
+        .pp = 10,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
+	
+	[MOVE_ASCENSION] =
+    {
+        .effect = EFFECT_ASCENSION,
+        .power = 0,
+        .type = TYPE_DRAGON,
+        .accuracy = 0,
+        .pp = 20,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_USER,
+        .priority = 0,
+        .flags = FLAG_SNATCH_AFFECTED,
+    },
+	
+	[MOVE_AWAKENING] =
+    {
+        .effect = EFFECT_AWAKENING,
+        .power = 0,
+        .type = TYPE_PSYCHIC,
+        .accuracy = 0,
+        .pp = 20,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_USER,
+        .priority = 0,
+        .flags = FLAG_SNATCH_AFFECTED,
+    },
+	
+	[MOVE_ATTUNEMENT] =
+    {
+        .effect = EFFECT_ATTUNEMENT,
+        .power = 0,
+        .type = TYPE_GHOST,
+        .accuracy = 0,
+        .pp = 20,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_USER,
+        .priority = 0,
+        .flags = FLAG_SNATCH_AFFECTED,
     },
 };

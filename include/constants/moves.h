@@ -367,8 +367,15 @@
 #define MOVE_SHRED 363
 #define MOVE_ENTWINE 364
 #define MOVE_DRAGON_FIST 365
+#define MOVE_COBRA_CRUSH 366
+#define MOVE_ICE_SLASHER 367
+#define MOVE_SPIRIT_PURGE 368
+#define MOVE_CHISEL 369
+#define MOVE_ASCENSION 370
+#define MOVE_AWAKENING 371
+#define MOVE_ATTUNEMENT 372
 
-#define MOVES_COUNT 366
+#define MOVES_COUNT 373
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

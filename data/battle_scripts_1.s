@@ -242,6 +242,13 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectSprout             	 @ EFFECT_SPROUT
 	.4byte BattleScript_EffectShred             	 @ EFFECT_SHRED
 	.4byte BattleScript_EffectEntwine             	 @ EFFECT_ENTWINE
+	.4byte BattleScript_EffectCobraCrush             @ EFFECT_COBRA_CRUSH
+	.4byte BattleScript_EffectFreezeHit              @ EFFECT_ICE_SLASHER
+	.4byte BattleScript_EffectSpiritPurge            @ EFFECT_SPIRIT_PURGE
+	.4byte BattleScript_EffectChisel            	 @ EFFECT_CHISEL
+	.4byte BattleScript_EffectAscension            	 @ EFFECT_ASCENSION
+	.4byte BattleScript_EffectAwakening            	 @ EFFECT_AWAKENING
+	.4byte BattleScript_EffectAttunement             @ EFFECT_ATTUNEMENT
 	
 
 BattleScript_EffectHit::
@@ -505,9 +512,17 @@ BattleScript_EffectAttackUp::
 BattleScript_EffectDefenseUp::
 	setstatchanger STAT_DEF, 1, FALSE
 	goto BattleScript_EffectStatUp
+	
+BattleScript_EffectSpeedUp::
+	setstatchanger STAT_SPEED, 1, FALSE
+	goto BattleScript_EffectStatUp
 
 BattleScript_EffectSpecialAttackUp::
 	setstatchanger STAT_SPATK, 1, FALSE
+	goto BattleScript_EffectStatUp
+	
+BattleScript_EffectSpecialDefenseUp::
+	setstatchanger STAT_SPDEF, 1, FALSE
 	goto BattleScript_EffectStatUp
 
 BattleScript_EffectEvasionUp::
@@ -1124,9 +1139,13 @@ BattleScript_EffectDragonFist::
 	ppreduce
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	setword gBattleMoveDamage, 999
+	jumpifability BS_TARGET, ABILITY_STURDY, BattleScript_SturdyPreventsOHKO
 	adjustsetdamage
 	attackanimation
 	waitanimation
+	critcalc
+	damagecalc
+	typecalc
 	effectivenesssound
 	hitanimation BS_TARGET
 	waitstate
@@ -1142,6 +1161,90 @@ BattleScript_EffectDragonFist::
 	seteffectwithchance
 	end
 
+BattleScript_EffectCobraCrush::
+	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC
+	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
+	jumpifstatus BS_ATTACKER, STATUS1_POISON | STATUS1_TOXIC_POISON, BattleScript_EffectCobraCrushed
+	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_EffectCobraCrushed
+	goto BattleScript_HitFromAtkString
+	
+BattleScript_EffectCobraCrushed::
+	setbyte sDMG_MULTIPLIER, 2
+	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_HitFromAtkString
+	attackstring
+	ppreduce
+	cureifburnedparalysedorpoisoned BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	typecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	waitmessage B_WAIT_TIME_LONG
+	printstring STRINGID_PKMNSTATUSNORMAL
+	waitmessage B_WAIT_TIME_LONG
+	updatestatusicon BS_ATTACKER
+	end
+	
+BattleScript_EffectSpiritPurge::
+	attackcanceler
+	friendshiptodamagecalculation
+	jumpifnodamage BattleScript_HitFromAccCheck
+	ppreduce
+	printstring STRINGID_PKMNLOSTFOCUS
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+	
+BattleScript_EffectChisel::
+	jumpifstatus BS_TARGET, STATUS1_FREEZE, BattleScript_ChiselDoubleDmg
+	jumpiftype BS_TARGET, TYPE_ROCK, BattleScript_ChiselDoubleDmg
+	goto BattleScript_EffectBrickBreak
+BattleScript_ChiselDoubleDmg::
+	setbyte sDMG_MULTIPLIER, 2
+	goto BattleScript_EffectBrickBreak
+	
+BattleScript_EffectAscension::
+	attackstring
+	ppreduce
+	jumpiftype BS_ATTACKER, TYPE_DRAGON, BattleScript_EffectSpecialAttackUp
+	attackanimation
+	waitanimation
+	settypewithmove
+	printstring STRINGID_PKMNCHANGEDTYPE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+	
+BattleScript_EffectAwakening::
+	attackstring
+	ppreduce
+	jumpiftype BS_ATTACKER, TYPE_PSYCHIC, BattleScript_EffectSpecialDefenseUp
+	attackanimation
+	waitanimation
+	settypewithmove
+	printstring STRINGID_PKMNCHANGEDTYPE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+	
+BattleScript_EffectAttunement::
+	attackstring
+	ppreduce
+	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_EffectSpeedUp
+	attackanimation
+	waitanimation
+	settypewithmove
+	printstring STRINGID_PKMNCHANGEDTYPE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
 
 BattleScript_EffectConfuse::
 	attackcanceler

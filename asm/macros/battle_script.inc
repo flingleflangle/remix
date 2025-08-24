@@ -1257,8 +1257,8 @@
 	.byte 0xf9
 	.endm
 	
-	.macro remaininghptoaccuracy
-	.byte 0xfA
+	.macro settypewithmove
+	.byte 0xfa
 	.endm
 
 

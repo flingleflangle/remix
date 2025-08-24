@@ -250,7 +250,6 @@ static void Cmd_setdestinybond(void);
 static void Cmd_trysetdestinybondtohappen(void);
 static void Cmd_remaininghptopower(void);
 static void Cmd_remaininghptopowerevil(void);
-static void Cmd_remaininghptoaccuracy(void);
 static void Cmd_tryspiteppreduce(void);
 static void Cmd_healpartystatus(void);
 static void Cmd_cursetarget(void);
@@ -314,6 +313,7 @@ static void Cmd_settypebasedhalvers(void);
 static void Cmd_setweatherballtype(void);
 static void Cmd_tryrecycleitem(void);
 static void Cmd_settypetoenvironment(void);
+static void Cmd_settypewithmove(void);
 static void Cmd_pursuitdoubles(void);
 static void Cmd_snatchsetbattlers(void);
 static void Cmd_removelightscreenreflect(void);
@@ -580,7 +580,7 @@ void (*const gBattleScriptingCommandsTable[])(void) =
     Cmd_finishturn,                              //0xF7
     Cmd_trainerslideout,                         //0xF8
     Cmd_remaininghptopowerevil,					 //0xF9
-    Cmd_remaininghptoaccuracy					 //0xFA
+    Cmd_settypewithmove,					 	 //0xF9
 };
 
 struct StatFractions
@@ -757,6 +757,16 @@ static const u8 sFlailHpScaleToPowerTable[] =
     9, 100,
     16, 80,
     32, 40,
+    48, 20
+};
+
+static const u8 sVileCutterHpScaleToPowerTable[] =
+{
+    2, 200,
+    8, 150,
+    16, 100,
+    32, 80,
+    40, 40,
     48, 20
 };
 
@@ -1273,6 +1283,7 @@ static void Cmd_critcalc(void)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_ATTACK)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_BLAZE_KICK)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_POISON_TAIL)
+                + (gBattleMoves[gCurrentMove].effect == EFFECT_ICE_SLASHER)
                 + (holdEffect == HOLD_EFFECT_SCOPE_LENS)
                 + 2 * (holdEffect == HOLD_EFFECT_LUCKY_PUNCH && gBattleMons[gBattlerAttacker].species == SPECIES_CHANSEY)
                 + 2 * (holdEffect == HOLD_EFFECT_STICK && gBattleMons[gBattlerAttacker].species == SPECIES_FARFETCHD);
@@ -8363,32 +8374,15 @@ static void Cmd_remaininghptopowerevil(void)
     s32 i;
     s32 hpFraction = GetScaledHPFraction(gBattleMons[gBattlerTarget].hp, gBattleMons[gBattlerTarget].maxHP, 48);
 
-    for (i = 0; i < (s32) sizeof(sFlailHpScaleToPowerTable); i += 2)
+    for (i = 0; i < (s32) sizeof(sVileCutterHpScaleToPowerTable); i += 2)
     {
-        if (hpFraction <= sFlailHpScaleToPowerTable[i])
+        if (hpFraction <= sVileCutterHpScaleToPowerTable[i])
             break;
     }
 
-    gDynamicBasePower = sFlailHpScaleToPowerTable[i + 1] ;
+    gDynamicBasePower = sVileCutterHpScaleToPowerTable[i + 1] ;
     gBattlescriptCurrInstr++;
 }
-
-static void Cmd_remaininghptoaccuracy(void)
-{
-	u8 type, moveAcc, holdEffect, param;
-    s32 i;
-    s32 hpFraction = GetScaledHPFraction(gBattleMons[gBattlerTarget].hp, gBattleMons[gBattlerTarget].maxHP, 48);
-
-    for (i = 0; i < (s32) sizeof(sFlailHpScaleToPowerTable); i += 1)
-    {
-        if (hpFraction <= sFlailHpScaleToPowerTable[i])
-            break;
-    }
-
-    moveAcc = sFlailHpScaleToPowerTable[i + 1] ;
-    gBattlescriptCurrInstr++;
-}
-
 static void Cmd_tryspiteppreduce(void)
 {
     if (gLastMoves[gBattlerTarget] != MOVE_NONE
@@ -8678,6 +8672,8 @@ static void Cmd_friendshiptodamagecalculation(void)
 {
     if (gBattleMoves[gCurrentMove].effect == EFFECT_RETURN)
         gDynamicBasePower = 10 * (gBattleMons[gBattlerAttacker].friendship) / 25;
+    else if (gBattleMoves[gCurrentMove].effect == EFFECT_SPIRIT_PURGE)
+        gDynamicBasePower = 10 * (gBattleMons[gBattlerTarget].friendship) / 8;
     else // EFFECT_FRUSTRATION
         gDynamicBasePower = 10 * (MAX_FRIENDSHIP - gBattleMons[gBattlerAttacker].friendship) / 25;
 
@@ -9936,6 +9932,53 @@ static void Cmd_settypetoenvironment(void)
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     }
 }
+
+static void Cmd_settypewithmove(void)
+{
+	if (gCurrentMove == MOVE_ASCENSION) {
+		if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_DRAGON))
+		{
+			SET_BATTLER_TYPE(gBattlerAttacker, TYPE_DRAGON);
+			PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_DRAGON);
+
+			gBattlescriptCurrInstr += 1;
+		}
+		else
+		{
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		}
+	}
+	
+	if (gCurrentMove == MOVE_AWAKENING) {
+		if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_PSYCHIC))
+		{
+			SET_BATTLER_TYPE(gBattlerAttacker, TYPE_PSYCHIC);
+			PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_PSYCHIC);
+
+			gBattlescriptCurrInstr += 1;
+		}
+		else
+		{
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		}
+	}
+	
+	if (gCurrentMove == MOVE_ATTUNEMENT) {
+		if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GHOST))
+		{
+			SET_BATTLER_TYPE(gBattlerAttacker, TYPE_GHOST);
+			PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_GHOST);
+
+			gBattlescriptCurrInstr += 1;
+		}
+		else
+		{
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		}
+	}
+}
+
+
 
 // Unused
 static void Cmd_pursuitdoubles(void)

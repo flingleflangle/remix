@@ -1460,6 +1460,34 @@ static const u8 sEntwineDescription[] = _(
 static const u8 sDragonFistDescription[] = _(
     "A one-hit KO attack that\n"
     "charges a finishing blow.");
+	
+static const u8 sCobraCrushDescription[] = _(
+    "Wields poison to double\n"
+    "its striking power.");
+
+static const u8 sIceSlasherDescription[] = _(
+    "A slash with a high critical-\n"
+    "hit ratio. May freeze.");
+	
+static const u8 sSpiritPurgeDescription[] = _(
+    "An attack that is stronger\n"
+    "against resolute opponents.");
+	
+static const u8 sChiselDescription[] = _(
+    "Carves out ice, rock, and\n"
+    "screens for double damage.");
+	
+static const u8 sAscensionDescription[] = _(
+    "Changes the user's type\n"
+    "into DRAGON type.");
+	
+static const u8 sAwakeningDescription[] = _(
+    "Changes the user's type\n"
+    "into PSYCHIC type.");
+	
+static const u8 sAttunementDescription[] = _(
+    "Changes the user's type\n"
+    "into GHOST type.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -1829,4 +1857,11 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_SHRED - 1] = sShredDescription,
 	[MOVE_ENTWINE - 1] = sEntwineDescription,
 	[MOVE_DRAGON_FIST - 1] = sDragonFistDescription,
+	[MOVE_COBRA_CRUSH - 1] = sCobraCrushDescription,
+	[MOVE_ICE_SLASHER - 1] = sIceSlasherDescription,
+	[MOVE_SPIRIT_PURGE - 1] = sSpiritPurgeDescription,
+	[MOVE_CHISEL - 1] = sChiselDescription,
+	[MOVE_ASCENSION - 1] = sAscensionDescription,
+	[MOVE_AWAKENING - 1] = sAwakeningDescription,
+	[MOVE_ATTUNEMENT - 1] = sAttunementDescription,
 };
