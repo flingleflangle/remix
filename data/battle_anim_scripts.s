@@ -10253,7 +10253,7 @@ Move_ASCENSION:
 	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_WHITE_CIRCLE_OF_LIGHT, 2, 0, 16, RGB_WHITEALPHA
 	waitforvisualfinish
 	delay 30
-	playsewithpan SE_M_HYPER_BEAM, SOUND_PAN_ATTACKER
+	playsewithpan SE_M_LEER, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_BlendBattleAnimPalExclude, 5, 5, 2, 16, 0, RGB_WHITEALPHA
 	waitforvisualfinish
 	clearmonbg ANIM_ATTACKER
@@ -10262,33 +10262,32 @@ Move_ASCENSION:
 	end
 	
 Move_AWAKENING:
-	loadspritegfx ANIM_TAG_HOLLOW_ORB
-	monbg ANIM_ATTACKER
-	loadspritegfx ANIM_TAG_WHITE_CIRCLE_OF_LIGHT
-	loadspritegfx ANIM_TAG_IMPACT
-	delay 1
-	createvisualtask AnimTask_DragonDanceWaver, 5
+	loadspritegfx ANIM_TAG_THIN_RING
+	loadspritegfx ANIM_TAG_OPENING_EYE
+	monbg ANIM_ATK_PARTNER
+	createvisualtask AnimTask_BlendBattleAnimPalExclude, 5, ANIM_ATTACKER, 0, 0, 16, RGB_BLACK
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 0, 15, RGB_WHITE
+	waitforvisualfinish
+	createvisualtask AnimTask_SetAllNonAttackersInvisiblity, 5, TRUE
+	waitforvisualfinish
+	createsprite gOpeningEyeSpriteTemplate, ANIM_ATTACKER, 5, 0, 0, 1, 0
+	createsprite gThinRingShrinkingSpriteTemplate, ANIM_ATTACKER, 40, 0, 0, 0, 0
+	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_ATTACKER
 	delay 8
-	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_ATTACKER
-	createsprite gLusterPurgeCircleSpriteTemplate, ANIM_ATTACKER, 41, 0, 0, 0, 0
-	createvisualtask AnimTask_BlendPalInAndOutByTag, 5, ANIM_TAG_HOLLOW_ORB, RGB(0, 0, 19), 14, 0, 3
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 0
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 43
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 85
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 128
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 170
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 213
-	delay 30
-	createvisualtask AnimTask_BlendBattleAnimPalExclude, 5, 5, 2, 0, 16, RGB_WHITEALPHA
-	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_WHITE_CIRCLE_OF_LIGHT, 2, 0, 16, RGB_WHITEALPHA
+	createsprite gThinRingShrinkingSpriteTemplate, ANIM_ATTACKER, 40, 0, 0, 0, 0
+	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_ATTACKER
+	delay 8
+	createsprite gThinRingShrinkingSpriteTemplate, ANIM_ATTACKER, 40, 0, 0, 0, 0
+	delay 16
+	playsewithpan SE_M_LEER, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_ATTACKER, 1 
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 15, 0, RGB_WHITE
 	waitforvisualfinish
-	delay 30
-	playsewithpan SE_M_HYPER_BEAM, SOUND_PAN_ATTACKER
-	createvisualtask AnimTask_BlendBattleAnimPalExclude, 5, 5, 2, 16, 0, RGB_WHITEALPHA
+	createvisualtask AnimTask_SetAllNonAttackersInvisiblity, 5, FALSE
 	waitforvisualfinish
-	clearmonbg ANIM_ATTACKER
-	blendoff
-	delay 1
+	createvisualtask AnimTask_BlendBattleAnimPalExclude, 5, ANIM_ATTACKER, 0, 16, 0, RGB_BLACK
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_PARTNER
 	end
 	
 Move_ATTUNEMENT:

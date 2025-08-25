@@ -4800,9 +4800,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_CHISEL] =
     {
         .effect = EFFECT_CHISEL,
-        .power = 50,
+        .power = 60,
         .type = TYPE_STEEL,
-        .accuracy = 90,
+        .accuracy = 100,
         .pp = 10,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,

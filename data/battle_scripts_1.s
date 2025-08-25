@@ -1206,12 +1206,15 @@ BattleScript_EffectSpiritPurge::
 	goto BattleScript_MoveEnd
 	
 BattleScript_EffectChisel::
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_EffectHit
+	setmoveeffect MOVE_EFFECT_REMOVE_PARALYSIS | MOVE_EFFECT_CERTAIN
 	jumpifstatus BS_TARGET, STATUS1_FREEZE, BattleScript_ChiselDoubleDmg
 	jumpiftype BS_TARGET, TYPE_ROCK, BattleScript_ChiselDoubleDmg
-	goto BattleScript_EffectBrickBreak
+	jumpiftype BS_TARGET, TYPE_ICE, BattleScript_ChiselDoubleDmg
+	goto BattleScript_EffectHit
 BattleScript_ChiselDoubleDmg::
 	setbyte sDMG_MULTIPLIER, 2
-	goto BattleScript_EffectBrickBreak
+	goto BattleScript_EffectHit
 	
 BattleScript_EffectAscension::
 	attackstring
@@ -4215,6 +4218,12 @@ BattleScript_CurseTurnDmg::
 
 BattleScript_TargetPRLZHeal::
 	printstring STRINGID_PKMNHEALEDPARALYSIS
+	waitmessage B_WAIT_TIME_LONG
+	updatestatusicon BS_TARGET
+	return
+	
+BattleScript_TargetFRZHeal::
+	printstring STRINGID_PKMNWASDEFROSTED
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_TARGET
 	return

@@ -1475,7 +1475,7 @@ static const u8 sSpiritPurgeDescription[] = _(
 	
 static const u8 sChiselDescription[] = _(
     "Carves out ice, rock, and\n"
-    "screens for double damage.");
+    "frost for double damage.");
 	
 static const u8 sAscensionDescription[] = _(
     "Changes the user's type\n"

@@ -2850,6 +2850,24 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     BattleScriptPush(gBattlescriptCurrInstr + 1);
                     gBattlescriptCurrInstr = BattleScript_TargetPRLZHeal;
                 }
+                if (gCurrentMove == MOVE_CHISEL) {
+					
+				if (!(gBattleMons[gBattlerTarget].status1 & STATUS1_FREEZE))
+                {
+                    gBattlescriptCurrInstr++;
+                }
+                else
+					{
+                    gBattleMons[gBattlerTarget].status1 &= ~STATUS1_FREEZE;
+
+                    gActiveBattler = gBattlerTarget;
+                    BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+                    MarkBattlerForControllerExec(gActiveBattler);
+
+                    BattleScriptPush(gBattlescriptCurrInstr + 1);
+                    gBattlescriptCurrInstr = BattleScript_TargetFRZHeal;
+					}
+				}
                 break;
             case MOVE_EFFECT_ATK_DEF_DOWN: // SuperPower
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
