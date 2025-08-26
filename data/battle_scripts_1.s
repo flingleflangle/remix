@@ -1095,10 +1095,9 @@ BattleScript_EffectShred::
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
-	typecalc
+	critcalc
+	damagecalc
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
-	setword gBattleMoveDamage, 60
-	adjustsetdamage
 	goto BattleScript_HitFromAtkAnimation
 	
 BattleScript_EffectEntwine::
@@ -1166,11 +1165,13 @@ BattleScript_EffectCobraCrush::
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
 	jumpifstatus BS_ATTACKER, STATUS1_POISON | STATUS1_TOXIC_POISON, BattleScript_EffectCobraCrushed
 	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_EffectCobraCrushed
+	jumpiftype BS_ATTACKER, TYPE_STEEL, BattleScript_EffectCobraCrushed
 	goto BattleScript_HitFromAtkString
 	
 BattleScript_EffectCobraCrushed::
 	setbyte sDMG_MULTIPLIER, 2
 	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_HitFromAtkString
+	jumpiftype BS_ATTACKER, TYPE_STEEL, BattleScript_HitFromAtkString
 	attackstring
 	ppreduce
 	cureifburnedparalysedorpoisoned BattleScript_ButItFailed
