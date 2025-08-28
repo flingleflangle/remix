@@ -374,8 +374,13 @@
 #define MOVE_ASCENSION 370
 #define MOVE_AWAKENING 371
 #define MOVE_ATTUNEMENT 372
+#define MOVE_VENOM_FANG 373
+#define MOVE_GEYSER 374
+#define MOVE_FLYING_KNEE 375
+#define MOVE_DODGE 376
+#define MOVE_GUARD_BREAK 377
 
-#define MOVES_COUNT 373
+#define MOVES_COUNT 378
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

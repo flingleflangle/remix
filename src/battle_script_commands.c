@@ -1284,6 +1284,7 @@ static void Cmd_critcalc(void)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_BLAZE_KICK)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_POISON_TAIL)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_ICE_SLASHER)
+                + (gBattleMoves[gCurrentMove].effect == EFFECT_FLYING_KNEE)
                 + (holdEffect == HOLD_EFFECT_SCOPE_LENS)
                 + 2 * (holdEffect == HOLD_EFFECT_LUCKY_PUNCH && gBattleMons[gBattlerAttacker].species == SPECIES_CHANSEY)
                 + 2 * (holdEffect == HOLD_EFFECT_STICK && gBattleMons[gBattlerAttacker].species == SPECIES_FARFETCHD);
@@ -6553,7 +6554,7 @@ static void Cmd_setprotectlike(void)
     bool8 notLastTurn = TRUE;
     u16 lastMove = gLastResultingMoves[gBattlerAttacker];
 
-    if (lastMove != MOVE_PROTECT && lastMove != MOVE_DETECT && lastMove != MOVE_ENDURE)
+    if (lastMove != MOVE_PROTECT && lastMove != MOVE_DETECT && lastMove != MOVE_ENDURE && lastMove == MOVE_DODGE)
         gDisableStructs[gBattlerAttacker].protectUses = 0;
 
     if (gCurrentTurnActionNumber == (gBattlersCount - 1))
@@ -6570,6 +6571,11 @@ static void Cmd_setprotectlike(void)
         {
             gProtectStructs[gBattlerAttacker].endured = 1;
             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BRACED_ITSELF;
+        }
+		if (gBattleMoves[gCurrentMove].effect == EFFECT_DODGE)
+        {
+			gProtectStructs[gBattlerAttacker].protected = 1;
+            gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_PROTECTED_ITSELF;
         }
         gDisableStructs[gBattlerAttacker].protectUses++;
     }
@@ -7901,6 +7907,7 @@ static void Cmd_setsubstitute(void)
     }
 
     gBattlescriptCurrInstr++;
+	
 }
 
 static bool8 IsMoveUncopyableByMimic(u16 move)

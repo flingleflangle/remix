@@ -4848,4 +4848,69 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 0,
         .flags = FLAG_SNATCH_AFFECTED,
     },
+	
+	[MOVE_VENOM_FANG] =
+    {
+        .effect = EFFECT_VENOM_FANG,
+        .power = 40,
+        .type = TYPE_POISON,
+        .accuracy = 85,
+        .pp = 15,
+        .secondaryEffectChance = 60,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
+	
+	[MOVE_GEYSER] =
+    {
+        .effect = EFFECT_GEYSER,
+        .power = 75,
+        .type = TYPE_GROUND,
+        .accuracy = 100,
+        .pp = 15,
+        .secondaryEffectChance = 30,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_KINGS_ROCK_AFFECTED | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
+	
+	[MOVE_FLYING_KNEE] =
+    {
+        .effect = EFFECT_FLYING_KNEE,
+        .power = 35,
+        .type = TYPE_FLYING,
+        .accuracy = 85,
+        .pp = 15,
+        .secondaryEffectChance = 100,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_KINGS_ROCK_AFFECTED | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
+	
+	[MOVE_DODGE] =
+    {
+        .effect = EFFECT_DODGE,
+        .power = 0,
+        .type = TYPE_NORMAL,
+        .accuracy = 100,
+        .pp = 5,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_USER,
+        .priority = 0,
+        .flags = 0,
+    },
+	
+	[MOVE_GUARD_BREAK] =
+    {
+        .effect = EFFECT_GUARD_BREAK,
+        .power = 40,
+        .type = TYPE_NORMAL,
+        .accuracy = 100,
+        .pp = 10,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = -1,
+        .flags = FLAG_MAKES_CONTACT | FLAG_KINGS_ROCK_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
 };

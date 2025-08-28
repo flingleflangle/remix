@@ -1479,15 +1479,35 @@ static const u8 sChiselDescription[] = _(
 	
 static const u8 sAscensionDescription[] = _(
     "Changes the user's type\n"
-    "into DRAGON type.");
+    "into the DRAGON type.");
 	
 static const u8 sAwakeningDescription[] = _(
     "Changes the user's type\n"
-    "into PSYCHIC type.");
+    "into the PSYCHIC type.");
 	
 static const u8 sAttunementDescription[] = _(
     "Changes the user's type\n"
-    "into GHOST type.");
+    "into the GHOST type.");
+	
+static const u8 sVenomFangDescription[] = _(
+    "A sharp-fanged attack that\n"
+    "confuses and induces sleep.");
+	
+static const u8 sGeyserDescription[] = _(
+    "Erupts from the earth with\n"
+    "steam. Hits airborne foes.");
+	
+static const u8 sFlyingKneeDescription[] = _(
+    "Power is greatly enhanced\n"
+    "if used on the 1st turn.");
+	
+static const u8 sDodgeDescription[] = _(
+    "Evades the next attack.\n"
+    "SPEED decreases on use.");
+	
+static const u8 sGuardBreakDescription[] = _(
+    "Breaks PROTECT, SUBSTITUTE,\n"
+    "and any form of barrier.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -1864,4 +1884,9 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_ASCENSION - 1] = sAscensionDescription,
 	[MOVE_AWAKENING - 1] = sAwakeningDescription,
 	[MOVE_ATTUNEMENT - 1] = sAttunementDescription,
+	[MOVE_VENOM_FANG - 1] = sVenomFangDescription,
+	[MOVE_GEYSER - 1] = sGeyserDescription,
+	[MOVE_FLYING_KNEE - 1] = sFlyingKneeDescription,
+	[MOVE_DODGE - 1] = sDodgeDescription,
+	[MOVE_GUARD_BREAK - 1] = sGuardBreakDescription,
 };
