@@ -1473,6 +1473,10 @@ static const u8 sSpiritPurgeDescription[] = _(
     "An attack that is stronger\n"
     "against resolute opponents.");
 	
+static const u8 sUTurnDescription[] = _(
+    "User switches with ally\n"
+    "immediately after attacking.");
+	
 static const u8 sChiselDescription[] = _(
     "Carves out ice, rock, and\n"
     "frost for double damage.");
@@ -1508,6 +1512,26 @@ static const u8 sDodgeDescription[] = _(
 static const u8 sGuardBreakDescription[] = _(
     "Breaks PROTECT, SUBSTITUTE,\n"
     "and any form of barrier.");
+	
+static const u8 sDragonLashDescription[] = _(
+    "Lashes the foe with its\n"
+    "tail. May flinch or confuse.");
+	
+static const u8 sRevolverDescription[] = _(
+    "User switches with ally\n"
+    "immediately after attacking.");
+	
+static const u8 sFlySwatDescription[] = _(
+    "User switches with ally\n"
+    "immediately after attacking.");
+	
+static const u8 sAroundTownDescription[] = _(
+    "User switches with ally\n"
+    "immediately after attacking.");
+	
+static const u8 sHostageDescription[] = _(
+    "Redirects all attacks to\n"
+    "the selected foe.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -1880,6 +1904,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_COBRA_CRUSH - 1] = sCobraCrushDescription,
 	[MOVE_ICE_SLASHER - 1] = sIceSlasherDescription,
 	[MOVE_SPIRIT_PURGE - 1] = sSpiritPurgeDescription,
+	[MOVE_U_TURN - 1] = sUTurnDescription,
 	[MOVE_CHISEL - 1] = sChiselDescription,
 	[MOVE_ASCENSION - 1] = sAscensionDescription,
 	[MOVE_AWAKENING - 1] = sAwakeningDescription,
@@ -1889,4 +1914,9 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_FLYING_KNEE - 1] = sFlyingKneeDescription,
 	[MOVE_DODGE - 1] = sDodgeDescription,
 	[MOVE_GUARD_BREAK - 1] = sGuardBreakDescription,
+	[MOVE_DRAGON_LASH - 1] = sDragonLashDescription,
+	[MOVE_REVOLVER - 1] = sRevolverDescription,
+	[MOVE_FLY_SWAT - 1] = sFlySwatDescription,
+	[MOVE_AROUND_TOWN - 1] = sAroundTownDescription,
+	[MOVE_HOSTAGE - 1] = sHostageDescription,
 };

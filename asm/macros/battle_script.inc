@@ -1260,6 +1260,10 @@
 	.macro settypewithmove
 	.byte 0xfa
 	.endm
+	
+	.macro setforcedtargetevil
+	.byte 0xfb
+	.endm
 
 
 @ various command changed to more readable macros

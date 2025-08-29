@@ -254,6 +254,9 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectFlyingKnee             @ EFFECT_FLYING_KNEE
 	.4byte BattleScript_EffectDodge             	 @ EFFECT_DODGE
 	.4byte BattleScript_EffectGuardBreak             @ EFFECT_GUARD_BREAK
+	.4byte BattleScript_EffectDragonLash             @ EFFECT_DRAGON_LASH
+	.4byte BattleScript_EffectUTurn             	 @ EFFECT_U_TURN
+	.4byte BattleScript_EffectHostage             	 @ EFFECT_HOSTAGE
 	
 
 BattleScript_EffectHit::
@@ -1353,6 +1356,78 @@ BattleScript_EffectFlyingKnee::
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	seteffectwithchance
 	end
+	
+BattleScript_EffectDragonLash::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	typecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	setmoveeffect MOVE_EFFECT_FLINCH 
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_CONFUSION
+	seteffectwithchance
+	end
+	
+BattleScript_EffectUTurn::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifbattletype BATTLE_TYPE_ARENA, BattleScript_ButItFailed
+	jumpifcantswitch SWITCH_IGNORE_ESCAPE_PREVENTION | BS_ATTACKER, BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	critcalc
+	damagecalc
+	typecalc
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	openpartyscreen BS_ATTACKER, BattleScript_ButItFailed
+	switchoutabilities BS_ATTACKER
+	waitstate
+	switchhandleorder BS_ATTACKER, 2
+	returntoball BS_ATTACKER
+	getswitchedmondata BS_ATTACKER
+	switchindataupdate BS_ATTACKER
+	hpthresholds BS_ATTACKER
+	printstring STRINGID_SWITCHINMON
+	switchinanim BS_ATTACKER, TRUE
+	waitstate
+	switchineffects BS_ATTACKER
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
+	
+BattleScript_EffectHostage::
+	attackcanceler
+	attackstring
+	ppreduce
+	setforcedtargetevil
+	attackanimation
+	waitanimation
+	printstring STRINGID_PKMNCENTERATTENTION
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
 
 BattleScript_EffectConfuse::
 	attackcanceler

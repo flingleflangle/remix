@@ -280,6 +280,7 @@ static void Cmd_setminimize(void);
 static void Cmd_sethail(void);
 static void Cmd_trymemento(void);
 static void Cmd_setforcedtarget(void);
+static void Cmd_setforcedtargetevil(void);
 static void Cmd_setcharge(void);
 static void Cmd_callenvironmentattack(void);
 static void Cmd_cureifburnedparalysedorpoisoned(void);
@@ -580,7 +581,8 @@ void (*const gBattleScriptingCommandsTable[])(void) =
     Cmd_finishturn,                              //0xF7
     Cmd_trainerslideout,                         //0xF8
     Cmd_remaininghptopowerevil,					 //0xF9
-    Cmd_settypewithmove,					 	 //0xF9
+    Cmd_settypewithmove,					 	 //0xFA
+    Cmd_setforcedtargetevil,					 //0xFB
 };
 
 struct StatFractions
@@ -9191,6 +9193,13 @@ static void Cmd_setforcedtarget(void)
     gSideTimers[GetBattlerSide(gBattlerAttacker)].followmeTarget = gBattlerAttacker;
     gBattlescriptCurrInstr++;
 }
+
+static void Cmd_setforcedtargetevil(void)
+{
+    gSideTimers[GetBattlerSide(gBattlerTarget)].followmeTimer = 1;
+    gSideTimers[GetBattlerSide(gBattlerTarget)].followmeTarget = gBattlerTarget;
+    gBattlescriptCurrInstr++;
+} 
 
 static void Cmd_setcharge(void)
 {
