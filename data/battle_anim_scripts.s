@@ -9834,7 +9834,7 @@ Move_STAGGER:
 	createsprite gBasicHitSplatSpriteTemplate, ANIM_TARGET, 3, 0, 0, ANIM_TARGET, 1
 	createsprite gFistFootSpriteTemplate, ANIM_TARGET, 4, 0, 0, 8, 1, 0
 	delay 10
-	playsewithpan SE_M_SWAGGER2, SOUND_PAN_TARGET
+	playsewithpan SE_M_ATTRACT, SOUND_PAN_TARGET
 	createsprite gDizzyPunchDuckSpriteTemplate, ANIM_TARGET, 3, 0, -8, 160, -32
 	createsprite gDizzyPunchDuckSpriteTemplate, ANIM_TARGET, 3, 0, -8, -256, -40
 	createsprite gDizzyPunchDuckSpriteTemplate, ANIM_TARGET, 3, 0, -8, 128, -16
@@ -9866,9 +9866,9 @@ Move_TOMBSTONER:
 	delay 8
 	createsprite gRockTombRockSpriteTemplate, ANIM_TARGET, 2, 0, 2, 64, 55, 0
 	delay 12
-	clearmonbg ANIM_TARGET
 	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_TARGET
 	waitplaysewithpan SE_M_TRI_ATTACK2, SOUND_PAN_TARGET, 8
+	createvisualtask AnimTask_SetGrayscaleOrOriginalPal, 5, ANIM_TARGET, FALSE
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 0, 16, 16, RGB_WHITE
 	createsprite gRockFragmentSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 20, 24, 14, 2
 	createsprite gRockFragmentSpriteTemplate, ANIM_ATTACKER, 2, 5, 0, -20, 24, 14, 1
@@ -9882,8 +9882,10 @@ Move_TOMBSTONER:
 	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 3, 0, 20, 1
 	createvisualtask AnimTask_ShakeBattlePlatforms, 2, 2, 0, 10, 1
 	waitforvisualfinish
+	delay 12
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 2, 16, 0, RGB_WHITE
-	waitforvisualfinish
+	delay 16
+	createvisualtask AnimTask_SetGrayscaleOrOriginalPal, 5, ANIM_TARGET, TRUE
 	end
 	
 Move_SPROUT:
@@ -10101,16 +10103,40 @@ DragonFistUnleash:
 	goto DragonFistEnd
 	
 Move_COBRA_CRUSH:
-	loadspritegfx ANIM_TAG_FANG_ATTACK
 	loadspritegfx ANIM_TAG_POISON_BUBBLE
-	loopsewithpan SE_M_TOXIC, SOUND_PAN_ATTACKER, 6, 6
-	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 0, 4, 0, 12, RGB(26, 0, 26)
-	createvisualtask AnimTask_WindUpLunge, 2, ANIM_ATTACKER, -24, 0, 24, 10, 24, 3
-	delay 36
+	loadspritegfx ANIM_TAG_SHARP_TEETH
+	loadspritegfx ANIM_TAG_IMPACT
+	monbg ANIM_TARGET
+	setalpha 12, 8
 	playsewithpan SE_M_BITE, SOUND_PAN_TARGET
-	createsprite gFangSpriteTemplate, ANIM_TARGET, 2
+	createsprite gHorizontalLungeSpriteTemplate, ANIM_ATTACKER, 2, 3, 6
+	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, -32, -32, 1, 819, 819, 10
+	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, 32, 32, 5, -819, -819, 10
 	delay 10
-	createvisualtask AnimTask_ShakeMonInPlace, 2, ANIM_TARGET, 4, 0, 12, 1
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, -8, 0, ANIM_TARGET, 1
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 0, 7, 5, 2
+	waitforvisualfinish
+	playsewithpan SE_M_BITE, SOUND_PAN_TARGET
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 0, 4, 0, 12, RGB(26, 0, 26)
+	createsprite gHorizontalLungeSpriteTemplate, ANIM_ATTACKER, 2, 3, 6
+	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, 32, -32, 7, -819, 819, 10
+	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, -32, 32, 3, 819, -819, 10
+	delay 10
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, 8, 0, ANIM_TARGET, 1
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 0, 8, 4, 2
+	delay 10
+	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, 0, -32, 0, 0, 819, 10
+	createsprite gSharpTeethSpriteTemplate, ANIM_ATTACKER, 2, 0, 32, 4, 0, -819, 10
+	createsprite gHorizontalLungeSpriteTemplate, ANIM_ATTACKER, 2, 3, 6
+	delay 10
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, ANIM_TARGET, 2
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 0, 4, 7, 1
+	playsewithpan SE_M_SELF_DESTRUCT, SOUND_PAN_TARGET
+	delay 12
+	call PoisonBubblesEffect
+	clearmonbg ANIM_TARGET
+	blendoff
+	delay 1
 	waitforvisualfinish
 	end
 	
@@ -10329,33 +10355,32 @@ Move_AWAKENING:
 	end
 	
 Move_ATTUNEMENT:
-	loadspritegfx ANIM_TAG_HOLLOW_ORB
-	monbg ANIM_ATTACKER
-	loadspritegfx ANIM_TAG_WHITE_CIRCLE_OF_LIGHT
-	loadspritegfx ANIM_TAG_IMPACT
+	loadspritegfx ANIM_TAG_BLUE_ORB
+	loadspritegfx ANIM_TAG_GUARD_RING
+	monbg ANIM_ATK_PARTNER
+	setalpha 8, 8
+	createvisualtask AnimTask_InitMementoShadow, 2
 	delay 1
-	createvisualtask AnimTask_DragonDanceWaver, 5
-	delay 8
-	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_ATTACKER
-	createsprite gLusterPurgeCircleSpriteTemplate, ANIM_ATTACKER, 41, 0, 0, 0, 0
-	createvisualtask AnimTask_BlendPalInAndOutByTag, 5, ANIM_TAG_HOLLOW_ORB, RGB(0, 0, 19), 14, 0, 3
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 0
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 43
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 85
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 128
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 170
-	createsprite gDragonDanceOrbSpriteTemplate, ANIM_ATTACKER, 2, 213
-	delay 30
-	createvisualtask AnimTask_BlendBattleAnimPalExclude, 5, 5, 2, 0, 16, RGB_WHITEALPHA
-	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_WHITE_CIRCLE_OF_LIGHT, 2, 0, 16, RGB_WHITEALPHA
+	playsewithpan SE_M_MILK_DRINK, SOUND_PAN_ATTACKER
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 0
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 42
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 84
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 126
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 168
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 210
+	createsprite gGuardRingSpriteTemplate, ANIM_ATTACKER, 2
+	delay 4
+	createvisualtask AnimTask_MoveAttackerMementoShadow, 5
+	createsprite gGuardRingSpriteTemplate, ANIM_ATTACKER, 2
+	delay 4
+	createsprite gGuardRingSpriteTemplate, ANIM_ATTACKER, 2
+	delay 32
+	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATK_SIDE, 0, 2, 0, 10, RGB_WHITE
 	waitforvisualfinish
-	delay 30
-	playsewithpan SE_M_HYPER_BEAM, SOUND_PAN_ATTACKER
-	createvisualtask AnimTask_BlendBattleAnimPalExclude, 5, 5, 2, 16, 0, RGB_WHITEALPHA
-	waitforvisualfinish
-	clearmonbg ANIM_ATTACKER
+	clearmonbg ANIM_ATK_PARTNER
+	clearmonbg_static ANIM_ATK_PARTNER
 	blendoff
-	delay 1
 	end
 	
 Move_VENOM_FANG:

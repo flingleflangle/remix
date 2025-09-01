@@ -4457,6 +4457,7 @@ const union {
         .PROTECT = TRUE,
         .RAIN_DANCE = TRUE,
         .FRUSTRATION = TRUE,
+        .EARTHQUAKE = TRUE,
         .THUNDERBOLT = TRUE,
         .THUNDER = TRUE,
         .RETURN = TRUE,

@@ -1170,8 +1170,8 @@ BattleScript_EffectDragonFist::
 	end
 
 BattleScript_EffectCobraCrush::
-	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC
-	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	setmoveeffect MOVE_EFFECT_POISON
 	jumpifstatus BS_ATTACKER, STATUS1_POISON | STATUS1_TOXIC_POISON, BattleScript_EffectCobraCrushed
 	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_EffectCobraCrushed
 	jumpiftype BS_ATTACKER, TYPE_STEEL, BattleScript_EffectCobraCrushed
@@ -1181,6 +1181,7 @@ BattleScript_EffectCobraCrushed::
 	setbyte sDMG_MULTIPLIER, 2
 	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_HitFromAtkString
 	jumpiftype BS_ATTACKER, TYPE_STEEL, BattleScript_HitFromAtkString
+	setmoveeffect MOVE_EFFECT_POISON | MOVE_EFFECT_CERTAIN
 	attackstring
 	ppreduce
 	cureifburnedparalysedorpoisoned BattleScript_ButItFailed

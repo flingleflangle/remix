@@ -1470,8 +1470,8 @@ static const u8 sIceSlasherDescription[] = _(
     "hit ratio. May freeze.");
 	
 static const u8 sSpiritPurgeDescription[] = _(
-    "An attack that is stronger\n"
-    "against resolute opponents.");
+    "Attacks with dark power.\n"
+    "More damage on loyal foes.");
 	
 static const u8 sUTurnDescription[] = _(
     "User switches with ally\n"
