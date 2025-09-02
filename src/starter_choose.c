@@ -112,9 +112,9 @@ static const u8 sStarterLabelCoords[STARTER_MON_COUNT][2] =
 
 static const u16 sStarterMon[STARTER_MON_COUNT] =
 {
-    SPECIES_MAWILE,
-    SPECIES_TORKOAL,
-    SPECIES_NOSEPASS,
+    SPECIES_ARON,
+    SPECIES_TRAPINCH,
+    SPECIES_SPHEAL,
 };
 
 static const struct BgTemplate sBgTemplates[3] =
