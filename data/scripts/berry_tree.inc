@@ -97,6 +97,7 @@ BerryTree_EventScript_SetAdverbPoor::
 
 
 BerryTree_EventScript_PickBerry::
+	buffernumberstring STR_VAR_2, VAR_0x8006
 	special ObjectEventInteractionPickBerryTree
 	goto_if_eq VAR_0x8004, 0, BerryTree_EventScript_BerryPocketFull
 	special IncrementDailyPickedBerries
@@ -201,7 +202,7 @@ BerryTree_Text_PickedTheBerry:
 
 BerryTree_Text_PutAwayBerry:
 	.string "{PLAYER} put away the {STR_VAR_1}\n"
-	.string "in the BAG's BERRIES POCKET.\p"
+	.string "in the BAG's BERRIES POCKET.$"
 	.string "The soil returned to its soft and\n"
 	.string "loamy state.$"
 

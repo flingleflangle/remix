@@ -336,7 +336,7 @@ BattleScript_EffectFreeze::
 	waitanimation
 	setmoveeffect MOVE_EFFECT_FREEZE
 	seteffectprimary
-	goto BattleScript_StatDown
+	goto BattleScript_MoveEnd
 
 BattleScript_AlreadyAsleep::
 	setalreadystatusedmoveattempt BS_ATTACKER

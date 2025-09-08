@@ -1426,7 +1426,7 @@ static const u8 sFreezeRayDescription[] = _(
     "encase the foe in ice.");
 	
 static const u8 sVileCutterDescription[] = _(
-    "Vicious slashes that deal\n"
+    "A vicious slash that deals\n"
     "more damage to weaker foes.");
 	
 static const u8 sFireCrashDescription[] = _(
@@ -1450,8 +1450,8 @@ static const u8 sSproutDescription[] = _(
     "from a planted LEECH SEED.");
 	
 static const u8 sShredDescription[] = _(
-    "Rakes the foe with claws,\n"
-    "inflicting 60 HP damage.");
+    "Rakes the foe with claws.\n"
+    "Ignores type resistance.");
 
 static const u8 sEntwineDescription[] = _(
     "Tangles the opponent in\n"
