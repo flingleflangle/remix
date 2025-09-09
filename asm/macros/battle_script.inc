@@ -1264,6 +1264,10 @@
 	.macro setforcedtargetevil
 	.byte 0xfb
 	.endm
+	
+	.macro ballthrowend
+	.byte 0xfc
+	.endm
 
 
 @ various command changed to more readable macros

@@ -5,6 +5,8 @@
 #include "util.h"
 #include "constants/event_objects.h"
 #include "constants/map_scripts.h"
+#include "union_room.h"
+#include "link.h"
 
 #define RAM_SCRIPT_MAGIC 51
 
@@ -337,6 +339,7 @@ void RunOnTransitionMapScript(void)
 
 void RunOnResumeMapScript(void)
 {
+	FlagClear(FLAG_SYS_ON_RESUME);
     MapHeaderRunScriptType(MAP_SCRIPT_ON_RESUME);
 }
 
@@ -467,4 +470,17 @@ void InitRamScript_NoObjectEvent(u8 *script, u16 scriptSize)
     if (scriptSize > sizeof(gSaveBlock1Ptr->ramScript.data.script))
         scriptSize = sizeof(gSaveBlock1Ptr->ramScript.data.script);
     InitRamScript(script, scriptSize, MAP_GROUP(MAP_UNDEFINED), MAP_NUM(MAP_UNDEFINED), NO_OBJECT);
+}
+
+void CableClub_OnResumeFunc(void)
+{
+    if(FlagGet(FLAG_SYS_ON_RESUME))
+        return;
+    FlagSet(FLAG_SYS_ON_RESUME);
+    if(!IsWirelessAdapterConnected())
+    {
+        FlagSet(FLAG_NURSE_UNION_ROOM_REMINDER);
+        return;
+    }
+    InitUnionRoom();
 }

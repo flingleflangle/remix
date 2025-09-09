@@ -52,6 +52,9 @@ BattleScript_BallThrow::
 	printstring STRINGID_PLAYERUSEDITEM
 	handleballthrow
 
+BattleScript_BallThrowEnd::
+	ballthrowend
+
 BattleScript_BallThrowByWally::
 	printstring STRINGID_WALLYUSEDITEM
 	handleballthrow

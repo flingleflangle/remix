@@ -328,6 +328,7 @@ static void Cmd_removeattackerstatus1(void);
 static void Cmd_finishaction(void);
 static void Cmd_finishturn(void);
 static void Cmd_trainerslideout(void);
+static void Cmd_ballthrowend(void);
 
 void (*const gBattleScriptingCommandsTable[])(void) =
 {
@@ -583,6 +584,7 @@ void (*const gBattleScriptingCommandsTable[])(void) =
     Cmd_remaininghptopowerevil,					 //0xF9
     Cmd_settypewithmove,					 	 //0xFA
     Cmd_setforcedtargetevil,					 //0xFB
+    Cmd_ballthrowend,					 		 //0xFC
 };
 
 struct StatFractions
@@ -10048,6 +10050,7 @@ static void Cmd_removelightscreenreflect(void)
 static void Cmd_handleballthrow(void)
 {
     u8 ballMultiplier = 0;
+	gBallShakesBData.ballShakesArray = 0;
 
     if (gBattleControllerExecFlags)
         return;
@@ -10063,7 +10066,8 @@ static void Cmd_handleballthrow(void)
     }
     else if (gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL)
     {
-        BtlController_EmitBallThrowAnim(B_COMM_TO_CONTROLLER, BALL_3_SHAKES_SUCCESS);
+        gBallShakesBData.shakes = CalcNextShakeFromOdds(gBallShakesBData.odds);
+        BtlController_EmitBallThrowAnim(B_COMM_TO_CONTROLLER, gBallShakesBData.shakes);
         MarkBattlerForControllerExec(gActiveBattler);
         gBattlescriptCurrInstr = BattleScript_WallyBallThrow;
     }
@@ -10149,49 +10153,11 @@ static void Cmd_handleballthrow(void)
             }
         }
 
-        if (odds > 254) // mon caught
-        {
-            BtlController_EmitBallThrowAnim(B_COMM_TO_CONTROLLER, BALL_3_SHAKES_SUCCESS);
-            MarkBattlerForControllerExec(gActiveBattler);
-            gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-            SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerTarget]], MON_DATA_POKEBALL, &gLastUsedItem);
-
-            if (CalculatePlayerPartyCount() == PARTY_SIZE)
-                gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-            else
-                gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-        }
-        else // mon may be caught, calculate shakes
-        {
-            u8 shakes;
-
-            odds = Sqrt(Sqrt(16711680 / odds));
-            odds = 1048560 / odds;
-
-            for (shakes = 0; shakes < BALL_3_SHAKES_SUCCESS && Random() < odds; shakes++);
-
-            if (gLastUsedItem == ITEM_MASTER_BALL)
-                shakes = BALL_3_SHAKES_SUCCESS; // why calculate the shakes before that check?
-
-            BtlController_EmitBallThrowAnim(B_COMM_TO_CONTROLLER, shakes);
-            MarkBattlerForControllerExec(gActiveBattler);
-
-            if (shakes == BALL_3_SHAKES_SUCCESS) // mon caught, copy of the code above
-            {
-                gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-                SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerTarget]], MON_DATA_POKEBALL, &gLastUsedItem);
-
-                if (CalculatePlayerPartyCount() == PARTY_SIZE)
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                else
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-            }
-            else // not caught
-            {
-                gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
-                gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
-            }
-        }
+        gBallShakesBData.odds = odds;
+        gBallShakesBData.shakes = CalcNextShakeFromOdds(gBallShakesBData.odds);
+        BtlController_EmitBallThrowAnim(B_COMM_TO_CONTROLLER, gBallShakesBData.shakes);
+        MarkBattlerForControllerExec(gActiveBattler);
+        gBattlescriptCurrInstr = BattleScript_BallThrowEnd;
     }
 }
 
@@ -10290,6 +10256,38 @@ static void Cmd_displaydexinfo(void)
             gBattlescriptCurrInstr++;
         break;
     }
+}
+
+static void Cmd_ballthrowend(void)
+{
+    u8 shakes = gBallShakesBData.shakes;
+    if (shakes == BALL_3_SHAKES_SUCCESS) // mon caught, copy of the code above
+    {
+        gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
+        SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBattlerTarget]], MON_DATA_POKEBALL, &gLastUsedItem);
+
+        if (CalculatePlayerPartyCount() == PARTY_SIZE)
+            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+        else
+            gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+    }
+    else // not caught
+    {
+        gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+        gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
+    }
+    gBallShakesBData.odds = 0;
+    gBallShakesBData.ballShakesArray = 0;
+    gBallShakesBData.shakes = 0;
+}
+
+bool8 CalcNextShakeFromOdds(u32 odds)
+{
+    if (odds > 254 || gLastUsedItem == ITEM_MASTER_BALL || gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL) // mon caught
+        return TRUE;
+    odds = Sqrt(Sqrt(16711680 / odds));
+    odds = 1048560 / odds;
+    return Random() < odds;
 }
 
 void HandleBattleWindow(u8 xStart, u8 yStart, u8 xEnd, u8 yEnd, u8 flags)
