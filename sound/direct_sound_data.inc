@@ -1937,6 +1937,11 @@ Cry_Deoxys::
 	.align 2
 Cry_Chimecho::
 	.incbin "sound/direct_sound_samples/cries/chimecho.bin"
+	
+	.align 2
+Cry_Weavile::
+	.incbin "sound/direct_sound_samples/cries/weavile.bin"
+	
 
 	.align 2
 DirectSoundWaveData_register_noise::

@@ -2319,3 +2319,11 @@ const u8 gDeoxysPokedexText[] = _(
     "extraterrestrial virus exposed to a laser\n"
     "beam. Its body is configured for superior\n"
     "agility and speed.");
+	
+const u8 gWeavilePokedexText[] = _(
+    "Thanks to its increased intelligence,\n"
+    "scrapping over food is a thing of the past.\n"
+    "A single scratch from its claws may\n"
+    "give you a case of frostbite.");
+
+   
