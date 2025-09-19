@@ -251,7 +251,7 @@ const u8 gSpeciesNames[][POKEMON_NAME_LENGTH + 1] = {
     [SPECIES_LUGIA] = _("LUGIA"),
     [SPECIES_HO_OH] = _("HO-OH"),
     [SPECIES_CELEBI] = _("CELEBI"),
-    [SPECIES_OLD_UNOWN_B] = _("?"),
+    [SPECIES_WEAVILE] = _("WEAVILE"),
     [SPECIES_OLD_UNOWN_C] = _("?"),
     [SPECIES_OLD_UNOWN_D] = _("?"),
     [SPECIES_OLD_UNOWN_E] = _("?"),
@@ -411,5 +411,4 @@ const u8 gSpeciesNames[][POKEMON_NAME_LENGTH + 1] = {
     [SPECIES_JIRACHI] = _("JIRACHI"),
     [SPECIES_DEOXYS] = _("DEOXYS"),
     [SPECIES_CHIMECHO] = _("CHIMECHO"),
-    [SPECIES_WEAVILE] = _("WEAVILE"),
 };

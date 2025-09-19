@@ -6594,9 +6594,6 @@ const union {
         .FLASH = TRUE,
     } },
 
-    [SPECIES_OLD_UNOWN_B] = { .learnset = {
-    } },
-
     [SPECIES_OLD_UNOWN_C] = { .learnset = {
     } },
 

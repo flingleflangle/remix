@@ -252,7 +252,7 @@ const u8 *const gMonFootprintTable[] =
     [SPECIES_LUGIA] = gMonFootprint_Lugia,
     [SPECIES_HO_OH] = gMonFootprint_HoOh,
     [SPECIES_CELEBI] = gMonFootprint_Celebi,
-    [SPECIES_OLD_UNOWN_B] = gMonFootprint_QuestionMark,
+    [SPECIES_WEAVILE] = gMonFootprint_Weavile,
     [SPECIES_OLD_UNOWN_C] = gMonFootprint_QuestionMark,
     [SPECIES_OLD_UNOWN_D] = gMonFootprint_QuestionMark,
     [SPECIES_OLD_UNOWN_E] = gMonFootprint_QuestionMark,
@@ -412,6 +412,5 @@ const u8 *const gMonFootprintTable[] =
     [SPECIES_JIRACHI] = gMonFootprint_Jirachi,
     [SPECIES_DEOXYS] = gMonFootprint_Deoxys,
     [SPECIES_CHIMECHO] = gMonFootprint_Chimecho,
-    [SPECIES_WEAVILE] = gMonFootprint_Weavile,
     [SPECIES_EGG] = gMonFootprint_Bulbasaur,
 };

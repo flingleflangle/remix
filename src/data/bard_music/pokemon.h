@@ -2020,7 +2020,7 @@ static const struct BardSoundTemplate sBardSoundTemplates_Pokemon[NUM_SPECIES][M
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
     },
-    [SPECIES_OLD_UNOWN_B] = {
+    [SPECIES_WEAVILE] = {
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
