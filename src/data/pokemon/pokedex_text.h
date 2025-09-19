@@ -2320,6 +2320,12 @@ const u8 gDeoxysPokedexText[] = _(
     "beam. Its body is configured for superior\n"
     "agility and speed.");
 	
+const u8 gMunchlaxPokedexText[] = _(
+    "Stuffing itself with vast amounts of\n"
+    "food is its only concern. Whether the food\n"
+    "is rotten or fresh, yummy or tasteless,\n"
+    "it does not care.");
+	
 const u8 gWeavilePokedexText[] = _(
     "Thanks to its increased intelligence,\n"
     "scrapping over food is a thing of the past.\n"

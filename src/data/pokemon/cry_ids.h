@@ -135,5 +135,6 @@ const u16 gSpeciesIdToCryId[] =
     [SPECIES_JIRACHI - 277] = 385,
     [SPECIES_DEOXYS - 277] = 386,
     [SPECIES_CHIMECHO - 277] = 387,
-    [SPECIES_WEAVILE - 277] = 388,
+    [SPECIES_MUNCHLAX - 277] = 388,
+    [SPECIES_WEAVILE - 277] = 389,
 };

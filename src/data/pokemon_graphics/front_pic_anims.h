@@ -4582,6 +4582,15 @@ static const union AnimCmd sAnim_Chimecho_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Munchlax_1[] =
+{
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Weavile_1[] =
 {
     ANIMCMD_FRAME(1, 15),
@@ -5230,6 +5239,7 @@ DOUBLE_ANIMATION(Latios);
 DOUBLE_ANIMATION(Jirachi);
 DOUBLE_ANIMATION(Deoxys);
 SINGLE_ANIMATION(Chimecho);
+SINGLE_ANIMATION(Munchlax);
 SINGLE_ANIMATION(Weavile);
 SINGLE_ANIMATION(Egg);
 SINGLE_ANIMATION(UnownB);
@@ -5674,7 +5684,8 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_JIRACHI]     = sAnims_Jirachi,
     [SPECIES_DEOXYS]      = sAnims_Deoxys,
     [SPECIES_CHIMECHO]    = sAnims_Chimecho,
-    [SPECIES_WEAVILE]    = sAnims_Weavile,
+    [SPECIES_MUNCHLAX]    = sAnims_Munchlax,
+    [SPECIES_WEAVILE]     = sAnims_Weavile,
     [SPECIES_EGG]         = sAnims_Egg,
     [SPECIES_UNOWN_B]     = sAnims_UnownB,
     [SPECIES_UNOWN_C]     = sAnims_UnownC,

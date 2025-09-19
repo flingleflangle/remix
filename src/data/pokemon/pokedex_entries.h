@@ -4644,6 +4644,18 @@ const struct PokedexEntry gPokedexEntries[] =
         .trainerOffset = 2,
     },
 	
+	[NATIONAL_DEX_MUNCHLAX] =
+    {
+        .categoryName = _("BIG EATER"),
+        .height = 6,
+        .weight = 1050,
+        .description = gMunchlaxPokedexText,
+        .pokemonScale = 257,
+        .pokemonOffset = 0,
+        .trainerScale = 256,
+        .trainerOffset = 2,
+    },
+	
 	[NATIONAL_DEX_WEAVILE] =
     {
         .categoryName = _("SHARP CLAW"),
