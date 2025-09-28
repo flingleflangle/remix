@@ -394,6 +394,7 @@ enum {
     NATIONAL_DEX_JIRACHI,
     NATIONAL_DEX_DEOXYS,
     NATIONAL_DEX_MUNCHLAX,
+    NATIONAL_DEX_GLISCOR,
     NATIONAL_DEX_WEAVILE,
     // Old Unown
     NATIONAL_DEX_OLD_UNOWN_B,
@@ -633,6 +634,7 @@ enum {
     HOENN_DEX_JIRACHI,
     HOENN_DEX_DEOXYS,
     HOENN_DEX_MUNCHLAX,
+    HOENN_DEX_GLISCOR,
     HOENN_DEX_WEAVILE,
     // End of Hoenn Dex (see HOENN_DEX_COUNT)
     // Here below have values but are excluded from the Pokédex

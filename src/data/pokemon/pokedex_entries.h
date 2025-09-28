@@ -4656,6 +4656,18 @@ const struct PokedexEntry gPokedexEntries[] =
         .trainerOffset = 2,
     },
 	
+	[NATIONAL_DEX_GLISCOR] =
+    {
+        .categoryName = _("FANG SCORP"),
+        .height = 20,
+        .weight = 425,
+        .description = gGliscorPokedexText,
+        .pokemonScale = 257,
+        .pokemonOffset = 0,
+        .trainerScale = 256,
+        .trainerOffset = 2,
+    },
+	
 	[NATIONAL_DEX_WEAVILE] =
     {
         .categoryName = _("SHARP CLAW"),

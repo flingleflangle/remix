@@ -1943,6 +1943,10 @@ Cry_Munchlax::
 	.incbin "sound/direct_sound_samples/cries/munchlax.bin"
 	
 	.align 2
+Cry_Gliscor::
+	.incbin "sound/direct_sound_samples/cries/gliscor.bin"
+	
+	.align 2
 Cry_Weavile::
 	.incbin "sound/direct_sound_samples/cries/weavile.bin"
 	

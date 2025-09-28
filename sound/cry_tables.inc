@@ -389,6 +389,7 @@ gCryTable::
 	cry Cry_Deoxys
 	cry Cry_Chimecho
 	cry Cry_Munchlax
+	cry Cry_Gliscor
 	cry Cry_Weavile
 
 	.align 2
@@ -782,4 +783,5 @@ gCryTable_Reverse::
 	cry_reverse Cry_Deoxys
 	cry_reverse Cry_Chimecho
 	cry_reverse Cry_Munchlax
+	cry_reverse Cry_Gliscor
 	cry_reverse Cry_Weavile

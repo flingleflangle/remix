@@ -2326,6 +2326,12 @@ const u8 gMunchlaxPokedexText[] = _(
     "is rotten or fresh, yummy or tasteless,\n"
     "it does not care.");
 	
+const u8 gGliscorPokedexText[] = _(
+    "It glides soundlessly on its wings, and\n"
+    "sinks its fangs into the throat of its prey.\n"
+    "It takes on a look of satisfaction once it\n"
+    "has entirely drained its prey of blood.");
+	
 const u8 gWeavilePokedexText[] = _(
     "Thanks to its increased intelligence,\n"
     "scrapping over food is a thing of the past.\n"
