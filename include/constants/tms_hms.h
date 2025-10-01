@@ -36,7 +36,7 @@
     F(DOUBLE_TEAM) \
     F(REFLECT) \
     F(THUNDER_PUNCH) \
-    F(FLAMETHROWER) \
+    F(FIRE_PUNCH) \
     F(SLUDGE_BOMB) \
     F(SANDSTORM) \
     F(FIRE_BLAST) \

@@ -1283,14 +1283,14 @@ static const u8 sTM33Desc[] = _(
     "physical attacks.");
 
 static const u8 sTM34Desc[] = _(
-    "Zaps the foe with a\n"
-    "jolt of electricity\n"
-    "that never misses.");
+    "An electric punch\n"
+    "that may paralyze\n"
+    "the target.");
 
 static const u8 sTM35Desc[] = _(
-    "Looses a stream of\n"
-    "fire that may burn\n"
-    "the foe.");
+    "A firey punch\n"
+    "that may burn\n"
+    "the target.");
 
 static const u8 sTM36Desc[] = _(
     "Hurls sludge at the\n"
