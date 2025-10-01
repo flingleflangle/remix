@@ -2326,6 +2326,12 @@ const u8 gMunchlaxPokedexText[] = _(
     "is rotten or fresh, yummy or tasteless,\n"
     "it does not care.");
 	
+const u8 gBonslyPokedexText[] = _(
+    "It discharges moisture from its eyes,\n"
+    "making it look like it’s crying-apparently\n"
+    "an effective way of getting enemies to\n"
+    "let down their guard.");
+	
 const u8 gGliscorPokedexText[] = _(
     "It glides soundlessly on its wings, and\n"
     "sinks its fangs into the throat of its prey.\n"

@@ -4656,6 +4656,18 @@ const struct PokedexEntry gPokedexEntries[] =
         .trainerOffset = 2,
     },
 	
+	[NATIONAL_DEX_BONSLY] =
+    {
+        .categoryName = _("BONSAI"),
+        .height = 5,
+        .weight = 150,
+        .description = gBonslyPokedexText,
+        .pokemonScale = 257,
+        .pokemonOffset = 0,
+        .trainerScale = 256,
+        .trainerOffset = 2,
+    },
+	
 	[NATIONAL_DEX_GLISCOR] =
     {
         .categoryName = _("FANG SCORP"),

@@ -2204,6 +2204,17 @@ static const union AnimCmd sAnim_Sudowoodo_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Bonsly_1[] =
+{
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Politoed_1[] =
 {
     ANIMCMD_FRAME(1, 10),
@@ -5247,6 +5258,7 @@ DOUBLE_ANIMATION(Jirachi);
 DOUBLE_ANIMATION(Deoxys);
 SINGLE_ANIMATION(Chimecho);
 SINGLE_ANIMATION(Munchlax);
+SINGLE_ANIMATION(Bonsly);
 SINGLE_ANIMATION(Gliscor);
 SINGLE_ANIMATION(Weavile);
 SINGLE_ANIMATION(Egg);
@@ -5693,6 +5705,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_DEOXYS]      = sAnims_Deoxys,
     [SPECIES_CHIMECHO]    = sAnims_Chimecho,
     [SPECIES_MUNCHLAX]    = sAnims_Munchlax,
+    [SPECIES_BONSLY]      = sAnims_Bonsly,
     [SPECIES_GLISCOR]     = sAnims_Gliscor,
     [SPECIES_WEAVILE]     = sAnims_Weavile,
     [SPECIES_EGG]         = sAnims_Egg,
