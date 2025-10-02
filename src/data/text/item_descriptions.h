@@ -1153,9 +1153,9 @@ static const u8 sTM07Desc[] = _(
     "types except ICE.");
 
 static const u8 sTM08Desc[] = _(
-    "Bulks up the body\n"
-    "to boost both\n"
-    "ATTACK & DEFENSE.");
+    "A fighting dance\n"
+    "that sharply raises\n"
+    "ATTACK.");
 
 static const u8 sTM09Desc[] = _(
     "Plants a seed on\n"
@@ -1173,9 +1173,9 @@ static const u8 sTM11Desc[] = _(
     "for 5 turns.");
 
 static const u8 sTM12Desc[] = _(
-    "Enrages the foe so\n"
-    "it can only use\n"
-    "attack moves.");
+    "Strikes, then\n"
+    "switches with its\n"
+    "waiting party.");
 
 static const u8 sTM13Desc[] = _(
     "Fires an icy cold\n"

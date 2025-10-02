@@ -9,11 +9,11 @@
     F(ROAR) \
     F(TOXIC) \
     F(HAIL) \
-    F(BULK_UP) \
+    F(SWORDS_DANCE) \
     F(LEECH_SEED) \
     F(HIDDEN_POWER) \
     F(SUNNY_DAY) \
-    F(TAUNT) \
+    F(U_TURN) \
     F(ICE_BEAM) \
     F(BLIZZARD) \
     F(HYPER_BEAM) \
