@@ -29,7 +29,7 @@
     F(THUNDER) \
     F(EARTHQUAKE) \
     F(RETURN) \
-    F(DIG) \
+    F(TOMBSTONER) \
     F(PSYCHIC) \
     F(SHADOW_BALL) \
     F(BRICK_BREAK) \
@@ -40,7 +40,7 @@
     F(SLUDGE_BOMB) \
     F(SANDSTORM) \
     F(FIRE_BLAST) \
-    F(ROCK_TOMB) \
+    F(MUD_SLAP) \
     F(AERIAL_ACE) \
     F(TORMENT) \
     F(FACADE) \

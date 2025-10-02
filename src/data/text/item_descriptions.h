@@ -1253,9 +1253,9 @@ static const u8 sTM27Desc[] = _(
     "powerful this move.");
 
 static const u8 sTM28Desc[] = _(
-    "Digs underground\n"
-    "the 1st turn, then\n"
-    "strikes next turn.");
+    "Most effective\n"
+    "when used as a\n"
+    "finishing blow.");
 
 static const u8 sTM29Desc[] = _(
     "A powerful psychic\n"
@@ -1308,9 +1308,9 @@ static const u8 sTM38Desc[] = _(
     "burn the foe.");
 
 static const u8 sTM39Desc[] = _(
-    "Stops the foe from\n"
-    "moving with rocks.\n"
-    "May lower SPEED.");
+    "Hurls mud in the\n"
+    "target's face to\n"
+    "reduce accuracy.");
 
 static const u8 sTM40Desc[] = _(
     "An extremely fast\n"

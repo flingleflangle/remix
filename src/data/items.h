@@ -3822,7 +3822,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_DIG] =
+    [ITEM_TM_TOMBSTONER] =
     {
         .name = _("TM28"),
         .itemId = ITEM_TM28,
@@ -3943,7 +3943,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_ROCK_TOMB] =
+    [ITEM_TM_MUD_SLAP] =
     {
         .name = _("TM39"),
         .itemId = ITEM_TM39,
