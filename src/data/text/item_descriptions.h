@@ -1138,9 +1138,9 @@ static const u8 sTM04Desc[] = _(
     "the mind.");
 
 static const u8 sTM05Desc[] = _(
-    "A savage roar that\n"
-    "makes the foe flee \n"
-    "to end the battle.");
+    "Attacks using\n"
+    "muddy water. May\n"
+    "lower accuracy.");
 
 static const u8 sTM06Desc[] = _(
     "Poisons the foe\n"
@@ -1163,9 +1163,9 @@ static const u8 sTM09Desc[] = _(
     "HP on every turn.");
 
 static const u8 sTM10Desc[] = _(
-    "The attack power\n"
-    "varies among\n"
-    "different POKéMON.");
+    "A kick with a high\n"
+    "critical-hit ratio.\n"
+    "May cause a burn.");
 
 static const u8 sTM11Desc[] = _(
     "Raises the power of\n"
@@ -1338,9 +1338,9 @@ static const u8 sTM44Desc[] = _(
     "health and status.");
 
 static const u8 sTM45Desc[] = _(
-    "Makes it tough to\n"
-    "attack a foe of the\n"
-    "opposite gender.");
+    "Slashes with a\n"
+    "sharp leaf. High\n"
+    "critical-hit ratio.");
 
 static const u8 sTM46Desc[] = _(
     "While attacking,\n"

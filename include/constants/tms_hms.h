@@ -6,12 +6,12 @@
     F(DRAGON_CLAW) \
     F(BUBBLE_BEAM) \
     F(CALM_MIND) \
-    F(ROAR) \
+    F(MUDDY_WATER) \
     F(TOXIC) \
     F(HAIL) \
     F(SWORDS_DANCE) \
     F(LEECH_SEED) \
-    F(HIDDEN_POWER) \
+    F(BLAZE_KICK) \
     F(SUNNY_DAY) \
     F(U_TURN) \
     F(ICE_BEAM) \
@@ -46,7 +46,7 @@
     F(FACADE) \
     F(SECRET_POWER) \
     F(REST) \
-    F(ATTRACT) \
+    F(LEAF_BLADE) \
     F(THIEF) \
     F(STEEL_WING) \
     F(SKILL_SWAP) \
