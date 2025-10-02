@@ -1128,9 +1128,9 @@ static const u8 sTM02Desc[] = _(
     "sharp claws.");
 
 static const u8 sTM03Desc[] = _(
-    "Generates an\n"
-    "ultrasonic wave\n"
-    "that may confuse.");
+    "Forcefully sprays\n"
+    "bubbles that may\n"
+    "lower SPEED.");
 
 static const u8 sTM04Desc[] = _(
     "Raises SP. ATK and\n"
@@ -1158,9 +1158,9 @@ static const u8 sTM08Desc[] = _(
     "ATTACK & DEFENSE.");
 
 static const u8 sTM09Desc[] = _(
-    "Shoots 2 to 5 seeds\n"
-    "in a row to strike\n"
-    "the foe.");
+    "Plants a seed on\n"
+    "the foe to steal\n"
+    "HP on every turn.");
 
 static const u8 sTM10Desc[] = _(
     "The attack power\n"
@@ -1233,9 +1233,9 @@ static const u8 sTM23Desc[] = _(
     "lower DEFENSE.");
 
 static const u8 sTM24Desc[] = _(
-    "A powerful electric\n"
-    "attack that may\n"
-    "cause paralysis.");
+    "Powerful and sure\n"
+    "to cause paralysis,\n"
+    "but inaccurate.");
 
 static const u8 sTM25Desc[] = _(
     "Strikes the foe\n"
@@ -1318,9 +1318,9 @@ static const u8 sTM40Desc[] = _(
     "be avoided.");
 
 static const u8 sTM41Desc[] = _(
-    "Prevents the foe\n"
-    "from using the same\n"
-    "move in a row.");
+    "A move that has\n"
+    "a different effect\n"
+    "with GHOST-types.");
 
 static const u8 sTM42Desc[] = _(
     "Raises ATTACK when\n"

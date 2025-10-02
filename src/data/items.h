@@ -3547,7 +3547,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_WATER_PULSE] =
+    [ITEM_TM_BUBBLE_BEAM] =
     {
         .name = _("TM03"),
         .itemId = ITEM_TM03,
@@ -3613,7 +3613,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_BULLET_SEED] =
+    [ITEM_TM_LEECH_SEED] =
     {
         .name = _("TM09"),
         .itemId = ITEM_TM09,
@@ -3778,7 +3778,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_THUNDERBOLT] =
+    [ITEM_TM_ZAP_CANNON] =
     {
         .name = _("TM24"),
         .itemId = ITEM_TM24,
@@ -3965,7 +3965,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_TORMENT] =
+    [ITEM_TM_CURSE] =
     {
         .name = _("TM41"),
         .itemId = ITEM_TM41,

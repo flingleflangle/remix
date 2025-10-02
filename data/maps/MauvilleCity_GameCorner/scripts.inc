@@ -265,8 +265,8 @@ MauvilleCity_GameCorner_EventScript_TMFlamethrower::
 
 MauvilleCity_GameCorner_EventScript_TMThunderbolt::
 	setvar VAR_TEMP_1, 4
-	bufferitemname STR_VAR_1, ITEM_TM_THUNDERBOLT
-	setvar VAR_0x8004, ITEM_TM_THUNDERBOLT
+	bufferitemname STR_VAR_1, ITEM_TM_ZAP_CANNON
+	setvar VAR_0x8004, ITEM_TM_ZAP_CANNON
 	goto MauvilleCity_GameCorner_EventScript_ConfirmTMPrize
 
 MauvilleCity_GameCorner_EventScript_TMIceBeam::
@@ -329,10 +329,10 @@ MauvilleCity_GameCorner_EventScript_BuyTMFlamethrower::
 MauvilleCity_GameCorner_EventScript_BuyTMThunderbolt::
 	checkcoins VAR_TEMP_2
 	goto_if_lt VAR_TEMP_2, TM_THUNDERBOLT_COINS, MauvilleCity_GameCorner_EventScript_NotEnoughCoinsForTM
-	checkitemspace ITEM_TM_THUNDERBOLT
+	checkitemspace ITEM_TM_ZAP_CANNON
 	goto_if_eq VAR_RESULT, FALSE, MauvilleCity_GameCorner_EventScript_NoRoomForTM
 	removecoins TM_THUNDERBOLT_COINS
-	additem ITEM_TM_THUNDERBOLT
+	additem ITEM_TM_ZAP_CANNON
 	updatecoinsbox 1, 1
 	playse SE_SHOP
 	msgbox MauvilleCity_GameCorner_Text_HereYouGo, MSGBOX_DEFAULT

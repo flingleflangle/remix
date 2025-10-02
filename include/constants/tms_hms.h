@@ -4,13 +4,13 @@
 #define FOREACH_TM(F) \
     F(FOCUS_PUNCH) \
     F(DRAGON_CLAW) \
-    F(WATER_PULSE) \
+    F(BUBBLE_BEAM) \
     F(CALM_MIND) \
     F(ROAR) \
     F(TOXIC) \
     F(HAIL) \
     F(BULK_UP) \
-    F(BULLET_SEED) \
+    F(LEECH_SEED) \
     F(HIDDEN_POWER) \
     F(SUNNY_DAY) \
     F(TAUNT) \
@@ -25,7 +25,7 @@
     F(FRUSTRATION) \
     F(SOLAR_BEAM) \
     F(IRON_TAIL) \
-    F(THUNDERBOLT) \
+    F(ZAP_CANNON) \
     F(THUNDER) \
     F(EARTHQUAKE) \
     F(METEOR_MASH) \
@@ -42,7 +42,7 @@
     F(FIRE_BLAST) \
     F(MUD_SLAP) \
     F(AERIAL_ACE) \
-    F(TORMENT) \
+    F(CURSE) \
     F(FACADE) \
     F(SECRET_POWER) \
     F(REST) \
