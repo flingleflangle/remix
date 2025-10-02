@@ -3811,7 +3811,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_RETURN] =
+    [ITEM_TM_METEOR_MASH] =
     {
         .name = _("TM27"),
         .itemId = ITEM_TM27,

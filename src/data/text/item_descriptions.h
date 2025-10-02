@@ -1248,9 +1248,9 @@ static const u8 sTM26Desc[] = _(
     "on flying foes.");
 
 static const u8 sTM27Desc[] = _(
-    "The more the user\n"
-    "likes you, the more\n"
-    "powerful this move.");
+    "Launches a\n"
+    "meteor-like punch.\n"
+    "May raise ATTACK.");
 
 static const u8 sTM28Desc[] = _(
     "Most effective\n"

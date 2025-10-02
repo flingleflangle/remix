@@ -28,7 +28,7 @@
     F(THUNDERBOLT) \
     F(THUNDER) \
     F(EARTHQUAKE) \
-    F(RETURN) \
+    F(METEOR_MASH) \
     F(TOMBSTONER) \
     F(PSYCHIC) \
     F(SHADOW_BALL) \
