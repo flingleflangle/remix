@@ -4,9 +4,9 @@ MauvilleCity_GameCorner_MapScripts::
     @ Game Corner prices
 	.set TM_DOUBLE_TEAM_COINS, 1500
 	.set TM_PSYCHIC_COINS, 3500
-	.set TM_FLAMETHROWER_COINS, 4000
-	.set TM_THUNDERBOLT_COINS, 4000
-	.set TM_ICE_BEAM_COINS, 4000
+	.set TM_FLAMETHROWER_COINS, 2000
+	.set TM_THUNDERBOLT_COINS, 2000
+	.set TM_ICE_BEAM_COINS, 2000
 	.set DOLL_COINS, 1000
 
 	.set COINS_PRICE_50,  1000
@@ -265,14 +265,14 @@ MauvilleCity_GameCorner_EventScript_TMFlamethrower::
 
 MauvilleCity_GameCorner_EventScript_TMThunderbolt::
 	setvar VAR_TEMP_1, 4
-	bufferitemname STR_VAR_1, ITEM_TM_ZAP_CANNON
-	setvar VAR_0x8004, ITEM_TM_ZAP_CANNON
+	bufferitemname STR_VAR_1, ITEM_TM_THUNDER_PUNCH
+	setvar VAR_0x8004, ITEM_TM_THUNDER_PUNCH
 	goto MauvilleCity_GameCorner_EventScript_ConfirmTMPrize
 
 MauvilleCity_GameCorner_EventScript_TMIceBeam::
 	setvar VAR_TEMP_1, 5
-	bufferitemname STR_VAR_1, ITEM_TM_ICE_BEAM
-	setvar VAR_0x8004, ITEM_TM_ICE_BEAM
+	bufferitemname STR_VAR_1, ITEM_TM_ICE_PUNCH
+	setvar VAR_0x8004, ITEM_TM_ICE_PUNCH
 	goto MauvilleCity_GameCorner_EventScript_ConfirmTMPrize
 
 MauvilleCity_GameCorner_EventScript_ConfirmTMPrize::
@@ -329,10 +329,10 @@ MauvilleCity_GameCorner_EventScript_BuyTMFlamethrower::
 MauvilleCity_GameCorner_EventScript_BuyTMThunderbolt::
 	checkcoins VAR_TEMP_2
 	goto_if_lt VAR_TEMP_2, TM_THUNDERBOLT_COINS, MauvilleCity_GameCorner_EventScript_NotEnoughCoinsForTM
-	checkitemspace ITEM_TM_ZAP_CANNON
+	checkitemspace ITEM_TM_THUNDER_PUNCH
 	goto_if_eq VAR_RESULT, FALSE, MauvilleCity_GameCorner_EventScript_NoRoomForTM
 	removecoins TM_THUNDERBOLT_COINS
-	additem ITEM_TM_ZAP_CANNON
+	additem ITEM_TM_THUNDER_PUNCH
 	updatecoinsbox 1, 1
 	playse SE_SHOP
 	msgbox MauvilleCity_GameCorner_Text_HereYouGo, MSGBOX_DEFAULT
@@ -342,10 +342,10 @@ MauvilleCity_GameCorner_EventScript_BuyTMThunderbolt::
 MauvilleCity_GameCorner_EventScript_BuyTMIceBeam::
 	checkcoins VAR_TEMP_2
 	goto_if_lt VAR_TEMP_2, TM_ICE_BEAM_COINS, MauvilleCity_GameCorner_EventScript_NotEnoughCoinsForTM
-	checkitemspace ITEM_TM_ICE_BEAM
+	checkitemspace ITEM_TM_ICE_PUNCH
 	goto_if_eq VAR_RESULT, FALSE, MauvilleCity_GameCorner_EventScript_NoRoomForTM
 	removecoins TM_ICE_BEAM_COINS
-	additem ITEM_TM_ICE_BEAM
+	additem ITEM_TM_ICE_PUNCH
 	updatecoinsbox 1, 1
 	playse SE_SHOP
 	msgbox MauvilleCity_GameCorner_Text_HereYouGo, MSGBOX_DEFAULT

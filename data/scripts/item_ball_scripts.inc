@@ -431,7 +431,7 @@ AbandonedShip_Rooms2_B1F_EventScript_ItemDiveBall::
 	end
 
 AbandonedShip_Room_B1F_EventScript_ItemTMIceBeam::
-	finditem ITEM_TM_ICE_BEAM
+	finditem ITEM_TM_ICE_PUNCH
 	end
 
 AbandonedShip_Rooms2_1F_EventScript_ItemRevive::
@@ -507,7 +507,7 @@ MtPyre_Exterior_EventScript_ItemMaxPotion::
 	end
 
 MtPyre_Exterior_EventScript_ItemTMSkillSwap::
-	finditem ITEM_TM_SKILL_SWAP
+	finditem ITEM_TM_REVERSAL
 	end
 
 AquaHideout_B1F_EventScript_ItemMasterBall::

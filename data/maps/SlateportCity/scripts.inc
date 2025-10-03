@@ -537,9 +537,14 @@ SlateportCity_EventScript_PowerTMClerk::
 
 	.align 2
 SlateportCity_Pokemart_PowerTMs:
+	.2byte ITEM_TM_THUNDER_PUNCH
+	.2byte ITEM_TM_FIRE_PUNCH
+	.2byte ITEM_TM_ICE_PUNCH
+	.2byte ITEM_TM_FOCUS_PUNCH
 	.2byte ITEM_TM_LEAF_BLADE
 	.2byte ITEM_TM_BLAZE_KICK
 	.2byte ITEM_TM_MUDDY_WATER
+	.2byte ITEM_TM_REVERSAL
 	pokemartlistend
 
 @ Scene with Capt Sterns interview and Team Aqua announcing plans to steal Submarine

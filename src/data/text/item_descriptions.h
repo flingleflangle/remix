@@ -1178,9 +1178,9 @@ static const u8 sTM12Desc[] = _(
     "waiting party.");
 
 static const u8 sTM13Desc[] = _(
-    "Fires an icy cold\n"
-    "beam that may\n"
-    "freeze the foe.");
+    "An icy punch\n"
+    "that may freeze\n"
+    "the target.");
 
 static const u8 sTM14Desc[] = _(
     "A brutal snow-and-\n"
@@ -1213,14 +1213,14 @@ static const u8 sTM19Desc[] = _(
     "this move inflicts.");
 
 static const u8 sTM20Desc[] = _(
-    "Prevents status\n"
-    "abnormality with a\n"
-    "mystical power.");
+    "Inflicts severe\n"
+    "damage, but makes\n"
+    "the user faint.");
 
 static const u8 sTM21Desc[] = _(
-    "The less the user\n"
-    "likes you, the more\n"
-    "powerful this move.");
+    "A rampage lasting\n"
+    "2 to 3 turns that\n"
+    "confuses the user.");
 
 static const u8 sTM22Desc[] = _(
     "Absorbs sunlight in\n"
@@ -1248,7 +1248,7 @@ static const u8 sTM26Desc[] = _(
     "on flying foes.");
 
 static const u8 sTM27Desc[] = _(
-    "Launches a\n"
+    "Fires a strong,\n"
     "meteor-like punch.\n"
     "May raise ATTACK.");
 
@@ -1348,19 +1348,19 @@ static const u8 sTM46Desc[] = _(
     "foe's held item.");
 
 static const u8 sTM47Desc[] = _(
-    "Spreads hard-\n"
-    "edged wings and\n"
-    "slams into the foe.");
+    "Large boulders are\n"
+    "hurled. May cause\n"
+    "flinching.");
 
 static const u8 sTM48Desc[] = _(
-    "Switches abilities\n"
-    "with the foe on the\n"
-    "turn this is used.");
+    "Inflicts more\n"
+    "damage when the\n"
+    "user's HP is down.");
 
 static const u8 sTM49Desc[] = _(
-    "Steals the effects\n"
-    "of the move the foe\n"
-    "is trying to use.");
+    "Crunches foe with\n"
+    "sharp fangs. May\n"
+    "lower SP. DEF.");
 
 static const u8 sTM50Desc[] = _(
     "Enables full-power\n"

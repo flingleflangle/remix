@@ -14,15 +14,15 @@
     F(BLAZE_KICK) \
     F(SUNNY_DAY) \
     F(U_TURN) \
-    F(ICE_BEAM) \
+    F(ICE_PUNCH) \
     F(BLIZZARD) \
     F(HYPER_BEAM) \
     F(LIGHT_SCREEN) \
     F(PROTECT) \
     F(RAIN_DANCE) \
     F(GIGA_DRAIN) \
-    F(SAFEGUARD) \
-    F(FRUSTRATION) \
+    F(SELF_DESTRUCT) \
+    F(OUTRAGE) \
     F(SOLAR_BEAM) \
     F(IRON_TAIL) \
     F(ZAP_CANNON) \
@@ -48,9 +48,9 @@
     F(REST) \
     F(LEAF_BLADE) \
     F(THIEF) \
-    F(STEEL_WING) \
-    F(SKILL_SWAP) \
-    F(SNATCH) \
+    F(ROCK_SLIDE) \
+    F(REVERSAL) \
+    F(CRUNCH) \
     F(OVERHEAT)
 
 #define FOREACH_HM(F) \
