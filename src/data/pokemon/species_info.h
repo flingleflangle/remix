@@ -6603,7 +6603,7 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .abilities = {ABILITY_PRESSURE, ABILITY_NONE},
         .safariZoneFleeRate = 0,
         .bodyColor = BODY_COLOR_BLACK,
-        .noFlip = TRUE,
+        .noFlip = FALSE,
     },
 
     [SPECIES_TEDDIURSA] =
