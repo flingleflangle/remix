@@ -32,6 +32,10 @@ LilycoveCity_DepartmentStore_4F_Pokemart_AttackTMs:
 	.2byte ITEM_TM_OUTRAGE
 	.2byte ITEM_TM_SELF_DESTRUCT
 	.2byte ITEM_TM_TOMBSTONER
+	.2byte ITEM_FIRE_CRYSTAL
+	.2byte ITEM_AQUA_CRYSTAL
+	.2byte ITEM_LAND_CRYSTAL
+	.2byte ITEM_VOLT_CRYSTAL
 	pokemartlistend
 
 LilycoveCity_DepartmentStore_4F_EventScript_ClerkRight::
@@ -53,6 +57,10 @@ LilycoveCity_DepartmentStore_4F_Pokemart_DefenseTMs:
 	.2byte ITEM_TM_CURSE
 	.2byte ITEM_TM_U_TURN
 	.2byte ITEM_TM_REST
+	.2byte ITEM_STAR_CRYSTAL
+	.2byte ITEM_POWER_CRYSTAL
+	.2byte ITEM_MIND_CRYSTAL
+	.2byte ITEM_DARK_CRYSTAL
 	pokemartlistend
 
 LilycoveCity_DepartmentStore_4F_Text_AttackOrDefenseTM:

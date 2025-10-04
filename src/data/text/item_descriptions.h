@@ -250,6 +250,52 @@ static const u8 sGreenShardDesc[] = _(
     "A shard from an\n"
     "ancient item. Can\n"
     "be sold cheaply.");
+	
+// Evolution Crystals
+static const u8 sStarCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with a\n"
+    "calming aura.");
+
+static const u8 sAquaCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with a\n"
+    "chilling aura.");
+
+static const u8 sFireCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with a\n"
+    "burning aura.");
+	
+static const u8 sLandCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with a\n"
+    "natural aura.");
+	
+static const u8 sVoltCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with a\n"
+    "shocking aura.");
+	
+static const u8 sPowerCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with a\n"
+    "mighty aura.");
+	
+static const u8 sMindCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with a\n"
+    "mystical aura.");
+	
+static const u8 sDarkCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with an\n"
+    "eerie aura.");
+	
+static const u8 sMetalCrystalDesc[] = _(
+    "A powerful crystal\n"
+    "that glows with a\n"
+    "steely aura.");
 
 // Vitamins
 static const u8 sHPUpDesc[] = _(

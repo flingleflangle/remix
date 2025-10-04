@@ -691,103 +691,121 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
 
-    [ITEM_034] =
+    [ITEM_STAR_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("STAR CRYSTAL"),
+        .itemId = ITEM_STAR_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_STAR_ENERGY,
+        .holdEffectParam = 15,
+        .description = sStarCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_035] =
+    [ITEM_AQUA_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("AQUA CRYSTAL"),
+        .itemId = ITEM_AQUA_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_AQUA_ENERGY,
+        .holdEffectParam = 20,
+        .description = sAquaCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_036] =
+    [ITEM_FIRE_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("FIRE CRYSTAL"),
+        .itemId = ITEM_FIRE_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_FIRE_POWER,
+        .holdEffectParam = 25,
+        .description = sFireCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_037] =
+    [ITEM_LAND_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("LAND CRYSTAL"),
+        .itemId = ITEM_LAND_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_LAND_ENERGY,
+        .holdEffectParam = 20,
+        .description = sLandCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_038] =
+    [ITEM_VOLT_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("VOLT CRYSTAL"),
+        .itemId = ITEM_VOLT_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_ELECTRIC_POWER,
+        .holdEffectParam = 25,
+        .description = sVoltCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_039] =
+    [ITEM_POWER_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("POWER CRYSTAL"),
+        .itemId = ITEM_POWER_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_POWER_ENERGY,
+        .holdEffectParam = 15,
+        .description = sPowerCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_03A] =
+    [ITEM_MIND_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("MIND CRYSTAL"),
+        .itemId = ITEM_MIND_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_MIND_ENERGY,
+        .holdEffectParam = 20,
+        .description = sMindCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_03B] =
+    [ITEM_DARK_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("DARK CRYSTAL"),
+        .itemId = ITEM_DARK_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_DARK_ENERGY,
+        .holdEffectParam = 20,
+        .description = sDarkCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_03C] =
+    [ITEM_METAL_CRYSTAL] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("METAL CRYSTAL"),
+        .itemId = ITEM_METAL_CRYSTAL,
+        .price = 6000,
+        .holdEffect = HOLD_EFFECT_STEEL_POWER,
+        .holdEffectParam = 25,
+        .description = sMetalCrystalDesc,
         .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
     [ITEM_03D] =

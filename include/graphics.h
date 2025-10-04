@@ -3523,6 +3523,25 @@ extern const u32 gItemIcon_WaterStone[];
 extern const u32 gItemIconPalette_WaterStone[];
 extern const u32 gItemIcon_LeafStone[];
 extern const u32 gItemIconPalette_LeafStone[];
+// Evolution crystals
+extern const u32 gItemIcon_StarCrystal[];
+extern const u32 gItemIconPalette_StarCrystal[];
+extern const u32 gItemIcon_AquaCrystal[];
+extern const u32 gItemIconPalette_AquaCrystal[];
+extern const u32 gItemIcon_FireCrystal[];
+extern const u32 gItemIconPalette_FireCrystal[];
+extern const u32 gItemIcon_LandCrystal[];
+extern const u32 gItemIconPalette_LandCrystal[];
+extern const u32 gItemIcon_VoltCrystal[];
+extern const u32 gItemIconPalette_VoltCrystal[];
+extern const u32 gItemIcon_PowerCrystal[];
+extern const u32 gItemIconPalette_PowerCrystal[];
+extern const u32 gItemIcon_MindCrystal[];
+extern const u32 gItemIconPalette_MindCrystal[];
+extern const u32 gItemIcon_DarkCrystal[];
+extern const u32 gItemIconPalette_DarkCrystal[];
+extern const u32 gItemIcon_MetalCrystal[];
+extern const u32 gItemIconPalette_MetalCrystal[];
 // Valuables
 extern const u32 gItemIcon_TinyMushroom[];
 extern const u32 gItemIconPalette_Mushroom[];
