@@ -695,7 +695,7 @@ const struct Item gItems[] =
     {
         .name = _("STAR CRYSTAL"),
         .itemId = ITEM_STAR_CRYSTAL,
-        .price = 6000,
+        .price = 7000,
         .holdEffect = HOLD_EFFECT_STAR_ENERGY,
         .holdEffectParam = 15,
         .description = sStarCrystalDesc,
@@ -708,7 +708,7 @@ const struct Item gItems[] =
     {
         .name = _("AQUA CRYSTAL"),
         .itemId = ITEM_AQUA_CRYSTAL,
-        .price = 6000,
+        .price = 7000,
         .holdEffect = HOLD_EFFECT_AQUA_ENERGY,
         .holdEffectParam = 20,
         .description = sAquaCrystalDesc,
@@ -717,14 +717,14 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_FIRE_CRYSTAL] =
+    [ITEM_FLARE_CRYSTAL] =
     {
-        .name = _("FIRE CRYSTAL"),
-        .itemId = ITEM_FIRE_CRYSTAL,
-        .price = 6000,
+        .name = _("FLARE CRYSTAL"),
+        .itemId = ITEM_FLARE_CRYSTAL,
+        .price = 7000,
         .holdEffect = HOLD_EFFECT_FIRE_POWER,
         .holdEffectParam = 25,
-        .description = sFireCrystalDesc,
+        .description = sFlareCrystalDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
@@ -734,7 +734,7 @@ const struct Item gItems[] =
     {
         .name = _("LAND CRYSTAL"),
         .itemId = ITEM_LAND_CRYSTAL,
-        .price = 6000,
+        .price = 7000,
         .holdEffect = HOLD_EFFECT_LAND_ENERGY,
         .holdEffectParam = 20,
         .description = sLandCrystalDesc,
@@ -747,7 +747,7 @@ const struct Item gItems[] =
     {
         .name = _("VOLT CRYSTAL"),
         .itemId = ITEM_VOLT_CRYSTAL,
-        .price = 6000,
+        .price = 7000,
         .holdEffect = HOLD_EFFECT_ELECTRIC_POWER,
         .holdEffectParam = 25,
         .description = sVoltCrystalDesc,
@@ -760,7 +760,7 @@ const struct Item gItems[] =
     {
         .name = _("POWER CRYSTAL"),
         .itemId = ITEM_POWER_CRYSTAL,
-        .price = 6000,
+        .price = 7000,
         .holdEffect = HOLD_EFFECT_POWER_ENERGY,
         .holdEffectParam = 15,
         .description = sPowerCrystalDesc,
@@ -773,7 +773,7 @@ const struct Item gItems[] =
     {
         .name = _("MIND CRYSTAL"),
         .itemId = ITEM_MIND_CRYSTAL,
-        .price = 6000,
+        .price = 7000,
         .holdEffect = HOLD_EFFECT_MIND_ENERGY,
         .holdEffectParam = 20,
         .description = sMindCrystalDesc,
@@ -782,14 +782,14 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_DARK_CRYSTAL] =
+    [ITEM_SHADE_CRYSTAL] =
     {
-        .name = _("DARK CRYSTAL"),
-        .itemId = ITEM_DARK_CRYSTAL,
-        .price = 6000,
-        .holdEffect = HOLD_EFFECT_DARK_ENERGY,
+        .name = _("SHADE CRYSTAL"),
+        .itemId = ITEM_SHADE_CRYSTAL,
+        .price = 7000,
+        .holdEffect = HOLD_EFFECT_SHADE_ENERGY,
         .holdEffectParam = 20,
-        .description = sDarkCrystalDesc,
+        .description = sShadeCrystalDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
@@ -799,7 +799,7 @@ const struct Item gItems[] =
     {
         .name = _("METAL CRYSTAL"),
         .itemId = ITEM_METAL_CRYSTAL,
-        .price = 6000,
+        .price = 7000,
         .holdEffect = HOLD_EFFECT_STEEL_POWER,
         .holdEffectParam = 25,
         .description = sMetalCrystalDesc,

@@ -304,7 +304,7 @@ const u8 gItemEffect_AquaCrystal[6] = {
     [4] = ITEM4_EVO_STONE,
 };
 
-const u8 gItemEffect_FireCrystal[6] = {
+const u8 gItemEffect_FlareCrystal[6] = {
     [4] = ITEM4_EVO_STONE,
 };
 
@@ -324,7 +324,7 @@ const u8 gItemEffect_MindCrystal[6] = {
     [4] = ITEM4_EVO_STONE,
 };
 
-const u8 gItemEffect_DarkCrystal[6] = {
+const u8 gItemEffect_ShadeCrystal[6] = {
     [4] = ITEM4_EVO_STONE,
 };
 
@@ -475,12 +475,12 @@ const u8 *const gItemEffectTable[] =
     [ITEM_LEAF_STONE - ITEM_POTION]    = gItemEffect_LeafStone,
     [ITEM_STAR_CRYSTAL - ITEM_POTION]  = gItemEffect_StarCrystal,
     [ITEM_AQUA_CRYSTAL - ITEM_POTION]  = gItemEffect_AquaCrystal,
-    [ITEM_FIRE_CRYSTAL - ITEM_POTION]  = gItemEffect_FireCrystal,
+    [ITEM_FLARE_CRYSTAL - ITEM_POTION]  = gItemEffect_FlareCrystal,
     [ITEM_LAND_CRYSTAL - ITEM_POTION]  = gItemEffect_LandCrystal,
     [ITEM_VOLT_CRYSTAL - ITEM_POTION]  = gItemEffect_VoltCrystal,
     [ITEM_POWER_CRYSTAL - ITEM_POTION] = gItemEffect_PowerCrystal,
     [ITEM_MIND_CRYSTAL - ITEM_POTION]  = gItemEffect_MindCrystal,
-    [ITEM_DARK_CRYSTAL - ITEM_POTION]  = gItemEffect_DarkCrystal,
+    [ITEM_SHADE_CRYSTAL - ITEM_POTION] = gItemEffect_ShadeCrystal,
     [ITEM_METAL_CRYSTAL - ITEM_POTION] = gItemEffect_MetalCrystal,
     [ITEM_CHERI_BERRY - ITEM_POTION]   = gItemEffect_CheriBerry,
     [ITEM_CHESTO_BERRY - ITEM_POTION]  = gItemEffect_ChestoBerry,

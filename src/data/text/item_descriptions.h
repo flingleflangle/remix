@@ -262,7 +262,7 @@ static const u8 sAquaCrystalDesc[] = _(
     "that glows with a\n"
     "chilling aura.");
 
-static const u8 sFireCrystalDesc[] = _(
+static const u8 sFlareCrystalDesc[] = _(
     "A powerful crystal\n"
     "that glows with a\n"
     "burning aura.");
@@ -287,7 +287,7 @@ static const u8 sMindCrystalDesc[] = _(
     "that glows with a\n"
     "mystical aura.");
 	
-static const u8 sDarkCrystalDesc[] = _(
+static const u8 sShadeCrystalDesc[] = _(
     "A powerful crystal\n"
     "that glows with an\n"
     "eerie aura.");
