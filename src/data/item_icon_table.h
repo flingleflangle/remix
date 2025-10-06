@@ -65,8 +65,8 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_MIND_CRYSTAL] = {gItemIcon_Nugget, gItemIconPalette_PsychicTMHM},
     [ITEM_SHADE_CRYSTAL] = {gItemIcon_Nugget, gItemIconPalette_DarkTMHM},
     [ITEM_METAL_CRYSTAL] = {gItemIcon_Nugget, gItemIconPalette_SteelTMHM},
-    [ITEM_03D] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_03E] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_CHOICE_SPECS] = {gItemIcon_BlackGlasses, gItemIconPalette_ChoiceBand},
+    [ITEM_CHOICE_SCARF] = {gItemIcon_SilkScarf, gItemIconPalette_ChoiceBand},
     // Vitamins
     [ITEM_HP_UP] = {gItemIcon_HPUp, gItemIconPalette_HPUp},
     [ITEM_PROTEIN] = {gItemIcon_Vitamin, gItemIconPalette_Protein},

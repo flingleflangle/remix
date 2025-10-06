@@ -2263,7 +2263,7 @@ static bool8 CanStartSurfing(s16 x, s16 y, u8 direction)
     }
 
     if ((gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_ON_FOOT)
-     && MapGridGetElevationAt(x, y) == 1
+     && IsPlayerFacingSurfableFishableWater()
      && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT)
     {
         CreateStartSurfingTask(direction);

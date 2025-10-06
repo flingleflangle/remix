@@ -795,9 +795,19 @@ static const u8 sMentalHerbDesc[] = _(
     "of infatuation.");
 
 static const u8 sChoiceBandDesc[] = _(
-    "Raises a move's\n"
-    "power, but permits\n"
-    "only that move.");
+    "Boosts the user's\n"
+    "ATTACK, but permits\n"
+    "only one move.");
+	
+static const u8 sChoiceSpecsDesc[] = _(
+    "Boosts the user's\n"
+    "SP. ATK, but permits\n"
+    "only one move.");
+	
+static const u8 sChoiceScarfDesc[] = _(
+    "Boosts the user's\n"
+    "SPEED, but permits\n"
+    "only one move.");
 
 static const u8 sKingsRockDesc[] = _(
     "A hold item that\n"

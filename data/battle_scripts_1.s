@@ -1074,6 +1074,7 @@ BattleScript_EffectTombstoner::
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET
 	seteffectwithchance
+	moveendall
 	end
 	
 BattleScript_EffectSprout::

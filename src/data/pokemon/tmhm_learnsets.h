@@ -8206,6 +8206,7 @@ const union {
         .SWORDS_DANCE = TRUE,
         .HYPER_BEAM = TRUE,
         .CRUNCH = TRUE,
+        .SHADOW_BALL = TRUE,
         .ROCK_SLIDE = TRUE,
         .ZAP_CANNON = TRUE,
         .PROTECT = TRUE,
