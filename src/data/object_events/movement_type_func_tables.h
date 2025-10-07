@@ -436,3 +436,21 @@ u8 (*const gMovementTypeFuncs_Invisible[])(struct ObjectEvent *, struct Sprite *
     MovementType_Invisible_Step1,
     MovementType_Invisible_Step2,
 };
+
+// Start vs_seeker branch
+u8 (*const gMovementTypeFuncs_RaiseHandAndStop[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_RaiseHandAndStop_Step0,
+    MovementType_RaiseHandAndStop_Step1,
+    MovementType_RaiseHandAndStop_Step2,
+};
+
+u8 (*const gMovementTypeFuncs_RaiseHandAndJump[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_RaiseHandAndJump_Step0,
+    MovementType_RaiseHandAndMove_Step1,
+};
+
+u8 (*const gMovementTypeFuncs_RaiseHandAndSwim[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_RaiseHandAndSwim_Step0,
+    MovementType_RaiseHandAndMove_Step1,
+};
+// End vs_seeker branch

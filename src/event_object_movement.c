@@ -21,6 +21,7 @@
 #include "task.h"
 #include "trainer_see.h"
 #include "trainer_hill.h"
+#include "trig.h" // vs_seeker branch
 #include "util.h"
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
@@ -178,6 +179,10 @@ static void DestroyLevitateMovementTask(u8);
 static bool8 NpcTakeStep(struct Sprite *);
 static bool8 IsElevationMismatchAt(u8, s16, s16);
 static bool8 AreElevationsCompatible(u8, u8);
+// Start vs_seeker branch
+static u8 MovementType_RaiseHandAndStop_Callback(struct ObjectEvent *, struct Sprite *);
+static u8 MovementType_RaiseHandAndJump_Callback(struct ObjectEvent *, struct Sprite *);
+static u8 MovementType_RaiseHandAndSwim_Callback(struct ObjectEvent *, struct Sprite *);
 
 static const struct SpriteFrameImage sPicTable_PechaBerryTree[];
 
@@ -304,6 +309,11 @@ static void (*const sMovementTypeCallbacks[])(struct Sprite *) =
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_UP] = MovementType_WalkSlowlyInPlace,
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_LEFT] = MovementType_WalkSlowlyInPlace,
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_RIGHT] = MovementType_WalkSlowlyInPlace,
+	// Start vs_seeker branch
+    [MOVEMENT_TYPE_RAISE_HAND_AND_STOP]                   = MovementType_RaiseHandAndStop,
+    [MOVEMENT_TYPE_RAISE_HAND_AND_JUMP]                   = MovementType_RaiseHandAndJump,
+    [MOVEMENT_TYPE_RAISE_HAND_AND_SWIM]                   = MovementType_RaiseHandAndSwim,
+    // End vs_seeker branch
 };
 
 static const bool8 sMovementTypeHasRange[NUM_MOVEMENT_TYPES] = {
@@ -432,6 +442,11 @@ const u8 gInitialMovementTypeFacingDirections[] = {
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_UP] = DIR_NORTH,
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_LEFT] = DIR_WEST,
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_RIGHT] = DIR_EAST,
+	// Start vs_seeker branch
+    [MOVEMENT_TYPE_RAISE_HAND_AND_STOP] = DIR_SOUTH,
+    [MOVEMENT_TYPE_RAISE_HAND_AND_JUMP] = DIR_SOUTH,
+    [MOVEMENT_TYPE_RAISE_HAND_AND_SWIM] = DIR_SOUTH,
+    // End vs_seeker branch
 };
 
 #define OBJ_EVENT_PAL_TAG_BRENDAN                 0x1100
@@ -8992,3 +9007,176 @@ u8 MovementAction_Fly_Finish(struct ObjectEvent *objectEvent, struct Sprite *spr
 {
     return TRUE;
 }
+
+// Start vs_seeker branch
+void MovementType_RaiseHandAndStop(struct Sprite *sprite)
+{
+    UpdateObjectEventCurrentMovement(&gObjectEvents[sprite->data[0]], sprite, MovementType_RaiseHandAndStop_Callback);
+}
+
+void MovementType_RaiseHandAndJump(struct Sprite *sprite)
+{
+    UpdateObjectEventCurrentMovement(&gObjectEvents[sprite->data[0]], sprite, MovementType_RaiseHandAndJump_Callback);
+}
+
+void MovementType_RaiseHandAndSwim(struct Sprite *sprite)
+{
+    UpdateObjectEventCurrentMovement(&gObjectEvents[sprite->data[0]], sprite, MovementType_RaiseHandAndSwim_Callback);
+}
+
+static u8 MovementType_RaiseHandAndStop_Callback(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return gMovementTypeFuncs_RaiseHandAndStop[sprite->data[1]](objectEvent, sprite);
+}
+
+static u8 MovementType_RaiseHandAndJump_Callback(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return gMovementTypeFuncs_RaiseHandAndJump[sprite->data[1]](objectEvent, sprite);
+}
+
+static u8 MovementType_RaiseHandAndSwim_Callback(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return gMovementTypeFuncs_RaiseHandAndSwim[sprite->data[1]](objectEvent, sprite);
+}
+
+bool8 MovementType_RaiseHandAndStop_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ClearObjectEventMovement(objectEvent, sprite);
+    ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_RAISE_HAND_AND_STOP);
+    sprite->data[1] = 1;
+    return TRUE;
+}
+
+bool8 MovementType_RaiseHandAndStop_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    if (ObjectEventExecSingleMovementAction(objectEvent, sprite))
+    {
+        sprite->data[1] = 2;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+bool8 MovementType_RaiseHandAndStop_Step2(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    objectEvent->singleMovementActive = FALSE;
+    return FALSE;
+}
+
+bool8 MovementType_RaiseHandAndJump_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ClearObjectEventMovement(objectEvent, sprite);
+    ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_RAISE_HAND_AND_JUMP);
+    sprite->data[1] = 1;
+    return FALSE;
+}
+
+bool8 MovementType_RaiseHandAndSwim_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ClearObjectEventMovement(objectEvent, sprite);
+    ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_RAISE_HAND_AND_SWIM);
+    sprite->data[1] = 1;
+    return FALSE;
+}
+
+bool8 MovementType_RaiseHandAndMove_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    if (ObjectEventExecSingleMovementAction(objectEvent, sprite))
+    {
+        sprite->data[1] = 0;
+    }
+    return FALSE;
+}
+
+static bool8 MovementAction_RaiseHand_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    StartSpriteAnim(sprite, ANIM_RAISE_HAND);
+    sprite->animPaused = FALSE;
+    objectEvent->disableAnim = FALSE;
+    sprite->data[2] = 1;
+    sprite->data[4] = 0;
+    sprite->data[5] = 0;
+    sprite->data[6] = 0;
+    sprite->data[7] = 0;
+    return FALSE;
+}
+
+static bool8 MovementAction_RaiseHandAndStop_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return sprite->animEnded;
+}
+
+static bool8 MovementAction_RaiseHandAndJump_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    switch (sprite->data[7])
+    {
+    case 0:
+        if((sprite->data[6] += 10) > 127)
+        {
+            sprite->data[6] = 0;
+            sprite->data[5]++;
+            sprite->data[7] = sprite->data[5];
+            StartSpriteAnim(sprite, ANIM_STD_FACE_SOUTH);
+            sprite->animPaused = FALSE;
+            objectEvent->disableAnim = FALSE;
+        }
+        sprite->y2 = -(3 * gSineTable[sprite->data[6]] >> 7);
+        objectEvent->singleMovementActive = sprite->y2 != 0;
+        return FALSE;
+    case 1:
+        if (++sprite->data[4] > 16)
+        {
+            sprite->data[4] = 0;
+            StartSpriteAnim(sprite, ANIM_RAISE_HAND);
+            sprite->animPaused = FALSE;
+            objectEvent->disableAnim = FALSE;
+            sprite->data[7] = 0;
+        }
+        else
+        {
+            objectEvent->singleMovementActive = FALSE;
+        }
+        return FALSE;
+    case 2:
+        objectEvent->singleMovementActive = FALSE;
+        if (++sprite->data[4] > 80)
+        {
+            sprite->data[4] = 0;
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+    return FALSE;
+}
+
+static bool8 MovementAction_RaiseHandAndSwim_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    bool8 ret;
+    sprite->data[7] = (sprite->data[7] + 4) & 0xFF;
+    sprite->x2 = gSineTable[sprite->data[7]] >> 7;
+    if (sprite->data[7] == 0)
+        ret = TRUE;
+    else
+        ret = FALSE;
+    return ret;
+}
+
+bool8 MovementAction_EmoteX_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
+    FieldEffectStart(FLDEFF_X_ICON);
+    sprite->sActionFuncId = 1;
+    return TRUE;
+}
+
+bool8 MovementAction_EmoteDoubleExclamationMark_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
+    FieldEffectStart(FLDEFF_DOUBLE_EXCL_MARK_ICON);
+    sprite->sActionFuncId = 1;
+    return TRUE;
+}
+// End vs_seeker branch

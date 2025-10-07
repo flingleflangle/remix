@@ -1531,7 +1531,7 @@ static const u8 sTownMapDesc[] = _(
     "present location.");
 
 static const u8 sVSSeekerDesc[] = _(
-    "A rechargeable unit\n"
+    "A one-press unit\n"
     "that flags battle-\n"
     "ready TRAINERS.");
 

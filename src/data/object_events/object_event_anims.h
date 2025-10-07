@@ -343,6 +343,13 @@ static const union AnimCmd sAnim_GoFastestEast[] =
     ANIMCMD_JUMP(0),
 };
 
+// Start vs_seeker branch
+static const union AnimCmd sAnim_RaiseHand[] = {
+    ANIMCMD_FRAME(9, 0),
+    ANIMCMD_END,
+};
+// End vs_seeker branch
+
 static const union AnimCmd sAnim_RunSouth[] =
 {
     ANIMCMD_FRAME(12, 5),
@@ -843,6 +850,7 @@ static const union AnimCmd *const sAnimTable_Standard[] = {
     [ANIM_STD_GO_FASTEST_NORTH] = sAnim_GoFastestNorth,
     [ANIM_STD_GO_FASTEST_WEST] = sAnim_GoFastestWest,
     [ANIM_STD_GO_FASTEST_EAST] = sAnim_GoFastestEast,
+    [ANIM_RAISE_HAND] = sAnim_RaiseHand, // vs_seeker branch
 };
 
 static const union AnimCmd *const sAnimTable_HoOh[] = {
