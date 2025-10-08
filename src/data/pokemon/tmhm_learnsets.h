@@ -6362,9 +6362,6 @@ const union {
     [SPECIES_OLD_UNOWN_Y] = { .learnset = {
     } },
 
-    [SPECIES_OLD_UNOWN_Z] = { .learnset = {
-    } },
-
     [SPECIES_TREECKO] = { .learnset = {
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
@@ -9720,6 +9717,39 @@ const union {
         .SECRET_POWER = TRUE,
         .REST = TRUE,
         .FLASH = TRUE,
+    } },
+	
+	[SPECIES_LUCARIO] = { .learnset = {
+        .FOCUS_PUNCH = TRUE,
+        .BUBBLE_BEAM = TRUE,
+        .CALM_MIND = TRUE,
+        .TOXIC = TRUE,
+        .SWORDS_DANCE = TRUE,
+        .BLAZE_KICK = TRUE,
+        .SUNNY_DAY = TRUE,
+        .HYPER_BEAM = TRUE,
+        .PROTECT = TRUE,
+        .RAIN_DANCE = TRUE,
+		.IRON_TAIL = TRUE,
+		.EARTHQUAKE = TRUE,
+		.METEOR_MASH = TRUE,
+        .TOMBSTONER = TRUE,
+        .PSYCHIC = TRUE,
+        .SHADOW_BALL = TRUE,
+        .BRICK_BREAK = TRUE,
+        .DOUBLE_TEAM = TRUE,
+        .REFLECT = TRUE,
+        .CURSE = TRUE,
+        .FACADE = TRUE,
+		.THUNDER_PUNCH = TRUE,
+		.ICE_PUNCH = TRUE,
+		.CRUNCH = TRUE,
+        .SECRET_POWER = TRUE,
+        .REVERSAL = TRUE,
+        .ROCK_SLIDE = TRUE,
+        .REST = TRUE,
+        .STRENGTH = TRUE,
+        .ROCK_SMASH = TRUE,
     } },
 
 };

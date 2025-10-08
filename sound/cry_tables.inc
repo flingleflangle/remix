@@ -392,6 +392,7 @@ gCryTable::
 	cry Cry_Bonsly
 	cry Cry_Gliscor
 	cry Cry_Weavile
+	cry Cry_Lucario
 
 	.align 2
 gCryTable_Reverse::
@@ -787,3 +788,4 @@ gCryTable_Reverse::
 	cry_reverse Cry_Bonsly
 	cry_reverse Cry_Gliscor
 	cry_reverse Cry_Weavile
+	cry_reverse Cry_Lucario

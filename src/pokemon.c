@@ -382,7 +382,6 @@ static const u16 sSpeciesToHoennPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_HOENN(OLD_UNOWN_W),
     SPECIES_TO_HOENN(OLD_UNOWN_X),
     SPECIES_TO_HOENN(OLD_UNOWN_Y),
-    SPECIES_TO_HOENN(OLD_UNOWN_Z),
     SPECIES_TO_HOENN(TREECKO),
     SPECIES_TO_HOENN(GROVYLE),
     SPECIES_TO_HOENN(SCEPTILE),
@@ -522,6 +521,7 @@ static const u16 sSpeciesToHoennPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_HOENN(BONSLY),
     SPECIES_TO_HOENN(WEAVILE),
     SPECIES_TO_HOENN(GLISCOR),
+    SPECIES_TO_HOENN(LUCARIO),
 };
 
 // Assigns all species to the National Dex Index (Summary No. for National Dex)
@@ -802,7 +802,6 @@ static const u16 sSpeciesToNationalPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_NATIONAL(OLD_UNOWN_W),
     SPECIES_TO_NATIONAL(OLD_UNOWN_X),
     SPECIES_TO_NATIONAL(OLD_UNOWN_Y),
-    SPECIES_TO_NATIONAL(OLD_UNOWN_Z),
     SPECIES_TO_NATIONAL(TREECKO),
     SPECIES_TO_NATIONAL(GROVYLE),
     SPECIES_TO_NATIONAL(SCEPTILE),
@@ -942,6 +941,7 @@ static const u16 sSpeciesToNationalPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_NATIONAL(BONSLY),
     SPECIES_TO_NATIONAL(WEAVILE),
     SPECIES_TO_NATIONAL(GLISCOR),
+    SPECIES_TO_NATIONAL(LUCARIO),
 };
 
 // Assigns all Hoenn Dex Indexes to a National Dex Index
@@ -1337,6 +1337,7 @@ static const u16 sHoennToNationalOrder[NUM_SPECIES - 1] =
     HOENN_TO_NATIONAL(BONSLY),
     HOENN_TO_NATIONAL(WEAVILE),
     HOENN_TO_NATIONAL(GLISCOR),
+    HOENN_TO_NATIONAL(LUCARIO),
     HOENN_TO_NATIONAL(OLD_UNOWN_B),
     HOENN_TO_NATIONAL(OLD_UNOWN_C),
     HOENN_TO_NATIONAL(OLD_UNOWN_D),
@@ -1361,7 +1362,6 @@ static const u16 sHoennToNationalOrder[NUM_SPECIES - 1] =
     HOENN_TO_NATIONAL(OLD_UNOWN_W),
     HOENN_TO_NATIONAL(OLD_UNOWN_X),
     HOENN_TO_NATIONAL(OLD_UNOWN_Y),
-    HOENN_TO_NATIONAL(OLD_UNOWN_Z),
 };
 
 const struct SpindaSpot gSpindaSpotGraphics[] =
@@ -5747,13 +5747,7 @@ u16 HoennToNationalOrder(u16 hoennNum)
 
 u16 SpeciesToCryId(u16 species)
 {
-    if (species <= SPECIES_CELEBI - 1)
-        return species;
-
-    if (species < SPECIES_TREECKO - 1)
-        return SPECIES_UNOWN - 1;
-
-    return gSpeciesIdToCryId[species - (SPECIES_TREECKO - 1)];
+    return gSpeciesIdToCryId[species];
 }
 
 // Spots can be drawn on Spinda's color indexes 1, 2, or 3

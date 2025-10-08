@@ -1657,7 +1657,6 @@ static const union AnimCmd *const *const sUnusedAnimsTable[] =
     [SPECIES_OLD_UNOWN_W] = sUnusedAnims_OldUnownB,
     [SPECIES_OLD_UNOWN_X] = sUnusedAnims_OldUnownB,
     [SPECIES_OLD_UNOWN_Y] = sUnusedAnims_OldUnownB,
-    [SPECIES_OLD_UNOWN_Z] = sUnusedAnims_OldUnownB,
     [SPECIES_TREECKO] = sUnusedAnims_Treecko,
     [SPECIES_GROVYLE] = sUnusedAnims_Grovyle,
     [SPECIES_SCEPTILE] = sUnusedAnims_Sceptile,

@@ -4614,6 +4614,13 @@ static const union AnimCmd sAnim_Weavile_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Lucario_1[] =
+{
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Egg_1[] =
 {
     ANIMCMD_FRAME(0, 6),
@@ -5259,6 +5266,7 @@ SINGLE_ANIMATION(Munchlax);
 SINGLE_ANIMATION(Bonsly);
 SINGLE_ANIMATION(Gliscor);
 SINGLE_ANIMATION(Weavile);
+SINGLE_ANIMATION(Lucario);
 SINGLE_ANIMATION(Egg);
 SINGLE_ANIMATION(UnownB);
 SINGLE_ANIMATION(UnownC);
@@ -5566,7 +5574,6 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_OLD_UNOWN_W] = sAnims_OldUnownB,
     [SPECIES_OLD_UNOWN_X] = sAnims_OldUnownB,
     [SPECIES_OLD_UNOWN_Y] = sAnims_OldUnownB,
-    [SPECIES_OLD_UNOWN_Z] = sAnims_OldUnownB,
     [SPECIES_TREECKO]     = sAnims_Treecko,
     [SPECIES_GROVYLE]     = sAnims_Grovyle,
     [SPECIES_SCEPTILE]    = sAnims_Sceptile,
@@ -5706,6 +5713,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_BONSLY]      = sAnims_Bonsly,
     [SPECIES_GLISCOR]     = sAnims_Gliscor,
     [SPECIES_WEAVILE]     = sAnims_Weavile,
+    [SPECIES_LUCARIO]     = sAnims_Lucario,
     [SPECIES_EGG]         = sAnims_Egg,
     [SPECIES_UNOWN_B]     = sAnims_UnownB,
     [SPECIES_UNOWN_C]     = sAnims_UnownC,

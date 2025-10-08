@@ -4691,4 +4691,16 @@ const struct PokedexEntry gPokedexEntries[] =
         .trainerScale = 256,
         .trainerOffset = 2,
     },
+	
+	[NATIONAL_DEX_LUCARIO] =
+    {
+        .categoryName = _("AURA"),
+        .height = 12,
+        .weight = 540,
+        .description = gLucarioPokedexText,
+        .pokemonScale = 257,
+        .pokemonOffset = 0,
+        .trainerScale = 256,
+        .trainerOffset = 2,
+    },
 };

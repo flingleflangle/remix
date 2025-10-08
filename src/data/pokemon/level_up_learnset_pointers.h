@@ -276,7 +276,6 @@ const u16 *const gLevelUpLearnsets[NUM_SPECIES] =
     [SPECIES_OLD_UNOWN_W] = sSpecies273LevelUpLearnset,
     [SPECIES_OLD_UNOWN_X] = sSpecies274LevelUpLearnset,
     [SPECIES_OLD_UNOWN_Y] = sSpecies275LevelUpLearnset,
-    [SPECIES_OLD_UNOWN_Z] = sSpecies276LevelUpLearnset,
     [SPECIES_TREECKO] = sTreeckoLevelUpLearnset,
     [SPECIES_GROVYLE] = sGrovyleLevelUpLearnset,
     [SPECIES_SCEPTILE] = sSceptileLevelUpLearnset,
@@ -416,4 +415,5 @@ const u16 *const gLevelUpLearnsets[NUM_SPECIES] =
     [SPECIES_BONSLY] = sBonslyLevelUpLearnset,
     [SPECIES_GLISCOR] = sGliscorLevelUpLearnset,
     [SPECIES_WEAVILE] = sWeavileLevelUpLearnset,
+    [SPECIES_LUCARIO] = sLucarioLevelUpLearnset,
 };

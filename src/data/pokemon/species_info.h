@@ -7734,8 +7734,6 @@ const struct SpeciesInfo gSpeciesInfo[] =
 
     [SPECIES_OLD_UNOWN_Y] = OLD_UNOWN_SPECIES_INFO,
 
-    [SPECIES_OLD_UNOWN_Z] = OLD_UNOWN_SPECIES_INFO,
-
     [SPECIES_TREECKO] =
     {
         .baseHP        = 40,
@@ -11781,6 +11779,36 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .growthRate = GROWTH_FAST,
         .eggGroups = { EGG_GROUP_AMORPHOUS, EGG_GROUP_AMORPHOUS },
         .abilities = {ABILITY_LEVITATE, ABILITY_NONE},
+        .safariZoneFleeRate = 0,
+        .bodyColor = BODY_COLOR_BLUE,
+        .noFlip = FALSE,
+    },
+	
+	[SPECIES_LUCARIO] =
+    {
+        .baseHP        = 70,
+        .baseAttack    = 110,
+        .baseDefense   = 70,
+        .baseSpeed     = 90,
+        .baseSpAttack  = 115,
+        .baseSpDefense = 70,
+        .types = { TYPE_FIGHTING, TYPE_STEEL },
+        .catchRate = 45,
+        .expYield = 204,
+        .evYield_HP        = 0,
+        .evYield_Attack    = 1,
+        .evYield_Defense   = 0,
+        .evYield_Speed     = 0,
+        .evYield_SpAttack  = 1,
+        .evYield_SpDefense = 0,
+        .itemCommon = ITEM_MACHO_BRACE,
+        .itemRare   = ITEM_METAL_COAT,
+        .genderRatio = MON_MALE,
+        .eggCycles = 25,
+        .friendship = STANDARD_FRIENDSHIP,
+        .growthRate = GROWTH_MEDIUM_SLOW,
+        .eggGroups = { EGG_GROUP_FIELD, EGG_GROUP_HUMAN_LIKE },
+        .abilities = {ABILITY_INNER_FOCUS, ABILITY_NONE},
         .safariZoneFleeRate = 0,
         .bodyColor = BODY_COLOR_BLUE,
         .noFlip = FALSE,

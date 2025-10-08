@@ -388,6 +388,9 @@ PetalburgCity_Gym_EventScript_NormanBattle::
 	special DrawWholeMapView
 	call PetalburgCity_Gym_EventScript_GiveFacade
 	delay 30
+	msgbox PetalburgCity_Gym_Text_TakeThisToo, MSGBOX_DEFAULT
+	call PetalburgCity_Gym_EventScript_GiveVsSeeker
+	delay 30
 	msgbox PetalburgCity_Gym_Text_DadHappyAndSad, MSGBOX_DEFAULT
 	closemessage
 	delay 40
@@ -405,6 +408,11 @@ PetalburgCity_Gym_EventScript_GiveFacade::
 	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_BagIsFull
 	setflag FLAG_RECEIVED_TM_FACADE
 	msgbox PetalburgCity_Gym_Text_ExplainFacade, MSGBOX_DEFAULT
+	return
+	
+PetalburgCity_Gym_EventScript_GiveVsSeeker::
+	giveitem ITEM_VS_SEEKER
+	msgbox PetalburgCity_Gym_Text_ExplainVsSeeker, MSGBOX_DEFAULT
 	return
 
 PetalburgCity_Gym_EventScript_WallysDadArrivesNorth::
@@ -1293,6 +1301,16 @@ PetalburgCity_Gym_Text_ExplainFacade:
 	.string "or burned.\p"
 	.string "It might be able to turn a bad\n"
 	.string "situation into an advantage.$"
+	
+PetalburgCity_Gym_Text_TakeThisToo:
+	.string "DAD: Oh, and take this, too.$"
+	
+PetalburgCity_Gym_Text_ExplainVsSeeker:
+	.string "That's the VS. SEEKER.\n"
+	.string "With a press of a button, you may\l"
+	.string "call any trainer for a rematch.\p"
+	.string "Since you're serious about this,\n"
+	.string "I thought you should have it.$"
 
 PetalburgCity_Gym_Text_DadHappyAndSad:
 	.string "DAD: As the GYM LEADER, I can't\n"

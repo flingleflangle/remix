@@ -2343,5 +2343,11 @@ const u8 gWeavilePokedexText[] = _(
     "scrapping over food is a thing of the past.\n"
     "A single scratch from its claws may\n"
     "give you a case of frostbite.");
+	
+const u8 gLucarioPokedexText[] = _(
+    "They can detect the species of a living\n"
+    "being- and its emotions-from over half a\n" 
+    "mile away. They control auras and hunt\n"
+    "their prey in packs.");
 
    

@@ -278,7 +278,6 @@ const struct CompressedSpriteSheet gMonStillFrontPicTable[] =
     SPECIES_SPRITE(OLD_UNOWN_W,   gMonStillFrontPic_DoubleQuestionMark),
     SPECIES_SPRITE(OLD_UNOWN_X,   gMonStillFrontPic_DoubleQuestionMark),
     SPECIES_SPRITE(OLD_UNOWN_Y,   gMonStillFrontPic_DoubleQuestionMark),
-    SPECIES_SPRITE(OLD_UNOWN_Z,   gMonStillFrontPic_DoubleQuestionMark),
 // Gen III
     SPECIES_SPRITE(TREECKO,       gMonStillFrontPic_Treecko),
     SPECIES_SPRITE(GROVYLE,       gMonStillFrontPic_Grovyle),
@@ -419,6 +418,7 @@ const struct CompressedSpriteSheet gMonStillFrontPicTable[] =
     SPECIES_SPRITE(BONSLY,        gMonStillFrontPic_Bonsly),
     SPECIES_SPRITE(GLISCOR,       gMonStillFrontPic_Gliscor),
     SPECIES_SPRITE(WEAVILE,       gMonStillFrontPic_Weavile),
+    SPECIES_SPRITE(LUCARIO,       gMonStillFrontPic_Lucario),
     SPECIES_SPRITE(EGG,           gMonStillFrontPic_Egg),
     SPECIES_SPRITE(UNOWN_B,       gMonStillFrontPic_UnownB),
     SPECIES_SPRITE(UNOWN_C,       gMonStillFrontPic_UnownC),
