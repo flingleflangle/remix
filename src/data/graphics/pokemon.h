@@ -2306,6 +2306,7 @@ const u8 gMonIcon_Minun[] = INCBIN_U8("graphics/pokemon/minun/icon.4bpp");
 const u8 gMonFootprint_Minun[] = INCBIN_U8("graphics/pokemon/minun/footprint.1bpp");
 
 const u32 gMonStillFrontPic_Mawile[] = INCBIN_U32("graphics/pokemon/mawile/front.4bpp.lz");
+const u32 gMonStillFrontPic_MawileEX[] = INCBIN_U32("graphics/pokemon/mawile/EXfront.4bpp.lz");
 const u32 gMonPalette_Mawile[] = INCBIN_U32("graphics/pokemon/mawile/normal.gbapal.lz");
 const u32 gMonBackPic_Mawile[] = INCBIN_U32("graphics/pokemon/mawile/back.4bpp.lz");
 const u32 gMonShinyPalette_Mawile[] = INCBIN_U32("graphics/pokemon/mawile/shiny.gbapal.lz");

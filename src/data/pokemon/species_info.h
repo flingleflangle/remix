@@ -2580,7 +2580,7 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .friendship = STANDARD_FRIENDSHIP,
         .growthRate = GROWTH_MEDIUM_FAST,
         .eggGroups = { EGG_GROUP_FLYING, EGG_GROUP_FLYING },
-        .abilities = {ABILITY_RUN_AWAY, ABILITY_EARLY_BIRD},
+        .abilities = {ABILITY_HUSTLE, ABILITY_GUTS},
         .safariZoneFleeRate = 10,
         .bodyColor = BODY_COLOR_BROWN,
         .noFlip = FALSE,
@@ -7685,55 +7685,7 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .bodyColor = BODY_COLOR_GREEN,
         .noFlip = FALSE,
     },
-
-    [SPECIES_OLD_UNOWN_B] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_C] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_D] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_E] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_F] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_G] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_H] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_I] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_J] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_K] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_L] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_M] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_N] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_O] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_P] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_Q] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_R] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_S] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_T] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_U] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_V] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_W] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_X] = OLD_UNOWN_SPECIES_INFO,
-
-    [SPECIES_OLD_UNOWN_Y] = OLD_UNOWN_SPECIES_INFO,
-
+	
     [SPECIES_TREECKO] =
     {
         .baseHP        = 40,
@@ -10103,6 +10055,36 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .bodyColor = BODY_COLOR_BLACK,
         .noFlip = FALSE,
     },
+	
+	[SPECIES_MAWILE_EX] =
+    {
+        .baseHP        = 50,
+        .baseAttack    = 85,
+        .baseDefense   = 85,
+        .baseSpeed     = 50,
+        .baseSpAttack  = 85,
+        .baseSpDefense = 55,
+        .types = { TYPE_STEEL, TYPE_DARK },
+        .catchRate = 45,
+        .expYield = 98,
+        .evYield_HP        = 0,
+        .evYield_Attack    = 1,
+        .evYield_Defense   = 1,
+        .evYield_Speed     = 0,
+        .evYield_SpAttack  = 0,
+        .evYield_SpDefense = 0,
+        .itemCommon = ITEM_METAL_COAT,
+        .itemRare   = ITEM_SALAC_BERRY,
+        .genderRatio = PERCENT_FEMALE(50),
+        .eggCycles = 20,
+        .friendship = STANDARD_FRIENDSHIP,
+        .growthRate = GROWTH_FAST,
+        .eggGroups = { EGG_GROUP_FIELD, EGG_GROUP_FAIRY },
+        .abilities = {ABILITY_HUGE_POWER_EX, ABILITY_HUGE_POWER_EX},
+        .safariZoneFleeRate = 0,
+        .bodyColor = BODY_COLOR_BLACK,
+        .noFlip = TRUE,
+    },
 
     [SPECIES_MEDITITE] =
     {
@@ -10848,7 +10830,7 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .friendship = STANDARD_FRIENDSHIP,
         .growthRate = GROWTH_ERRATIC,
         .eggGroups = { EGG_GROUP_FIELD, EGG_GROUP_FIELD },
-        .abilities = {ABILITY_IMMUNITY, ABILITY_HUSTLE},
+        .abilities = {ABILITY_IMMUNITY, ABILITY_GUTS},
         .safariZoneFleeRate = 0,
         .bodyColor = BODY_COLOR_WHITE,
         .noFlip = TRUE,

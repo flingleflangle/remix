@@ -145,7 +145,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_VICE_GRIP] =
     {
-        .effect = EFFECT_HIT,
+        .effect = EFFECT_VICE_GRIP,
         .power = 55,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -2992,7 +2992,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SWEET_SCENT] =
     {
-        .effect = EFFECT_EVASION_DOWN,
+        .effect = EFFECT_SWEET_SCENT,
         .power = 0,
         .type = TYPE_NORMAL,
         .accuracy = 100,
@@ -3148,7 +3148,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CRUNCH] =
     {
-        .effect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+        .effect = EFFECT_CRUNCH,
         .power = 80,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -4071,7 +4071,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_FAKE_TEARS] =
     {
-        .effect = EFFECT_SPECIAL_DEFENSE_DOWN_2,
+        .effect = EFFECT_FAKE_TEARS,
         .power = 0,
         .type = TYPE_DARK,
         .accuracy = 100,

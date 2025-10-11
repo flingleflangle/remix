@@ -6290,78 +6290,6 @@ const union {
         .FLASH = TRUE,
     } },
 
-    [SPECIES_OLD_UNOWN_B] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_C] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_D] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_E] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_F] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_G] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_H] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_I] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_J] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_K] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_L] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_M] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_N] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_O] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_P] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_Q] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_R] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_S] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_T] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_U] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_V] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_W] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_X] = { .learnset = {
-    } },
-
-    [SPECIES_OLD_UNOWN_Y] = { .learnset = {
-    } },
-
     [SPECIES_TREECKO] = { .learnset = {
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
@@ -8213,6 +8141,40 @@ const union {
         .METEOR_MASH = TRUE,
         .BRICK_BREAK = TRUE,
         .DOUBLE_TEAM = TRUE,
+        .THUNDER_PUNCH = TRUE,
+        .SLUDGE_BOMB = TRUE,
+        .SANDSTORM = TRUE,
+        .FIRE_BLAST = TRUE,
+        .MUD_SLAP = TRUE,
+        .CURSE = TRUE,
+        .FACADE = TRUE,
+        .SECRET_POWER = TRUE,
+        .REST = TRUE,
+        .STRENGTH = TRUE,
+        .ROCK_SMASH = TRUE,
+    } },
+	
+	[SPECIES_MAWILE_EX] = { .learnset = {
+        .FOCUS_PUNCH = TRUE,
+        .TOXIC = TRUE,
+        .CALM_MIND = TRUE,
+        .SUNNY_DAY = TRUE,
+        .SWORDS_DANCE = TRUE,
+        .HYPER_BEAM = TRUE,
+        .CRUNCH = TRUE,
+        .SHADOW_BALL = TRUE,
+        .TOMBSTONER = TRUE,
+        .U_TURN = TRUE,
+        .ROCK_SLIDE = TRUE,
+        .ZAP_CANNON = TRUE,
+        .PROTECT = TRUE,
+        .RAIN_DANCE = TRUE,
+        .ICE_PUNCH = TRUE,
+        .SOLAR_BEAM = TRUE,
+        .METEOR_MASH = TRUE,
+        .BRICK_BREAK = TRUE,
+        .DOUBLE_TEAM = TRUE,
+        .FIRE_PUNCH = TRUE,
         .THUNDER_PUNCH = TRUE,
         .SLUDGE_BOMB = TRUE,
         .SANDSTORM = TRUE,
