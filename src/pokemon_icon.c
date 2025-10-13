@@ -6,7 +6,7 @@
 #include "sprite.h"
 #include "constants/pokemon_icon.h"
 
-#define INVALID_ICON_SPECIES SPECIES_OLD_UNOWN_J // Oddly specific, used when an icon should be a ?. Any of the 'old unown' would work
+#define INVALID_ICON_SPECIES SPECIES_PORYGON3 // Oddly specific, used when an icon should be a ?. Any of the 'old unown' would work
 
 struct MonIconSpriteTemplate
 {
@@ -278,6 +278,7 @@ const u8 *const gMonIconTable[] =
     [SPECIES_TREECKO] = gMonIcon_Treecko,
     [SPECIES_GROVYLE] = gMonIcon_Grovyle,
     [SPECIES_SCEPTILE] = gMonIcon_Sceptile,
+    [SPECIES_SCEPTILE_EX] = gMonIcon_Sceptile,
     [SPECIES_TORCHIC] = gMonIcon_Torchic,
     [SPECIES_COMBUSKEN] = gMonIcon_Combusken,
     [SPECIES_BLAZIKEN] = gMonIcon_Blaziken,
@@ -703,6 +704,7 @@ const u8 gMonIconPaletteIndices[] =
     [SPECIES_TREECKO] = 1,
     [SPECIES_GROVYLE] = 0,
     [SPECIES_SCEPTILE] = 1,
+    [SPECIES_SCEPTILE_EX] = 1,
     [SPECIES_TORCHIC] = 0,
     [SPECIES_COMBUSKEN] = 0,
     [SPECIES_BLAZIKEN] = 0,

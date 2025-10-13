@@ -1446,6 +1446,11 @@ FireSpinEffect:
 	return
 
 Move_FURY_CUTTER:
+	choosetwoturnanim FuryCutter, FuryCutterEX
+FuryCutterEX:
+	call EXMove
+	delay 4
+FuryCutter:
 	loadspritegfx ANIM_TAG_CUT
 	monbg ANIM_TARGET
 	setalpha 12, 8
@@ -1868,8 +1873,8 @@ Move_PAIN_SPLIT:
 
 Move_VICE_GRIP:
 	choosetwoturnanim ViceGrip, ViceGripEX
-ViceGripEnd:
-	end
+ViceGripEX:
+	call EXMove
 ViceGrip:
 	loadspritegfx ANIM_TAG_CUT
 	loadspritegfx ANIM_TAG_IMPACT
@@ -1884,23 +1889,7 @@ ViceGrip:
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_PARTNER
 	blendoff
-	goto ViceGripEnd
-ViceGripEX:
-	call EXMove
-	loadspritegfx ANIM_TAG_CUT
-	loadspritegfx ANIM_TAG_IMPACT
-	monbg ANIM_DEF_PARTNER
-	setalpha 12, 8
-	playsewithpan SE_M_VICEGRIP, SOUND_PAN_TARGET
-	createsprite gViceGripSpriteTemplate, ANIM_ATTACKER, 2, 0
-	createsprite gViceGripSpriteTemplate, ANIM_ATTACKER, 2, 1
-	delay 9
-	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 1, 0, 0, ANIM_TARGET, 2
-	createvisualtask AnimTask_ShakeMon2, 5, ANIM_TARGET, 2, 0, 5, 1
-	waitforvisualfinish
-	clearmonbg ANIM_DEF_PARTNER
-	blendoff
-	goto ViceGripEnd
+	end
 
 Move_GUILLOTINE:
 	loadspritegfx ANIM_TAG_CUT
@@ -2756,6 +2745,10 @@ Move_MEDITATE:
 	end
 
 Move_AGILITY:
+	choosetwoturnanim Agility, AgilityEX
+AgilityEX:
+	call EXMove
+Agility:
 	monbg ANIM_ATK_PARTNER
 	setalpha 12, 8
 	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 4, 4
@@ -4217,8 +4210,8 @@ Move_AROMATHERAPY:
 
 Move_FAKE_TEARS:
 	choosetwoturnanim FakeTears, FakeTearsEX
-FakeTearsEnd:
-	end
+FakeTearsEX:
+	call EXMove
 FakeTears:
 	loadspritegfx ANIM_TAG_SMALL_BUBBLES
 	loadspritegfx ANIM_TAG_THOUGHT_BUBBLE
@@ -4240,30 +4233,7 @@ FakeTears:
 	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 2
 	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 3
 	waitforvisualfinish
-	goto FakeTearsEnd
-FakeTearsEX:
-	call EXMove
-	loadspritegfx ANIM_TAG_SMALL_BUBBLES
-	loadspritegfx ANIM_TAG_THOUGHT_BUBBLE
-	loadspritegfx ANIM_TAG_MUSIC_NOTES
-	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_SMALL_BUBBLES, 0, 4, 4, RGB(12, 11, 31)
-	waitforvisualfinish
-	createvisualtask AnimTask_RockMonBackAndForth, 5, ANIM_ATTACKER, 2, 1
-	loopsewithpan SE_M_TAIL_WHIP, SOUND_PAN_ATTACKER, 12, 4
-	delay 8
-	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 0
-	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 1
-	delay 8
-	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 2
-	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 3
-	delay 8
-	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 0
-	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 1
-	delay 8
-	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 2
-	createsprite gTearDropSpriteTemplate, ANIM_ATTACKER, 2, 0, 3
-	waitforvisualfinish
-	goto FakeTearsEnd
+	end
 
 Move_AIR_CUTTER:
 	loadspritegfx ANIM_TAG_AIR_WAVE
@@ -4567,6 +4537,10 @@ Move_CALM_MIND:
 	end
 
 Move_LEAF_BLADE:
+	choosetwoturnanim LeafBlade, LeafBladeEX
+LeafBladeEX:
+	call EXMove
+LeafBlade:
 	loadspritegfx ANIM_TAG_LEAF
 	loadspritegfx ANIM_TAG_CROSS_IMPACT
 	createvisualtask AnimTask_LeafBlade, 5
@@ -8435,24 +8409,10 @@ MorningSunStar:
 
 Move_SWEET_SCENT:
 	choosetwoturnanim SweetScent, SweetScentEX
-SweetScentEnd: 
-	end
-SweetScent:
-	loadspritegfx ANIM_TAG_PINK_PETAL
-	playsewithpan SE_M_SWEET_SCENT, SOUND_PAN_ATTACKER
-	createsprite gSweetScentPetalSpriteTemplate, ANIM_ATTACKER, 2, 100, 0, 100
-	delay 25
-	setpan 0
-	call SweetScentEffect
-	createsprite gSweetScentPetalSpriteTemplate, ANIM_ATTACKER, 2, 55, 0
-	setpan SOUND_PAN_TARGET
-	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_DEF_SIDE, 1, 5, 5, 13, RGB(31, 21, 21)
-	call SweetScentEffect
-	waitforvisualfinish
-	end
 SweetScentEX:
 	call EXMove
 	delay 4
+SweetScent:
 	loadspritegfx ANIM_TAG_PINK_PETAL
 	playsewithpan SE_M_SWEET_SCENT, SOUND_PAN_ATTACKER
 	createsprite gSweetScentPetalSpriteTemplate, ANIM_ATTACKER, 2, 100, 0, 100
@@ -8746,28 +8706,23 @@ Move_MUDDY_WATER:
 	end
 
 Move_BULLET_SEED:
+	choosetwoturnanim BulletSeed, BulletSeedEX
+BulletSeedEX:
+	call EXMove
+BulletSeed:
 	loadspritegfx ANIM_TAG_SEED
 	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
+	delay 3
 	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
+	delay 3
 	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
+	delay 3
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 30, 1
 	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
+	delay 3
 	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
+	delay 3
 	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
-	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
-	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
-	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	delay 5
-	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
-	waitforvisualfinish
 	end
 
 Move_DRAGON_CLAW:

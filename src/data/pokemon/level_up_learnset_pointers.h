@@ -255,6 +255,7 @@ const u16 *const gLevelUpLearnsets[NUM_SPECIES] =
     [SPECIES_TREECKO] = sTreeckoLevelUpLearnset,
     [SPECIES_GROVYLE] = sGrovyleLevelUpLearnset,
     [SPECIES_SCEPTILE] = sSceptileLevelUpLearnset,
+    [SPECIES_SCEPTILE_EX] = sSceptileLevelUpLearnset,
     [SPECIES_TORCHIC] = sTorchicLevelUpLearnset,
     [SPECIES_COMBUSKEN] = sCombuskenLevelUpLearnset,
     [SPECIES_BLAZIKEN] = sBlazikenLevelUpLearnset,

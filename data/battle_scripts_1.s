@@ -261,6 +261,9 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectSweetScent             @ EFFECT_SWEET_SCENT
 	.4byte BattleScript_EffectViceGrip               @ EFFECT_VICE_GRIP
 	.4byte BattleScript_EffectFakeTears              @ EFFECT_FAKE_TEARS
+	.4byte BattleScript_EffectLeafBlade              @ EFFECT_LEAF_BLADE
+	.4byte BattleScript_EffectAgility                @ EFFECT_AGILITY
+	.4byte BattleScript_EffectBulletSeed             @ EFFECT_BULLET_SEED
 	
 
 BattleScript_EffectHit::
@@ -689,10 +692,15 @@ BattleScript_DoMultiHit::
 	addbyte sMULTIHIT_STRING + 4, 1
 	moveendto MOVEEND_NEXT_TARGET
 	jumpifbyte CMP_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_FOE_ENDURED, BattleScript_MultiHitPrintStrings
+	jumpifmove MOVE_BULLET_SEED, BattleScript_MultiHitAnimFix
 	decrementmultihit BattleScript_MultiHitLoop
 	goto BattleScript_MultiHitPrintStrings
 BattleScript_MultiHitNoMoreHits::
 	pause B_WAIT_TIME_SHORT
+BattleScript_MultiHitAnimFix::
+	setbyte sB_ANIM_TURN, 0
+	decrementmultihit BattleScript_MultiHitLoop
+	goto BattleScript_MultiHitPrintStrings
 BattleScript_MultiHitPrintStrings::
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
@@ -706,6 +714,7 @@ BattleScript_MultiHitEnd::
 	moveendcase MOVEEND_SYNCHRONIZE_TARGET
 	moveendfrom MOVEEND_IMMUNITY_ABILITIES
 	end
+
 
 BattleScript_EffectConversion::
 	attackcanceler
@@ -1557,6 +1566,113 @@ BattleScript_FakeTearsUp::
 BattleScript_FakeTearsEnd::
 	goto BattleScript_MoveEnd
 
+BattleScript_EffectLeafBlade::
+	jumpifability BS_ATTACKER, ABILITY_LIGHTNING_ROD_EX, BattleScript_EffectLeafBladeEX
+	goto BattleScript_EffectHit
+BattleScript_EffectLeafBladeEX::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	setbyte sB_ANIM_TURN, 1
+	bicbyte gMoveResultFlags, MOVE_RESULT_NOT_VERY_EFFECTIVE
+	goto BattleScript_HitFromAtkAnimation
+
+BattleScript_EffectAgility:
+	jumpifability BS_ATTACKER, ABILITY_LIGHTNING_ROD_EX, BattleScript_EffectAgilityEX
+	goto BattleScript_EffectSpeedUp2
+BattleScript_EffectAgilityEX:
+	setbyte sB_ANIM_TURN, 1
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPEED, MAX_STAT_STAGE, BattleScript_AgilityDoMoveAnim
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_ACC, MAX_STAT_STAGE, BattleScript_CantRaiseMultipleStats
+BattleScript_AgilityDoMoveAnim::
+	attackanimation
+	waitanimation
+	setbyte sSTAT_ANIM_PLAYED, FALSE
+	playstatchangeanimation BS_ATTACKER, BIT_ATK | BIT_DEF, 0
+	setstatchanger STAT_SPEED, 2, FALSE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_AgilityTryAcc
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_AgilityTryAcc
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_AgilityTryAcc::
+	setstatchanger STAT_ACC, 1, FALSE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_AgilityEnd
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_AgilityEnd
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_AgilityEnd::
+	goto BattleScript_MoveEnd
+
+
+BattleScript_EffectBulletSeed::
+	jumpifability BS_ATTACKER, ABILITY_LIGHTNING_ROD_EX, BattleScript_EffectBulletSeedEX
+	goto BattleScript_EffectMultiHit
+BattleScript_EffectBulletSeedEX::
+	setbyte sDMG_MULTIPLIER, 2
+	setbyte sB_ANIM_TURN, 1
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	setmultihitcounter 4
+	initmultihitstring
+	setbyte sMULTIHIT_EFFECT, 0
+BattleScript_BulletSeedLoop::
+	jumpifhasnohp BS_ATTACKER, BattleScript_BulletSeedEnd
+	jumpifhasnohp BS_TARGET, BattleScript_BulletSeedPrintStrings
+	jumpifhalfword CMP_EQUAL, gChosenMove, MOVE_SLEEP_TALK, BattleScript_DoBulletSeed
+	jumpifstatus BS_ATTACKER, STATUS1_SLEEP, BattleScript_BulletSeedPrintStrings
+BattleScript_DoBulletSeed::
+	movevaluescleanup
+	copybyte cEFFECT_CHOOSER, sMULTIHIT_EFFECT
+	critcalc
+	damagecalc
+	typecalc
+	jumpifmovehadnoeffect BattleScript_BulletSeedNoMoreHits
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
+	addbyte sMULTIHIT_STRING + 4, 1
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifbyte CMP_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_FOE_ENDURED, BattleScript_BulletSeedPrintStrings
+	setbyte sB_ANIM_TURN, 0
+	decrementmultihit BattleScript_BulletSeedLoop
+	goto BattleScript_BulletSeedPrintStrings
+BattleScript_BulletSeedNoMoreHits::
+	pause B_WAIT_TIME_SHORT
+BattleScript_BulletSeedPrintStrings::
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	jumpifmovehadnoeffect BattleScript_BulletSeedEnd
+	copyarray gBattleTextBuff1, sMULTIHIT_STRING, 6
+	printstring STRINGID_HITXTIMES
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_BulletSeedEnd::
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	setseeded
+	printfromtable gLeechSeedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	moveendcase MOVEEND_SYNCHRONIZE_TARGET
+	moveendfrom MOVEEND_IMMUNITY_ABILITIES
+	end
+
+
 BattleScript_EffectConfuse::
 	attackcanceler
 	attackstring
@@ -2327,6 +2443,12 @@ BattleScript_FuryCutterHit::
 	typecalc
 	jumpifmovehadnoeffect BattleScript_FuryCutterHit
 	adjustnormaldamage
+	jumpifability BS_ATTACKER, ABILITY_LIGHTNING_ROD_EX, BattleScript_EffectFuryCutterEX
+	goto BattleScript_HitFromAtkAnimation
+BattleScript_EffectFuryCutterEX:
+	setbyte sB_ANIM_TURN, 1
+	setbyte sDMG_MULTIPLIER, 3
+	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectAttract::

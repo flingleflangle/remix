@@ -254,6 +254,7 @@ const u16 gSpeciesIdToCryId[] =
     [SPECIES_TREECKO - 1] = 273,
     [SPECIES_GROVYLE - 1] = 274,
     [SPECIES_SCEPTILE - 1] = 275,
+    [SPECIES_SCEPTILE_EX - 1] = 275,
     [SPECIES_TORCHIC - 1] = 270,
     [SPECIES_COMBUSKEN - 1] = 271,
     [SPECIES_BLAZIKEN - 1] = 272,

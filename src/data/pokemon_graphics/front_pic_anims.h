@@ -5553,6 +5553,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_TREECKO]     = sAnims_Treecko,
     [SPECIES_GROVYLE]     = sAnims_Grovyle,
     [SPECIES_SCEPTILE]    = sAnims_Sceptile,
+    [SPECIES_SCEPTILE_EX] = sAnims_Sceptile,
     [SPECIES_TORCHIC]     = sAnims_Torchic,
     [SPECIES_COMBUSKEN]   = sAnims_Combusken,
     [SPECIES_BLAZIKEN]    = sAnims_Blaziken,

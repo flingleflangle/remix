@@ -1263,7 +1263,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_AGILITY] =
     {
-        .effect = EFFECT_SPEED_UP_2,
+        .effect = EFFECT_AGILITY,
         .power = 0,
         .type = TYPE_PSYCHIC,
         .accuracy = 0,
@@ -2737,7 +2737,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .type = TYPE_BUG,
         .accuracy = 95,
         .pp = 20,
-        .secondaryEffectChance = 0,
+        .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
@@ -4258,7 +4258,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .type = TYPE_FIGHTING,
         .accuracy = 90,
         .pp = 15,
-        .secondaryEffectChance = 0,
+        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
@@ -4305,7 +4305,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_BULLET_SEED] =
     {
-        .effect = EFFECT_MULTI_HIT,
+        .effect = EFFECT_BULLET_SEED,
         .power = 10,
         .type = TYPE_GRASS,
         .accuracy = 100,
@@ -4526,7 +4526,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_LEAF_BLADE] =
     {
-        .effect = EFFECT_HIGH_CRITICAL,
+        .effect = EFFECT_LEAF_BLADE,
         .power = 70,
         .type = TYPE_GRASS,
         .accuracy = 100,
