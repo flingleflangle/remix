@@ -1187,6 +1187,8 @@ SECTIONS {
         sound/songs/midi/mus_rg_slow_pallet.o(.rodata);
         sound/songs/midi/mus_rg_teachy_tv_menu.o(.rodata);
         sound/songs/midi/mus_t_marionette.o(.rodata);
+        sound/songs/midi/mus_t_drill_missile.o(.rodata);
+        sound/songs/midi/mus_t_third_gear.o(.rodata);
         sound/songs/midi/ph_trap_blend.o(.rodata);
         sound/songs/midi/ph_trap_held.o(.rodata);
         sound/songs/midi/ph_trap_solo.o(.rodata);

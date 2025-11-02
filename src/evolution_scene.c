@@ -805,7 +805,7 @@ static void Task_EvolutionScene(u8 taskId)
                 if (!(gTasks[taskId].tBits & TASK_BIT_LEARN_MOVE))
                 {
                     StopMapMusic();
-                    if (gMain.inBattle && gBattleOutcome == 0) PlayBattleBGM(); // If battle is still ongoing, replay battle music
+                    if (gMain.inBattle && gBattleOutcome == 0) PlayNewMapMusic(MUS_RG_TITLE); // If battle is still ongoing, replay battle music
                     else Overworld_PlaySpecialMapMusic();
                 }
 
