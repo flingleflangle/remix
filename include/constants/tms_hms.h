@@ -4,7 +4,7 @@
 #define FOREACH_TM(F) \
     F(FOCUS_PUNCH) \
     F(DRAGON_CLAW) \
-    F(BUBBLE_BEAM) \
+    F(WATER_PULSE) \
     F(CALM_MIND) \
     F(MUDDY_WATER) \
     F(TOXIC) \
@@ -14,7 +14,7 @@
     F(BLAZE_KICK) \
     F(SUNNY_DAY) \
     F(U_TURN) \
-    F(ICE_PUNCH) \
+    F(ICE_BEAM) \
     F(BLIZZARD) \
     F(HYPER_BEAM) \
     F(LIGHT_SCREEN) \
@@ -35,8 +35,8 @@
     F(BRICK_BREAK) \
     F(DOUBLE_TEAM) \
     F(REFLECT) \
-    F(THUNDER_PUNCH) \
-    F(FIRE_PUNCH) \
+    F(SHOCK_WAVE) \
+    F(FLAMETHROWER) \
     F(SLUDGE_BOMB) \
     F(SANDSTORM) \
     F(FIRE_BLAST) \
@@ -52,7 +52,11 @@
     F(REVERSAL) \
     F(CRUNCH) \
     F(OVERHEAT) \
-    F(TRI_ATTACK) 
+    F(TRI_ATTACK) \
+    F(THUNDER_PUNCH) \
+    F(ICE_PUNCH) \
+    F(FIRE_PUNCH) \
+    F(FREEZE_RAY) \
 
 #define FOREACH_HM(F) \
     F(CUT) \

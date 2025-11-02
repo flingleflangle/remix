@@ -3567,7 +3567,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_BUBBLE_BEAM] =
+    [ITEM_TM_WATER_PULSE] =
     {
         .name = _("TM03"),
         .itemId = ITEM_TM03,
@@ -3677,7 +3677,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_ICE_PUNCH] =
+    [ITEM_TM_ICE_BEAM] =
     {
         .name = _("TM13"),
         .itemId = ITEM_TM13,
@@ -3908,7 +3908,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_THUNDER_PUNCH] =
+    [ITEM_TM_SHOCK_WAVE] =
     {
         .name = _("TM34"),
         .itemId = ITEM_TM34,
@@ -3919,7 +3919,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_FIRE_PUNCH] =
+    [ITEM_TM_FLAMETHROWER] =
     {
         .name = _("TM35"),
         .itemId = ITEM_TM35,
@@ -4101,6 +4101,50 @@ const struct Item gItems[] =
         .itemId = ITEM_TM51,
         .price = 3000,
         .description = sTM51Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_THUNDER_PUNCH] =
+    {
+        .name = _("TM52"),
+        .itemId = ITEM_TM52,
+        .price = 3000,
+        .description = sTM52Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_ICE_PUNCH] =
+    {
+        .name = _("TM53"),
+        .itemId = ITEM_TM53,
+        .price = 3000,
+        .description = sTM53Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_FIRE_PUNCH] =
+    {
+        .name = _("TM54"),
+        .itemId = ITEM_TM54,
+        .price = 3000,
+        .description = sTM54Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_FREEZE_RAY] =
+    {
+        .name = _("TM55"),
+        .itemId = ITEM_TM55,
+        .price = 3000,
+        .description = sTM55Desc,
         .pocket = POCKET_TM_HM,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,

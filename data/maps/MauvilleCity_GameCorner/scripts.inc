@@ -259,8 +259,8 @@ MauvilleCity_GameCorner_EventScript_TMPsychic::
 
 MauvilleCity_GameCorner_EventScript_TMFlamethrower::
 	setvar VAR_TEMP_1, 3
-	bufferitemname STR_VAR_1, ITEM_TM_FIRE_PUNCH
-	setvar VAR_0x8004, ITEM_TM_FIRE_PUNCH
+	bufferitemname STR_VAR_1, ITEM_TM_FLAMETHROWER
+	setvar VAR_0x8004, ITEM_TM_FLAMETHROWER
 	goto MauvilleCity_GameCorner_EventScript_ConfirmTMPrize
 
 MauvilleCity_GameCorner_EventScript_TMThunderbolt::
@@ -271,8 +271,8 @@ MauvilleCity_GameCorner_EventScript_TMThunderbolt::
 
 MauvilleCity_GameCorner_EventScript_TMIceBeam::
 	setvar VAR_TEMP_1, 5
-	bufferitemname STR_VAR_1, ITEM_TM_ICE_PUNCH
-	setvar VAR_0x8004, ITEM_TM_ICE_PUNCH
+	bufferitemname STR_VAR_1, ITEM_TM_ICE_BEAM
+	setvar VAR_0x8004, ITEM_TM_ICE_BEAM
 	goto MauvilleCity_GameCorner_EventScript_ConfirmTMPrize
 
 MauvilleCity_GameCorner_EventScript_ConfirmTMPrize::
@@ -316,10 +316,10 @@ MauvilleCity_GameCorner_EventScript_BuyTMPsychic::
 MauvilleCity_GameCorner_EventScript_BuyTMFlamethrower::
 	checkcoins VAR_TEMP_2
 	goto_if_lt VAR_TEMP_2, TM_FLAMETHROWER_COINS, MauvilleCity_GameCorner_EventScript_NotEnoughCoinsForTM
-	checkitemspace ITEM_TM_FIRE_PUNCH
+	checkitemspace ITEM_TM_FLAMETHROWER
 	goto_if_eq VAR_RESULT, FALSE, MauvilleCity_GameCorner_EventScript_NoRoomForTM
 	removecoins TM_FLAMETHROWER_COINS
-	additem ITEM_TM_FIRE_PUNCH
+	additem ITEM_TM_FLAMETHROWER
 	updatecoinsbox 1, 1
 	playse SE_SHOP
 	msgbox MauvilleCity_GameCorner_Text_HereYouGo, MSGBOX_DEFAULT
@@ -342,10 +342,10 @@ MauvilleCity_GameCorner_EventScript_BuyTMThunderbolt::
 MauvilleCity_GameCorner_EventScript_BuyTMIceBeam::
 	checkcoins VAR_TEMP_2
 	goto_if_lt VAR_TEMP_2, TM_ICE_BEAM_COINS, MauvilleCity_GameCorner_EventScript_NotEnoughCoinsForTM
-	checkitemspace ITEM_TM_ICE_PUNCH
+	checkitemspace ITEM_TM_ICE_BEAM
 	goto_if_eq VAR_RESULT, FALSE, MauvilleCity_GameCorner_EventScript_NoRoomForTM
 	removecoins TM_ICE_BEAM_COINS
-	additem ITEM_TM_ICE_PUNCH
+	additem ITEM_TM_ICE_BEAM
 	updatecoinsbox 1, 1
 	playse SE_SHOP
 	msgbox MauvilleCity_GameCorner_Text_HereYouGo, MSGBOX_DEFAULT

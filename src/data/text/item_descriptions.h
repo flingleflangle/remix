@@ -1184,9 +1184,9 @@ static const u8 sTM02Desc[] = _(
     "sharp claws.");
 
 static const u8 sTM03Desc[] = _(
-    "Forcefully sprays\n"
-    "bubbles that may\n"
-    "lower SPEED.");
+    "Generates an\n"
+    "ultrasonic wave\n"
+    "that may confuse.");
 
 static const u8 sTM04Desc[] = _(
     "Raises SP. ATK and\n"
@@ -1234,9 +1234,9 @@ static const u8 sTM12Desc[] = _(
     "waiting party.");
 
 static const u8 sTM13Desc[] = _(
-    "An icy punch\n"
-    "that may freeze\n"
-    "the target.");
+    "Fires an icy cold\n"
+    "beam that may\n"
+    "freeze the foe.");
 
 static const u8 sTM14Desc[] = _(
     "A brutal snow-and-\n"
@@ -1339,14 +1339,14 @@ static const u8 sTM33Desc[] = _(
     "physical attacks.");
 
 static const u8 sTM34Desc[] = _(
-    "An electric punch\n"
-    "that may paralyze\n"
-    "the target.");
+    "Zaps the foe with a\n"
+    "jolt of electricity\n"
+    "that never misses.");
 
 static const u8 sTM35Desc[] = _(
-    "A firey punch\n"
-    "that may burn\n"
-    "the target.");
+    "Looses a stream of\n"
+    "fire that may burn\n"
+    "the foe.");
 
 static const u8 sTM36Desc[] = _(
     "Hurls sludge at the\n"
@@ -1428,6 +1428,25 @@ static const u8 sTM51Desc[] = _(
     "that may paralyze,\n"
     "burn, or freeze.");
 
+static const u8 sTM52Desc[] = _(
+    "An electric punch\n"
+    "that may paralyze\n"
+    "the target.");
+
+static const u8 sTM53Desc[] = _(
+    "An icy punch\n"
+    "that may freeze\n"
+    "the target.");
+
+static const u8 sTM54Desc[] = _(
+    "A firey punch\n"
+    "that may burn\n"
+    "the target.");
+
+static const u8 sTM55Desc[] = _(
+    "A chilling ray\n"
+    "that encases the\n"
+    "foe in ice.");
 
 static const u8 sHM01Desc[] = _(
     "Attacks the foe\n"
