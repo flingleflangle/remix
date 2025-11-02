@@ -51,7 +51,8 @@
     F(ROCK_SLIDE) \
     F(REVERSAL) \
     F(CRUNCH) \
-    F(OVERHEAT)
+    F(OVERHEAT) \
+    F(TRI_ATTACK) 
 
 #define FOREACH_HM(F) \
     F(CUT) \

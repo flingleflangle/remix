@@ -1423,6 +1423,11 @@ static const u8 sTM50Desc[] = _(
     "attack, but sharply\n"
     "lowers SP. ATK.");
 
+static const u8 sTM51Desc[] = _(
+    "A triangular beam\n"
+    "that may paralyze,\n"
+    "burn, or freeze.");
+
 
 static const u8 sHM01Desc[] = _(
     "Attacks the foe\n"

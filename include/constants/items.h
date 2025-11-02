@@ -253,6 +253,8 @@
 #define ITEM_METAL_POWDER 223
 #define ITEM_THICK_CLUB 224
 #define ITEM_STICK 225
+
+// Extra TMs
 #define ITEM_0E2 226
 #define ITEM_0E3 227
 #define ITEM_0E4 228
@@ -372,52 +374,81 @@
 #define ITEM_TM48 336
 #define ITEM_TM49 337
 #define ITEM_TM50 338
-#define ITEM_HM01 339
-#define ITEM_HM02 340
-#define ITEM_HM03 341
-#define ITEM_HM04 342
-#define ITEM_HM05 343
-#define ITEM_HM06 344
-#define ITEM_HM07 345
-#define ITEM_HM08 346
+#define ITEM_TM51 339
+#define ITEM_TM52 340
+#define ITEM_TM53 341
+#define ITEM_TM54 342
+#define ITEM_TM55 343
+#define ITEM_TM56 344
+#define ITEM_TM57 345
+#define ITEM_TM58 346
+#define ITEM_TM59 347
+#define ITEM_TM60 348
+#define ITEM_TM61 349
+#define ITEM_TM62 350
+#define ITEM_TM63 351
+#define ITEM_TM64 352
+#define ITEM_TM65 353
+#define ITEM_TM66 354
+#define ITEM_TM67 355
+#define ITEM_TM68 356
+#define ITEM_TM69 357
+#define ITEM_TM70 358
+#define ITEM_TM71 359
+#define ITEM_TM72 360
+#define ITEM_TM73 361
+#define ITEM_TM74 362
+#define ITEM_TM75 363
+#define ITEM_TM76 364
+#define ITEM_TM77 365
+#define ITEM_TM78 366
+#define ITEM_TM79 367
+#define ITEM_TM80 368
+#define ITEM_HM01 369
+#define ITEM_HM02 370
+#define ITEM_HM03 371
+#define ITEM_HM04 372
+#define ITEM_HM05 373
+#define ITEM_HM06 374
+#define ITEM_HM07 375
+#define ITEM_HM08 376
 
 // Unknown
-#define ITEM_15B 347
-#define ITEM_15C 348
+#define ITEM_15C 377
 
 // FireRed/LeafGreen
-#define ITEM_OAKS_PARCEL 349
-#define ITEM_POKE_FLUTE 350
-#define ITEM_SECRET_KEY 351
-#define ITEM_BIKE_VOUCHER 352
-#define ITEM_GOLD_TEETH 353
-#define ITEM_OLD_AMBER 354
-#define ITEM_CARD_KEY 355
-#define ITEM_LIFT_KEY 356
-#define ITEM_HELIX_FOSSIL 357
-#define ITEM_DOME_FOSSIL 358
-#define ITEM_SILPH_SCOPE 359
-#define ITEM_BICYCLE 360
-#define ITEM_TOWN_MAP 361
-#define ITEM_VS_SEEKER 362
-#define ITEM_FAME_CHECKER 363
-#define ITEM_TM_CASE 364
-#define ITEM_BERRY_POUCH 365
-#define ITEM_TEACHY_TV 366
-#define ITEM_TRI_PASS 367
-#define ITEM_RAINBOW_PASS 368
-#define ITEM_TEA 369
-#define ITEM_MYSTIC_TICKET 370
-#define ITEM_AURORA_TICKET 371
-#define ITEM_POWDER_JAR 372
-#define ITEM_RUBY 373
-#define ITEM_SAPPHIRE 374
+#define ITEM_OAKS_PARCEL 378
+#define ITEM_POKE_FLUTE 379
+#define ITEM_SECRET_KEY 380
+#define ITEM_BIKE_VOUCHER 381
+#define ITEM_GOLD_TEETH 382
+#define ITEM_OLD_AMBER 383
+#define ITEM_CARD_KEY 384
+#define ITEM_LIFT_KEY 385
+#define ITEM_HELIX_FOSSIL 386
+#define ITEM_DOME_FOSSIL 387
+#define ITEM_SILPH_SCOPE 388
+#define ITEM_BICYCLE 389
+#define ITEM_TOWN_MAP 390
+#define ITEM_VS_SEEKER 391
+#define ITEM_FAME_CHECKER 392
+#define ITEM_TM_CASE 393
+#define ITEM_BERRY_POUCH 394
+#define ITEM_TEACHY_TV 395
+#define ITEM_TRI_PASS 396
+#define ITEM_RAINBOW_PASS 397
+#define ITEM_TEA 398
+#define ITEM_MYSTIC_TICKET 399
+#define ITEM_AURORA_TICKET 400
+#define ITEM_POWDER_JAR 401
+#define ITEM_RUBY 402
+#define ITEM_SAPPHIRE 403
 
 // Emerald
-#define ITEM_MAGMA_EMBLEM 375
-#define ITEM_OLD_SEA_MAP 376
+#define ITEM_MAGMA_EMBLEM 404
+#define ITEM_OLD_SEA_MAP 405
 
-#define ITEMS_COUNT 377
+#define ITEMS_COUNT 406
 
 // A special item id associated with "Cancel"/"Exit" etc. in a list of items or decorations
 // Its icon is defined at ITEMS_COUNT as the "return to field" arrow
@@ -445,7 +476,7 @@
 #define ITEM_TO_MAIL(itemId) ((itemId) - FIRST_MAIL_INDEX)
 #define MAIL_NONE 0xFF
 
-#define NUM_TECHNICAL_MACHINES 50
+#define NUM_TECHNICAL_MACHINES 80
 #define NUM_HIDDEN_MACHINES     8
 
 #define MAX_BAG_ITEM_CAPACITY  99
