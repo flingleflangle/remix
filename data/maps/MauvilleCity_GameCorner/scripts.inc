@@ -265,8 +265,8 @@ MauvilleCity_GameCorner_EventScript_TMFlamethrower::
 
 MauvilleCity_GameCorner_EventScript_TMThunderbolt::
 	setvar VAR_TEMP_1, 4
-	bufferitemname STR_VAR_1, ITEM_TM_THUNDER_PUNCH
-	setvar VAR_0x8004, ITEM_TM_THUNDER_PUNCH
+	bufferitemname STR_VAR_1, ITEM_TM_THUNDERBOLT
+	setvar VAR_0x8004, ITEM_TM_THUNDERBOLT
 	goto MauvilleCity_GameCorner_EventScript_ConfirmTMPrize
 
 MauvilleCity_GameCorner_EventScript_TMIceBeam::
