@@ -6,14 +6,14 @@
     F(DRAGON_CLAW) \
     F(WATER_PULSE) \
     F(CALM_MIND) \
-    F(MUDDY_WATER) \
+    F(ROAR) \
     F(TOXIC) \
     F(HAIL) \
-    F(SWORDS_DANCE) \
-    F(LEECH_SEED) \
-    F(BLAZE_KICK) \
+    F(BULK_UP) \
+    F(BULLET_SEED) \
+    F(HIDDEN_POWER) \
     F(SUNNY_DAY) \
-    F(U_TURN) \
+    F(TAUNT) \
     F(ICE_BEAM) \
     F(BLIZZARD) \
     F(HYPER_BEAM) \
@@ -21,15 +21,15 @@
     F(PROTECT) \
     F(RAIN_DANCE) \
     F(GIGA_DRAIN) \
-    F(SELF_DESTRUCT) \
-    F(OUTRAGE) \
+    F(SAFEGUARD) \
+    F(FRUSTRATION) \
     F(SOLAR_BEAM) \
     F(IRON_TAIL) \
-    F(ZAP_CANNON) \
+    F(THUNDERBOLT) \
     F(THUNDER) \
     F(EARTHQUAKE) \
-    F(METEOR_MASH) \
-    F(TOMBSTONER) \
+    F(RETURN) \
+    F(DIG) \
     F(PSYCHIC) \
     F(SHADOW_BALL) \
     F(BRICK_BREAK) \
@@ -40,23 +40,48 @@
     F(SLUDGE_BOMB) \
     F(SANDSTORM) \
     F(FIRE_BLAST) \
-    F(MUD_SLAP) \
+    F(ROCK_TOMB) \
     F(AERIAL_ACE) \
-    F(CURSE) \
+    F(TORMENT) \
     F(FACADE) \
     F(SECRET_POWER) \
     F(REST) \
-    F(LEAF_BLADE) \
+    F(ATTRACT) \
     F(THIEF) \
-    F(ROCK_SLIDE) \
-    F(REVERSAL) \
-    F(CRUNCH) \
+    F(STEEL_WING) \
+    F(SKILL_SWAP) \
+    F(SNATCH) \
     F(OVERHEAT) \
     F(TRI_ATTACK) \
     F(THUNDER_PUNCH) \
     F(ICE_PUNCH) \
     F(FIRE_PUNCH) \
     F(FREEZE_RAY) \
+    F(WILL_O_WISP) \
+    F(PSYBEAM) \
+    F(MAGICAL_LEAF) \
+    F(TOMBSTONER) \
+    F(DRAGON_LASH) \
+    F(LEECH_SEED) \
+    F(ROCK_SLIDE) \
+    F(GEYSER) \
+    F(U_TURN) \
+    F(MUD_SLAP) \
+    F(METEOR_MASH) \
+    F(ZAP_CANNON) \
+    F(OUTRAGE) \
+    F(LEAF_BLADE) \
+    F(MUDDY_WATER) \
+    F(BLAZE_KICK) \
+    F(CRUNCH) \
+    F(VENOM_FANG) \
+    F(CURSE) \
+    F(REVERSAL) \
+    F(EXTREME_SPEED) \
+    F(SHADOW_PUNCH) \
+    F(SELF_DESTRUCT) \
+    F(WEATHER_BALL) \
+    F(FISSURE) \
 
 #define FOREACH_HM(F) \
     F(CUT) \

@@ -29,9 +29,10 @@ LilycoveCity_DepartmentStore_4F_Pokemart_AttackTMs:
 	.2byte ITEM_TM_THUNDER
 	.2byte ITEM_TM_BLIZZARD
 	.2byte ITEM_TM_HYPER_BEAM
+	.2byte ITEM_TM_TOMBSTONER
 	.2byte ITEM_TM_OUTRAGE
 	.2byte ITEM_TM_SELF_DESTRUCT
-	.2byte ITEM_TM_TOMBSTONER
+	.2byte ITEM_TM_FISSURE
 	.2byte ITEM_FLARE_CRYSTAL
 	.2byte ITEM_AQUA_CRYSTAL
 	.2byte ITEM_LAND_CRYSTAL
@@ -53,6 +54,7 @@ LilycoveCity_DepartmentStore_4F_Pokemart_DefenseTMs:
 	.2byte ITEM_TM_PROTECT
 	.2byte ITEM_TM_REFLECT
 	.2byte ITEM_TM_LIGHT_SCREEN
+	.2byte ITEM_TM_SAFEGUARD
 	.2byte ITEM_TM_DOUBLE_TEAM
 	.2byte ITEM_TM_CURSE
 	.2byte ITEM_TM_U_TURN
