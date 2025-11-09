@@ -231,6 +231,19 @@ static const u16 sNewGamePCItems[][2] =
     { ITEM_LUCKY_EGG, 1 },
     { ITEM_TM01, 2 },
     { ITEM_TM80, 1 },
+    { ITEM_TM81, 1 },
+    { ITEM_TM82, 1 },
+    { ITEM_TM83, 1 },
+    { ITEM_TM84, 1 },
+    { ITEM_TM85, 1 },
+    { ITEM_TM86, 1 },
+    { ITEM_TM87, 1 },
+    { ITEM_TM88, 1 },
+    { ITEM_TM89, 1 },
+    { ITEM_TM90, 1 },
+    { ITEM_TM91, 1 },
+    { ITEM_TM92, 1 },
+    { ITEM_HM01, 1 },
     { ITEM_NONE, 0 }
 };
 

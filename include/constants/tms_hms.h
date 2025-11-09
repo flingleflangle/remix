@@ -81,6 +81,18 @@
     F(SHADOW_PUNCH) \
     F(SELF_DESTRUCT) \
     F(WEATHER_BALL) \
+    F(SKULL_BASH) \
+    F(DRAGON_DANCE) \
+    F(CHISEL) \
+    F(LOW_KICK) \
+    F(TRICK) \
+    F(FOCUS_ENERGY) \
+    F(FLYING_KNEE) \
+    F(SILVER_WIND) \
+    F(NATURE_POWER) \
+    F(SUPERPOWER) \
+    F(PAIN_SPLIT) \
+    F(REVENGE) \
     F(FISSURE) \
 
 #define FOREACH_HM(F) \

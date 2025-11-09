@@ -1569,6 +1569,66 @@ static const u8 sTM79Desc[] = _(
     "with the weather.");
 
 static const u8 sTM80Desc[] = _(
+    "Tucks in the head,\n"
+    "then attacks on\n"
+    "the next turn.");
+
+static const u8 sTM81Desc[] = _(
+    "A mystical dance\n"
+    "that ups ATTACK\n"
+    "and SPEED.");
+
+static const u8 sTM82Desc[] = _(
+    "Carves out ice,\n"
+    "rock, and frost\n"
+    "for double damage.");
+
+static const u8 sTM83Desc[] = _(
+    "A kick that inflicts\n"
+    "more damage on\n"
+    "heavier foes.");
+
+static const u8 sTM84Desc[] = _(
+    "Tricks the foe\n"
+    "into trading\n"
+    "held items.");
+
+static const u8 sTM85Desc[] = _(
+    "Focuses power to\n"
+    "raise the\n"
+    "critical-hit ratio.");
+
+static const u8 sTM86Desc[] = _(
+    "Power is greatly\n"
+    "enhanced if used\n"
+    "on the 1st turn.");
+
+static const u8 sTM87Desc[] = _(
+    "A powdery attack\n"
+    "that may raise\n"
+    "all abilities.");
+
+static const u8 sTM88Desc[] = _(
+    "The type of attack\n"
+    "varies depending\n"
+    "on location.");
+
+static const u8 sTM89Desc[] = _(
+    "Boosts strength\n"
+    "sharply, but lowers\n"
+    "all abilities.");
+
+static const u8 sTM90Desc[] = _(
+    "Adds the user and\n"
+    "foe's HP, then\n"
+    "shares the total.");
+
+static const u8 sTM91Desc[] = _(
+    "An attack that\n"
+    "gains power if\n"
+    "injured by the foe.");
+
+static const u8 sTM92Desc[] = _(
     "A one-hit KO that\n"
     "drops the target\n"
     "in a fissure.");

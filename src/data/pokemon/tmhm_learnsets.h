@@ -672,6 +672,7 @@ const union {
 		.FIRE_PUNCH = TRUE,
         .MUD_SLAP = TRUE,
         .FACADE = TRUE,
+        .METEOR_MASH = TRUE,
         .SECRET_POWER = TRUE,
         .REST = TRUE,
         .SURF = TRUE,
@@ -707,6 +708,7 @@ const union {
         .MUD_SLAP = TRUE,
         .FACADE = TRUE,
         .SECRET_POWER = TRUE,
+        .METEOR_MASH = TRUE,
         .REST = TRUE,
         .THIEF = TRUE,
         .STRENGTH = TRUE,
@@ -6608,6 +6610,7 @@ const union {
         .CUT = TRUE,
         .STRENGTH = TRUE,
         .ROCK_SMASH = TRUE,
+        .FLY = TRUE,
     } },
 	
 	[SPECIES_GLISCOR] = { .learnset = {
@@ -6644,6 +6647,7 @@ const union {
         .CUT = TRUE,
         .STRENGTH = TRUE,
         .ROCK_SMASH = TRUE,
+        .FLY = TRUE,
     } },
 
     [SPECIES_SNUBBULL] = { .learnset = {

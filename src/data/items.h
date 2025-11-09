@@ -4414,12 +4414,144 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_FISSURE] =
+    [ITEM_TM_SKULL_BASH] =
     {
         .name = _("TM80"),
         .itemId = ITEM_TM80,
         .price = 3000,
         .description = sTM80Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_DRAGON_DANCE] =
+    {
+        .name = _("TM81"),
+        .itemId = ITEM_TM81,
+        .price = 3000,
+        .description = sTM81Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_CHISEL] =
+    {
+        .name = _("TM82"),
+        .itemId = ITEM_TM82,
+        .price = 3000,
+        .description = sTM82Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_LOW_KICK] =
+    {
+        .name = _("TM83"),
+        .itemId = ITEM_TM83,
+        .price = 3000,
+        .description = sTM83Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_TRICK] =
+    {
+        .name = _("TM84"),
+        .itemId = ITEM_TM84,
+        .price = 3000,
+        .description = sTM84Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_FOCUS_ENERGY] =
+    {
+        .name = _("TM85"),
+        .itemId = ITEM_TM85,
+        .price = 3000,
+        .description = sTM85Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_FLYING_KNEE] =
+    {
+        .name = _("TM86"),
+        .itemId = ITEM_TM86,
+        .price = 3000,
+        .description = sTM86Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_SILVER_WIND] =
+    {
+        .name = _("TM87"),
+        .itemId = ITEM_TM87,
+        .price = 3000,
+        .description = sTM87Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_NATURE_POWER] =
+    {
+        .name = _("TM88"),
+        .itemId = ITEM_TM88,
+        .price = 3000,
+        .description = sTM88Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_SUPERPOWER] =
+    {
+        .name = _("TM89"),
+        .itemId = ITEM_TM89,
+        .price = 3000,
+        .description = sTM89Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_PAIN_SPLIT] =
+    {
+        .name = _("TM90"),
+        .itemId = ITEM_TM90,
+        .price = 3000,
+        .description = sTM90Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_REVENGE] =
+    {
+        .name = _("TM91"),
+        .itemId = ITEM_TM91,
+        .price = 3000,
+        .description = sTM91Desc,
+        .pocket = POCKET_TM_HM,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_TMHM,
+    },
+
+    [ITEM_TM_FISSURE] =
+    {
+        .name = _("TM92"),
+        .itemId = ITEM_TM92,
+        .price = 3000,
+        .description = sTM92Desc,
         .pocket = POCKET_TM_HM,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
