@@ -93,7 +93,7 @@
     F(SUPERPOWER) \
     F(PAIN_SPLIT) \
     F(REVENGE) \
-    F(FISSURE) \
+    F(FISSURE) 
 
 #define FOREACH_HM(F) \
     F(CUT) \
