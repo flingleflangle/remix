@@ -1,6 +1,6 @@
 #include "global.h"
 #include "event_data.h"
-#include "rtc.h"
+#include "faketime.h"
 #include "time_events.h"
 #include "field_specials.h"
 #include "lottery_corner.h"
@@ -18,7 +18,7 @@ static void UpdatePerMinute(struct Time *localTime);
 static void InitTimeBasedEvents(void)
 {
     FlagSet(FLAG_SYS_CLOCK_SET);
-    RtcCalcLocalTime();
+    EnableResetRTC();
     gSaveBlock2Ptr->lastBerryTreeUpdate = gLocalTime;
     VarSet(VAR_DAYS, gLocalTime.days);
 }
@@ -27,7 +27,6 @@ void DoTimeBasedEvents(void)
 {
     if (FlagGet(FLAG_SYS_CLOCK_SET) && !InPokemonCenter())
     {
-        RtcCalcLocalTime();
         UpdatePerDay(&gLocalTime);
         UpdatePerMinute(&gLocalTime);
     }

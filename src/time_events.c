@@ -5,7 +5,7 @@
 #include "pokemon.h"
 #include "random.h"
 #include "overworld.h"
-#include "rtc.h"
+#include "faketime.h"
 #include "script.h"
 #include "task.h"
 
@@ -83,7 +83,6 @@ void UpdateShoalTideFlag(void)
 
     if (IsMapTypeOutdoors(GetLastUsedWarpMapType()))
     {
-        RtcCalcLocalTime();
         if (tide[gLocalTime.hours])
             FlagSet(FLAG_SYS_SHOAL_TIDE);
         else

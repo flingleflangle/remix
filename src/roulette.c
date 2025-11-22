@@ -16,7 +16,7 @@
 #include "palette_util.h"
 #include "random.h"
 #include "roulette.h"
-#include "rtc.h"
+#include "faketime.h"
 #include "scanline_effect.h"
 #include "script.h"
 #include "sound.h"
@@ -1154,7 +1154,6 @@ static void InitRouletteTableData(void)
             break;
         }
     }
-    RtcCalcLocalTime();
 }
 
 // Task data for the roulette game tasks, starting with Task_StartPlaying

@@ -27,7 +27,7 @@
 #include "pokemon_storage_system.h"
 #include "random.h"
 #include "recorded_battle.h"
-#include "rtc.h"
+#include "faketime.h"
 #include "sound.h"
 #include "string_util.h"
 #include "strings.h"
@@ -2830,7 +2830,8 @@ void CalculateMonStats(struct Pokemon *mon)
         {
             // BUG: currentHP is unintentionally able to become <= 0 after the instruction below. This causes the pomeg berry glitch.
             currentHP += newMaxHP - oldMaxHP;
-            #ifdef BUGFIX
+            // Don't fix the Pomeg Berry Glitch.
+            #ifdef BUGFIXNT
             if (currentHP <= 0)
                 currentHP = 1;
             #endif
@@ -5512,12 +5513,10 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_FRIENDSHIP_DAY:
-                RtcCalcLocalTime();
                 if (gLocalTime.hours >= DAY_EVO_HOUR_BEGIN && gLocalTime.hours < DAY_EVO_HOUR_END && friendship >= FRIENDSHIP_EVO_THRESHOLD)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_FRIENDSHIP_NIGHT:
-                RtcCalcLocalTime();
                 if (gLocalTime.hours >= NIGHT_EVO_HOUR_BEGIN && gLocalTime.hours < NIGHT_EVO_HOUR_END && friendship >= FRIENDSHIP_EVO_THRESHOLD)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
