@@ -856,12 +856,24 @@
 #define TRAINER_LEAF                        852
 #define TRAINER_BRENDAN_PLACEHOLDER         853
 #define TRAINER_MAY_PLACEHOLDER             854
+#define TRAINER_STAR_CRYSTAL	            855
+#define TRAINER_LAND_CRYSTAL	            856
+#define TRAINER_AQUA_CRYSTAL	            857
+#define TRAINER_FLARE_CRYSTAL	            858
+#define TRAINER_VOLT_CRYSTAL	            859
+#define TRAINER_POWER_CRYSTAL	            860
+#define TRAINER_MIND_CRYSTAL	            861
+#define TRAINER_SHADE_CRYSTAL	            862
+#define TRAINER_METAL_CRYSTAL	            863
+#define TRAINER_MAGMAR_MASTER	            864
+#define TRAINER_ELECTABUZZ_MASTER			865
+#define TRAINER_JYNX_MASTER					866
 
 // NOTE: Because each Trainer uses a flag to determine when they are defeated, there is only space for 9 additional trainers before trainer flag space overflows
 //       More space can be made by shifting flags around in constants/flags.h or changing how trainer flags are handled
 //       MAX_TRAINERS_COUNT can be increased but will take up additional saveblock space
 
-#define TRAINERS_COUNT                      855
-#define MAX_TRAINERS_COUNT                  864
+#define TRAINERS_COUNT                      867
+#define MAX_TRAINERS_COUNT                  1264
 
 #endif  // GUARD_CONSTANTS_OPPONENTS_H
