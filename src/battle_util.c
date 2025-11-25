@@ -3817,7 +3817,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     && gBattleMoves[gCurrentMove].flags & FLAG_KINGS_ROCK_AFFECTED
                     && gBattleMons[gBattlerTarget].hp)
                 {
-                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_TOXIC;
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
                     effect++;
@@ -3831,6 +3831,71 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     && gBattleMons[gBattlerTarget].hp)
                 {
                     gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    effect++;
+                }
+                break;
+            case HOLD_EFFECT_ATK_DOWN:
+                if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                    && TARGET_TURN_DAMAGED
+                    && (Random() % 100) < atkHoldEffectParam
+                    && gBattleMoves[gCurrentMove].flags & FLAG_KINGS_ROCK_AFFECTED
+                    && gBattleMons[gBattlerTarget].hp)
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_ATK_MINUS_1;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    effect++;
+                }
+                break;
+            case HOLD_EFFECT_DEF_DOWN:
+                if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                    && TARGET_TURN_DAMAGED
+                    && (Random() % 100) < atkHoldEffectParam
+                    && gBattleMoves[gCurrentMove].flags & FLAG_KINGS_ROCK_AFFECTED
+                    && gBattleMons[gBattlerTarget].hp)
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_DEF_MINUS_1;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    effect++;
+                }
+                break;
+            case HOLD_EFFECT_SP_ATK_DOWN:
+                if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                    && TARGET_TURN_DAMAGED
+                    && (Random() % 100) < atkHoldEffectParam
+                    && gBattleMoves[gCurrentMove].flags & FLAG_KINGS_ROCK_AFFECTED
+                    && gBattleMons[gBattlerTarget].hp)
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_SP_ATK_MINUS_1;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    effect++;
+                }
+                break;
+            case HOLD_EFFECT_SP_DEF_DOWN:
+                if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                    && TARGET_TURN_DAMAGED
+                    && (Random() % 100) < atkHoldEffectParam
+                    && gBattleMoves[gCurrentMove].flags & FLAG_KINGS_ROCK_AFFECTED
+                    && gBattleMons[gBattlerTarget].hp)
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_SP_DEF_MINUS_1;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    effect++;
+                }
+                break;
+            case HOLD_EFFECT_SPEED_DOWN:
+                if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                    && TARGET_TURN_DAMAGED
+                    && (Random() % 100) < atkHoldEffectParam
+                    && gBattleMoves[gCurrentMove].flags & FLAG_KINGS_ROCK_AFFECTED
+                    && gBattleMons[gBattlerTarget].hp)
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_SPD_MINUS_1;
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
                     effect++;
