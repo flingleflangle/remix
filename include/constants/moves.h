@@ -385,8 +385,9 @@
 #define MOVE_FLY_SWAT 381
 #define MOVE_AROUND_TOWN 382
 #define MOVE_HOSTAGE 383
+#define MOVE_AURA_SPHERE 384
 
-#define MOVES_COUNT 384
+#define MOVES_COUNT 385
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

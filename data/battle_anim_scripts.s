@@ -399,6 +399,8 @@ gBattleAnims_Moves::
 	.4byte Move_REVOLVER
 	.4byte Move_FLY_SWAT
 	.4byte Move_AROUND_TOWN
+	.4byte Move_HOSTAGE
+	.4byte Move_AURA_SPHERE
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -10652,6 +10654,44 @@ Move_AROUND_TOWN:
 	createsprite gBatonPassPokeballSpriteTemplate, ANIM_ATTACKER, 2
 	clearmonbg ANIM_TARGET
 	blendoff
+	end
+
+Move_HOSTAGE:
+Move_AURA_SPHERE:
+	loadspritegfx ANIM_TAG_IMPACT_2
+	loadspritegfx ANIM_TAG_LEER
+	monbg ANIM_ATK_PARTNER
+	splitbgprio ANIM_ATTACKER
+	setalpha 12, 8
+	monbg ANIM_DEF_PARTNER
+	splitbgprio ANIM_TARGET
+	fadetobg BG_HIGHSPEED_OPPONENT
+	waitbgfadeout
+	createvisualtask AnimTask_StartSlidingBg, 5, -2304, 0, 1, -1
+	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_ATTACKER, 1
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 0, 16, RGB_WHITE
+	playsewithpan SE_M_SKY_UPPERCUT, SOUND_PAN_ATTACKER
+	delay 4
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 15, 0, RGB_WHITE
+	delay 4
+	waitbgfadein
+	delay 40
+	createsprite gAuraSphereBlast, ANIM_TARGET, 3, 0
+	playsewithpan SE_M_SWAGGER, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 2, 0, 9, RGB_WHITE
+	delay 16
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 8, 0, 16, 1
+	playsewithpan SE_M_SAND_ATTACK, SOUND_PAN_TARGET
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 9, 0, RGB_WHITE
+	clearmonbg ANIM_DEF_PARTNER
+	clearmonbg ANIM_ATK_PARTNER
+	blendoff
+	restorebg
+	waitbgfadeout
+	setarg 7, 0xFFFF
+	waitbgfadein
 	end
 	
 Move_SKY_UPPERCUT:

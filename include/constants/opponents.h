@@ -868,12 +868,13 @@
 #define TRAINER_MAGMAR_MASTER	            864
 #define TRAINER_ELECTABUZZ_MASTER			865
 #define TRAINER_JYNX_MASTER					866
+#define TRAINER_TESTER_TIM					867
 
 // NOTE: Because each Trainer uses a flag to determine when they are defeated, there is only space for 9 additional trainers before trainer flag space overflows
 //       More space can be made by shifting flags around in constants/flags.h or changing how trainer flags are handled
 //       MAX_TRAINERS_COUNT can be increased but will take up additional saveblock space
 
-#define TRAINERS_COUNT                      867
+#define TRAINERS_COUNT                      868
 #define MAX_TRAINERS_COUNT                  1264
 
 #endif  // GUARD_CONSTANTS_OPPONENTS_H

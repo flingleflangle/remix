@@ -4796,3 +4796,45 @@ VSSeeker_Text_TrainersNotReady::
 	.string "to be ready for battle.\p"
 	.string "Let's wait till later.{PAUSE_UNTIL_PRESS}$"
 @ End vs_seeker branch
+
+//COMMENT HERE! I put all of the new trainers in this group right at the bottom.
+
+OldaleTown_Text_TesterTimIntro:
+	.string "I'm ready for the test run. Let's go!$"
+
+OldaleTown_Text_TesterTimDefeat:
+	.string "Looks like it worked! What a relief...$"
+
+OldaleTown_Text_TesterTimPostBattle:
+	.string "Hey, we already battled! Was I supposed\n"
+	.string "to wave the flag around, or something?\p"
+	.string "Huh?\n"
+	.string "You don't know what I mean by that?\l"
+	.string "Aren't you the programmer?$"
+
+OldaleTown_Text_MagmarMasterIntro:
+	.string "I don't have anything cool to say here,\n"
+	.string "dialogue writing is hard.\p"
+	.string "Anyway, I'm the MAGMAR guy.\n"
+	.string "Fight me!$"
+
+OldaleTown_Text_ElectabuzzMasterIntro:
+	.string "I don't have anything cool to say here,\n"
+	.string "dialogue writing is hard.\p"
+	.string "Anyway, I'm the ELECTABUZZ guy.\n"
+	.string "Fight me!$"
+
+OldaleTown_Text_JynxMasterIntro:
+	.string "I don't have anything cool to say here,\n"
+	.string "dialogue writing is hard.\p"
+	.string "Anyway, I'm the JYNX guy.\n"
+	.string "Fight me!$"
+
+OldaleTown_Text_ElementalMasterDefeat:
+	.string "Oops.$"
+
+OldaleTown_Text_ElementalMasterPostBattle:
+	.string "Well, I lost. You gonna program in the\n"
+	.string "tutor function yet, or do you just want\l"
+	.string "me to stand here and look pretty?$"
+

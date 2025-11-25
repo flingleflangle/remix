@@ -4991,4 +4991,17 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 3,
         .flags = 0,
     },
+
+    [MOVE_AURA_SPHERE] =
+    {
+        .effect = EFFECT_ALWAYS_HIT,
+        .power = 90,
+        .type = TYPE_FIGHTING,
+        .accuracy = 0,
+        .pp = 20,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
 };

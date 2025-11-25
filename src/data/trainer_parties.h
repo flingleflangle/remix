@@ -12434,3 +12434,67 @@ static const struct TrainerMonNoItemDefaultMoves sParty_MayLinkPlaceholder[] = {
     .species = SPECIES_KYOGRE,
     }
 };
+
+// NEW TRAINERS START HERE!!!!!!!!!!
+// MAKE SURE YOU CAN SEE IT AT ANY TIME BY MAKING THIS LINE BIG AS FUCK!!!!!
+// ...Or, just hit Ctrl+F and type "New Trainers". That works too.
+
+
+static const struct TrainerMonNoItemDefaultMoves sParty_TesterTim[] = {
+    {
+    .iv = 0,
+    .lvl = 5,
+    .species = SPECIES_PORYGON,
+    }
+};
+
+static const struct TrainerMonItemCustomMoves sParty_MagmarMaster[] = {
+    {
+    .iv = 255,
+    .lvl = 27,
+    .species = SPECIES_MAGBY,
+    .heldItem = ITEM_EVERSTONE,
+    .moves = {MOVE_STAGGER, MOVE_FIRE_CRASH, MOVE_FIRE_PUNCH, MOVE_FIRE_SPIN}
+    },
+    {
+    .iv = 200,
+    .lvl = 33,
+    .species = SPECIES_MAGMAR,
+    .heldItem = ITEM_CHARCOAL,
+    .moves = {MOVE_CONFUSE_RAY, MOVE_FLAMETHROWER, MOVE_PSYCHIC, MOVE_TOXIC}
+    },
+};
+
+static const struct TrainerMonItemCustomMoves sParty_ElectabuzzMaster[] = {
+    {
+    .iv = 255,
+    .lvl = 27,
+    .species = SPECIES_ELEKID,
+    .heldItem = ITEM_EVERSTONE,
+    .moves = {MOVE_STAGGER, MOVE_THUNDER_CRASH, MOVE_THUNDER_PUNCH, MOVE_QUICK_ATTACK}
+    },
+    {
+    .iv = 200,
+    .lvl = 33,
+    .species = SPECIES_ELECTABUZZ,
+    .heldItem = ITEM_MAGNET,
+    .moves = {MOVE_REFLECT, MOVE_THUNDERBOLT, MOVE_FIRE_PUNCH, MOVE_PSYCHIC}
+    },
+};
+
+static const struct TrainerMonItemCustomMoves sParty_JynxMaster[] = {
+    {
+    .iv = 255,
+    .lvl = 33,
+    .species = SPECIES_SMOOCHUM,
+    .heldItem = ITEM_EVERSTONE,
+    .moves = {MOVE_STAGGER, MOVE_FREEZE_RAY, MOVE_ICE_PUNCH, MOVE_PSYCHIC}
+    },
+    {
+    .iv = 200,
+    .lvl = 33,
+    .species = SPECIES_JYNX,
+    .heldItem = ITEM_NEVER_MELT_ICE,
+    .moves = {MOVE_CALM_MIND, MOVE_LOVELY_KISS, MOVE_ICE_BEAM, MOVE_DREAM_EATER}
+    },
+};

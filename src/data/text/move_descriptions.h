@@ -1533,6 +1533,10 @@ static const u8 sHostageDescription[] = _(
     "Redirects all attacks to\n"
     "the selected foe.");
 
+static const u8 sAuraSphereDescription[] = _(
+    "Fires a blast of aura power.\n"
+    "This attack never misses.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -1919,4 +1923,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_FLY_SWAT - 1] = sFlySwatDescription,
 	[MOVE_AROUND_TOWN - 1] = sAroundTownDescription,
 	[MOVE_HOSTAGE - 1] = sHostageDescription,
+	[MOVE_AURA_SPHERE - 1] = sAuraSphereDescription,
 };

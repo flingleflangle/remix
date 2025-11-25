@@ -677,6 +677,7 @@ AI_CheckViability:
 	if_effect EFFECT_CONVERSION, AI_CV_Conversion
 	if_effect EFFECT_RESTORE_HP, AI_CV_Heal
 	if_effect EFFECT_TOXIC, AI_CV_Toxic
+	if_effect EFFECT_FREEZE, AI_CV_Toxic
 	if_effect EFFECT_LIGHT_SCREEN, AI_CV_LightScreen
 	if_effect EFFECT_REST, AI_CV_Rest
 	if_effect EFFECT_OHKO, AI_CV_OneHitKO
@@ -715,6 +716,7 @@ AI_CheckViability:
 	if_effect EFFECT_PAIN_SPLIT, AI_CV_PainSplit
 	if_effect EFFECT_SNORE, AI_CV_Snore
 	if_effect EFFECT_LOCK_ON, AI_CV_LockOn
+	if_effect EFFECT_STAGGER, AI_CV_LockOn
 	if_effect EFFECT_SLEEP_TALK, AI_CV_SleepTalk
 	if_effect EFFECT_DESTINY_BOND, AI_CV_DestinyBond
 	if_effect EFFECT_FLAIL, AI_CV_Flail
@@ -2646,7 +2648,7 @@ AI_SetupFirstTurn:
 	get_considered_move_effect
 	if_not_in_bytes AI_SetupFirstTurn_SetupEffectsToEncourage, AI_SetupFirstTurn_End
 	if_random_less_than 80, AI_SetupFirstTurn_End
-	score +2
+	score +4
 AI_SetupFirstTurn_End:
 	end
 
@@ -2706,6 +2708,7 @@ AI_SetupFirstTurn_SetupEffectsToEncourage:
 	.byte EFFECT_BULK_UP
 	.byte EFFECT_CALM_MIND
 	.byte EFFECT_CAMOUFLAGE
+	.byte EFFECT_STAGGER
 	.byte -1
 
 @ ~60% chance to prefer moves that do 0 or 1 damage, or are in sIgnoredPowerfulMoveEffects
@@ -2733,6 +2736,8 @@ AI_Risky_EffectsToEncourage:
 	.byte EFFECT_EXPLOSION
 	.byte EFFECT_MIRROR_MOVE
 	.byte EFFECT_OHKO
+	.byte EFFECT_FIRE_CRASH
+	.byte EFFECT_THUNDER_CRASH
 	.byte EFFECT_HIGH_CRITICAL
 	.byte EFFECT_CONFUSE
 	.byte EFFECT_METRONOME

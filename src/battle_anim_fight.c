@@ -294,6 +294,17 @@ const struct SpriteTemplate gSuperpowerFireballSpriteTemplate =
     .callback = AnimSuperpowerFireball,
 };
 
+const struct SpriteTemplate gAuraSphereBlast =
+{
+    .tileTag = ANIM_TAG_IMPACT_2,
+    .paletteTag = ANIM_TAG_IMPACT_2,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSuperpowerFireball,
+};
+
 const struct SpriteTemplate gArmThrustHandSpriteTemplate =
 {
     .tileTag = ANIM_TAG_HANDS_AND_FEET,
