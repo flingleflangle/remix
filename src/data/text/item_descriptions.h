@@ -1429,19 +1429,19 @@ static const u8 sTM51Desc[] = _(
     "burn, or freeze.");
 
 static const u8 sTM52Desc[] = _(
-    "An electric punch\n"
-    "that may paralyze\n"
-    "the target.");
+    "Ensnares to inflict\n"
+    "more damage on\n"
+    "heavier foes.");
 
 static const u8 sTM53Desc[] = _(
-    "An icy punch\n"
-    "that may freeze\n"
-    "the target.");
+    "Slams into opponent\n"
+    "with rock. May\n"
+    "scatter shards.");
 
 static const u8 sTM54Desc[] = _(
-    "A firey punch\n"
-    "that may burn\n"
-    "the target.");
+    "Attacks with a\n"
+    "steel-hard head.\n"
+    "May flinch.");
 
 static const u8 sTM55Desc[] = _(
     "A chilling ray\n"

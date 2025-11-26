@@ -264,6 +264,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectLeafBlade              @ EFFECT_LEAF_BLADE
 	.4byte BattleScript_EffectAgility                @ EFFECT_AGILITY
 	.4byte BattleScript_EffectBulletSeed             @ EFFECT_BULLET_SEED
+	.4byte BattleScript_EffectBoulderDash            @ EFFECT_BOULDER_DASH
 	
 
 BattleScript_EffectHit::
@@ -1348,6 +1349,7 @@ BattleScript_EffectGeyserBypass::
 	
 BattleScript_EffectFlyingKnee::
 	jumpifnotfirstturn BattleScript_EffectHit
+	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_EffectFlyingKnee2
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
@@ -1371,6 +1373,11 @@ BattleScript_EffectFlyingKnee::
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	seteffectwithchance
 	end
+
+BattleScript_EffectFlyingKnee2::
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	setbyte sDMG_MULTIPLIER, 2
+	goto BattleScript_EffectHit
 	
 BattleScript_EffectDragonLash::
 	attackcanceler
@@ -1671,6 +1678,32 @@ BattleScript_BulletSeedEnd::
 	moveendcase MOVEEND_SYNCHRONIZE_TARGET
 	moveendfrom MOVEEND_IMMUNITY_ABILITIES
 	end
+
+BattleScript_EffectBoulderDash::
+	attackcanceler
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_MoveEnd
+	trysetspikes BattleScript_MoveEnd
+	printstring STRINGID_SPIKESSCATTERED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
 
 
 BattleScript_EffectConfuse::

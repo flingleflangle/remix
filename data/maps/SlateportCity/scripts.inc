@@ -537,9 +537,8 @@ SlateportCity_EventScript_PowerTMClerk::
 
 	.align 2
 SlateportCity_Pokemart_PowerTMs:
-	.2byte ITEM_TM_THUNDER_PUNCH
-	.2byte ITEM_TM_FIRE_PUNCH
-	.2byte ITEM_TM_ICE_PUNCH
+	.2byte ITEM_TM_LOW_KICK
+	.2byte ITEM_TM_GRASS_KNOT
 	.2byte ITEM_TM_FOCUS_PUNCH
 	.2byte ITEM_TM_LEAF_BLADE
 	.2byte ITEM_TM_BLAZE_KICK

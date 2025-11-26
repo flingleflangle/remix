@@ -224,21 +224,12 @@ static const struct MenuAction sItemStorage_MenuActions[] =
 
 static const u16 sNewGamePCItems[][2] =
 {
-    { ITEM_LUM_BERRY, 4 },
-	{ ITEM_STAR_CRYSTAL, 1 },
-	{ ITEM_LAND_CRYSTAL, 1 },
-	{ ITEM_AQUA_CRYSTAL, 1 },
-	{ ITEM_FLARE_CRYSTAL, 1 },
-	{ ITEM_VOLT_CRYSTAL, 1 },
-	{ ITEM_POWER_CRYSTAL, 1 },
-	{ ITEM_MIND_CRYSTAL, 1 },
-	{ ITEM_SHADE_CRYSTAL, 1 },
-	{ ITEM_METAL_CRYSTAL, 1 },
-    { ITEM_SMOKE_BALL, 1 },
-    { ITEM_AMULET_COIN, 1 },
-    { ITEM_LUCKY_EGG, 1 },
-    { ITEM_TM01, 2 },
+    { ITEM_TM01, 1 },
     { ITEM_TM80, 1 },
+    { ITEM_POTION, 1},
+    { ITEM_LUCKY_EGG, 1 },
+    { ITEM_LUXURY_BALL, 2 },
+    { ITEM_LUM_BERRY, 4 },
     { ITEM_NONE, 0 }
 };
 

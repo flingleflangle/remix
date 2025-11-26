@@ -386,8 +386,11 @@
 #define MOVE_AROUND_TOWN 382
 #define MOVE_HOSTAGE 383
 #define MOVE_AURA_SPHERE 384
+#define MOVE_IRON_HEAD 385
+#define MOVE_GRASS_KNOT 386
+#define MOVE_BOULDER_DASH 387
 
-#define MOVES_COUNT 385
+#define MOVES_COUNT 388
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

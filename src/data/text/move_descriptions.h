@@ -1537,6 +1537,18 @@ static const u8 sAuraSphereDescription[] = _(
     "Fires a blast of aura power.\n"
     "This attack never misses.");
 
+static const u8 sIronHeadDescription[] = _(
+    "Attacks with a steel-hard\n"
+    "head. May cause flinching.");
+
+static const u8 sGrassKnotDescription[] = _(
+    "Ensnares to inflict more\n"
+    "damage on heavier foes.");
+
+static const u8 sBoulderDashDescription[] = _(
+    "Slams into opponent with\n"
+    "rock. May scatter shards.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -1924,4 +1936,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_AROUND_TOWN - 1] = sAroundTownDescription,
 	[MOVE_HOSTAGE - 1] = sHostageDescription,
 	[MOVE_AURA_SPHERE - 1] = sAuraSphereDescription,
+	[MOVE_IRON_HEAD - 1] = sIronHeadDescription,
+	[MOVE_GRASS_KNOT - 1] = sGrassKnotDescription,
+	[MOVE_BOULDER_DASH - 1] = sBoulderDashDescription,
 };

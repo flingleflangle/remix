@@ -53,9 +53,9 @@
     F(SNATCH) \
     F(OVERHEAT) \
     F(TRI_ATTACK) \
-    F(THUNDER_PUNCH) \
-    F(ICE_PUNCH) \
-    F(FIRE_PUNCH) \
+    F(GRASS_KNOT) \
+    F(BOULDER_DASH) \
+    F(IRON_HEAD) \
     F(FREEZE_RAY) \
     F(WILL_O_WISP) \
     F(PSYBEAM) \

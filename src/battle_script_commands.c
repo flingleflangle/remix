@@ -1279,6 +1279,7 @@ static void Cmd_critcalc(void)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_POISON_TAIL)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_ICE_SLASHER)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_FLYING_KNEE)
+                + (gBattleMoves[gCurrentMove].effect == EFFECT_BOULDER_DASH)
                 + (holdEffect == HOLD_EFFECT_SCOPE_LENS)
                 + 2 * (holdEffect == HOLD_EFFECT_LUCKY_PUNCH && gBattleMons[gBattlerAttacker].species == SPECIES_CHANSEY)
                 + 2 * (holdEffect == HOLD_EFFECT_STICK && gBattleMons[gBattlerAttacker].species == SPECIES_FARFETCHD);

@@ -431,7 +431,7 @@ AbandonedShip_Rooms2_B1F_EventScript_ItemDiveBall::
 	end
 
 AbandonedShip_Room_B1F_EventScript_ItemTMIceBeam::
-	finditem ITEM_TM_ICE_PUNCH
+	finditem ITEM_TM_ICE_BEAM
 	end
 
 AbandonedShip_Rooms2_1F_EventScript_ItemRevive::

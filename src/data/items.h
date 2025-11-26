@@ -710,7 +710,7 @@ const struct Item gItems[] =
         .itemId = ITEM_AQUA_CRYSTAL,
         .price = 7000,
         .holdEffect = HOLD_EFFECT_SP_ATK_DOWN,
-        .holdEffectParam = 20,
+        .holdEffectParam = 10,
         .description = sAquaCrystalDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_PARTY_MENU,
@@ -736,7 +736,7 @@ const struct Item gItems[] =
         .itemId = ITEM_LAND_CRYSTAL,
         .price = 7000,
         .holdEffect = HOLD_EFFECT_SPEED_DOWN,
-        .holdEffectParam = 20,
+        .holdEffectParam = 10,
         .description = sLandCrystalDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_PARTY_MENU,
@@ -762,7 +762,7 @@ const struct Item gItems[] =
         .itemId = ITEM_POWER_CRYSTAL,
         .price = 7000,
         .holdEffect = HOLD_EFFECT_DEF_DOWN,
-        .holdEffectParam = 20,
+        .holdEffectParam = 10,
         .description = sPowerCrystalDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_PARTY_MENU,
@@ -775,7 +775,7 @@ const struct Item gItems[] =
         .itemId = ITEM_MIND_CRYSTAL,
         .price = 7000,
         .holdEffect = HOLD_EFFECT_SP_DEF_DOWN,
-        .holdEffectParam = 20,
+        .holdEffectParam = 10,
         .description = sMindCrystalDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_PARTY_MENU,
@@ -801,7 +801,7 @@ const struct Item gItems[] =
         .itemId = ITEM_METAL_CRYSTAL,
         .price = 7000,
         .holdEffect = HOLD_EFFECT_ATK_DOWN,
-        .holdEffectParam = 20,
+        .holdEffectParam = 10,
         .description = sMetalCrystalDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_PARTY_MENU,
@@ -4106,7 +4106,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_THUNDER_PUNCH] =
+    [ITEM_TM_GRASS_KNOT] =
     {
         .name = _("TM52"),
         .itemId = ITEM_TM52,
@@ -4117,7 +4117,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_ICE_PUNCH] =
+    [ITEM_TM_BOULDER_DASH] =
     {
         .name = _("TM53"),
         .itemId = ITEM_TM53,
@@ -4128,7 +4128,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_FIRE_PUNCH] =
+    [ITEM_TM_IRON_HEAD] =
     {
         .name = _("TM54"),
         .itemId = ITEM_TM54,
