@@ -546,6 +546,7 @@ const struct TrainerBall gTrainerBallTable[] = {
     {TRAINER_CLASS_PIKE_QUEEN, ITEM_ULTRA_BALL},
     {TRAINER_CLASS_PYRAMID_KING, ITEM_ULTRA_BALL},
     {TRAINER_CLASS_RS_PROTAG, ITEM_MASTER_BALL},
+    {TRAINER_CLASS_CRYSTAL_DUKE, ITEM_PREMIER_BALL},
     {0xFF, ITEM_POKE_BALL},
 };
 
@@ -607,6 +608,7 @@ const struct TrainerMoney gTrainerMoneyTable[] =
     {TRAINER_CLASS_HIKER, 10},
     {TRAINER_CLASS_YOUNG_COUPLE, 8},
     {TRAINER_CLASS_WINSTRATE, 10},
+    {TRAINER_CLASS_CRYSTAL_DUKE, 12},
     {0xFF, 5}, // Any trainer class not listed above uses this
 };
 

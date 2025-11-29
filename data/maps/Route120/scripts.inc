@@ -427,3 +427,26 @@ Route120_Text_RouteSignFortree:
 Route120_Text_RouteSign121:
 	.string "{RIGHT_ARROW} ROUTE 121\n"
 	.string "{LEFT_ARROW} ROUTE 120$"
+	
+Route120_EventScript_ElectabuzzMaster::
+ 	trainerbattle_single TRAINER_ELECTABUZZ_MASTER, Route120_Text_ElectabuzzMasterIntro, Text_ElementalMasterDefeat, Route120_EventScript_ElectabuzzMaster
+	goto_if_set FLAG_MOVE_TUTOR_TAUGHT_THUNDER_PUNCH, MoveTutor_EventScript_ThunderPunchTaught
+ 	msgbox MoveTutor_Text_ThunderPunchTeach, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, MoveTutor_EventScript_ThunderPunchDeclined
+	msgbox MoveTutor_Text_ElementalPunchWhichMon, MSGBOX_DEFAULT
+	setvar VAR_0x8005, TUTOR_MOVE_THUNDER_PUNCH
+	call MoveTutor_EventScript_OpenPartyMenu
+	goto_if_eq VAR_RESULT, 0, MoveTutor_EventScript_ThunderPunchDeclined
+	setflag FLAG_MOVE_TUTOR_TAUGHT_THUNDER_PUNCH
+	goto MoveTutor_EventScript_ElementalPunchTaught
+	end
+	
+MoveTutor_EventScript_ThunderPunchTaught::
+	msgbox MoveTutor_Text_ThunderPunchTaught, MSGBOX_DEFAULT
+	release
+	end
+	
+MoveTutor_EventScript_ThunderPunchDeclined::
+	msgbox MoveTutor_Text_ThunderPunchDecline, MSGBOX_DEFAULT
+	release
+	end

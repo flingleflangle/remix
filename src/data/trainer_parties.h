@@ -12498,3 +12498,36 @@ static const struct TrainerMonItemCustomMoves sParty_JynxMaster[] = {
     .moves = {MOVE_CALM_MIND, MOVE_LOVELY_KISS, MOVE_ICE_BEAM, MOVE_DREAM_EATER}
     },
 };
+
+static const struct TrainerMonItemCustomMoves sParty_PowerCrystal[] = {
+    {
+    .iv = 100,
+    .lvl = 15,
+    .species = SPECIES_HARIYAMA,
+    .heldItem = ITEM_POWER_CRYSTAL,
+    .moves = {MOVE_FAKE_OUT, MOVE_ARM_THRUST}
+    },
+    {
+    .iv = 100,
+    .lvl = 15,
+    .species = SPECIES_SUDOWOODO,
+    .heldItem = ITEM_NONE,
+    .moves = {MOVE_ROCK_SLIDE, MOVE_BOULDER_DASH, MOVE_FOCUS_PUNCH}
+    },
+    {
+    .iv = 100,
+    .lvl = 17,
+    .species = SPECIES_BRELOOM,
+    .heldItem = ITEM_MIRACLE_SEED,
+    .moves = {MOVE_LEECH_SEED, MOVE_SPROUT, MOVE_MACH_PUNCH}
+    },
+    {
+    .iv = 100,
+    .lvl = 20,
+    .species = SPECIES_AGGRON,
+    .heldItem = ITEM_NONE,
+    .moves = {MOVE_IRON_DEFENSE, MOVE_METEOR_MASH, MOVE_TOMBSTONER}
+    },
+
+
+};

@@ -1434,9 +1434,9 @@ static const u8 sTM52Desc[] = _(
     "heavier foes.");
 
 static const u8 sTM53Desc[] = _(
-    "Slams into opponent\n"
-    "with rock. May\n"
-    "scatter shards.");
+    "Slams into foe with\n"
+    "rock. May scatter\n"
+    "shards on the field.");
 
 static const u8 sTM54Desc[] = _(
     "Attacks with a\n"

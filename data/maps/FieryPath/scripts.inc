@@ -12,3 +12,25 @@ FieryPath_EventScript_MoveScottToFallarbor::
 	clearflag FLAG_HIDE_FALLARBOR_TOWN_BATTLE_TENT_SCOTT
 	return
 
+FieryPath_EventScript_MagmarMaster::
+ 	trainerbattle_single TRAINER_MAGMAR_MASTER, FieryPath_Text_MagmarMasterIntro, Text_ElementalMasterDefeat, FieryPath_EventScript_MagmarMaster
+	goto_if_set FLAG_MOVE_TUTOR_TAUGHT_FIRE_PUNCH, MoveTutor_EventScript_FirePunchTaught
+ 	msgbox MoveTutor_Text_FirePunchTeach, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, MoveTutor_EventScript_FirePunchDeclined
+	msgbox MoveTutor_Text_ElementalPunchWhichMon, MSGBOX_DEFAULT
+	setvar VAR_0x8005, TUTOR_MOVE_FIRE_PUNCH
+	call MoveTutor_EventScript_OpenPartyMenu
+	goto_if_eq VAR_RESULT, 0, MoveTutor_EventScript_FirePunchDeclined
+	setflag FLAG_MOVE_TUTOR_TAUGHT_FIRE_PUNCH
+	goto MoveTutor_EventScript_ElementalPunchTaught
+	end
+	
+MoveTutor_EventScript_FirePunchTaught::
+	msgbox MoveTutor_Text_FirePunchTaught, MSGBOX_DEFAULT
+	release
+	end
+
+MoveTutor_EventScript_FirePunchDeclined::
+	msgbox MoveTutor_Text_FirePunchDecline, MSGBOX_DEFAULT
+	release
+	end

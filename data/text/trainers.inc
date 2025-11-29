@@ -4812,29 +4812,35 @@ OldaleTown_Text_TesterTimPostBattle:
 	.string "You don't know what I mean by that?\l"
 	.string "Aren't you the programmer?$"
 
-OldaleTown_Text_MagmarMasterIntro:
-	.string "I don't have anything cool to say here,\n"
-	.string "dialogue writing is hard.\p"
-	.string "Anyway, I'm the MAGMAR guy.\n"
-	.string "Fight me!$"
+FieryPath_Text_MagmarMasterIntro:
+	.string "Oh, you've come for a challenge?\p"
+	.string "Well, you're in the right place, at the\n"
+	.string "right time! Me and my POKéMON have been\l"
+	.string "training all day, and we've come up with\l"
+	.string "some new moves!\p"
+	.string "Let me show you the ultimate\n"
+	.string "FIRE type combo!$"
 
-OldaleTown_Text_ElectabuzzMasterIntro:
-	.string "I don't have anything cool to say here,\n"
-	.string "dialogue writing is hard.\p"
-	.string "Anyway, I'm the ELECTABUZZ guy.\n"
-	.string "Fight me!$"
+Route120_Text_ElectabuzzMasterIntro:
+	.string "Oh, you've come for a challenge?\p"
+	.string "Well, you're in the right place, at the\n"
+	.string "right time! Me and my POKéMON have been\l"
+	.string "training all day, and we've come up with\l"
+	.string "some new moves!\p"
+	.string "Let me show you the ultimate\n"
+	.string "ELECTRIC type combo!$"
 
-OldaleTown_Text_JynxMasterIntro:
-	.string "I don't have anything cool to say here,\n"
-	.string "dialogue writing is hard.\p"
-	.string "Anyway, I'm the JYNX guy.\n"
-	.string "Fight me!$"
+ShoalCave_LowTideIceRoom_Text_JynxMasterIntro:
+	.string "Oh, you've come for a challenge?\p"
+	.string "Well, you're in the right place, at the\n"
+	.string "right time! Me and my POKéMON have been\l"
+	.string "training all day, and we've come up with\l"
+	.string "some new moves!\p"
+	.string "Let me show you the ultimate\n"
+	.string "ICE type combo!$"
 
-OldaleTown_Text_ElementalMasterDefeat:
-	.string "Oops.$"
+Text_ElementalMasterDefeat:
+	.string "Still a long way to go!$"
 
-OldaleTown_Text_ElementalMasterPostBattle:
-	.string "Well, I lost. You gonna program in the\n"
-	.string "tutor function yet, or do you just want\l"
-	.string "me to stand here and look pretty?$"
+
 

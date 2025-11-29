@@ -1546,8 +1546,8 @@ static const u8 sGrassKnotDescription[] = _(
     "damage on heavier foes.");
 
 static const u8 sBoulderDashDescription[] = _(
-    "Slams into opponent with\n"
-    "rock. May scatter shards.");
+    "Slams into foe with rock. May\n"
+    "scatter shards on the field.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =

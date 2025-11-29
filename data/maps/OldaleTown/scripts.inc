@@ -344,21 +344,6 @@ OldaleTown_EventScript_TesterTim::
  	msgbox OldaleTown_Text_TesterTimPostBattle, MSGBOX_AUTOCLOSE
  	end
 
-OldaleTown_EventScript_MagmarMaster::
- 	trainerbattle_single TRAINER_MAGMAR_MASTER, OldaleTown_Text_MagmarMasterIntro, OldaleTown_Text_ElementalMasterDefeat
- 	msgbox OldaleTown_Text_ElementalMasterPostBattle, MSGBOX_AUTOCLOSE
- 	end
-
-OldaleTown_EventScript_ElectabuzzMaster::
- 	trainerbattle_single TRAINER_ELECTABUZZ_MASTER, OldaleTown_Text_ElectabuzzMasterIntro, OldaleTown_Text_ElementalMasterDefeat
- 	msgbox OldaleTown_Text_ElementalMasterPostBattle, MSGBOX_AUTOCLOSE
- 	end
-
-OldaleTown_EventScript_JynxMaster::
- 	trainerbattle_single TRAINER_JYNX_MASTER, OldaleTown_Text_JynxMasterIntro, OldaleTown_Text_ElementalMasterDefeat
- 	msgbox OldaleTown_Text_ElementalMasterPostBattle, MSGBOX_AUTOCLOSE
- 	end
-
 OldaleTown_Text_SavingMyProgress:
 	.string "I want to take a rest, so I'm saving my\n"
 	.string "progress.$"

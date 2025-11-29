@@ -1,3 +1,25 @@
 ShoalCave_LowTideIceRoom_MapScripts::
 	.byte 0
 
+ShoalCave_LowTideIceRoom_EventScript_JynxMaster::
+ 	trainerbattle_single TRAINER_JYNX_MASTER, ShoalCave_LowTideIceRoom_Text_JynxMasterIntro, Text_ElementalMasterDefeat, ShoalCave_LowTideIceRoom_EventScript_JynxMaster
+	goto_if_set FLAG_MOVE_TUTOR_TAUGHT_ICE_PUNCH, MoveTutor_EventScript_IcePunchTaught
+ 	msgbox MoveTutor_Text_IcePunchTeach, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, MoveTutor_EventScript_IcePunchDeclined
+	msgbox MoveTutor_Text_ElementalPunchWhichMon, MSGBOX_DEFAULT
+	setvar VAR_0x8005, TUTOR_MOVE_ICE_PUNCH
+	call MoveTutor_EventScript_OpenPartyMenu
+	goto_if_eq VAR_RESULT, 0, MoveTutor_EventScript_IcePunchDeclined
+	setflag FLAG_MOVE_TUTOR_TAUGHT_ICE_PUNCH
+	goto MoveTutor_EventScript_ElementalPunchTaught
+	end
+	
+MoveTutor_EventScript_IcePunchTaught::
+	msgbox MoveTutor_Text_IcePunchTaught, MSGBOX_DEFAULT
+	release
+	end
+	
+MoveTutor_EventScript_IcePunchDeclined::
+	msgbox MoveTutor_Text_IcePunchDecline, MSGBOX_DEFAULT
+	release
+	end

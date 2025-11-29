@@ -105,6 +105,7 @@ AI_CheckBadMove_CheckEffect:
 	if_effect EFFECT_SLEEP, AI_CBM_Sleep
 	if_effect EFFECT_EXPLOSION, AI_CBM_Explosion
 	if_effect EFFECT_DREAM_EATER, AI_CBM_DreamEater
+	if_effect EFFECT_SPROUT, AI_CBM_Sprout
 	if_effect EFFECT_ATTACK_UP, AI_CBM_AttackUp
 	if_effect EFFECT_DEFENSE_UP, AI_CBM_DefenseUp
 	if_effect EFFECT_SPEED_UP, AI_CBM_SpeedUp
@@ -241,6 +242,11 @@ AI_CBM_Nightmare:
 
 AI_CBM_DreamEater:
 	if_not_status AI_TARGET, STATUS1_SLEEP, Score_Minus8
+	if_type_effectiveness AI_EFFECTIVENESS_x0, Score_Minus10
+	end
+
+AI_CBM_Sprout:
+	if_not_status AI_TARGET, STATUS3_LEECHSEED, Score_Minus8
 	if_type_effectiveness AI_EFFECTIVENESS_x0, Score_Minus10
 	end
 
@@ -2634,7 +2640,7 @@ AI_TryToFaint_DoubleSuperEffective:
 
 AI_TryToFaint_TryToEncourageQuickAttack:
 	if_effect EFFECT_EXPLOSION, AI_TryToFaint_End
-	if_not_effect EFFECT_QUICK_ATTACK, AI_TryToFaint_ScoreUp4
+	if_not_effect (EFFECT_QUICK_ATTACK | EFFECT_BOULDER_DASH), AI_TryToFaint_ScoreUp4
 	score +2
 AI_TryToFaint_ScoreUp4:
 	score +4
@@ -2709,6 +2715,7 @@ AI_SetupFirstTurn_SetupEffectsToEncourage:
 	.byte EFFECT_CALM_MIND
 	.byte EFFECT_CAMOUFLAGE
 	.byte EFFECT_STAGGER
+	.byte EFFECT_FAKE_OUT
 	.byte -1
 
 @ ~60% chance to prefer moves that do 0 or 1 damage, or are in sIgnoredPowerfulMoveEffects
@@ -3097,6 +3104,7 @@ AI_HPAware_DiscouragedEffectsWhenLowHP:
 	.byte -1
 
 AI_HPAware_DiscouragedEffectsWhenTargetHighHP:
+	.byte EFFECT_TOMBSTONER
 	.byte -1
 
 AI_HPAware_DiscouragedEffectsWhenTargetMediumHP:

@@ -44,7 +44,7 @@
 #define NUM_TEMP_FLAGS   (TEMP_FLAGS_END - TEMP_FLAGS_START + 1)
 
 #define FLAG_VS_SEEKER_CHARGING 0x20 // vs_seeker branch
-#define FLAG_UNUSED_0x021    0x21 // Unused Flag
+#define FLAG_RECEIVED_TM_BOULDER_DASH    0x21
 #define FLAG_UNUSED_0x022    0x22 // Unused Flag
 #define FLAG_UNUSED_0x023    0x23 // Unused Flag
 #define FLAG_UNUSED_0x024    0x24 // Unused Flag
@@ -516,9 +516,9 @@
 #define FLAG_DEFEATED_HO_OH                  0x1DC
 #define FLAG_DEFEATED_LUGIA                  0x1DD
 
-#define FLAG_UNUSED_0x1DE                    0x1DE // Unused Flag
-#define FLAG_UNUSED_0x1DF                    0x1DF // Unused Flag
-#define FLAG_UNUSED_0x1E0                    0x1E0 // Unused Flag
+#define FLAG_MOVE_TUTOR_TAUGHT_FIRE_PUNCH    0x1DE // Unused Flag
+#define FLAG_MOVE_TUTOR_TAUGHT_ICE_PUNCH     0x1DF // Unused Flag
+#define FLAG_MOVE_TUTOR_TAUGHT_THUNDER_PUNCH 0x1E0 // Unused Flag
 #define FLAG_UNUSED_0x1E1                    0x1E1 // Unused Flag
 #define FLAG_UNUSED_0x1E2                    0x1E2 // Unused Flag
 #define FLAG_UNUSED_0x1E3                    0x1E3 // Unused Flag

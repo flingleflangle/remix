@@ -47,6 +47,79 @@ MoveTutor_Text_RolloutTaught:
 	.string "Rolling around in the grass makes me\n"
 	.string "happy. Come on, let's roll!$"
 
+MoveTutor_Text_FirePunchTeach:
+	.string "Ahh, crashed and burned! Oh well.\n"
+	.string "Really got me fired up, kid.\p"
+	.string "Seems a bit of a shame to leave\n"
+	.string "a scorcher like that nothing but\l"
+	.string "pocket change...\p"
+	.string "Would you like me to teach your POKéMON\n"
+	.string "how to wield the explosive FIRE PUNCH?$"
+
+MoveTutor_Text_IcePunchTeach:
+	.string "Whew, gave me chills!\n"
+	.string "Cool performances like that deserve\l"
+	.string "equally cool rewards, yeah?\p"
+	.string "Would you like me to teach your POKéMON\n"
+	.string "how to wield the frigid ICE PUNCH?$"
+
+MoveTutor_Text_ThunderPunchTeach:
+	.string "I'm shocked! A battle as stunning as\n"
+	.string "that is deserving of a reward!\p"
+	.string "But, I don't have any items to give\n"
+	.string "you... hmm.\p"
+	.string "Would you like me to teach your POKéMON\n"
+	.string "how to wield the electrifying\l"
+	.string "THUNDERPUNCH?$"
+
+MoveTutor_Text_FirePunchDecline:
+	.string "Too hot to handle, huh?$"
+
+MoveTutor_Text_IcePunchDecline:
+	.string "That's cold.$"
+
+MoveTutor_Text_ThunderPunchDecline:
+	.string "What? It doesn't spark your interest?$"
+
+MoveTutor_Text_FirePunchTaught:
+	.string "Have you met either of my siblings yet?\p"
+	.string "They're typically hanging around colder\n"
+	.string "places. I can't get into it, myself...\p"
+	.string "My brother likes the rain, and my\l"
+	.string "sister likes the snow.\p"
+	.string "How about you?$"
+
+MoveTutor_Text_ThunderPunchTaught:
+	.string "Have you met either of my siblings yet?\p"
+	.string "They're typically hanging around\n"
+	.string "places with extreme weather.\l"
+	.string "My brother prefers the heat, and my\l"
+	.string "sister prefers the cold.\p"
+	.string "How about you?$"
+
+MoveTutor_Text_IcePunchTaught:
+	.string "Have you met my brothers yet?\p"
+	.string "They're typically hanging around\n"
+	.string "places with extreme weather.\l"
+	.string "One of 'em likes heavy rain,\n"
+	.string "and the other likes it hot.\p"
+	.string "How about you?$"
+
+MoveTutor_Text_ElementalPunchWhichMon:
+	.string "Which of your POKéMON can even throw a\n"
+	.string "punch, by the way?$"
+
+MoveTutor_EventScript_ElementalPunchTaught::
+	msgbox MoveTutor_Text_ElementalPunchTaught, MSGBOX_DEFAULT
+	release
+	end
+
+MoveTutor_Text_ElementalPunchTaught:
+	.string "Sweet! I'm sure that move will come in\n"
+	.string "handy for you.\p"
+	.string "If you ever meet one of my siblings, tell\n"
+	.string "them I said hi!$"
+
 MoveTutor_Text_FuryCutterTeach:
 	.string "There's a move that gets stronger\n"
 	.string "when you keep using it in a row.\p"

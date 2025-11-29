@@ -6426,6 +6426,8 @@ u16 GetBattleBGM(void)
         case TRAINER_CLASS_BATTLE_GIRL:
         case TRAINER_CLASS_PSYCHIC:
             return MUS_T_DRILL_MISSILE;
+        case TRAINER_CLASS_CRYSTAL_DUKE:
+            return MUS_T_MARIONETTE;
         case TRAINER_CLASS_AQUA_LEADER:
         case TRAINER_CLASS_MAGMA_LEADER:
             return MUS_VS_AQUA_MAGMA_LEADER;
