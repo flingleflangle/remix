@@ -10320,4 +10320,16 @@ const struct Trainer gTrainers[] = {
         .aiFlags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_HP_AWARE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_SETUP_FIRST_TURN | AI_SCRIPT_TRY_TO_FAINT,
         .party = ITEM_CUSTOM_MOVES(sParty_PowerCrystal),
     },
+
+    [TRAINER_SHADE_CRYSTAL] =
+    {
+        .trainerClass = TRAINER_CLASS_CRYSTAL_DUKE,
+        .encounterMusic_gender = F_TRAINER_FEMALE | TRAINER_ENCOUNTER_MUSIC_SUSPICIOUS,
+        .trainerPic = TRAINER_PIC_COOLTRAINER_F,
+        .trainerName = _("DRAEVRA"),
+        .items = {},
+        .doubleBattle = FALSE,
+        .aiFlags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_HP_AWARE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_SETUP_FIRST_TURN | AI_SCRIPT_TRY_TO_FAINT,
+        .party = ITEM_CUSTOM_MOVES(sParty_ShadeCrystal),
+    },
 };

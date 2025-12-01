@@ -2872,6 +2872,7 @@ static const u16 sBonslyLevelUpLearnset[] = {
 };
 
 static const u16 sSudowoodoLevelUpLearnset[] = {
+    LEVEL_UP_MOVE( 0, MOVE_BOULDER_DASH),
     LEVEL_UP_MOVE( 1, MOVE_ROCK_THROW),
     LEVEL_UP_MOVE( 1, MOVE_MIMIC),
     LEVEL_UP_MOVE( 9, MOVE_FLAIL),

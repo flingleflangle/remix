@@ -2716,6 +2716,7 @@ AI_SetupFirstTurn_SetupEffectsToEncourage:
 	.byte EFFECT_CAMOUFLAGE
 	.byte EFFECT_STAGGER
 	.byte EFFECT_FAKE_OUT
+	.byte EFFECT_TRAP
 	.byte -1
 
 @ ~60% chance to prefer moves that do 0 or 1 damage, or are in sIgnoredPowerfulMoveEffects
@@ -3105,6 +3106,7 @@ AI_HPAware_DiscouragedEffectsWhenLowHP:
 
 AI_HPAware_DiscouragedEffectsWhenTargetHighHP:
 	.byte EFFECT_TOMBSTONER
+	.byte EFFECT_EVIL
 	.byte -1
 
 AI_HPAware_DiscouragedEffectsWhenTargetMediumHP:

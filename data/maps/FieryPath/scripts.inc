@@ -34,3 +34,4 @@ MoveTutor_EventScript_FirePunchDeclined::
 	msgbox MoveTutor_Text_FirePunchDecline, MSGBOX_DEFAULT
 	release
 	end
+	

@@ -12502,7 +12502,7 @@ static const struct TrainerMonItemCustomMoves sParty_JynxMaster[] = {
 static const struct TrainerMonItemCustomMoves sParty_PowerCrystal[] = {
     {
     .iv = 100,
-    .lvl = 15,
+    .lvl = 14,
     .species = SPECIES_HARIYAMA,
     .heldItem = ITEM_POWER_CRYSTAL,
     .moves = {MOVE_FAKE_OUT, MOVE_ARM_THRUST}
@@ -12511,23 +12511,59 @@ static const struct TrainerMonItemCustomMoves sParty_PowerCrystal[] = {
     .iv = 100,
     .lvl = 15,
     .species = SPECIES_SUDOWOODO,
-    .heldItem = ITEM_NONE,
+    .heldItem = ITEM_POWER_CRYSTAL,
     .moves = {MOVE_ROCK_SLIDE, MOVE_BOULDER_DASH, MOVE_FOCUS_PUNCH}
     },
     {
     .iv = 100,
-    .lvl = 17,
+    .lvl = 16,
     .species = SPECIES_BRELOOM,
     .heldItem = ITEM_MIRACLE_SEED,
     .moves = {MOVE_LEECH_SEED, MOVE_SPROUT, MOVE_MACH_PUNCH}
     },
     {
     .iv = 100,
-    .lvl = 20,
+    .lvl = 19,
     .species = SPECIES_AGGRON,
-    .heldItem = ITEM_NONE,
+    .heldItem = ITEM_HARD_STONE,
     .moves = {MOVE_IRON_DEFENSE, MOVE_METEOR_MASH, MOVE_TOMBSTONER}
     },
+};
 
-
+static const struct TrainerMonItemCustomMoves sParty_ShadeCrystal[] = {
+    {
+    .iv = 100,
+    .lvl = 28,
+    .species = SPECIES_SEVIPER,
+    .heldItem = ITEM_SHADE_CRYSTAL,
+    .moves = {MOVE_WRAP, MOVE_POISON_TAIL, MOVE_VILE_CUTTER, MOVE_SUPER_FANG}
+    },
+    {
+    .iv = 100,
+    .lvl = 28,
+    .species = SPECIES_WEAVILE,
+    .heldItem = ITEM_NONE,
+    .moves = {MOVE_VENOM_FANG, MOVE_DREAM_EATER, MOVE_SLASH, MOVE_AWAKENING}
+    },
+    {
+    .iv = 100,
+    .lvl = 29,
+    .species = SPECIES_GENGAR,
+    .heldItem = ITEM_SHADE_CRYSTAL,
+    .moves = {MOVE_ICE_PUNCH, MOVE_THUNDERBOLT, MOVE_PSYCHIC, MOVE_CURSE}
+    },
+    {
+    .iv = 100,
+    .lvl = 30,
+    .species = SPECIES_NIDOQUEEN,
+    .heldItem = ITEM_DRAGON_FANG,
+    .moves = {MOVE_STAGGER, MOVE_DYNAMIC_PUNCH, MOVE_DRAGON_LASH, MOVE_ASCENSION}
+    },
+    {
+    .iv = 100,
+    .lvl = 32,
+    .species = SPECIES_ABSOL,
+    .heldItem = ITEM_SPELL_TAG,
+    .moves = {MOVE_SPIRIT_PURGE, MOVE_DOUBLE_EDGE, MOVE_CURSE, MOVE_ATTUNEMENT}
+    },
 };

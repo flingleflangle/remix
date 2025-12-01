@@ -40,8 +40,8 @@ RustboroCity_Flat2_3F_EventScript_GivePowerCrystal::
 
 RustboroCity_Flat2_3F_Text_GivePowerCrystal:
 	.string "Here's the secret to my quick little\n"
-	.string "demonstration! No need to be shy, just\l"
-	.string "take it!$"
+	.string "demonstration! No need to be shy,\l"
+	.string "just take it!$"
 	
 RustboroCity_Flat2_3F_Text_PowerCrystalExplanation:
 	.string "That right there is a POWER CRYSTAL!\p"
@@ -53,14 +53,14 @@ RustboroCity_Flat2_3F_Text_PowerCrystalExplanation:
 	.string "That's not all, though. Some POKéMON\n"
 	.string "can use it to evolve without even\l"
 	.string "needing any experience!\p"
-	.string "This crystal works on ROCK, GROUND, and\n"
+	.string "This crystal evolves ROCK, GROUND, and\n"
 	.string "FIGHTING POKéMON. Crazy, right?\p"
-	.string "There's a ton of other crystals, too. I'd\n"
-	.string "explain what they all did, but it's not\l"
-	.string "in the cards to give you a lecture.\p"
+	.string "There's a ton of other crystals, too.\n"
+	.string "I'd explain what they all did, but it's\l"
+	.string "not in the cards to give you a lecture.\p"
 	.string "I'm sure you'll figure them out!\n"
-	.string "The quickest answers are found in\l"
-	.string "the heat of battle.$"
+	.string "Usually, the quickest answers are\l"
+	.string "found in the heat of battle.$"
 	
 
 RustboroCity_Flat2_3F_EventScript_IForgot:
@@ -85,9 +85,9 @@ RustboroCity_Flat2_3F_Text_BoulderDash:
 RustboroCity_Flat2_3F_Text_NoDrinks:
 	.string "You know, it's mighty inconvenient that\n"
 	.string "there's no vending machine here.\p"
-	.string "You'd think they would've thought of\n"
-	.string "that if they let just anyone walk in,\l"
-	.string "right?$"
+	.string "No water fountain, either. You'd think\n"
+	.string "they would've thought of that with all\l"
+	.string "the stairs you have to go up, right?$"
 	
 	
 	

@@ -23,3 +23,4 @@ MoveTutor_EventScript_IcePunchDeclined::
 	msgbox MoveTutor_Text_IcePunchDecline, MSGBOX_DEFAULT
 	release
 	end
+	
