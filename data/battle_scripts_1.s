@@ -1222,15 +1222,6 @@ BattleScript_EffectCobraCrushed::
 	updatestatusicon BS_ATTACKER
 	end
 	
-BattleScript_EffectSpiritPurge::
-	attackcanceler
-	friendshiptodamagecalculation
-	jumpifnodamage BattleScript_HitFromAccCheck
-	ppreduce
-	printstring STRINGID_PKMNLOSTFOCUS
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-	
 BattleScript_EffectChisel::
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_EffectHit
 	setmoveeffect MOVE_EFFECT_REMOVE_PARALYSIS | MOVE_EFFECT_CERTAIN
@@ -1348,8 +1339,7 @@ BattleScript_EffectGeyserBypass::
 	goto BattleScript_HitFromAtkAnimation
 	
 BattleScript_EffectFlyingKnee::
-	jumpifnotfirstturn BattleScript_EffectHit
-	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_EffectFlyingKnee2
+	jumpifnotfirstturn BattleScript_EffectFlyingKnee2
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
@@ -1375,6 +1365,7 @@ BattleScript_EffectFlyingKnee::
 	end
 
 BattleScript_EffectFlyingKnee2::
+	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_EffectHit
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	setbyte sDMG_MULTIPLIER, 2
 	goto BattleScript_EffectHit
@@ -1425,6 +1416,7 @@ BattleScript_EffectUTurn::
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
 	openpartyscreen BS_ATTACKER, BattleScript_ButItFailed
 	switchoutabilities BS_ATTACKER
 	waitstate
@@ -1437,7 +1429,6 @@ BattleScript_EffectUTurn::
 	switchinanim BS_ATTACKER, TRUE
 	waitstate
 	switchineffects BS_ATTACKER
-	tryfaintmon BS_TARGET
 	goto BattleScript_MoveEnd
 	
 BattleScript_EffectHostage::
@@ -2496,6 +2487,11 @@ BattleScript_EffectAttract::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+
+BattleScript_EffectSpiritPurge::
+	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_EffectReturn
+	attackstring
+	goto BattleScript_ButItFailed
 BattleScript_EffectReturn::
 BattleScript_EffectFrustration::
 	attackcanceler
@@ -2506,7 +2502,6 @@ BattleScript_EffectFrustration::
 BattleScript_EffectPresent::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
-	attackstring
 	ppreduce
 	typecalc
 	presentdamagecalculation

@@ -92,4 +92,19 @@ FallarborTown_Text_TownSign:
 FallarborTown_Text_MoveTutorSign:
 	.string "MOVE TUTOR'S HOUSE\n"
 	.string "“New moves taught to POKéMON.”$"
+	
+FallarborTown_EventScript_MetalTrainer::
+ 	trainerbattle_single TRAINER_METAL_CRYSTAL, FallarborTown_Text_MetalTrainerIntro, FallarborTown_Text_MetalTrainerDefeat
+	msgbox FallarborTown_Text_MetalTrainerPostDefeat, MSGBOX_DEFAULT
+	release
+	end
+	
+FallarborTown_Text_MetalTrainerIntro:
+	.string "fight me$"
+	
+FallarborTown_Text_MetalTrainerDefeat:
+	.string "gg$"
+	
+FallarborTown_Text_MetalTrainerPostDefeat:
+	.string "   yeah$"
 

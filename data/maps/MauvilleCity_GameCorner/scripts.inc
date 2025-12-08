@@ -2,15 +2,15 @@ MauvilleCity_GameCorner_MapScripts::
 	.byte 0
 
     @ Game Corner prices
-	.set TM_DOUBLE_TEAM_COINS, 1500
-	.set TM_PSYCHIC_COINS, 3500
+	.set TM_DOUBLE_TEAM_COINS, 500
+	.set TM_PSYCHIC_COINS, 1500
 	.set TM_FLAMETHROWER_COINS, 2000
 	.set TM_THUNDERBOLT_COINS, 2000
 	.set TM_ICE_BEAM_COINS, 2000
-	.set DOLL_COINS, 1000
+	.set DOLL_COINS, 500
 
-	.set COINS_PRICE_50,  1000
-	.set COINS_PRICE_500, 10000
+	.set COINS_PRICE_50,  500
+	.set COINS_PRICE_500, 5000
 
 MauvilleCity_GameCorner_EventScript_CoinsClerk::
 	lock
@@ -448,7 +448,7 @@ MauvilleCity_GameCorner_EventScript_TryGive20Coins::
 	checkcoins VAR_TEMP_1
 	goto_if_ge VAR_TEMP_1, 1, MauvilleCity_GameCorner_EventScript_PokefanMNormal @ Only give 20 coins if player has no coins
 	setflag FLAG_RECEIVED_20_COINS
-	addcoins 20
+	addcoins 2640
 	msgbox MauvilleCity_GameCorner_Text_LuckOnlyLastSoLongTakeCoins, MSGBOX_DEFAULT
 	playse SE_SHOP
 	goto MauvilleCity_GameCorner_EventScript_PokefanMNormal
@@ -723,13 +723,14 @@ MauvilleCity_GameCorner_Text_NeedCoinCaseGoNextDoor:
 
 MauvilleCity_GameCorner_Text_LuckOnlyLastSoLongTakeCoins:
 	.string "My luck can only last so long.\n"
-	.string "This is too much for me.\l"
+	.string "This is WAY too much for one person.\l"
 	.string "Here, take some COINS!$"
 
 MauvilleCity_GameCorner_Text_MauvilleSomethingForEveryone:
 	.string "MAUVILLE has something for\n"
 	.string "everyone.\p"
-	.string "For me, it's the GAME CORNER.$"
+	.string "For me, it's the GAME CORNER.\n"
+	.string "I just can't stop winning!$"
 
 MauvilleCity_GameCorner_Text_RouletteTablesDifferentRates:
 	.string "The ROULETTE tables have different\n"

@@ -63,50 +63,6 @@ MauvilleCity_House2_Text_ThatsDisappointing:
 	.string "A COIN CASE is needed for the\n"
 	.string "GAME CORNER.$"
 
-MauvilleCity_House2_EventScript_ShadeTrainer::
- 	trainerbattle_single TRAINER_SHADE_CRYSTAL, MauvilleCity_House2_Text_ShadeTrainerIntro, MauvilleCity_House2_Text_ShadeTrainerDefeat, MauvilleCity_House2_EventScript_GiveShadeCrystal
-	msgbox MauvilleCity_House2_Text_ShadeTrainerPostDefeat, MSGBOX_DEFAULT
-	release
-	end
-	
-MauvilleCity_House2_Text_ShadeTrainerIntro:
-	.string "Yo. Knew you had to show up eventually.\n"
-	.string "What was the holdup, did you get lost?\p"
-	.string "Eh. Doesn't matter.\n"
-	.string "You're here for a good fight, yeah?\l"
-	.string "Then check this out.$"
-	
-MauvilleCity_House2_Text_ShadeTrainerDefeat:
-	.string "Nice shot.\n"
-	
-MauvilleCity_House2_EventScript_GiveShadeCrystal:
-	msgbox MauvilleCity_House2_Text_GiveShadeCrystal, MSGBOX_DEFAULT
-	giveitem ITEM_SHADE_CRYSTAL
-	giveitem ITEM_TM_VENOM_FANG
-	msgbox MauvilleCity_House2_Text_RewardDescription, MSGBOX_DEFAULT
-	release
-	end
-	
-MauvilleCity_House2_Text_GiveShadeCrystal:
-	.string "Well, that was cool.\p"
-	.string "I'm big enough to admit I lost.\n"
-	.string "Here, take these. You earned 'em.$"
-
-MauvilleCity_House2_Text_RewardDescription:
-	.string "The SHADE CRYSTAL's not that different\n"
-	.string "from the others. It just has a chance\l"
-	.string "to poison instead.\p"
-	.string "That TM I gave you is for VENOM FANG.\n"
-	.string "It's not the strongest move, but its\l"
-	.string "effects can really mess a POKéMON up.\p"
-	.string "That's all. I know it's tempting, but\n"
-	.string "don't waste it. They're hard to come by.$"
-	
-MauvilleCity_House2_Text_ShadeTrainerPostDefeat:
-	.string "You, uhh... can I help you?\p"
-	.string "...No? It's all cool, then. 'Cause if you\n"
-	.string "were gonna ask for more items, I'm out.$"
-
 
 
 	

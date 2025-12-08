@@ -766,12 +766,12 @@ static const u8 sFlailHpScaleToPowerTable[] =
 
 static const u8 sVileCutterHpScaleToPowerTable[] =
 {
-    2, 200,
-    8, 150,
-    16, 100,
-    32, 80,
-    40, 40,
-    48, 20
+    2, 240,
+    8, 200,
+    16, 160,
+    32, 120,
+    40, 80,
+    48, 40
 };
 
 static const u16 sNaturePowerMoves[] =
@@ -8665,7 +8665,7 @@ static void Cmd_friendshiptodamagecalculation(void)
     if (gBattleMoves[gCurrentMove].effect == EFFECT_RETURN)
         gDynamicBasePower = 10 * (gBattleMons[gBattlerAttacker].friendship) / 25;
     else if (gBattleMoves[gCurrentMove].effect == EFFECT_SPIRIT_PURGE)
-        gDynamicBasePower = 10 * (gBattleMons[gBattlerTarget].friendship) / 8;
+        gDynamicBasePower = 10 * (gBattleMons[gBattlerTarget].friendship) / 18;
     else // EFFECT_FRUSTRATION
         gDynamicBasePower = 10 * (MAX_FRIENDSHIP - gBattleMons[gBattlerAttacker].friendship) / 25;
 

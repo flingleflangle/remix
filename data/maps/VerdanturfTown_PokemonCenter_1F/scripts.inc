@@ -39,3 +39,47 @@ VerdanturfTown_PokemonCenter_1F_Text_VisitForBattleTent:
 	.string "Or is there somebody here that you\n"
 	.string "came to see?$"
 
+VerdanturfTown_PokemonCenter_1F_EventScript_AbilityGuy::
+	msgbox VerdanturfTown_PokemonCenter_1F_Text_AbilityGuy, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, VerdanturfTown_PokemonCenter_1F_EventScript_NotInterested
+	msgbox VerdanturfTown_PokemonCenter_1F_Text_WhichMon, MSGBOX_DEFAULT
+	special ChoosePartyMon
+	waitstate
+	goto_if_ne VAR_0x8004, PARTY_NOTHING_CHOSEN, VerdanturfTown_PokemonCenter_1F_EventScript_AbilitySwapped
+	goto_if_eq VAR_0x8004, PARTY_NOTHING_CHOSEN, VerdanturfTown_PokemonCenter_1F_EventScript_NotInterested
+	end
+	
+VerdanturfTown_PokemonCenter_1F_Text_AbilityGuy:
+	.string "Hi! I'm the ABILITY guy!\n"
+	.string "Or the ABILITY MANIAC, depending on\l"
+	.string "who you ask.\p"
+	.string "Anyway, I can swap your POKéMON's\n"
+	.string "abilities, free of charge. Interested?$"
+	
+VerdanturfTown_PokemonCenter_1F_EventScript_NotInterested:
+	msgbox VerdanturfTown_PokemonCenter_1F_Text_NotInterested, MSGBOX_DEFAULT
+	release
+	end
+
+VerdanturfTown_PokemonCenter_1F_Text_NotInterested:
+	.string "No? Are you satisfied with your current\n"
+	.string "abilities? You'd be surprised how much\l"
+	.string "of a difference one ability can make.$"
+	
+
+VerdanturfTown_PokemonCenter_1F_EventScript_AbilitySwapped:
+	specialvar VAR_RESULT, SwitchMonAbility
+	msgbox VerdanturfTown_PokemonCenter_1F_Text_AbilitySwapped, MSGBOX_DEFAULT
+	release
+	end
+	
+VerdanturfTown_PokemonCenter_1F_Text_WhichMon:
+	.string "Alright, which POKéMON needs their\n"
+	.string "ability swapped?$"
+
+VerdanturfTown_PokemonCenter_1F_Text_AbilitySwapped:
+	.string "Voila! Now your POKéMON's ready for a\n"
+	.string "new strategy. Get to training!$"
+	
+
+

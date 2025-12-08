@@ -106,8 +106,10 @@ AI_CheckBadMove_CheckEffect:
 	if_effect EFFECT_EXPLOSION, AI_CBM_Explosion
 	if_effect EFFECT_DREAM_EATER, AI_CBM_DreamEater
 	if_effect EFFECT_SPROUT, AI_CBM_Sprout
+	if_effect EFFECT_SPROUT, AI_CBM_VileCutter
 	if_effect EFFECT_ATTACK_UP, AI_CBM_AttackUp
 	if_effect EFFECT_DEFENSE_UP, AI_CBM_DefenseUp
+	if_effect EFFECT_SPIRIT_PURGE, AI_CBM_SpiritPurge
 	if_effect EFFECT_SPEED_UP, AI_CBM_SpeedUp
 	if_effect EFFECT_SPECIAL_ATTACK_UP, AI_CBM_SpAtkUp
 	if_effect EFFECT_SPECIAL_DEFENSE_UP, AI_CBM_SpDefUp
@@ -212,6 +214,7 @@ AI_CheckBadMove_CheckEffect:
 	if_effect EFFECT_WATER_SPORT, AI_CBM_WaterSport
 	if_effect EFFECT_CALM_MIND, AI_CBM_CalmMind
 	if_effect EFFECT_DRAGON_DANCE, AI_CBM_DragonDance
+	if_effect EFFECT_TRAP, AI_CBM_Wrap
 	end
 
 AI_CBM_Sleep:
@@ -235,6 +238,10 @@ AI_CBM_Explosion:
 AI_CBM_Explosion_End:
 	end
 
+AI_CBM_SpiritPurge:
+	get_user_type1
+	if_not_equal TYPE_GHOST, Score_Minus10
+
 AI_CBM_Nightmare:
 	if_status2 AI_TARGET, STATUS2_NIGHTMARE, Score_Minus10
 	if_not_status AI_TARGET, STATUS1_SLEEP, Score_Minus8
@@ -243,6 +250,15 @@ AI_CBM_Nightmare:
 AI_CBM_DreamEater:
 	if_not_status AI_TARGET, STATUS1_SLEEP, Score_Minus8
 	if_type_effectiveness AI_EFFECTIVENESS_x0, Score_Minus10
+	end
+
+AI_CBM_Wrap:
+	if_status AI_TARGET, STATUS2_WRAPPED, Score_Minus10
+	if_status AI_TARGET, STATUS2_ESCAPE_PREVENTION, Score_Minus10
+	end
+
+AI_CBM_VileCutter:
+	if_hp_more_than AI_TARGET, 70, Score_Minus3
 	end
 
 AI_CBM_Sprout:
@@ -661,6 +677,11 @@ AI_CheckViability:
 	if_effect EFFECT_ABSORB, AI_CV_Absorb
 	if_effect EFFECT_EXPLOSION, AI_CV_SelfKO
 	if_effect EFFECT_DREAM_EATER, AI_CV_DreamEater
+	if_effect EFFECT_SPROUT, AI_CV_Sprout
+	if_effect EFFECT_EVIL, AI_CV_VileCutter
+	if_effect EFFECT_ASCENSION, AI_CV_Ascension
+	if_effect EFFECT_ATTUNEMENT, AI_CV_Attunement
+	if_effect EFFECT_SPIRIT_PURGE, AI_CV_SpiritPurge
 	if_effect EFFECT_MIRROR_MOVE, AI_CV_MirrorMove
 	if_effect EFFECT_ATTACK_UP, AI_CV_AttackUp
 	if_effect EFFECT_DEFENSE_UP, AI_CV_DefenseUp
@@ -725,6 +746,8 @@ AI_CheckViability:
 	if_effect EFFECT_STAGGER, AI_CV_LockOn
 	if_effect EFFECT_SLEEP_TALK, AI_CV_SleepTalk
 	if_effect EFFECT_DESTINY_BOND, AI_CV_DestinyBond
+	if_effect EFFECT_VENOM_FANG, AI_CV_VenomFang
+	if_effect EFFECT_FLYING_KNEE, AI_CV_FlyingKnee
 	if_effect EFFECT_FLAIL, AI_CV_Flail
 	if_effect EFFECT_HEAL_BELL, AI_CV_HealBell
 	if_effect EFFECT_THIEF, AI_CV_Thief
@@ -803,6 +826,54 @@ AI_CV_AbsorbEncourageMaybe:
 	if_random_less_than 50, AI_CV_Absorb_End
 	score -3
 AI_CV_Absorb_End:
+	end
+
+AI_CV_Sprout:
+	if_status3 AI_TARGET, STATUS3_LEECHSEED, Score_Plus10
+	end
+
+AI_CV_VileCutter:
+	if_hp_less_than AI_TARGET, 40, Score_Plus10
+	if_hp_less_than AI_TARGET, 70, Score_Plus5
+	end
+
+AI_CV_VenomFang:
+	if_status2 AI_TARGET, STATUS2_CONFUSION, Score_Plus5
+	end
+
+AI_CV_Attunement:
+	get_user_type1
+	if_equal TYPE_GHOST, Score_Minus3
+	get_target_type1
+	if_equal TYPE_DARK, Score_Minus3
+	if_equal TYPE_GHOST, Score_Minus3
+	if_equal TYPE_NORMAL, Score_Plus3
+	if_equal TYPE_FIGHTING, Score_Plus3
+	end
+
+AI_CV_Ascension:
+	get_user_type1
+	if_equal TYPE_DRAGON, Score_Minus3
+	get_target_type1
+	if_equal TYPE_ICE, Score_Minus3
+	if_equal TYPE_FIRE, Score_Plus3
+	if_equal TYPE_WATER, Score_Plus3
+	if_equal TYPE_GRASS, Score_Plus3
+	if_equal TYPE_ELECTRIC, Score_Plus3
+	end
+
+AI_CV_SpiritPurge:
+	if_type_effectiveness AI_EFFECTIVENESS_x0, Score_Minus10
+	if_type_effectiveness AI_EFFECTIVENESS_x0_5, Score_Minus10
+	if_type_effectiveness AI_EFFECTIVENESS_x0_25, Score_Minus10
+	get_user_type1
+	if_equal TYPE_GHOST, Score_Plus10
+	end
+
+AI_CV_FlyingKnee:
+	is_first_turn_for AI_USER
+	if_equal TRUE, Score_Plus10
+	score -3
 	end
 
 AI_CV_SelfKO:
@@ -1436,10 +1507,17 @@ AI_CV_OneHitKO:
 	end
 
 AI_CV_SuperFang:
+	if_status AI_TARGET, STATUS1_TOXIC_POISON, AI_CV_SuperFang2
+	if_status AI_TARGET, STATUS2_WRAPPED, AI_CV_SuperFang2
 	if_hp_more_than AI_TARGET, 50, AI_CV_SuperFang_End
 	score -1
 AI_CV_SuperFang_End:
 	end
+AI_CV_SuperFang2:
+	if_hp_less_than AI_TARGET, 35, Score_Minus10
+	score +3
+	end
+
 
 AI_CV_Trap:
 	if_status AI_TARGET, STATUS1_TOXIC_POISON, AI_CV_Trap2
@@ -1783,6 +1861,14 @@ AI_CV_PainSplit:
 AI_CV_PainSplit2:
 	if_hp_more_than AI_USER, 60, AI_CV_PainSplit_ScoreDown1
 	score +1
+	if_status AI_USER, STATUS1_POISON, AI_CV_PainSplit3
+	if_status AI_USER, STATUS1_BURN, AI_CV_PainSplit3
+	goto AI_CV_PainSplit_End
+
+
+AI_CV_PainSplit3:
+	if_hp_more_than AI_USER, 60, AI_CV_PainSplit_ScoreDown1
+	score +3
 	goto AI_CV_PainSplit_End
 
 AI_CV_PainSplit_ScoreDown1:
@@ -2640,7 +2726,7 @@ AI_TryToFaint_DoubleSuperEffective:
 
 AI_TryToFaint_TryToEncourageQuickAttack:
 	if_effect EFFECT_EXPLOSION, AI_TryToFaint_End
-	if_not_effect (EFFECT_QUICK_ATTACK | EFFECT_BOULDER_DASH), AI_TryToFaint_ScoreUp4
+	if_not_effect (EFFECT_QUICK_ATTACK | EFFECT_BOULDER_DASH | EFFECT_EVIL), AI_TryToFaint_ScoreUp4
 	score +2
 AI_TryToFaint_ScoreUp4:
 	score +4

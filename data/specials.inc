@@ -539,3 +539,4 @@ gSpecials::
 	def_special VsSeekerResetObjectMovementAfterChargeComplete
 	def_special VsSeekerFreezeObjectsAfterChargeComplete
 @ End vs_seeker branch
+	def_special SwitchMonAbility
