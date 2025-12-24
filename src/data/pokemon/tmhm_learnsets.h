@@ -6535,6 +6535,7 @@ const union {
         .SUNNY_DAY = TRUE,
         .BOULDER_DASH = TRUE,
         .PROTECT = TRUE,
+        .ROCK_TOMB = TRUE,
         .ROCK_SLIDE = TRUE,
         .SELF_DESTRUCT = TRUE,
         .EARTHQUAKE = TRUE,

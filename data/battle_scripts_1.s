@@ -265,6 +265,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectAgility                @ EFFECT_AGILITY
 	.4byte BattleScript_EffectBulletSeed             @ EFFECT_BULLET_SEED
 	.4byte BattleScript_EffectBoulderDash            @ EFFECT_BOULDER_DASH
+	.4byte BattleScript_EffectGloryBlaze             @ EFFECT_GLORY_BLAZE
 	
 
 BattleScript_EffectHit::
@@ -420,6 +421,7 @@ BattleScript_EffectParalyzeHit::
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	goto BattleScript_EffectHit
 
+
 BattleScript_EffectExplosion::
 	attackcanceler
 	attackstring
@@ -461,6 +463,52 @@ BattleScript_ExplosionMissed:
 	waitmessage B_WAIT_TIME_LONG
 	moveendto MOVEEND_NEXT_TARGET
 	jumpifnexttargetvalid BattleScript_ExplosionLoop
+	tryfaintmon BS_ATTACKER
+	end
+
+BattleScript_EffectGloryBlaze::
+	remaininghptopower
+	attackcanceler
+	attackstring
+	ppreduce
+@ Below jumps to BattleScript_DampStopsExplosion if it fails (only way it can)
+	tryexplosion
+	setatkhptozero
+	waitstate
+	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_GloryBlazeDoAnimStartLoop
+	call BattleScript_PreserveMissedBitDoMoveAnim
+	goto BattleScript_GloryBlazeLoop
+BattleScript_GloryBlazeDoAnimStartLoop:
+	attackanimation
+	waitanimation
+BattleScript_GloryBlazeLoop:
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	accuracycheck BattleScript_GloryBlazeMissed, ACC_CURR_MOVE
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	setmoveeffect MOVE_EFFECT_BURN
+	seteffectprimary
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_GloryBlazeLoop
+	tryfaintmon BS_ATTACKER
+	end
+BattleScript_GloryBlazeMissed:
+	effectivenesssound
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_GloryBlazeLoop
 	tryfaintmon BS_ATTACKER
 	end
 
@@ -990,6 +1038,8 @@ BattleScript_EffectFinalSting::
 	tryfaintmon BS_ATTACKER
 	end
 	
+
+
 BattleScript_EffectFireCrash::
 	attackcanceler
 	attackstring
