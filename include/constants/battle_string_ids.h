@@ -381,8 +381,9 @@
 #define STRINGID_PKMNDROPPEDITEM            381
 #define STRINGID_ADDEDTOBAG                 382
 #define STRINGID_BAGISFULL                  383
+#define STRINGID_PKMNTRAPPEDBYSPROUT        384
 
-#define BATTLESTRINGS_COUNT                 384
+#define BATTLESTRINGS_COUNT                 385
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,
@@ -602,6 +603,6 @@
 #define B_MSG_REF_DRAW               7
 #define B_MSG_REF_COMMENCE_BATTLE    8
 
-#define NUM_TRAPPING_MOVES 6
+#define NUM_TRAPPING_MOVES 7
 
 #endif // GUARD_CONSTANTS_BATTLE_STRING_IDS_H

@@ -4709,7 +4709,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_SPROUT] =
     {
         .effect = EFFECT_SPROUT,
-        .power = 100,
+        .power = 80,
         .type = TYPE_GRASS,
         .accuracy = 0,
         .pp = 10,

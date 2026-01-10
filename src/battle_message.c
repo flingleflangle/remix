@@ -55,6 +55,7 @@ EWRAM_DATA struct BattleMsgData *gBattleMsgDataPtr = NULL;
 static const u8 sText_Trainer1LoseText[] = _("{B_TRAINER1_LOSE_TEXT}");
 static const u8 sText_PkmnGainedEXP[] = _("{B_BUFF1} gained{B_BUFF2}\n{B_BUFF3} EXP. Points!\p");
 static const u8 sText_EmptyString4[] = _("");
+static const u8 sText_PkmnTrappedBySprout[] = _("{B_DEF_NAME_WITH_PREFIX} was trapped\nby SPROUT!");
 static const u8 sText_ABoosted[] = _(" a boosted");
 static const u8 sText_PkmnGrewToLv[] = _("{B_BUFF1} grew to\nLV. {B_BUFF2}!{WAIT_SE}\p");
 static const u8 sText_PkmnLearnedMove[] = _("{B_BUFF1} learned\n{B_BUFF2}!{WAIT_SE}\p");
@@ -836,6 +837,7 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNUSEDXTOGETPUMPED - BATTLESTRINGS_TABLE_START] = sText_PkmnUsedXToGetPumped,
     [STRINGID_PKMNSXMADEYUSELESS - BATTLESTRINGS_TABLE_START] = sText_PkmnsXMadeYUseless,
     [STRINGID_PKMNTRAPPEDBYSANDTOMB - BATTLESTRINGS_TABLE_START] = sText_PkmnTrappedBySandTomb,
+    [STRINGID_PKMNTRAPPEDBYSPROUT - BATTLESTRINGS_TABLE_START] = sText_PkmnTrappedBySprout,
     [STRINGID_EMPTYSTRING4 - BATTLESTRINGS_TABLE_START] = sText_EmptyString4,
     [STRINGID_ABOOSTED - BATTLESTRINGS_TABLE_START] = sText_ABoosted,
     [STRINGID_PKMNSXINTENSIFIEDSUN - BATTLESTRINGS_TABLE_START] = sText_PkmnsXIntensifiedSun,
@@ -1048,7 +1050,8 @@ const u16 gWrappedStringIds[NUM_TRAPPING_MOVES] =
     STRINGID_PKMNTRAPPEDINVORTEX,  // MOVE_FIRE_SPIN
     STRINGID_PKMNCLAMPED,          // MOVE_CLAMP
     STRINGID_PKMNTRAPPEDINVORTEX,  // MOVE_WHIRLPOOL
-    STRINGID_PKMNTRAPPEDBYSANDTOMB // MOVE_SAND_TOMB
+    STRINGID_PKMNTRAPPEDBYSANDTOMB, // MOVE_SAND_TOMB
+    STRINGID_PKMNTRAPPEDBYSPROUT // MOVE_SPROUT
 };
 
 const u16 gMistUsedStringIds[] =
@@ -1267,6 +1270,7 @@ const u16 gTrappingMoves[NUM_TRAPPING_MOVES + 1] =
     MOVE_CLAMP,
     MOVE_WHIRLPOOL,
     MOVE_SAND_TOMB,
+    MOVE_SPROUT,
     0xFFFF // Never read
 };
 

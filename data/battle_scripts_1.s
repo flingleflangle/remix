@@ -1146,6 +1146,7 @@ BattleScript_EffectSprout::
 	attackstring
 	ppreduce
 	jumpifnostatus3 BS_TARGET, STATUS3_LEECHSEED, BattleScript_ButItFailed
+	jumpifstatus2 BS_TARGET, STATUS2_WRAPPED, BattleScript_ButItFailed
 	attackanimation
 	waitanimation
 	critcalc
@@ -1155,13 +1156,18 @@ BattleScript_EffectSprout::
 	hitanimation BS_TARGET
 	waitstate
 	healthbarupdate BS_TARGET
+	setmoveeffect MOVE_EFFECT_WRAP
+	seteffectprimary
 	datahpupdate BS_TARGET
 	critmessage
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
-	tryfaintmon BS_TARGET
-	goto BattleScript_MoveEnd
+	negativedamage
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	jumpifability BS_TARGET, ABILITY_LIQUID_OOZE, BattleScript_AbsorbLiquidOoze
+	setbyte cMULTISTRING_CHOOSER, B_MSG_ABSORB
+	goto BattleScript_AbsorbUpdateHp
 	
 BattleScript_EffectShred::
 	attackcanceler
