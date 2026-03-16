@@ -929,7 +929,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .power = 30,
         .type = TYPE_GRASS,
         .accuracy = 100,
-        .pp = 20,
+        .pp = 30,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
@@ -939,7 +939,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_MEGA_DRAIN] =
     {
         .effect = EFFECT_ABSORB,
-        .power = 40,
+        .power = 50,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 20,
@@ -1836,7 +1836,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_LEECH_LIFE] =
     {
         .effect = EFFECT_ABSORB,
-        .power = 40,
+        .power = 50,
         .type = TYPE_BUG,
         .accuracy = 100,
         .pp = 25,
@@ -2629,7 +2629,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_GIGA_DRAIN] =
     {
         .effect = EFFECT_ABSORB,
-        .power = 60,
+        .power = 70,
         .type = TYPE_GRASS,
         .accuracy = 100,
         .pp = 10,
