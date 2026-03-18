@@ -84,6 +84,8 @@ enum {
 #define ANIM_SASSY   (ANIM_GENTLE + 1)
 #define ANIM_CAREFUL (ANIM_SASSY + 1)
 #define ANIM_QUIRKY  (ANIM_CAREFUL + 5)
+#define ANIM_FIERCE  (ANIM_QUIRKY + 5)
+#define ANIM_PATIENT (ANIM_FIERCE + 5)
 
 struct PokeblockFeed
 {
@@ -168,6 +170,8 @@ static const u8 sNatureToMonPokeblockAnim[NUM_NATURES][2] =
     [NATURE_SASSY]   = { ANIM_SASSY,   AFFINE_TURN_UP_HIGH },
     [NATURE_CAREFUL] = { ANIM_CAREFUL, AFFINE_NONE },
     [NATURE_QUIRKY]  = { ANIM_QUIRKY,  AFFINE_NONE },
+    [NATURE_FIERCE]  = { ANIM_FIERCE,   AFFINE_TURN_UP_HIGH },
+    [NATURE_PATIENT] = { ANIM_PATIENT,  AFFINE_TURN_DOWN_SLOW }
 };
 
 // Data for the animation the Pokémon does while readying to jump for the Pokéblock
@@ -290,6 +294,14 @@ static const s16 sMonPokeblockAnims[][NUM_ANIMDATA] =
     [ANIM_QUIRKY] =
     {   0,   4,  16,  12,  64,   0,   0,   0,   0,   FALSE},
     {   0,  -4,  16,  12,  64,   0,   0,   0,   0,   TRUE},
+
+    [ANIM_FIERCE] =
+    {   0,   0,   0,   0,  42,   0,   0,   0,   0,   TRUE},
+
+    [ANIM_PATIENT] =
+    {   0,   0,   0,   0,   8,   0,   0,   0,   0,   FALSE},
+    {  64,  16,  -4,   0,  32,   0,   0,   0,   0,   FALSE},
+    {   0,   0,   0,   0,   8,   0,   0,   0,   0,   TRUE},
 };
 
 static const union AffineAnimCmd sAffineAnim_Mon_None[] =

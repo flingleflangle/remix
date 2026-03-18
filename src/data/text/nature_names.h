@@ -23,6 +23,8 @@ static const u8 sGentleNatureName[] = _("GENTLE");
 static const u8 sSassyNatureName[] = _("SASSY");
 static const u8 sCarefulNatureName[] = _("CAREFUL");
 static const u8 sQuirkyNatureName[] = _("QUIRKY");
+static const u8 sFierceNatureName[] = _("FIERCE");
+static const u8 sPatientNatureName[] = _("PATIENT");
 
 const u8 *const gNatureNamePointers[NUM_NATURES] =
 {
@@ -51,4 +53,6 @@ const u8 *const gNatureNamePointers[NUM_NATURES] =
     [NATURE_SASSY] = sSassyNatureName,
     [NATURE_CAREFUL] = sCarefulNatureName,
     [NATURE_QUIRKY] = sQuirkyNatureName,
+    [NATURE_FIERCE] = sFierceNatureName,
+    [NATURE_PATIENT] = sPatientNatureName,
 };

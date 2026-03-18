@@ -1329,6 +1329,8 @@ const s8 gNatureStatTable[NUM_NATURES][NUM_NATURE_STATS] =
     [NATURE_SASSY]   = {    0,      0,     -1,      0,     +1   },
     [NATURE_CAREFUL] = {    0,      0,      0,     -1,     +1   },
     [NATURE_QUIRKY]  = {    0,      0,      0,      0,      0   },
+    [NATURE_FIERCE] =  {   +2,     -5,     +1,     +2,     -5   },
+    [NATURE_PATIENT] = {   -1,     +2,     -5,      0,     +2   },
 };
 
 #include "data/pokemon/tmhm_learnsets.h"
@@ -5864,8 +5866,22 @@ u16 ModifyStatByNature(u8 nature, u16 stat, u8 statIndex)
         retVal = stat * 110;
         retVal /= 100;
         break;
+    // adding a +2 modifies the stat even more
+    case 2:
+        retVal = stat * 120;
+        retVal /= 100;
+        break;
     case -1:
         retVal = stat * 90;
+        retVal /= 100;
+        break;
+    case -2:
+        retVal = stat * 80;
+        retVal /= 100;
+        break;
+    // -5 to decrease the stat by
+    case -5:
+        retVal = stat * 50;
         retVal /= 100;
         break;
     default:
