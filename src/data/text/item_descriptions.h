@@ -66,7 +66,7 @@ static const u8 sPremierBallDesc[] = _(
 static const u8 sPotionDesc[] = _(
     "Restores the HP of\n"
     "a POKéMON by\n"
-    "20 points.");
+    "50 points.");
 
 static const u8 sAntidoteDesc[] = _(
     "Heals a poisoned\n"
@@ -105,7 +105,7 @@ static const u8 sHyperPotionDesc[] = _(
 static const u8 sSuperPotionDesc[] = _(
     "Restores the HP of\n"
     "a POKéMON by\n"
-    "50 points.");
+    "100 points.");
 
 static const u8 sFullHealDesc[] = _(
     "Heals all the\n"
@@ -575,7 +575,7 @@ static const u8 sLeppaBerryDesc[] = _(
 
 static const u8 sOranBerryDesc[] = _(
     "A hold item that\n"
-    "restores 10 HP in\n"
+    "restores 30 HP in\n"
     "battle.");
 
 static const u8 sPersimBerryDesc[] = _(
@@ -590,8 +590,8 @@ static const u8 sLumBerryDesc[] = _(
 
 static const u8 sSitrusBerryDesc[] = _(
     "A hold item that\n"
-    "restores 30 HP in\n"
-    "battle.");
+    "restores 25% of\n"
+    "max HP in battle.");
 
 static const u8 sFigyBerryDesc[] = _(
     "A hold item that\n"

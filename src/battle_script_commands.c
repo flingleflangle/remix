@@ -1432,6 +1432,26 @@ static void Cmd_typecalc(void)
         gProtectStructs[gBattlerAttacker].targetNotAffected = 1;
 
     gBattlescriptCurrInstr++;
+
+// exceptions for specific moves to be supereffective outside of their type
+    if (gCurrentMove == MOVE_CUT && (gBattleMons[gBattlerTarget].types[0] == TYPE_GRASS || gBattleMons[gBattlerTarget].types[1] == TYPE_GRASS))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_STRENGTH && (gBattleMons[gBattlerTarget].types[0] == TYPE_ROCK || gBattleMons[gBattlerTarget].types[1] == TYPE_ROCK))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_TRI_ATTACK && (
+        gBattleMons[gBattlerTarget].types[0] == TYPE_WATER ||
+        gBattleMons[gBattlerTarget].types[0] ==  TYPE_GRASS ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_BUG ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_FLYING || 
+        gBattleMons[gBattlerTarget].types[0] == TYPE_DRAGON || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_WATER ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_GRASS || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_BUG || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_FLYING || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_DRAGON))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
 }
 
 static void CheckWonderGuardAndLevitate(void)
@@ -1599,6 +1619,25 @@ u8 TypeCalc(u16 move, u8 attacker, u8 defender)
     {
         flags |= MOVE_RESULT_MISSED;
     }
+
+    if (gCurrentMove == MOVE_CUT && (gBattleMons[defender].types[0] == TYPE_GRASS || gBattleMons[defender].types[1] == TYPE_GRASS))
+        ModulateDmgByType2(TYPE_MUL_SUPER_EFFECTIVE, move, &flags);
+
+    if (gCurrentMove == MOVE_STRENGTH && (gBattleMons[defender].types[0] == TYPE_ROCK || gBattleMons[defender].types[1] == TYPE_ROCK))
+            ModulateDmgByType2(TYPE_MUL_SUPER_EFFECTIVE, move, &flags);
+
+    if (gCurrentMove == MOVE_TRI_ATTACK && (
+        gBattleMons[defender].types[0] == TYPE_WATER || 
+        gBattleMons[defender].types[0] == TYPE_GRASS || 
+        gBattleMons[defender].types[0] == TYPE_BUG ||
+        gBattleMons[defender].types[0] == TYPE_FLYING || 
+        gBattleMons[defender].types[0] == TYPE_DRAGON || 
+        gBattleMons[defender].types[1] == TYPE_WATER || 
+        gBattleMons[defender].types[1] == TYPE_GRASS || 
+        gBattleMons[defender].types[1] == TYPE_BUG || 
+        gBattleMons[defender].types[1] == TYPE_FLYING || 
+        gBattleMons[defender].types[1] == TYPE_DRAGON))
+        ModulateDmgByType2(TYPE_MUL_SUPER_EFFECTIVE, move, &flags);
     return flags;
 }
 

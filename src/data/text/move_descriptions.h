@@ -58,8 +58,8 @@ static const u8 sSwordsDanceDescription[] = _(
     "sharply raises ATTACK.");
 
 static const u8 sCutDescription[] = _(
-    "Cuts the foe with sharp\n"
-    "scythes, claws, etc.");
+    "Super effective against\n"
+    "GRASS types.");
 
 static const u8 sGustDescription[] = _(
     "Strikes the foe with a gust\n"
@@ -278,8 +278,8 @@ static const u8 sSeismicTossDescription[] = _(
     "to the user's level.");
 
 static const u8 sStrengthDescription[] = _(
-    "Builds enormous power,\n"
-    "then slams the foe.");
+    "Super effective against\n"
+    "ROCK types.");
 
 static const u8 sAbsorbDescription[] = _(
     "An attack that absorbs\n"

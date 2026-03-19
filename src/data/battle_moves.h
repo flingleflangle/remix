@@ -199,7 +199,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_HIGH_CRITICAL,
         .power = 55,
-        .type = TYPE_BUG,
+        .type = TYPE_NORMAL,
         .accuracy = 95,
         .pp = 30,
         .secondaryEffectChance = 0,

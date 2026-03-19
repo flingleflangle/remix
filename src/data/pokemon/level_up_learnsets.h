@@ -3990,7 +3990,6 @@ static const u16 sGrovyleLevelUpLearnset[] = {
 };
 
 static const u16 sSceptileLevelUpLearnset[] = {
-    LEVEL_UP_MOVE( 0, MOVE_ASCENSION),
     LEVEL_UP_MOVE( 0, MOVE_DRAGON_CLAW),
     LEVEL_UP_MOVE( 1, MOVE_POUND),
     LEVEL_UP_MOVE( 1, MOVE_LEER),

@@ -1,6 +1,6 @@
 const u8 gItemEffect_Potion[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 20, // Amount of HP to recover
+    [6] = 50, // Amount of HP to recover
 };
 
 const u8 gItemEffect_Antidote[6] = {
@@ -41,7 +41,7 @@ const u8 gItemEffect_HyperPotion[7] = {
 
 const u8 gItemEffect_SuperPotion[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 50, // Amount of HP to recover
+    [6] = 100, // Amount of HP to recover
 };
 
 const u8 gItemEffect_FullHeal[6] = {
@@ -359,7 +359,7 @@ const u8 gItemEffect_LeppaBerry[7] = {
 
 const u8 gItemEffect_OranBerry[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 10, // Amount of HP to recover
+    [6] = 30, // Amount of HP to recover
 };
 
 const u8 gItemEffect_PersimBerry[6] = {
@@ -372,7 +372,7 @@ const u8 gItemEffect_LumBerry[6] = {
 
 const u8 gItemEffect_SitrusBerry[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 30, // Amount of HP to recover
+    [6] = ITEM6_HEAL_QUARTER, // Amount of HP to recover
 };
 
 #define EV_BERRY_FRIENDSHIP_CHANGE          \
