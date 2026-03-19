@@ -821,7 +821,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_HYPER_BEAM] =
     {
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_TOMBSTONER,
         .power = 150,
         .type = TYPE_NORMAL,
         .accuracy = 90,
@@ -3993,7 +3993,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_BLAST_BURN] =
     {
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_TOMBSTONER,
         .power = 150,
         .type = TYPE_FIRE,
         .accuracy = 90,
@@ -4006,7 +4006,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_HYDRO_CANNON] =
     {
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_TOMBSTONER,
         .power = 150,
         .type = TYPE_WATER,
         .accuracy = 90,
@@ -4396,7 +4396,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_FRENZY_PLANT] =
     {
-        .effect = EFFECT_RECHARGE,
+        .effect = EFFECT_TOMBSTONER,
         .power = 150,
         .type = TYPE_GRASS,
         .accuracy = 90,

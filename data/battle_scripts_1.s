@@ -3720,6 +3720,10 @@ BattleScript_FaintAttacker::
 	cleareffectsonfaint BS_ATTACKER
 	printstring STRINGID_ATTACKERFAINTED
 	jumpifmove MOVE_TOMBSTONER, BattleScript_MoveEnd
+	jumpifmove MOVE_HYPER_BEAM, BattleScript_MoveEnd
+	jumpifmove MOVE_HYDRO_CANNON, BattleScript_MoveEnd
+	jumpifmove MOVE_BLAST_BURN, BattleScript_MoveEnd
+	jumpifmove MOVE_FRENZY_PLANT, BattleScript_MoveEnd
 	return
 
 BattleScript_FaintTarget::
@@ -3729,6 +3733,10 @@ BattleScript_FaintTarget::
 	cleareffectsonfaint BS_TARGET
 	printstring STRINGID_TARGETFAINTED
 	jumpifmove MOVE_TOMBSTONER, BattleScript_MoveEnd
+	jumpifmove MOVE_HYPER_BEAM, BattleScript_MoveEnd
+	jumpifmove MOVE_HYDRO_CANNON, BattleScript_MoveEnd
+	jumpifmove MOVE_BLAST_BURN, BattleScript_MoveEnd
+	jumpifmove MOVE_FRENZY_PLANT, BattleScript_MoveEnd
 	jumpifmove MOVE_VICE_GRIP, BattleScript_MoveEnd
 	return
 
