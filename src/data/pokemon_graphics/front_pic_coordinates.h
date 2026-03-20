@@ -259,7 +259,6 @@ const struct MonCoords gMonFrontPicCoords[] =
     [SPECIES_TREECKO]     = { .size = MON_COORDS_SIZE(48, 48), .y_offset =  8 },
     [SPECIES_GROVYLE]     = { .size = MON_COORDS_SIZE(64, 56), .y_offset =  4 },
     [SPECIES_SCEPTILE]    = { .size = MON_COORDS_SIZE(64, 64), .y_offset =  0 },
-    [SPECIES_SCEPTILE_EX] = { .size = MON_COORDS_SIZE(64, 64), .y_offset =  0 },
     [SPECIES_TORCHIC]     = { .size = MON_COORDS_SIZE(40, 48), .y_offset =  8 },
     [SPECIES_COMBUSKEN]   = { .size = MON_COORDS_SIZE(64, 64), .y_offset =  1 },
     [SPECIES_BLAZIKEN]    = { .size = MON_COORDS_SIZE(64, 64), .y_offset =  0 },
