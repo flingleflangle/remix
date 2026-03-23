@@ -5059,14 +5059,14 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_IGNITE] =
     {
-        .effect = EFFECT_HIT,
-        .power = 40,
+        .effect = EFFECT_IGNITE,
+        .power = 0,
         .type = TYPE_FIRE,
-        .accuracy = 100,
-        .pp = 35,
-        .secondaryEffectChance = 0,
-        .target = MOVE_TARGET_SELECTED,
+        .accuracy = 0,
+        .pp = 5,
+        .secondaryEffectChance = 100,
+        .target = MOVE_TARGET_USER,
         .priority = 0,
-        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+        .flags = FLAG_SNATCH_AFFECTED,
     },
 };

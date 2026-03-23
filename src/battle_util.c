@@ -1458,6 +1458,7 @@ enum
     ENDTURN_TAUNT,
     ENDTURN_YAWN,
     ENDTURN_ITEMS2,
+    ENDTURN_IGNITE,
     ENDTURN_BATTLER_COUNT
 };
 
@@ -1769,6 +1770,15 @@ u8 DoBattlerEndTurnEffects(void)
                 }
                 gBattleStruct->turnEffectsTracker++;
                 break;
+            case ENDTURN_IGNITE:  // ignite damage
+                if ((gBattleMons[gActiveBattler].status1 & STATUS1_IGNITE) && gBattleMons[gActiveBattler].hp != 0)
+                {
+                    gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 6;
+                    if (gBattleMoveDamage == 0)
+                        gBattleMoveDamage = 1;
+                    BattleScriptExecute(BattleScript_IgniteTurnDmg);
+                    effect++;
+                }
             case ENDTURN_BATTLER_COUNT:  // done
                 gBattleStruct->turnEffectsTracker = 0;
                 gBattleStruct->turnEffectsBattlerId++;

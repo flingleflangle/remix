@@ -630,6 +630,7 @@ static const u32 sStatusFlagsForMoveEffects[NUM_MOVE_EFFECTS] =
     [MOVE_EFFECT_PREVENT_ESCAPE] = STATUS2_ESCAPE_PREVENTION,
     [MOVE_EFFECT_NIGHTMARE]      = STATUS2_NIGHTMARE,
     [MOVE_EFFECT_THRASH]         = STATUS2_LOCK_CONFUSE,
+    [MOVE_EFFECT_IGNITE]         = STATUS1_IGNITE,
 };
 
 static const u8 *const sMoveEffectBS_Ptrs[] =
@@ -673,6 +674,7 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
     [MOVE_EFFECT_REMOVE_PARALYSIS] = BattleScript_MoveEffectSleep,
     [MOVE_EFFECT_ATK_DEF_DOWN]     = BattleScript_MoveEffectSleep,
     [MOVE_EFFECT_RECOIL_33]        = BattleScript_MoveEffectRecoil,
+    [MOVE_EFFECT_IGNITE]           = BattleScript_MoveEffectIgnite,
 };
 
 static const struct WindowTemplate sUnusedWinTemplate =
@@ -2316,7 +2318,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
     if (gBattleMons[gEffectBattler].status2 & STATUS2_SUBSTITUTE && affectsUser != MOVE_EFFECT_AFFECTS_USER)
         INCREMENT_RESET_RETURN
 
-    if (gBattleCommunication[MOVE_EFFECT_BYTE] <= PRIMARY_STATUS_MOVE_EFFECT)
+    if (gBattleCommunication[MOVE_EFFECT_BYTE] >= MOVE_EFFECT_IGNITE)
     {
         switch (sStatusFlagsForMoveEffects[gBattleCommunication[MOVE_EFFECT_BYTE]])
         {
@@ -2521,6 +2523,14 @@ void SetMoveEffect(bool8 primary, u8 certain)
             {
                 gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
             }
+            break;
+        case STATUS1_IGNITE:
+            if (gBattleMons[gEffectBattler].status1){
+                //if already has status, do not status again
+                //I'm following a tutorial to a T idk man
+                break;
+            }
+            statusChanged = TRUE;
             break;
         }
         if (statusChanged == TRUE)

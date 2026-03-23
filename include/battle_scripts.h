@@ -224,5 +224,7 @@ extern const u8 BattleScript_ActionWatchesCarefully[];
 extern const u8 BattleScript_ActionGetNear[];
 extern const u8 BattleScript_ActionThrowPokeblock[];
 extern const u8 BattleScript_BallThrowEnd[];
+extern const u8 BattleScript_MoveEffectIgnite[];
+extern const u8 BattleScript_IgniteTurnDmg[];
 
 #endif // GUARD_BATTLE_SCRIPTS_H

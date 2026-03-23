@@ -419,6 +419,7 @@ gBattleAnims_StatusConditions::
 	.4byte Status_Freeze                    @ B_ANIM_STATUS_FRZ
 	.4byte Status_Curse                     @ B_ANIM_STATUS_CURSED
 	.4byte Status_Nightmare                 @ B_ANIM_STATUS_NIGHTMARE
+	.4byte Status_Ignite                    @ B_ANIM_STATUS_IGNITE
 
 	.align 2
 gBattleAnims_General::
@@ -11531,6 +11532,23 @@ BurnFlame:
 	createsprite gBurnFlameSpriteTemplate, ANIM_TARGET, 2, -24, 24, 24, 24, 20, 1, 1
 	delay 4
 	return
+
+Status_Ignite:
+	loadspritegfx ANIM_TAG_SMALL_EMBER
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 0, 15, RGB_RED
+	createvisualtask AnimTask_HorizontalShake, 3, ANIM_ATTACKER, 2, 12
+	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_ATTACKER
+	delay 4
+	createsprite gFireSpinSpriteTemplate, ANIM_ATTACKER, 2, 0, 28, 528, 30, 13, 50, ANIM_ATTACKER
+	delay 2
+	createsprite gFireSpinSpriteTemplate, ANIM_ATTACKER, 2, 0, 32, 480, 20, 16, -46, ANIM_ATTACKER
+	delay 2
+	delay 10
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 15, 0, RGB_RED
+	clearmonbg ANIM_DEF_PARTNER
+	blendoff
+	waitforvisualfinish
+	end
 
 Status_Infatuation:
 	loadspritegfx ANIM_TAG_MAGENTA_HEART

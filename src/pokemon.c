@@ -3316,6 +3316,10 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         if ((attacker->status1 & STATUS1_BURN) && attacker->ability != ABILITY_GUTS)
             damage /= 2;
 
+        // Ignite doubles attack
+        if (attacker->status1 & STATUS1_IGNITE)
+            damage *= 2;
+
         // Apply Reflect
         if ((sideStatus & SIDE_STATUS_REFLECT) && gCritMultiplier == 1)
         {
@@ -3352,6 +3356,10 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 
         damage = damage * gBattleMovePower;
         damage *= (2 * attacker->level / 5 + 2);
+
+        // Ignite doubles special attack, too
+        if (attacker->status1 & STATUS1_IGNITE)
+            damage *= 2;
 
         if (gCritMultiplier == 2)
         {

@@ -266,6 +266,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectBulletSeed             @ EFFECT_BULLET_SEED
 	.4byte BattleScript_EffectBoulderDash            @ EFFECT_BOULDER_DASH
 	.4byte BattleScript_EffectGloryBlaze             @ EFFECT_GLORY_BLAZE
+	.4byte BattleScript_EffectIgnite                 @ EFFECT_IGNITE
 	
 
 BattleScript_EffectHit::
@@ -420,6 +421,19 @@ BattleScript_EffectFreezeHit::
 BattleScript_EffectParalyzeHit::
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	goto BattleScript_EffectHit
+
+BattleScript_EffectIgnite::
+	setmoveeffect MOVE_EFFECT_BURN
+	attackstring
+	jumpifstatus BS_TARGET, STATUS1_IGNITE, BattleScript_ButItFailed
+	ppreduce
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_IGNITE
+	seteffectprimary
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffectprimary
+	goto BattleScript_MoveEnd
 
 
 BattleScript_EffectExplosion::
@@ -4670,6 +4684,11 @@ BattleScript_BurnTurnDmg::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_DoStatusTurnDmg
 
+BattleScript_IgniteTurnDmg::
+	printstring STRINGID_PKMNONFIRE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_DoStatusTurnDmg
+
 BattleScript_MoveUsedIsFrozen::
 	printstring STRINGID_PKMNISFROZEN
 	waitmessage B_WAIT_TIME_LONG
@@ -4829,6 +4848,12 @@ BattleScript_MoveEffectFreeze::
 BattleScript_MoveEffectParalysis::
 	statusanimation BS_EFFECT_BATTLER
 	printfromtable gGotParalyzedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_UpdateEffectStatusIconRet
+
+BattleScript_MoveEffectIgnite::
+	statusanimation BS_EFFECT_BATTLER
+	printstring STRINGID_PKMNHEATINGUP
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_UpdateEffectStatusIconRet
 
