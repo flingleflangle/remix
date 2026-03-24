@@ -78,7 +78,7 @@
     F(CURSE) \
     F(REVERSAL) \
     F(EXTREME_SPEED) \
-    F(SHADOW_PUNCH) \
+    F(IGNITE) \
     F(SELF_DESTRUCT) \
     F(WEATHER_BALL) \
     F(SKULL_BASH) \

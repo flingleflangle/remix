@@ -1554,9 +1554,9 @@ static const u8 sTM76Desc[] = _(
     "strikes first.");
 
 static const u8 sTM77Desc[] = _(
-    "An unavoidable\n"
-    "punch that is\n"
-    "thrown from shadows.");
+    "Fires up the user,\n"
+    "trading HP for\n"
+    "double the power.");
        
 static const u8 sTM78Desc[] = _(
     "Inflicts severe\n"
