@@ -3,14 +3,15 @@
 
 #define PARTY_NOTHING_CHOSEN 0xFF
 
-#define AILMENT_NONE  0
-#define AILMENT_PSN   1
-#define AILMENT_PRZ   2
-#define AILMENT_SLP   3
-#define AILMENT_FRZ   4
-#define AILMENT_BRN   5
-#define AILMENT_PKRS  6
-#define AILMENT_FNT   7
+#define AILMENT_NONE    0
+#define AILMENT_PSN     1
+#define AILMENT_PRZ     2
+#define AILMENT_SLP     3
+#define AILMENT_FRZ     4
+#define AILMENT_BRN     5
+#define AILMENT_IGNITE  6
+#define AILMENT_FNT     7
+#define AILMENT_PKRS    8
 
 #define TUTOR_MOVE_MEGA_PUNCH      0
 #define TUTOR_MOVE_SWORDS_DANCE    1

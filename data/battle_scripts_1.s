@@ -431,8 +431,6 @@ BattleScript_EffectIgnite::
 	waitanimation
 	setmoveeffect MOVE_EFFECT_IGNITE
 	seteffectprimary
-	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
-	seteffectprimary
 	goto BattleScript_MoveEnd
 
 
@@ -4687,6 +4685,8 @@ BattleScript_BurnTurnDmg::
 BattleScript_IgniteTurnDmg::
 	printstring STRINGID_PKMNONFIRE
 	waitmessage B_WAIT_TIME_LONG
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffectprimary
 	goto BattleScript_DoStatusTurnDmg
 
 BattleScript_MoveUsedIsFrozen::

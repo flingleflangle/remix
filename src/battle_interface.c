@@ -2040,6 +2040,11 @@ static void UpdateStatusIconInHealthbox(u8 healthboxSpriteId)
         statusGfxPtr = GetHealthboxElementGfxPtr(GetStatusIconForBattlerId(HEALTHBOX_GFX_STATUS_PRZ_BATTLER0, battler));
         statusPalId = PAL_STATUS_PAR;
     }
+    else if (status & STATUS1_IGNITE)
+    {
+        statusGfxPtr = GetHealthboxElementGfxPtr(GetStatusIconForBattlerId(HEALTHBOX_GFX_STATUS_BRN_BATTLER0, battler));
+        statusPalId = PAL_STATUS_BRN;
+    }
     else
     {
         statusGfxPtr = GetHealthboxElementGfxPtr(HEALTHBOX_GFX_39);

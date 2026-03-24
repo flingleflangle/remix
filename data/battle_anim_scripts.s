@@ -10860,6 +10860,7 @@ Move_IGNITE::
 	createsprite gOverheatFlameSpriteTemplate, ANIM_ATTACKER, 66, 1, 192, 30, 25, 0
 	createsprite gOverheatFlameSpriteTemplate, ANIM_ATTACKER, 66, 1, 224, 30, 25, 0
 	createsprite gLeerSpriteTemplate, ANIM_ATTACKER, 2, 24, -12
+	stopsound
 	playsewithpan SE_M_LEER, SOUND_PAN_ATTACKER
 	delay 4
 	waitforvisualfinish
