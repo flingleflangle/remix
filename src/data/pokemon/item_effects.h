@@ -332,24 +332,34 @@ const u8 gItemEffect_MetalCrystal[6] = {
     [4] = ITEM4_EVO_STONE,
 };
 
-const u8 gItemEffect_CheriBerry[6] = {
+const u8 gItemEffect_CheriBerry[7] = {
     [3] = ITEM3_PARALYSIS,
+    [4] = ITEM4_HEAL_HP,
+    [6] = 10, // Amount of HP to recover
 };
 
-const u8 gItemEffect_ChestoBerry[6] = {
+const u8 gItemEffect_ChestoBerry[7] = {
     [3] = ITEM3_SLEEP,
+    [4] = ITEM4_HEAL_HP,
+    [6] = 10, // Amount of HP to recover
 };
 
-const u8 gItemEffect_PechaBerry[6] = {
+const u8 gItemEffect_PechaBerry[7] = {
     [3] = ITEM3_POISON,
+    [4] = ITEM4_HEAL_HP,
+    [6] = 10, // Amount of HP to recover
 };
 
-const u8 gItemEffect_RawstBerry[6] = {
+const u8 gItemEffect_RawstBerry[7] = {
     [3] = ITEM3_BURN,
+    [4] = ITEM4_HEAL_HP,
+    [6] = 10, // Amount of HP to recover
 };
 
-const u8 gItemEffect_AspearBerry[6] = {
+const u8 gItemEffect_AspearBerry[7] = {
     [3] = ITEM3_FREEZE,
+    [4] = ITEM4_HEAL_HP,
+    [6] = 10, // Amount of HP to recover
 };
 
 const u8 gItemEffect_LeppaBerry[7] = {
@@ -362,8 +372,10 @@ const u8 gItemEffect_OranBerry[7] = {
     [6] = 30, // Amount of HP to recover
 };
 
-const u8 gItemEffect_PersimBerry[6] = {
+const u8 gItemEffect_PersimBerry[7] = {
     [3] = ITEM3_CONFUSION,
+    [4] = ITEM4_HEAL_HP,
+    [6] = 10, // Amount of HP to recover
 };
 
 const u8 gItemEffect_LumBerry[6] = {

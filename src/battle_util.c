@@ -3540,6 +3540,12 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     BattleScriptExecute(BattleScript_BerryCureBrnEnd2);
                     effect = ITEM_STATUS_CHANGE;
                 }
+                if (gBattleMons[battler].status1 & STATUS1_IGNITE)
+                {
+                    gBattleMons[battler].status1 &= ~STATUS1_IGNITE;
+                    BattleScriptExecute(BattleScript_BerryCureBrnEnd2);
+                    effect = ITEM_STATUS_CHANGE;
+                }
                 break;
             case HOLD_EFFECT_CURE_FRZ:
                 if (gBattleMons[battler].status1 & STATUS1_FREEZE)
@@ -3599,6 +3605,11 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     if (gBattleMons[battler].status2 & STATUS2_CONFUSION)
                     {
                         StringCopy(gBattleTextBuff1, gStatusConditionString_ConfusionJpn);
+                        i++;
+                    }
+                    if (gBattleMons[battler].status1 & STATUS1_IGNITE)
+                    {
+                        StringCopy(gBattleTextBuff1, gStatusConditionString_BurnJpn);
                         i++;
                     }
                     if (i <= 1)
@@ -3748,6 +3759,9 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
 
                     if (gBattleMons[battler].status2 & STATUS2_CONFUSION)
                         StringCopy(gBattleTextBuff1, gStatusConditionString_ConfusionJpn);
+
+                    if (gBattleMons[battler].status1 & STATUS1_IGNITE)
+                        StringCopy(gBattleTextBuff1, gStatusConditionString_BurnJpn);
 
                     gBattleMons[battler].status1 = 0;
                     gBattleMons[battler].status2 &= ~STATUS2_CONFUSION;
