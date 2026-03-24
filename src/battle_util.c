@@ -3257,8 +3257,8 @@ enum
     {                                                                                       \
         PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);                                        \
         gEffectBattler = battler;                                                         \
-        SET_STATCHANGER(stat, 1, FALSE);                                                    \
-        gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + (stat);                               \
+        SET_STATCHANGER(stat, 2, FALSE);                                                    \
+        gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + (stat);                               \
         gBattleScripting.animArg2 = 0;                                                      \
         BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);                               \
         effect = ITEM_STATS_CHANGE;                                                         \
@@ -3454,8 +3454,8 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_ATK);
                     PREPARE_STRING_BUFFER(gBattleTextBuff2, STRINGID_STATROSE); // Only the Attack stat-up berry has this
                     gEffectBattler = battler;
-                    SET_STATCHANGER(STAT_ATK, 1, FALSE);
-                    gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + STAT_ATK;
+                    SET_STATCHANGER(STAT_ATK, 2, FALSE);
+                    gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + STAT_ATK;
                     gBattleScripting.animArg2 = 0;
                     BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
                     effect = ITEM_STATS_CHANGE;
@@ -3509,7 +3509,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                         gBattleTextBuff2[7] = EOS;
 
                         gEffectBattler = battler;
-                        SET_STATCHANGER(i + 1, 2, FALSE);
+                        SET_STATCHANGER(i + 1, 6, FALSE);
                         gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + (i + 1);
                         gBattleScripting.animArg2 = 0;
                         BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);

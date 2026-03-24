@@ -125,32 +125,32 @@ static const u8 sMaxReviveDesc[] = _(
 static const u8 sFreshWaterDesc[] = _(
     "A mineral water\n"
     "that restores HP\n"
-    "by 50 points.");
+    "by 100 points.");
 
 static const u8 sSodaPopDesc[] = _(
     "A fizzy soda drink\n"
     "that restores HP\n"
-    "by 60 points.");
+    "by 120 points.");
 
 static const u8 sLemonadeDesc[] = _(
     "A very sweet drink\n"
     "that restores HP\n"
-    "by 80 points.");
+    "by 160 points.");
 
 static const u8 sMoomooMilkDesc[] = _(
     "A nutritious milk\n"
     "that restores HP\n"
-    "by 100 points.");
+    "by 200 points.");
 
 static const u8 sEnergyPowderDesc[] = _(
     "A bitter powder\n"
     "that restores HP\n"
-    "by 50 points.");
+    "by 100 points.");
 
 static const u8 sEnergyRootDesc[] = _(
     "A bitter root\n"
     "that restores HP\n"
-    "by 200 points.");
+    "to full.");
 
 static const u8 sHealPowderDesc[] = _(
     "A bitter powder\n"
@@ -590,7 +590,7 @@ static const u8 sLumBerryDesc[] = _(
 
 static const u8 sSitrusBerryDesc[] = _(
     "A hold item that\n"
-    "restores 25% of\n"
+    "restores 1/3 of\n"
     "max HP in battle.");
 
 static const u8 sFigyBerryDesc[] = _(
