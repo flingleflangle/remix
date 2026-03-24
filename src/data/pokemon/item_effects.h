@@ -60,22 +60,22 @@ const u8 gItemEffect_MaxRevive[7] = {
 
 const u8 gItemEffect_FreshWater[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 50, // Amount of HP to recover
+    [6] = 100, // Amount of HP to recover
 };
 
 const u8 gItemEffect_SodaPop[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 60, // Amount of HP to recover
+    [6] = 120, // Amount of HP to recover
 };
 
 const u8 gItemEffect_Lemonade[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 80, // Amount of HP to recover
+    [6] = 160, // Amount of HP to recover
 };
 
 const u8 gItemEffect_MoomooMilk[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 100, // Amount of HP to recover
+    [6] = 200, // Amount of HP to recover
 };
 
 const u8 gItemEffect_EnergyPowder[10] = {
@@ -133,8 +133,10 @@ const u8 gItemEffect_MaxElixir[7] = {
     [6] = ITEM6_HEAL_PP_FULL,
 };
 
-const u8 gItemEffect_LavaCookie[6] = {
+const u8 gItemEffect_LavaCookie[7] = {
     [3] = ITEM3_STATUS_ALL,
+    [4] = ITEM4_HEAL_HP,
+    [6] = 10, // Amount of HP to recover
 };
 
 const u8 gItemEffect_BlueFlute[6] = {
@@ -150,8 +152,9 @@ const u8 gItemEffect_RedFlute[6] = {
 };
 
 const u8 gItemEffect_BerryJuice[7] = {
+    [3] = ITEM3_STATUS_ALL,
     [4] = ITEM4_HEAL_HP,
-    [6] = 20, // Amount of HP to recover
+    [6] = 60, // Amount of HP to recover
 };
 
 const u8 gItemEffect_SacredAsh[7] = {
