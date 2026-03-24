@@ -213,7 +213,7 @@ static const u8 sWhiteFluteDesc[] = _(
 static const u8 sBerryJuiceDesc[] = _(
     "A 100% pure juice\n"
     "that restores HP\n"
-    "by 20 points.");
+    "by 60 points.");
 
 static const u8 sSacredAshDesc[] = _(
     "Fully revives and\n"
