@@ -1557,6 +1557,10 @@ static const u8 sIgniteDescription[] = _(
     "Heats up with a fiery aura.\n"
     "Trades HP for power.");
 
+static const u8 sHotwireDescription[] = _(
+    "Maximizes SP. ATK while\n"
+    "sacrificing HP.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -1949,4 +1953,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_BOULDER_DASH - 1] = sBoulderDashDescription,
 	[MOVE_GLORY_BLAZE - 1] = sGloryBlazeDescription,
 	[MOVE_IGNITE - 1] = sIgniteDescription,
+    [MOVE_HOTWIRE - 1] = sHotwireDescription,
 };

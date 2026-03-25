@@ -391,8 +391,9 @@
 #define MOVE_BOULDER_DASH 387
 #define MOVE_GLORY_BLAZE 388
 #define MOVE_IGNITE 389
+#define MOVE_HOTWIRE 390
 
-#define MOVES_COUNT 390
+#define MOVES_COUNT 391
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

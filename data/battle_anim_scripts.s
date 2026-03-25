@@ -406,6 +406,7 @@ gBattleAnims_Moves::
 	.4byte Move_BOULDER_DASH
 	.4byte Move_GLORY_BLAZE
 	.4byte Move_IGNITE
+	.4byte Move_HOTWIRE
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -3611,6 +3612,7 @@ Move_FOLLOW_ME:
 	loopsewithpan SE_M_TAIL_WHIP, SOUND_PAN_ATTACKER, 22, 3
 	end
 
+Move_HOTWIRE:
 Move_CHARGE:
 	loadspritegfx ANIM_TAG_ELECTRIC_ORBS
 	loadspritegfx ANIM_TAG_CIRCLE_OF_LIGHT

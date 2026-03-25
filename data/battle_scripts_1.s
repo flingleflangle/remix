@@ -267,6 +267,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectBoulderDash            @ EFFECT_BOULDER_DASH
 	.4byte BattleScript_EffectGloryBlaze             @ EFFECT_GLORY_BLAZE
 	.4byte BattleScript_EffectIgnite                 @ EFFECT_IGNITE
+	.4byte BattleScript_EffectHotwire                @ EFFECT_HOTWIRE
 	
 
 BattleScript_EffectHit::
@@ -2689,6 +2690,20 @@ BattleScript_EffectBellyDrum::
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	printstring STRINGID_PKMNCUTHPMAXEDATTACK
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+BattleScript_EffectHotwire::
+	attackcanceler
+	attackstring
+	ppreduce
+	maxattackhalvehp BattleScript_ButItFailed
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	attackanimation
+	waitanimation
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	printstring STRINGID_PKMNCUTHPMAXEDSPATTACK
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 

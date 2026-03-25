@@ -8895,24 +8895,49 @@ static void Cmd_setsunny(void)
 // Belly Drum
 static void Cmd_maxattackhalvehp(void)
 {
-    u32 halfHp = gBattleMons[gBattlerAttacker].maxHP / 2;
+    
+    if (gCurrentMove == MOVE_BELLY_DRUM) {
+        u32 halfHp = gBattleMons[gBattlerAttacker].maxHP / 2;
 
-    if (!(gBattleMons[gBattlerAttacker].maxHP / 2))
-        halfHp = 1;
+        if (!(gBattleMons[gBattlerAttacker].maxHP / 2))
+            halfHp = 1;
 
-    if (gBattleMons[gBattlerAttacker].statStages[STAT_ATK] < MAX_STAT_STAGE
-        && gBattleMons[gBattlerAttacker].hp > halfHp)
-    {
-        gBattleMons[gBattlerAttacker].statStages[STAT_ATK] = MAX_STAT_STAGE;
-        gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 2;
-        if (gBattleMoveDamage == 0)
-            gBattleMoveDamage = 1;
+        if (gBattleMons[gBattlerAttacker].statStages[STAT_ATK] < MAX_STAT_STAGE
+            && gBattleMons[gBattlerAttacker].hp > halfHp)
+        {
+            gBattleMons[gBattlerAttacker].statStages[STAT_ATK] = MAX_STAT_STAGE;
+            gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 2;
+            if (gBattleMoveDamage == 0)
+                gBattleMoveDamage = 1;
 
-        gBattlescriptCurrInstr += 5;
+            gBattlescriptCurrInstr += 5;
+        }
+        else
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
     }
-    else
-    {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+
+    if (gCurrentMove == MOVE_HOTWIRE) {
+        u32 halfHp = gBattleMons[gBattlerAttacker].maxHP / 2;
+
+        if (!(gBattleMons[gBattlerAttacker].maxHP / 2))
+            halfHp = 1;
+
+        if (gBattleMons[gBattlerAttacker].statStages[STAT_SPATK] < MAX_STAT_STAGE
+            && gBattleMons[gBattlerAttacker].hp > halfHp)
+        {
+            gBattleMons[gBattlerAttacker].statStages[STAT_SPATK] = MAX_STAT_STAGE;
+            gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 2;
+            if (gBattleMoveDamage == 0)
+                gBattleMoveDamage = 1;
+
+            gBattlescriptCurrInstr += 5;
+        }
+        else
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
     }
 }
 
