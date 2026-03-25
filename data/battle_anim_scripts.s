@@ -3637,14 +3637,16 @@ Move_HOTWIRE:
 	delay 1
 	createvisualtask AnimTask_InvertScreenColor, 2, 257, 257, 257
 	delay 1
-	createsprite gLightningSpriteTemplate, ANIM_ATTACKER, 2, 0, -36
+	createsprite gLightningSpriteTemplate, ANIM_ATTACKER, 2, 0, -60
 	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_ATTACKER, 1
 	playsewithpan SE_M_TRI_ATTACK2, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_InvertScreenColor, 2, 257, 257, 257
 	delay 1
-	createsprite gLightningSpriteTemplate, ANIM_ATTACKER, 2, 0, -16
+	createsprite gLightningSpriteTemplate, ANIM_ATTACKER, 2, 0, -46
 	delay 1
-	createsprite gLightningSpriteTemplate, ANIM_ATTACKER, 2, 0, 16
+	createsprite gLightningSpriteTemplate, ANIM_ATTACKER, 2, 0, -26
+	delay 1
+	createsprite gLightningSpriteTemplate, ANIM_ATTACKER, 2, 0, 6
 	createvisualtask AnimTask_HorizontalShake, 5, ANIM_ATTACKER, 5, 10
 	delay 24
 	createvisualtask AnimTask_InvertScreenColor, 2, 257, 257, 257
