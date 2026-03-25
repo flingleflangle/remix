@@ -3248,7 +3248,6 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     defender->species == SPECIES_MUNCHLAX || defender->species == SPECIES_BONSLY || defender->species == SPECIES_MAGNEMITE_EX || defender->species == SPECIES_SNEASEL_EX))
         spDefense = (150 * spDefense) / 100;
 
-
     // Apply abilities / field sports
     if (defender->ability == ABILITY_THICK_FAT && (type == TYPE_FIRE || type == TYPE_ICE))
         spAttack /= 2;
@@ -3274,6 +3273,79 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         gBattleMovePower = (150 * gBattleMovePower) / 100;
     if (type == TYPE_BUG && attacker->ability == ABILITY_SWARM && attacker->hp <= (attacker->maxHP / 3))
         gBattleMovePower = (150 * gBattleMovePower) / 100;
+
+        // Are effects of weather negated with cloud nine or air lock
+    if (WEATHER_HAS_EFFECT2)
+    {
+        // Boost Defense for Ice-types in Hail
+        if ((gBattleWeather & B_WEATHER_HAIL) && (
+            defender->species == SPECIES_BLASTOISE || defender->species == SPECIES_DEWGONG || defender->species == SPECIES_CLOYSTER || defender->species == SPECIES_SMOOCHUM || defender->species == SPECIES_JYNX ||
+            defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL || defender->species == SPECIES_SNEASEL_EX ||
+            defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_MAMOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
+            defender->species == SPECIES_CASTFORM || defender->species == SPECIES_SNORUNT || defender->species == SPECIES_GLALIE || defender->species == SPECIES_FROSLASS ||
+            defender->species == SPECIES_SPHEAL || defender->species == SPECIES_SEALEO || defender->species == SPECIES_WALREIN || defender->species == SPECIES_MILOTIC ||
+            defender->species == SPECIES_REGICE 
+        ))
+        {
+            defense = (150 * defense) / 100;
+        }
+        if ((gBattleWeather & B_WEATHER_HAIL_TEMPORARY) && (
+            defender->species == SPECIES_BLASTOISE || defender->species == SPECIES_DEWGONG || defender->species == SPECIES_CLOYSTER || defender->species == SPECIES_SMOOCHUM || defender->species == SPECIES_JYNX ||
+            defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL || defender->species == SPECIES_SNEASEL_EX ||
+            defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_MAMOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
+            defender->species == SPECIES_CASTFORM || defender->species == SPECIES_SNORUNT || defender->species == SPECIES_GLALIE || defender->species == SPECIES_FROSLASS ||
+            defender->species == SPECIES_SPHEAL || defender->species == SPECIES_SEALEO || defender->species == SPECIES_WALREIN || defender->species == SPECIES_MILOTIC ||
+            defender->species == SPECIES_REGICE 
+        ))
+        {
+            defense = (150 * defense) / 100;
+        }
+
+        // Boost Special Defense for Rock-types in sand
+        //hate that i have to add so many blocks of code. don't know how to do it better, oh well
+        if ((gBattleWeather & B_WEATHER_SANDSTORM) && (
+            defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
+            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_NIDOQUEEN_EX || defender->species == SPECIES_NIDOKING_EX || defender->species == SPECIES_MAROWAK ||
+            defender->species == SPECIES_RHYHORN || defender->species == SPECIES_RHYDON || defender->species == SPECIES_OMANYTE || defender->species == SPECIES_OMASTAR || defender->species == SPECIES_KABUTO || defender->species == SPECIES_KABUTOPS || 
+            defender->species == SPECIES_AERODACTYL || defender->species == SPECIES_BONSLY || defender->species == SPECIES_SUDOWOODO || defender->species == SPECIES_SHUCKLE || defender->species == SPECIES_MAGCARGO || 
+            defender->species == SPECIES_CORSOLA || defender->species == SPECIES_LARVITAR || defender->species == SPECIES_PUPITAR || defender->species == SPECIES_TYRANITAR ||
+            defender->species == SPECIES_NOSEPASS || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_AGGRON ||
+            defender->species == SPECIES_GLALIE_EX || defender->species == SPECIES_SABLEYE_EX || defender->species == SPECIES_FLYGON_EX || defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
+            defender->species == SPECIES_LILEEP || defender->species == SPECIES_CRADILY || defender->species == SPECIES_ANORITH || defender->species == SPECIES_ARMALDO || defender->species == SPECIES_RELICANTH ||
+            defender->species == SPECIES_REGIROCK ||
+            defender->ability == ABILITY_SAND_VEIL))
+        {
+            spDefense = (150 * spDefense) / 100;
+        }
+        if ((gBattleWeather & B_WEATHER_SANDSTORM_TEMPORARY) && (
+            defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
+            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_NIDOQUEEN_EX || defender->species == SPECIES_NIDOKING_EX || defender->species == SPECIES_MAROWAK ||
+            defender->species == SPECIES_RHYHORN || defender->species == SPECIES_RHYDON || defender->species == SPECIES_OMANYTE || defender->species == SPECIES_OMASTAR || defender->species == SPECIES_KABUTO || defender->species == SPECIES_KABUTOPS || 
+            defender->species == SPECIES_AERODACTYL || defender->species == SPECIES_BONSLY || defender->species == SPECIES_SUDOWOODO || defender->species == SPECIES_SHUCKLE || defender->species == SPECIES_MAGCARGO || 
+            defender->species == SPECIES_CORSOLA || defender->species == SPECIES_LARVITAR || defender->species == SPECIES_PUPITAR || defender->species == SPECIES_TYRANITAR ||
+            defender->species == SPECIES_NOSEPASS || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_AGGRON ||
+            defender->species == SPECIES_GLALIE_EX || defender->species == SPECIES_SABLEYE_EX || defender->species == SPECIES_FLYGON_EX || defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
+            defender->species == SPECIES_LILEEP || defender->species == SPECIES_CRADILY || defender->species == SPECIES_ANORITH || defender->species == SPECIES_ARMALDO || defender->species == SPECIES_RELICANTH ||
+            defender->species == SPECIES_REGIROCK ||
+            defender->ability == ABILITY_SAND_VEIL))
+        {
+            spDefense = (150 * spDefense) / 100;
+        }
+        if ((gBattleWeather & B_WEATHER_SANDSTORM_PERMANENT) && (
+            defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
+            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_NIDOQUEEN_EX || defender->species == SPECIES_NIDOKING_EX || defender->species == SPECIES_MAROWAK ||
+            defender->species == SPECIES_RHYHORN || defender->species == SPECIES_RHYDON || defender->species == SPECIES_OMANYTE || defender->species == SPECIES_OMASTAR || defender->species == SPECIES_KABUTO || defender->species == SPECIES_KABUTOPS || 
+            defender->species == SPECIES_AERODACTYL || defender->species == SPECIES_BONSLY || defender->species == SPECIES_SUDOWOODO || defender->species == SPECIES_SHUCKLE || defender->species == SPECIES_MAGCARGO || 
+            defender->species == SPECIES_CORSOLA || defender->species == SPECIES_LARVITAR || defender->species == SPECIES_PUPITAR || defender->species == SPECIES_TYRANITAR ||
+            defender->species == SPECIES_NOSEPASS || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_AGGRON ||
+            defender->species == SPECIES_GLALIE_EX || defender->species == SPECIES_SABLEYE_EX || defender->species == SPECIES_FLYGON_EX || defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
+            defender->species == SPECIES_LILEEP || defender->species == SPECIES_CRADILY || defender->species == SPECIES_ANORITH || defender->species == SPECIES_ARMALDO || defender->species == SPECIES_RELICANTH ||
+            defender->species == SPECIES_REGIROCK ||
+            defender->ability == ABILITY_SAND_VEIL))
+        {
+            spDefense = (150 * spDefense) / 100;
+        }
+    }
 
     // Self-destruct / Explosion cut defense in half
     if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
