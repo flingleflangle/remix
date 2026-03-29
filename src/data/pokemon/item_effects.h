@@ -208,6 +208,16 @@ const u8 gItemEffect_RareCandy[10] = {
     VITAMIN_FRIENDSHIP_CHANGE(7),
 };
 
+const u8 gItemEffect_TastyTreat[10] = {
+    [3] = ITEM3_LEVEL_DOWN,
+    [4] = ITEM4_REVIVE | ITEM4_HEAL_HP,
+    [5] = ITEM5_FRIENDSHIP_ALL,
+    [6] = ITEM6_HEAL_HP_FULL,
+    [7] = +20, // Friendship change, low
+    [8] = +25, // Friendship change, mid
+    [9] = +30, // Friendship change, high,
+};
+
 const u8 gItemEffect_PPUp[9] = {
     [4] = ITEM4_PP_UP,
     [5] = ITEM5_FRIENDSHIP_ALL,
@@ -475,6 +485,7 @@ const u8 *const gItemEffectTable[] =
     [ITEM_PP_UP - ITEM_POTION]         = gItemEffect_PPUp,
     [ITEM_ZINC - ITEM_POTION]          = gItemEffect_Zinc,
     [ITEM_PP_MAX - ITEM_POTION]        = gItemEffect_PPMax,
+    [ITEM_TASTY_TREAT - ITEM_POTION]   = gItemEffect_TastyTreat,
     [ITEM_GUARD_SPEC - ITEM_POTION]    = gItemEffect_GuardSpec,
     [ITEM_DIRE_HIT - ITEM_POTION]      = gItemEffect_DireHit,
     [ITEM_X_ATTACK - ITEM_POTION]      = gItemEffect_XAttack,

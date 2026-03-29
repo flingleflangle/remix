@@ -231,6 +231,8 @@ static const u16 sNewGamePCItems[][2] =
     { ITEM_EVIOLITE, 1 },
     { ITEM_LUXURY_BALL, 2 },
     { ITEM_LUM_BERRY, 4 },
+    { ITEM_RARE_CANDY, 4 },
+    { ITEM_TASTY_TREAT, 4 },
     { ITEM_NONE, 0 }
 };
 
