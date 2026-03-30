@@ -1957,6 +1957,14 @@ Cry_Weavile::
 	.align 2
 Cry_Lucario::
 	.incbin "sound/direct_sound_samples/cries/lucario.bin"
+
+	.align 2
+Cry_Mismagius::
+	.incbin "sound/direct_sound_samples/cries/mismagius.bin"
+
+	.align 2
+Cry_Honchkrow::
+	.incbin "sound/direct_sound_samples/cries/honchkrow.bin"
 	
 
 	.align 2

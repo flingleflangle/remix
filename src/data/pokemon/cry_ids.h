@@ -404,5 +404,7 @@ const u16 gSpeciesIdToCryId[] =
     [SPECIES_BONSLY - 1] = 389,
     [SPECIES_GLISCOR - 1] = 390,
     [SPECIES_WEAVILE - 1] = 391,
-    [SPECIES_LUCARIO - 1] = 392,
+    [SPECIES_MISMAGIUS - 1] = 392,
+    [SPECIES_HONCHKROW - 1] = 393,
+    [SPECIES_LUCARIO - 1] = 394,
 };

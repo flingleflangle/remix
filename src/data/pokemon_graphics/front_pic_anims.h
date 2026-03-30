@@ -2345,6 +2345,13 @@ static const union AnimCmd sAnim_Murkrow_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Honchkrow_1[] =
+{
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 20),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Slowking_1[] =
 {
     ANIMCMD_FRAME(0, 15),
@@ -2354,6 +2361,21 @@ static const union AnimCmd sAnim_Slowking_1[] =
 };
 
 static const union AnimCmd sAnim_Misdreavus_1[] =
+{
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Mismagius_1[] =
 {
     ANIMCMD_FRAME(1, 10),
     ANIMCMD_FRAME(0, 10),
@@ -5060,8 +5082,10 @@ SINGLE_ANIMATION(Quagsire);
 SINGLE_ANIMATION(Espeon);
 SINGLE_ANIMATION(Umbreon);
 SINGLE_ANIMATION(Murkrow);
+SINGLE_ANIMATION(Honchkrow);
 SINGLE_ANIMATION(Slowking);
 SINGLE_ANIMATION(Misdreavus);
+SINGLE_ANIMATION(Mismagius);
 SINGLE_ANIMATION(Unown);
 DOUBLE_ANIMATION(Wobbuffet);
 DOUBLE_ANIMATION(Girafarig);
@@ -5690,6 +5714,8 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_BONSLY]      = sAnims_Bonsly,
     [SPECIES_GLISCOR]     = sAnims_Gliscor,
     [SPECIES_WEAVILE]     = sAnims_Weavile,
+    [SPECIES_MISMAGIUS]   = sAnims_Mismagius,
+    [SPECIES_HONCHKROW]   = sAnims_Honchkrow,
     [SPECIES_LUCARIO]     = sAnims_Lucario,
     [SPECIES_EGG]         = sAnims_Egg,
     [SPECIES_UNOWN_B]     = sAnims_UnownB,
