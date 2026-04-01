@@ -10864,39 +10864,44 @@ Move_AURA_SPHERE:
 	setarg 7, 0x1000
 	delay 1
 	end
+	
 
 Move_SYNCHRO_BLAST:
+	loadspritegfx ANIM_TAG_GLOWY_RED_ORB
+	loadspritegfx ANIM_TAG_GLOWY_GREEN_ORB
 	loadspritegfx ANIM_TAG_IMPACT_2
 	loadspritegfx ANIM_TAG_LEER
 	setalpha 12, 8
-	fadetobg BG_PSYCHIC
-	waitbgfadeout
+	call SetPsychicBackground
 	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_ATTACKER, 1
 	createvisualtask AnimTask_FacadeColorBlend, 2, ANIM_ATTACKER, 72
-	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_ATTACKER
+	playsewithpan SE_M_TELEPORT, SOUND_PAN_ATTACKER
+	call SignalBeamOrbs
 	delay 4
-	waitforvisualfinish
-	waitbgfadein
-	delay 40
+	call SignalBeamOrbs
+	delay 4
+	call SignalBeamOrbs
+	delay 4
+	createvisualtask AnimTask_FacadeColorBlend, 2, ANIM_TARGET, 72
+	call SignalBeamOrbs
+	delay 4
+	call SignalBeamOrbs
+	delay 4
 	createsprite gAuraSphereBlast, ANIM_TARGET, 3, 0
 	playsewithpan SE_M_SWAGGER, SOUND_PAN_ATTACKER
-	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 2, 0, 9, RGB_WHITE
-	delay 16
+	call SignalBeamOrbs
+	delay 4
+	call SignalBeamOrbs
+	delay 4
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 8, 0, 16, 1
+	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_TARGET, 1
 	playsewithpan SE_M_SAND_ATTACK, SOUND_PAN_TARGET
+	call SignalBeamOrbs
+	delay 16
 	waitforvisualfinish
-	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 9, 0, RGB_WHITE
 	blendoff
 	waitforvisualfinish
-	restorebg
-	waitbgfadeout
-	setarg 7, 0xFFFF
-	waitbgfadein
-	clearmonbg ANIM_TARGET
-	blendoff
-	delay 1
-	setarg 7, 0x1000
-	delay 1
+	call UnsetPsychicBackground
 	end
 
 Move_IRON_HEAD::

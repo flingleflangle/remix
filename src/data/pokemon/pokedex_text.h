@@ -1204,6 +1204,12 @@ const u8 gMisdreavusPokedexText[] = _(
     "its red spheres to absorb the fear of foes\n"
     "as its nutrition.");
 
+const u8 gMismagiusPokedexText[] = _(
+    "MISMAGIUS have been known to cast spells\n"
+    "to make people fall in love, so some\n"
+    "people search for this POKéMON as if\n"
+    "their life depended on it.");
+
 const u8 gUnownPokedexText[] = _(
     "This POKéMON is shaped like ancient text\n"
     "characters. Although research is ongoing,\n"

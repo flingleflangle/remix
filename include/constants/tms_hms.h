@@ -89,7 +89,7 @@
     F(FOCUS_ENERGY) \
     F(FLYING_KNEE) \
     F(SILVER_WIND) \
-    F(NATURE_POWER) \
+    F(SYNCHRO_BLAST) \
     F(SUPERPOWER) \
     F(PAIN_SPLIT) \
     F(REVENGE) \

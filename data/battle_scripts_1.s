@@ -1515,32 +1515,54 @@ BattleScript_EffectHostage::
 BattleScript_EffectSynchroBlast::
 	attackstring
 	ppreduce
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_HitFromAtkString
+	jumpiftype BS_TARGET, TYPE_DARK, BattleScript_NotAffected
 	jumpifstatus BS_ATTACKER, STATUS1_POISON, BattleScript_EffectSynchroPoison
 	jumpifstatus BS_ATTACKER, STATUS1_TOXIC_POISON, BattleScript_EffectSynchroToxic
 	jumpifstatus BS_ATTACKER, STATUS1_BURN, BattleScript_EffectSynchroBurn
 	jumpifstatus BS_ATTACKER, STATUS1_IGNITE, BattleScript_EffectSynchroIgnite
 	jumpifstatus BS_ATTACKER, STATUS1_PARALYSIS, BattleScript_EffectSynchroParalyze
-	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
 	attackanimation
 	waitanimation
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
 	printstring STRINGID_PKMNSTATUSNORMAL
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_TARGET
+	seteffectwithchance
+	tryfaintmon BS_TARGET
 	goto BattleScript_MoveEnd
 BattleScript_EffectSynchroPoison::
 	setmoveeffect MOVE_EFFECT_POISON
+	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
 	goto BattleScript_HitFromAtkString
 BattleScript_EffectSynchroToxic::
 	setmoveeffect MOVE_EFFECT_TOXIC
+	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
 	goto BattleScript_HitFromCritCalc
 BattleScript_EffectSynchroBurn::
 	setmoveeffect MOVE_EFFECT_BURN
+	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
 	goto BattleScript_HitFromCritCalc
 BattleScript_EffectSynchroIgnite::
 	setmoveeffect MOVE_EFFECT_IGNITE
+	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
 	goto BattleScript_HitFromCritCalc
 BattleScript_EffectSynchroParalyze::
 	setmoveeffect MOVE_EFFECT_PARALYSIS
+	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
 	goto BattleScript_HitFromCritCalc
 
 BattleScript_EffectCrunch::

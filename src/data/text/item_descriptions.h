@@ -1614,9 +1614,9 @@ static const u8 sTM87Desc[] = _(
     "all abilities.");
 
 static const u8 sTM88Desc[] = _(
-    "The type of attack\n"
-    "varies depending\n"
-    "on location.");
+    "Synchronises user\n"
+    "status with its\n"
+    "foe on hit.");
 
 static const u8 sTM89Desc[] = _(
     "Boosts strength\n"
