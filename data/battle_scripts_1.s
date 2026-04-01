@@ -268,6 +268,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectGloryBlaze             @ EFFECT_GLORY_BLAZE
 	.4byte BattleScript_EffectIgnite                 @ EFFECT_IGNITE
 	.4byte BattleScript_EffectHotwire                @ EFFECT_HOTWIRE
+	.4byte BattleScript_EffectSynchroBlast           @ EFFECT_SYNCHRO_BLAST
 	
 
 BattleScript_EffectHit::
@@ -1510,6 +1511,37 @@ BattleScript_EffectHostage::
 	printstring STRINGID_PKMNCENTERATTENTION
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+
+BattleScript_EffectSynchroBlast::
+	attackstring
+	ppreduce
+	jumpifstatus BS_ATTACKER, STATUS1_POISON, BattleScript_EffectSynchroPoison
+	jumpifstatus BS_ATTACKER, STATUS1_TOXIC_POISON, BattleScript_EffectSynchroToxic
+	jumpifstatus BS_ATTACKER, STATUS1_BURN, BattleScript_EffectSynchroBurn
+	jumpifstatus BS_ATTACKER, STATUS1_IGNITE, BattleScript_EffectSynchroIgnite
+	jumpifstatus BS_ATTACKER, STATUS1_PARALYSIS, BattleScript_EffectSynchroParalyze
+	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
+	attackanimation
+	waitanimation
+	printstring STRINGID_PKMNSTATUSNORMAL
+	waitmessage B_WAIT_TIME_LONG
+	updatestatusicon BS_TARGET
+	goto BattleScript_MoveEnd
+BattleScript_EffectSynchroPoison::
+	setmoveeffect MOVE_EFFECT_POISON
+	goto BattleScript_HitFromAtkString
+BattleScript_EffectSynchroToxic::
+	setmoveeffect MOVE_EFFECT_TOXIC
+	goto BattleScript_HitFromCritCalc
+BattleScript_EffectSynchroBurn::
+	setmoveeffect MOVE_EFFECT_BURN
+	goto BattleScript_HitFromCritCalc
+BattleScript_EffectSynchroIgnite::
+	setmoveeffect MOVE_EFFECT_IGNITE
+	goto BattleScript_HitFromCritCalc
+BattleScript_EffectSynchroParalyze::
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	goto BattleScript_HitFromCritCalc
 
 BattleScript_EffectCrunch::
 	jumpifability BS_ATTACKER, ABILITY_HUGE_POWER_EX, BattleScript_EffectCrunchEX

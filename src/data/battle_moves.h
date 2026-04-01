@@ -5082,4 +5082,17 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 0,
         .flags = FLAG_SNATCH_AFFECTED,
     },
+
+    [MOVE_SYNCHRO_BLAST] =
+    {
+        .effect = EFFECT_SYNCHRO_BLAST,
+        .power = 50,
+        .type = TYPE_PSYCHIC,
+        .accuracy = 85,
+        .pp = 10,
+        .secondaryEffectChance = 100,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
 };

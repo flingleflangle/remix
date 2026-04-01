@@ -392,8 +392,9 @@
 #define MOVE_GLORY_BLAZE 388
 #define MOVE_IGNITE 389
 #define MOVE_HOTWIRE 390
+#define MOVE_SYNCHRO_BLAST 391
 
-#define MOVES_COUNT 391
+#define MOVES_COUNT 392
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

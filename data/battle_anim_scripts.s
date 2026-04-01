@@ -407,6 +407,7 @@ gBattleAnims_Moves::
 	.4byte Move_GLORY_BLAZE
 	.4byte Move_IGNITE
 	.4byte Move_HOTWIRE
+	.4byte Move_SYNCHRO_BLAST
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -10864,6 +10865,40 @@ Move_AURA_SPHERE:
 	delay 1
 	end
 
+Move_SYNCHRO_BLAST:
+	loadspritegfx ANIM_TAG_IMPACT_2
+	loadspritegfx ANIM_TAG_LEER
+	setalpha 12, 8
+	fadetobg BG_PSYCHIC
+	waitbgfadeout
+	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_ATTACKER, 1
+	createvisualtask AnimTask_FacadeColorBlend, 2, ANIM_ATTACKER, 72
+	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_ATTACKER
+	delay 4
+	waitforvisualfinish
+	waitbgfadein
+	delay 40
+	createsprite gAuraSphereBlast, ANIM_TARGET, 3, 0
+	playsewithpan SE_M_SWAGGER, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 2, 0, 9, RGB_WHITE
+	delay 16
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 8, 0, 16, 1
+	playsewithpan SE_M_SAND_ATTACK, SOUND_PAN_TARGET
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 9, 0, RGB_WHITE
+	blendoff
+	waitforvisualfinish
+	restorebg
+	waitbgfadeout
+	setarg 7, 0xFFFF
+	waitbgfadein
+	clearmonbg ANIM_TARGET
+	blendoff
+	delay 1
+	setarg 7, 0x1000
+	delay 1
+	end
+
 Move_IRON_HEAD::
 	loadspritegfx ANIM_TAG_GUST
 	loadspritegfx ANIM_TAG_IMPACT
@@ -11579,23 +11614,6 @@ BurnFlame:
 	delay 4
 	return
 
-Status_Ignite:
-	loadspritegfx ANIM_TAG_SMALL_EMBER
-	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 0, 15, RGB_RED
-	createvisualtask AnimTask_HorizontalShake, 3, ANIM_ATTACKER, 2, 12
-	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_ATTACKER
-	delay 4
-	createsprite gFireSpinSpriteTemplate, ANIM_ATTACKER, 2, 0, 28, 528, 30, 13, 50, ANIM_ATTACKER
-	delay 2
-	createsprite gFireSpinSpriteTemplate, ANIM_ATTACKER, 2, 0, 32, 480, 20, 16, -46, ANIM_ATTACKER
-	delay 2
-	delay 10
-	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 15, 0, RGB_RED
-	clearmonbg ANIM_DEF_PARTNER
-	blendoff
-	waitforvisualfinish
-	end
-
 Status_Infatuation:
 	loadspritegfx ANIM_TAG_MAGENTA_HEART
 	playsewithpan SE_M_CHARM, SOUND_PAN_ATTACKER
@@ -11651,6 +11669,23 @@ Status_Nightmare:
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 14, 1
 	waitforvisualfinish
 	clearmonbg ANIM_DEF_PARTNER
+	end
+
+Status_Ignite:
+	loadspritegfx ANIM_TAG_SMALL_EMBER
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 0, 15, RGB_RED
+	createvisualtask AnimTask_HorizontalShake, 3, ANIM_ATTACKER, 2, 12
+	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_ATTACKER
+	delay 4
+	createsprite gFireSpinSpriteTemplate, ANIM_ATTACKER, 2, 0, 28, 528, 30, 13, 50, ANIM_ATTACKER
+	delay 2
+	createsprite gFireSpinSpriteTemplate, ANIM_ATTACKER, 2, 0, 32, 480, 20, 16, -46, ANIM_ATTACKER
+	delay 2
+	delay 10
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 15, 0, RGB_RED
+	clearmonbg ANIM_DEF_PARTNER
+	blendoff
+	waitforvisualfinish
 	end
 
 General_CastformChange:
