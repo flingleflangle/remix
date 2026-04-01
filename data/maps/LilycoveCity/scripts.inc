@@ -241,9 +241,11 @@ LilycoveCity_EventScript_May::
 	goto_if_eq VAR_RESULT, NO, LilycoveCity_EventScript_DeclineMayBattle
 	msgbox LilycoveCity_Text_MayWontBeBeaten, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, LilycoveCity_EventScript_BattleMayTreecko
-	case 1, LilycoveCity_EventScript_BattleMayTorchic
-	case 2, LilycoveCity_EventScript_BattleMayMudkip
+	case 0, LilycoveCity_EventScript_BattleMayMudkip
+	case 1, LilycoveCity_EventScript_BattleMayTreecko
+	case 2, LilycoveCity_EventScript_BattleMayTorchic
+	case 3, LilycoveCity_EventScript_BattleMayMudkip
+	case 4, LilycoveCity_EventScript_BattleMayTorchic
 	end
 
 LilycoveCity_EventScript_MayAskToBattleAgain::
@@ -269,9 +271,11 @@ LilycoveCity_EventScript_Brendan::
 	goto_if_eq VAR_RESULT, NO, LilycoveCity_EventScript_DeclineBrendanBattle
 	msgbox LilycoveCity_Text_BrendanWontBeBeaten, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, LilycoveCity_EventScript_BattleBrendanTreecko
-	case 1, LilycoveCity_EventScript_BattleBrendanTorchic
-	case 2, LilycoveCity_EventScript_BattleBrendanMudkip
+	case 0, LilycoveCity_EventScript_BattleBrendanMudkip
+	case 1, LilycoveCity_EventScript_BattleBrendanTreecko
+	case 2, LilycoveCity_EventScript_BattleBrendanTorchic
+	case 3, LilycoveCity_EventScript_BattleBrendanMudkip
+	case 4, LilycoveCity_EventScript_BattleBrendanTorchic
 	end
 
 LilycoveCity_EventScript_BrendanAskToBattleAgain::

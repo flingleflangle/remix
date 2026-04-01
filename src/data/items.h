@@ -695,7 +695,7 @@ const struct Item gItems[] =
     {
         .name = _("STAR CRYSTAL"),
         .itemId = ITEM_STAR_CRYSTAL,
-        .price = 7000,
+        .price = 12600,
         .holdEffect = HOLD_EFFECT_CONFUSE,
         .holdEffectParam = 10,
         .description = sStarCrystalDesc,
@@ -708,7 +708,7 @@ const struct Item gItems[] =
     {
         .name = _("AQUA CRYSTAL"),
         .itemId = ITEM_AQUA_CRYSTAL,
-        .price = 7000,
+        .price = 9800,
         .holdEffect = HOLD_EFFECT_SP_ATK_DOWN,
         .holdEffectParam = 20,
         .description = sAquaCrystalDesc,
@@ -734,7 +734,7 @@ const struct Item gItems[] =
     {
         .name = _("LAND CRYSTAL"),
         .itemId = ITEM_LAND_CRYSTAL,
-        .price = 7000,
+        .price = 9800,
         .holdEffect = HOLD_EFFECT_SPEED_DOWN,
         .holdEffectParam = 20,
         .description = sLandCrystalDesc,
@@ -760,7 +760,7 @@ const struct Item gItems[] =
     {
         .name = _("POWER CRYSTAL"),
         .itemId = ITEM_POWER_CRYSTAL,
-        .price = 7000,
+        .price = 12600,
         .holdEffect = HOLD_EFFECT_DEF_DOWN,
         .holdEffectParam = 20,
         .description = sPowerCrystalDesc,
@@ -773,7 +773,7 @@ const struct Item gItems[] =
     {
         .name = _("MIND CRYSTAL"),
         .itemId = ITEM_MIND_CRYSTAL,
-        .price = 7000,
+        .price = 9800,
         .holdEffect = HOLD_EFFECT_SP_DEF_DOWN,
         .holdEffectParam = 20,
         .description = sMindCrystalDesc,
@@ -786,7 +786,7 @@ const struct Item gItems[] =
     {
         .name = _("SHADE CRYSTAL"),
         .itemId = ITEM_SHADE_CRYSTAL,
-        .price = 7000,
+        .price = 9800,
         .holdEffect = HOLD_EFFECT_POISON,
         .holdEffectParam = 10,
         .description = sShadeCrystalDesc,

@@ -400,9 +400,11 @@ Route110_EventScript_PlayBrendanMusic::
 Route110_EventScript_MayBattle::
 	msgbox Route110_Text_MayLetsBattle, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, Route110_EventScript_MayBattleTreecko
-	case 1, Route110_EventScript_MayBattleTorchic
-	case 2, Route110_EventScript_MayBattleMudkip
+	case 0, Route110_EventScript_MayBattleMudkip
+	case 1, Route110_EventScript_MayBattleTreecko
+	case 2, Route110_EventScript_MayBattleTorchic
+	case 3, Route110_EventScript_MayBattleMudkip
+	case 4, Route110_EventScript_MayBattleTorchic
 	end
 
 Route110_EventScript_MayBattleTreecko::
@@ -430,9 +432,11 @@ Route110_EventScript_MayDefeated::
 Route110_EventScript_BrendanBattle::
 	msgbox Route110_Text_BrendanLetsBattle, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, Route110_EventScript_BrendanBattleTreecko
-	case 1, Route110_EventScript_BrendanBattleTorchic
-	case 2, Route110_EventScript_BrendanBattleMudkip
+	case 0, Route110_EventScript_BrendanBattleMudkip
+	case 1, Route110_EventScript_BrendanBattleTreecko
+	case 2, Route110_EventScript_BrendanBattleTorchic
+	case 3, Route110_EventScript_BrendanBattleMudkip
+	case 4, Route110_EventScript_BrendanBattleTorchic
 	end
 
 Route110_EventScript_BrendanBattleTreecko::

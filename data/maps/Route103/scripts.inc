@@ -36,9 +36,11 @@ Route103_EventScript_RivalMay::
 	waitmovement 0
 	msgbox Route103_Text_MayLetsBattle, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, Route103_EventScript_StartMayBattleTreecko
-	case 1, Route103_EventScript_StartMayBattleTorchic
-	case 2, Route103_EventScript_StartMayBattleMudkip
+	case 0, Route103_EventScript_StartMayBattleMudkip
+	case 1, Route103_EventScript_StartMayBattleTreecko
+	case 2, Route103_EventScript_StartMayBattleTorchic
+	case 3, Route103_EventScript_StartMayBattleMudkip
+	case 4, Route103_EventScript_StartMayBattleTorchic
 	end
 
 Route103_EventScript_RivalBrendan::
@@ -53,9 +55,11 @@ Route103_EventScript_RivalBrendan::
 	waitmovement 0
 	msgbox Route103_Text_BrendanLetsBattle, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, Route103_EventScript_StartBrendanBattleTreecko
-	case 1, Route103_EventScript_StartBrendanBattleTorchic
-	case 2, Route103_EventScript_StartBrendanBattleMudkip
+	case 0, Route103_EventScript_StartBrendanBattleMudkip
+	case 1, Route103_EventScript_StartBrendanBattleTreecko
+	case 2, Route103_EventScript_StartBrendanBattleTorchic
+	case 3, Route103_EventScript_StartBrendanBattleMudkip
+	case 4, Route103_EventScript_StartBrendanBattleTorchic
 	end
 
 Route103_EventScript_StartMayBattleTreecko::

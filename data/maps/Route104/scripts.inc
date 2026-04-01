@@ -142,9 +142,11 @@ Route104_EventScript_MayAskToBattle::
 Route104_EventScript_BattleMay::
 	msgbox Route104_Text_MayIntro, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, Route104_EventScript_BattleMayTreecko
-	case 1, Route104_EventScript_BattleMayTorchic
-	case 2, Route104_EventScript_BattleMayMudkip
+	case 0, Route104_EventScript_BattleMayMudkip
+	case 1, Route104_EventScript_BattleMayTreecko
+	case 2, Route104_EventScript_BattleMayTorchic
+	case 3, Route104_EventScript_BattleMayMudkip
+	case 4, Route104_EventScript_BattleMayTorchic
 	end
 
 Route104_EventScript_MayDefeated::
@@ -214,9 +216,11 @@ Route104_EventScript_BrendanAskToBattle::
 Route104_EventScript_BattleBrendan::
 	msgbox Route104_Text_BrendanIntro, MSGBOX_DEFAULT
 	switch VAR_STARTER_MON
-	case 0, Route104_EventScript_BattleBrendanTreecko
-	case 1, Route104_EventScript_BattleBrendanTorchic
-	case 2, Route104_EventScript_BattleBrendanMudkip
+	case 0, Route104_EventScript_BattleBrendanMudkip
+	case 1, Route104_EventScript_BattleBrendanTreecko
+	case 2, Route104_EventScript_BattleBrendanTorchic
+	case 3, Route104_EventScript_BattleBrendanMudkip
+	case 4, Route104_EventScript_BattleBrendanTorchic
 	end
 
 Route104_EventScript_BrendanDefeated::

@@ -384,8 +384,10 @@ MauvilleCity_GameCorner_EventScript_Girl::
 	goto_if_eq VAR_RESULT, NO, MauvilleCity_GameCorner_EventScript_DeclineStarterDoll
 	switch VAR_STARTER_MON
 	case 0, MauvilleCity_GameCorner_EventScript_GiveTreeckoDoll
-	case 1, MauvilleCity_GameCorner_EventScript_GiveTorchicDoll
-	case 2, MauvilleCity_GameCorner_EventScript_GiveMudkipDoll
+	case 1, MauvilleCity_GameCorner_EventScript_GiveTreeckoDoll
+	case 2, MauvilleCity_GameCorner_EventScript_GiveTorchicDoll
+	case 3, MauvilleCity_GameCorner_EventScript_GiveMudkipDoll
+	case 4, MauvilleCity_GameCorner_EventScript_GiveMudkipDoll
 	end
 
 MauvilleCity_GameCorner_EventScript_GiveTreeckoDoll::
