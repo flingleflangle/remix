@@ -244,9 +244,9 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_THICK_CLUB] = {gItemIcon_ThickClub, gItemIconPalette_ThickClub},
     [ITEM_STICK] = {gItemIcon_Stick, gItemIconPalette_Stick},
     [ITEM_EVIOLITE] = {gItemIcon_Eviolite, gItemIconPalette_Eviolite},
+    [ITEM_FLAME_ORB] = {gItemIcon_FlameOrb, gItemIconPalette_FlameOrb},
+    [ITEM_TOXIC_ORB] = {gItemIcon_ToxicOrb, gItemIconPalette_ToxicOrb},
     //unused
-    [ITEM_0E3] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_0E4] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_0E5] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_0E6] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_0E7] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},

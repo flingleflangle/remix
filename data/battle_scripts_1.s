@@ -4933,6 +4933,22 @@ BattleScript_MoveEffectBurn::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_UpdateEffectStatusIconRet
 
+BattleScript_FlameOrb::
+	statusanimation BS_EFFECT_BATTLER
+	printfromtable gGotBurnedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	updatestatusicon BS_EFFECT_BATTLER
+	waitstate
+	end
+
+BattleScript_ToxicOrb::
+	statusanimation BS_EFFECT_BATTLER
+	printfromtable gGotPoisonedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	updatestatusicon BS_EFFECT_BATTLER
+	waitstate
+	end
+
 BattleScript_MoveEffectFreeze::
 	statusanimation BS_EFFECT_BATTLER
 	printfromtable gGotFrozenStringIds

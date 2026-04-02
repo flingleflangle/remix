@@ -1824,3 +1824,13 @@ static const u8 sEvioliteDesc[] = _(
     "Raises DEFENSE and\n"
     "SP. DEF of POKéMON\n"
     "yet to evolve.");
+
+static const u8 sFlameOrbDesc[] = _(
+    "A bizarre orb that\n"
+    "inflicts a burn on\n"
+    "holder in battle.");
+
+static const u8 sToxicOrbDesc[] = _(
+    "A bizarre orb that\n"
+    "badly poisons the\n"
+    "holder in battle.");

@@ -3792,6 +3792,10 @@ extern const u32 gItemIcon_Stick[];
 extern const u32 gItemIconPalette_Stick[];
 extern const u32 gItemIcon_Eviolite[];
 extern const u32 gItemIconPalette_Eviolite[];
+extern const u32 gItemIcon_FlameOrb[];
+extern const u32 gItemIconPalette_FlameOrb[];
+extern const u32 gItemIcon_ToxicOrb[];
+extern const u32 gItemIconPalette_ToxicOrb[];
 // Contest hold items
 extern const u32 gItemIcon_Scarf[];
 extern const u32 gItemIconPalette_RedScarf[];

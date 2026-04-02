@@ -613,7 +613,8 @@ gSongTable::
 	song ph_nurse_solo, 2, 2
 	song mus_t_marionette, 0, 0
 	song mus_t_drill_missile, 0, 0
-	song mus_t_third_gear, 0, 0
+	song mus_t_art_museum, 0, 0
+	song mus_t_caveman, 0, 0
 
 	.align 2
 dummy_song_header:

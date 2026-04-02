@@ -545,11 +545,8 @@
 
 #define MUS_T_MARIONETTE            610
 #define MUS_T_DRILL_MISSILE         611
-#define MUS_T_THIRD_GEAR            612
-#define MUS_T_SUNKEN_RUINS          613
-#define MUS_T_METAL_CITY            614
-#define MUS_T_SKULLKER_HIDEOUT      615
-#define MUS_T_CARRIE                616
+#define MUS_T_ART_MUSEUM            612
+#define MUS_T_CAVEMAN               613
 
 #define MUS_ROUTE118                0x7FFF  // Map is split into 2 music sections. controlled by GetCurrLocationDefaultMusic().
 

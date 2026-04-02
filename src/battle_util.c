@@ -3432,6 +3432,23 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     RecordItemEffectBattle(battler, battlerHoldEffect);
                 }
                 break;
+    // orbs. hopefully they work, because they were having a weird issue with saying hte opponent got the status.
+            case HOLD_EFFECT_FLAME_ORB:
+             if (gBattleMons[battler].status1 != STATUS1_BURN && !moveTurn)
+                {
+                    gBattleMons[battler].status1 = STATUS1_BURN;
+                    BattleScriptExecute(BattleScript_FlameOrb);
+                    effect = ITEM_STATUS_CHANGE;
+                }
+                break;
+            case HOLD_EFFECT_TOXIC_ORB:
+             if (gBattleMons[battler].status1 != STATUS1_TOXIC_POISON && !moveTurn)
+                {
+                    gBattleMons[battler].status1 = STATUS1_TOXIC_POISON;
+                    BattleScriptExecute(BattleScript_ToxicOrb);
+                    effect = ITEM_STATUS_CHANGE;
+                }
+                break;
             case HOLD_EFFECT_CONFUSE_SPICY:
                 TRY_EAT_CONFUSE_BERRY(FLAVOR_SPICY);
                 break;

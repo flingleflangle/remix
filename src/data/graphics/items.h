@@ -568,6 +568,12 @@ const u32 gItemIconPalette_Stick[] = INCBIN_U32("graphics/items/icon_palettes/st
 const u32 gItemIcon_Eviolite[] = INCBIN_U32("graphics/items/icons/eviolite.4bpp.lz");
 const u32 gItemIconPalette_Eviolite[] = INCBIN_U32("graphics/items/icon_palettes/eviolite.gbapal.lz");
 
+const u32 gItemIcon_FlameOrb[] = INCBIN_U32("graphics/items/icons/flame_orb.4bpp.lz");
+const u32 gItemIconPalette_FlameOrb[] = INCBIN_U32("graphics/items/icon_palettes/flame_orb.gbapal.lz");
+
+const u32 gItemIcon_ToxicOrb[] = INCBIN_U32("graphics/items/icons/toxic_orb.4bpp.lz");
+const u32 gItemIconPalette_ToxicOrb[] = INCBIN_U32("graphics/items/icon_palettes/toxic_orb.gbapal.lz");
+
 const u32 gItemIcon_Scarf[] = INCBIN_U32("graphics/items/icons/scarf.4bpp.lz");
 const u32 gItemIconPalette_RedScarf[] = INCBIN_U32("graphics/items/icon_palettes/red_scarf.gbapal.lz");
 const u32 gItemIconPalette_BlueScarf[] = INCBIN_U32("graphics/items/icon_palettes/blue_scarf.gbapal.lz");
