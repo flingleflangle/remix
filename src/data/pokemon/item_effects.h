@@ -309,6 +309,18 @@ const u8 gItemEffect_LeafStone[6] = {
     [4] = ITEM4_EVO_STONE,
 };
 
+const u8 gItemEffect_DuskStone[6] = {
+    [4] = ITEM4_EVO_STONE,
+};
+
+const u8 gItemEffect_DawnStone[6] = {
+    [4] = ITEM4_EVO_STONE,
+};
+
+const u8 gItemEffect_ShinyStone[6] = {
+    [4] = ITEM4_EVO_STONE,
+};
+
 const u8 gItemEffect_StarCrystal[6] = {
     [4] = ITEM4_EVO_STONE,
 };
@@ -499,6 +511,9 @@ const u8 *const gItemEffectTable[] =
     [ITEM_THUNDER_STONE - ITEM_POTION] = gItemEffect_ThunderStone,
     [ITEM_WATER_STONE - ITEM_POTION]   = gItemEffect_WaterStone,
     [ITEM_LEAF_STONE - ITEM_POTION]    = gItemEffect_LeafStone,
+    [ITEM_DUSK_STONE - ITEM_POTION]    = gItemEffect_DuskStone,
+    [ITEM_DAWN_STONE - ITEM_POTION]    = gItemEffect_DawnStone,
+    [ITEM_SHINY_STONE - ITEM_POTION]    = gItemEffect_ShinyStone,
     [ITEM_STAR_CRYSTAL - ITEM_POTION]  = gItemEffect_StarCrystal,
     [ITEM_AQUA_CRYSTAL - ITEM_POTION]  = gItemEffect_AquaCrystal,
     [ITEM_FLARE_CRYSTAL - ITEM_POTION]  = gItemEffect_FlareCrystal,

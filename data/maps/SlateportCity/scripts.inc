@@ -540,10 +540,11 @@ SlateportCity_Pokemart_PowerTMs:
 	.2byte ITEM_TM_LOW_KICK
 	.2byte ITEM_TM_GRASS_KNOT
 	.2byte ITEM_TM_FOCUS_PUNCH
+	.2byte ITEM_TM_REVERSAL
 	.2byte ITEM_TM_LEAF_BLADE
 	.2byte ITEM_TM_BLAZE_KICK
 	.2byte ITEM_TM_MUDDY_WATER
-	.2byte ITEM_TM_REVERSAL
+	.2byte ITEM_TM_TRI_ATTACK
 	pokemartlistend
 
 @ Scene with Capt Sterns interview and Team Aqua announcing plans to steal Submarine

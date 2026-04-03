@@ -415,32 +415,7 @@ static const u8 sRepelDesc[] = _(
     "steps.");
 
 // Evolution stones
-static const u8 sSunStoneDesc[] = _(
-    "Makes certain\n"
-    "species of POKéMON\n"
-    "evolve.");
-
-static const u8 sMoonStoneDesc[] = _(
-    "Makes certain\n"
-    "species of POKéMON\n"
-    "evolve.");
-
-static const u8 sFireStoneDesc[] = _(
-    "Makes certain\n"
-    "species of POKéMON\n"
-    "evolve.");
-
-static const u8 sThunderStoneDesc[] = _(
-    "Makes certain\n"
-    "species of POKéMON\n"
-    "evolve.");
-
-static const u8 sWaterStoneDesc[] = _(
-    "Makes certain\n"
-    "species of POKéMON\n"
-    "evolve.");
-
-static const u8 sLeafStoneDesc[] = _(
+static const u8 sEvoStoneDesc[] = _(
     "Makes certain\n"
     "species of POKéMON\n"
     "evolve.");

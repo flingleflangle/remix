@@ -574,6 +574,15 @@ const u32 gItemIconPalette_FlameOrb[] = INCBIN_U32("graphics/items/icon_palettes
 const u32 gItemIcon_ToxicOrb[] = INCBIN_U32("graphics/items/icons/toxic_orb.4bpp.lz");
 const u32 gItemIconPalette_ToxicOrb[] = INCBIN_U32("graphics/items/icon_palettes/toxic_orb.gbapal.lz");
 
+const u32 gItemIcon_DuskStone[] = INCBIN_U32("graphics/items/icons/dusk_stone.4bpp.lz");
+const u32 gItemIconPalette_DuskStone[] = INCBIN_U32("graphics/items/icon_palettes/dusk_stone.gbapal.lz");
+
+const u32 gItemIcon_DawnStone[] = INCBIN_U32("graphics/items/icons/dawn_stone.4bpp.lz");
+const u32 gItemIconPalette_DawnStone[] = INCBIN_U32("graphics/items/icon_palettes/dawn_stone.gbapal.lz");
+
+const u32 gItemIcon_ShinyStone[] = INCBIN_U32("graphics/items/icons/shiny_stone.4bpp.lz");
+const u32 gItemIconPalette_ShinyStone[] = INCBIN_U32("graphics/items/icon_palettes/shiny_stone.gbapal.lz");
+
 const u32 gItemIcon_Scarf[] = INCBIN_U32("graphics/items/icons/scarf.4bpp.lz");
 const u32 gItemIconPalette_RedScarf[] = INCBIN_U32("graphics/items/icon_palettes/red_scarf.gbapal.lz");
 const u32 gItemIconPalette_BlueScarf[] = INCBIN_U32("graphics/items/icon_palettes/blue_scarf.gbapal.lz");
