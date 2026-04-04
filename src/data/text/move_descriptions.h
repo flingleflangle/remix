@@ -1505,13 +1505,13 @@ static const u8 sFlyingKneeDescription[] = _(
     "Power is greatly enhanced\n"
     "if used on the 1st turn.");
 	
-static const u8 sDodgeDescription[] = _(
-    "Evades the next attack.\n"
-    "SPEED decreases on use.");
+static const u8 sBulletPunchDescription[] = _(
+    "Strikes as fast as a bullet.\n"
+    "This move always goes first.");
 	
-static const u8 sGuardBreakDescription[] = _(
-    "Breaks PROTECT, SUBSTITUTE,\n"
-    "and any form of barrier.");
+static const u8 sCloseCombatDescription[] = _(
+    "Very powerful, but cuts down\n"
+    "both DEFENSE and SP. DEF.");
 	
 static const u8 sDragonLashDescription[] = _(
     "Lashes the foe with its\n"
@@ -1944,8 +1944,8 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_VENOM_FANG - 1] = sVenomFangDescription,
 	[MOVE_GEYSER - 1] = sGeyserDescription,
 	[MOVE_FLYING_KNEE - 1] = sFlyingKneeDescription,
-	[MOVE_DODGE - 1] = sDodgeDescription,
-	[MOVE_GUARD_BREAK - 1] = sGuardBreakDescription,
+	[MOVE_BULLET_PUNCH - 1] = sBulletPunchDescription,
+	[MOVE_CLOSE_COMBAT - 1] = sCloseCombatDescription,
 	[MOVE_DRAGON_LASH - 1] = sDragonLashDescription,
 	[MOVE_REVOLVER - 1] = sRevolverDescription,
 	[MOVE_FLY_SWAT - 1] = sFlySwatDescription,

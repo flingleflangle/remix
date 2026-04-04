@@ -252,8 +252,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectVenomFang              @ EFFECT_VENOM_FANG
 	.4byte BattleScript_EffectGeyser              	 @ EFFECT_GEYSER
 	.4byte BattleScript_EffectFlyingKnee             @ EFFECT_FLYING_KNEE
-	.4byte BattleScript_EffectDodge             	 @ EFFECT_DODGE
-	.4byte BattleScript_EffectGuardBreak             @ EFFECT_GUARD_BREAK
+	.4byte BattleScript_EffectCloseCombat            @ EFFECT_CLOSE_COMBAT
 	.4byte BattleScript_EffectDragonLash             @ EFFECT_DRAGON_LASH
 	.4byte BattleScript_EffectUTurn             	 @ EFFECT_U_TURN
 	.4byte BattleScript_EffectHostage             	 @ EFFECT_HOSTAGE
@@ -2467,30 +2466,6 @@ BattleScript_EffectEndure::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectDodge::
-	jumpifnodamage BattleScript_EffectDodging
-	printstring STRINGID_PKMNFLINCHED
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-BattleScript_EffectDodging::
-	attackcanceler
-	attackstring
-	ppreduce
-	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MIN_STAT_STAGE, BattleScript_ButItFailed
-	setprotectlike
-	attackanimation
-	waitanimation
-	waitmessage B_WAIT_TIME_LONG
-	setstatchanger STAT_SPEED, 1, TRUE
-	statbuffchange MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN | STAT_CHANGE_ALLOW_PTR, BattleScript_DodgeEnd
-	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_DECREASE, BattleScript_DodgeEnd
-	setgraphicalstatchangevalues
-	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-	printfromtable gStatDownStringIds
-	waitmessage B_WAIT_TIME_LONG
-BattleScript_DodgeEnd::
-	goto BattleScript_MoveEnd
-
 BattleScript_EffectSpikes::
 	attackcanceler
 	trysetspikes BattleScript_FailedFromAtkString
@@ -3388,6 +3363,10 @@ BattleScript_EffectSuperpower::
 	setmoveeffect MOVE_EFFECT_ATK_DEF_DOWN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	goto BattleScript_EffectHit
 
+BattleScript_EffectCloseCombat::
+	setmoveeffect MOVE_EFFECT_DEF_SPDEF_DOWN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
+	goto BattleScript_EffectHit
+
 BattleScript_EffectMagicCoat::
 	attackcanceler
 	trysetmagiccoat BattleScript_FailedFromAtkString
@@ -3414,20 +3393,6 @@ BattleScript_EffectRevenge::
 	doubledamagedealtifdamaged
 	goto BattleScript_EffectHit
 	
-BattleScript_EffectGuardBreak::
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
-	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
-	attackstring
-	ppreduce
-	removelightscreenreflect
-	critcalc
-	damagecalc
-	typecalc
-	adjustnormaldamage
-	jumpifbyte CMP_EQUAL, sB_ANIM_TURN, 0, BattleScript_BrickBreakAnim
-	bicbyte gMoveResultFlags, MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE
-
 BattleScript_EffectBrickBreak::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
@@ -4662,6 +4627,25 @@ BattleScript_AtkDefDown_TryDef::
 	printfromtable gStatDownStringIds
 	waitmessage B_WAIT_TIME_LONG
 BattleScript_AtkDefDown_End::
+	return
+
+BattleScript_GuardDown::
+	setbyte sSTAT_ANIM_PLAYED, FALSE
+	playstatchangeanimation BS_ATTACKER, BIT_SPDEF | BIT_DEF, STAT_CHANGE_CANT_PREVENT | STAT_CHANGE_NEGATIVE | STAT_CHANGE_MULTIPLE_STATS
+	playstatchangeanimation BS_ATTACKER, BIT_DEF, STAT_CHANGE_CANT_PREVENT | STAT_CHANGE_NEGATIVE
+	setstatchanger STAT_DEF, 1, TRUE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN | STAT_CHANGE_ALLOW_PTR, BattleScript_GuardDown_TrySpDef
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_DECREASE, BattleScript_GuardDown_TrySpDef
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_GuardDown_TrySpDef::
+	playstatchangeanimation BS_ATTACKER, BIT_SPDEF, STAT_CHANGE_CANT_PREVENT | STAT_CHANGE_NEGATIVE
+	setstatchanger STAT_SPDEF, 1, TRUE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN | STAT_CHANGE_ALLOW_PTR, BattleScript_GuardDown_End
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_DECREASE, BattleScript_GuardDown_End
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_GuardDown_End::
 	return
 
 BattleScript_KnockedOff::
