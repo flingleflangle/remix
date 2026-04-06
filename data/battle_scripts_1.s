@@ -268,6 +268,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectIgnite                 @ EFFECT_IGNITE
 	.4byte BattleScript_EffectHotwire                @ EFFECT_HOTWIRE
 	.4byte BattleScript_EffectSynchroBlast           @ EFFECT_SYNCHRO_BLAST
+	.4byte BattleScript_EffectRockSmash              @ EFFECT_ROCK_SMASH
 	
 
 BattleScript_EffectHit::
@@ -1299,6 +1300,15 @@ BattleScript_EffectChisel::
 	jumpiftype BS_TARGET, TYPE_ICE, BattleScript_ChiselDoubleDmg
 	goto BattleScript_EffectHit
 BattleScript_ChiselDoubleDmg::
+	setbyte sDMG_MULTIPLIER, 2
+	goto BattleScript_EffectHit
+
+BattleScript_EffectRockSmash::
+	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_EffectHit
+	jumpiftype BS_TARGET, TYPE_ROCK, BattleScript_RockSmashed
+	goto BattleScript_EffectHit
+BattleScript_RockSmashed::
 	setbyte sDMG_MULTIPLIER, 2
 	goto BattleScript_EffectHit
 	
@@ -3269,10 +3279,10 @@ BattleScript_EffectCharge::
 	waitanimation
 	printstring STRINGID_PKMNCHARGINGPOWER
 	waitmessage B_WAIT_TIME_LONG
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPATK, MAX_STAT_STAGE, BattleScript_ChargeSpAtkUp
-	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPATK, MAX_STAT_STAGE, BattleScript_MoveEnd
-BattleScript_ChargeSpAtkUp::
-	setstatchanger STAT_SPATK, 1, FALSE
+	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPDEF, MAX_STAT_STAGE, BattleScript_ChargeSpDefUp
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPDEF, MAX_STAT_STAGE, BattleScript_MoveEnd
+BattleScript_ChargeSpDefUp::
+	setstatchanger STAT_SPDEF, 1, FALSE
 	setgraphicalstatchangevalues
 	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
 	printfromtable gStatUpStringIds
@@ -3604,16 +3614,43 @@ BattleScript_TeeterDanceMissed::
 	goto BattleScript_TeeterDanceDoMoveEndIncrement
 
 BattleScript_EffectMudSport::
+	attackcanceler
+	attackstring
+	jumpifstatus3 BS_ATTACKER, STATUS3_MUDSPORT, BattleScript_SportUnavailable
+	ppreduce
+	attackanimation
+	waitanimation
+	printstring STRINGID_ELECTRICITYWEAKENED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_SportFlinch1
 BattleScript_EffectWaterSport::
 	attackcanceler
 	attackstring
+	jumpifstatus3 BS_ATTACKER, STATUS3_WATERSPORT, BattleScript_SportUnavailable
 	ppreduce
-	settypebasedhalvers BattleScript_ButItFailed
 	attackanimation
 	waitanimation
-	printfromtable gSportsUsedStringIds
+	printstring STRINGID_FIREWEAKENED
 	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
+	goto BattleScript_SportFlinch1
+BattleScript_SportFlinch1::
+	setmoveeffect MOVE_EFFECT_FLINCH
+	seteffectprimary
+	jumpifnexttargetvalid BattleScript_SportFlinch2
+BattleScript_SportFlinch2::
+	jumpifnexttargetvalid BattleScript_SportFlinch3
+BattleScript_SportFlinch3::
+	setmoveeffect MOVE_EFFECT_FLINCH
+	seteffectprimary
+	settypebasedhalvers BattleScript_SportUnavailable
+	end
+BattleScript_SportUnavailable::
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_BUTITFAILED
+	waitmessage B_WAIT_TIME_LONG
+	moveendto MOVEEND_NEXT_TARGET
+	end
+
 
 BattleScript_EffectPoisonFang::
 	setmoveeffect MOVE_EFFECT_TOXIC
