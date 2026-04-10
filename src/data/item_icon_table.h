@@ -78,7 +78,7 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_PP_UP] = {gItemIcon_PPUp, gItemIconPalette_PPUp},
     [ITEM_ZINC] = {gItemIcon_Vitamin, gItemIconPalette_Zinc},
     [ITEM_PP_MAX] = {gItemIcon_PPMax, gItemIconPalette_PPMax},
-    [ITEM_TASTY_TREAT] = {gItemIcon_RareCandy, gItemIconPalette_Protein},
+    [ITEM_TASTY_TREAT] = {gItemIcon_TastyTreat, gItemIconPalette_TastyTreat},
     // Battle items
     [ITEM_GUARD_SPEC] = {gItemIcon_BattleStatItem, gItemIconPalette_GuardSpec},
     [ITEM_DIRE_HIT] = {gItemIcon_BattleStatItem, gItemIconPalette_DireHit},

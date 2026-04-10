@@ -3802,6 +3802,8 @@ extern const u32 gItemIcon_DawnStone[];
 extern const u32 gItemIconPalette_DawnStone[];
 extern const u32 gItemIcon_ShinyStone[];
 extern const u32 gItemIconPalette_ShinyStone[];
+extern const u32 gItemIcon_TastyTreat[];
+extern const u32 gItemIconPalette_TastyTreat[];
 // Contest hold items
 extern const u32 gItemIcon_Scarf[];
 extern const u32 gItemIconPalette_RedScarf[];

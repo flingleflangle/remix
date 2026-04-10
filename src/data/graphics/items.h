@@ -583,6 +583,9 @@ const u32 gItemIconPalette_DawnStone[] = INCBIN_U32("graphics/items/icon_palette
 const u32 gItemIcon_ShinyStone[] = INCBIN_U32("graphics/items/icons/shiny_stone.4bpp.lz");
 const u32 gItemIconPalette_ShinyStone[] = INCBIN_U32("graphics/items/icon_palettes/shiny_stone.gbapal.lz");
 
+const u32 gItemIcon_TastyTreat[] = INCBIN_U32("graphics/items/icons/tasty_treat.4bpp.lz");
+const u32 gItemIconPalette_TastyTreat[] = INCBIN_U32("graphics/items/icon_palettes/tasty_treat.gbapal.lz");
+
 const u32 gItemIcon_Scarf[] = INCBIN_U32("graphics/items/icons/scarf.4bpp.lz");
 const u32 gItemIconPalette_RedScarf[] = INCBIN_U32("graphics/items/icon_palettes/red_scarf.gbapal.lz");
 const u32 gItemIconPalette_BlueScarf[] = INCBIN_U32("graphics/items/icon_palettes/blue_scarf.gbapal.lz");

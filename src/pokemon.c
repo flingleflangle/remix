@@ -3289,7 +3289,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         if ((gBattleWeather & B_WEATHER_HAIL) && (
             defender->species == SPECIES_BLASTOISE || defender->species == SPECIES_DEWGONG || defender->species == SPECIES_CLOYSTER || defender->species == SPECIES_SMOOCHUM || defender->species == SPECIES_JYNX ||
             defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL || defender->species == SPECIES_SNEASEL_EX ||
-            defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_MAMOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
+            defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
             defender->species == SPECIES_CASTFORM || defender->species == SPECIES_SNORUNT || defender->species == SPECIES_GLALIE || defender->species == SPECIES_FROSLASS ||
             defender->species == SPECIES_SPHEAL || defender->species == SPECIES_SEALEO || defender->species == SPECIES_WALREIN || defender->species == SPECIES_MILOTIC ||
             defender->species == SPECIES_REGICE 
@@ -3300,7 +3300,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         if ((gBattleWeather & B_WEATHER_HAIL_TEMPORARY) && (
             defender->species == SPECIES_BLASTOISE || defender->species == SPECIES_DEWGONG || defender->species == SPECIES_CLOYSTER || defender->species == SPECIES_SMOOCHUM || defender->species == SPECIES_JYNX ||
             defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL || defender->species == SPECIES_SNEASEL_EX ||
-            defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_MAMOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
+            defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
             defender->species == SPECIES_CASTFORM || defender->species == SPECIES_SNORUNT || defender->species == SPECIES_GLALIE || defender->species == SPECIES_FROSLASS ||
             defender->species == SPECIES_SPHEAL || defender->species == SPECIES_SEALEO || defender->species == SPECIES_WALREIN || defender->species == SPECIES_MILOTIC ||
             defender->species == SPECIES_REGICE 
@@ -5061,7 +5061,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
                 retVal = FALSE;
             }
             // Tasty Treat. just the inverse of Rare Candy
-            if ((itemEffect[i] & ITEM3_LEVEL_DOWN) && (itemEffect[i] != ITEM3_LEVEL_UP)
+            if ((itemEffect[i] & ITEM3_LEVEL_DOWN) && (itemEffect[i] != ITEM3_LEVEL_UP) && (itemEffect[i] != ITEM3_STATUS_ALL)
              && GetMonData(mon, MON_DATA_LEVEL, NULL) != MIN_LEVEL)
             {
                 dataUnsigned = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES, NULL)].growthRate][GetMonData(mon, MON_DATA_LEVEL, NULL) - 1];

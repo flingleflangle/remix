@@ -2,13 +2,15 @@ Route113_GlassWorkshop_MapScripts::
 	map_script MAP_SCRIPT_ON_TRANSITION, Route113_GlassWorkshop_OnTransition
 	.byte 0
 
-	.set BLUE_FLUTE_PRICE,   250
-	.set YELLOW_FLUTE_PRICE, 500
-	.set RED_FLUTE_PRICE,    500
-	.set WHITE_FLUTE_PRICE,  1000
-	.set BLACK_FLUTE_PRICE,  1000
-	.set PRETTY_CHAIR_PRICE, 6000
-	.set PRETTY_DESK_PRICE,  8000
+	.set BLUE_FLUTE_PRICE,   100
+	.set YELLOW_FLUTE_PRICE, 250
+	.set RED_FLUTE_PRICE,    250
+	.set WHITE_FLUTE_PRICE,  500
+	.set BLACK_FLUTE_PRICE,  500
+	.set FLAME_ORB_PRICE,  	 1000
+	.set TOXIC_ORB_PRICE,  	 1000
+	.set PRETTY_CHAIR_PRICE, 2000
+	.set PRETTY_DESK_PRICE,  4000
 	.set LOWEST_ASH_PRICE,   BLUE_FLUTE_PRICE
 
 Route113_GlassWorkshop_OnTransition:
@@ -64,9 +66,11 @@ Route113_GlassWorkshop_EventScript_ChooseGlassItem::
 	case 2, Route113_GlassWorkshop_EventScript_RedFlute
 	case 3, Route113_GlassWorkshop_EventScript_WhiteFlute
 	case 4, Route113_GlassWorkshop_EventScript_BlackFlute
-	case 5, Route113_GlassWorkshop_EventScript_PrettyChair
-	case 6, Route113_GlassWorkshop_EventScript_PrettyDesk
-	case 7, Route113_GlassWorkshop_EventScript_CancelGlassItemSelect
+	case 5, Route113_GlassWorkshop_EventScript_FlameOrb
+	case 6, Route113_GlassWorkshop_EventScript_ToxicOrb
+	case 7, Route113_GlassWorkshop_EventScript_PrettyChair
+	case 8, Route113_GlassWorkshop_EventScript_PrettyDesk
+	case 9, Route113_GlassWorkshop_EventScript_CancelGlassItemSelect
 	case MULTI_B_PRESSED, Route113_GlassWorkshop_EventScript_CancelGlassItemSelect
 	end
 
@@ -130,6 +134,30 @@ Route113_GlassWorkshop_EventScript_BlackFlute::
 	goto Route113_GlassWorkshop_EventScript_MakeGlassItem
 	end
 
+Route113_GlassWorkshop_EventScript_FlameOrb::
+	setvar VAR_0x8008, ITEM_FLAME_ORB
+	bufferitemname STR_VAR_1, VAR_0x8008
+	setvar VAR_0x800A, FLAME_ORB_PRICE
+	goto_if_lt VAR_ASH_GATHER_COUNT, FLAME_ORB_PRICE, Route113_GlassWorkshop_EventScript_NotEnoughAshForItem
+	msgbox Route113_GlassWorkshop_Text_IsThatTheItemForYou, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route113_GlassWorkshop_EventScript_ChooseDifferentItem
+	setvar VAR_GLASS_WORKSHOP_STATE, 15
+	subvar VAR_ASH_GATHER_COUNT, FLAME_ORB_PRICE
+	goto Route113_GlassWorkshop_EventScript_MakeGlassItem
+	end
+
+Route113_GlassWorkshop_EventScript_ToxicOrb::
+	setvar VAR_0x8008, ITEM_TOXIC_ORB
+	bufferitemname STR_VAR_1, VAR_0x8008
+	setvar VAR_0x800A, TOXIC_ORB_PRICE
+	goto_if_lt VAR_ASH_GATHER_COUNT, TOXIC_ORB_PRICE, Route113_GlassWorkshop_EventScript_NotEnoughAshForItem
+	msgbox Route113_GlassWorkshop_Text_IsThatTheItemForYou, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route113_GlassWorkshop_EventScript_ChooseDifferentItem
+	setvar VAR_GLASS_WORKSHOP_STATE, 16
+	subvar VAR_ASH_GATHER_COUNT, TOXIC_ORB_PRICE
+	goto Route113_GlassWorkshop_EventScript_MakeGlassItem
+	end
+
 Route113_GlassWorkshop_EventScript_PrettyChair::
 	setvar VAR_0x8009, 1
 	setvar VAR_0x8008, DECOR_PRETTY_CHAIR
@@ -138,7 +166,7 @@ Route113_GlassWorkshop_EventScript_PrettyChair::
 	goto_if_lt VAR_ASH_GATHER_COUNT, PRETTY_CHAIR_PRICE, Route113_GlassWorkshop_EventScript_NotEnoughAshForItem
 	msgbox Route113_GlassWorkshop_Text_IsThatTheItemForYou, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, Route113_GlassWorkshop_EventScript_ChooseDifferentItem
-	setvar VAR_GLASS_WORKSHOP_STATE, 15
+	setvar VAR_GLASS_WORKSHOP_STATE, 17
 	subvar VAR_ASH_GATHER_COUNT, PRETTY_CHAIR_PRICE
 	goto Route113_GlassWorkshop_EventScript_MakeGlassItem
 	end
@@ -151,7 +179,7 @@ Route113_GlassWorkshop_EventScript_PrettyDesk::
 	goto_if_lt VAR_ASH_GATHER_COUNT, PRETTY_DESK_PRICE, Route113_GlassWorkshop_EventScript_NotEnoughAshForItem
 	msgbox Route113_GlassWorkshop_Text_IsThatTheItemForYou, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, Route113_GlassWorkshop_EventScript_ChooseDifferentItem
-	setvar VAR_GLASS_WORKSHOP_STATE, 16
+	setvar VAR_GLASS_WORKSHOP_STATE, 18
 	subvar VAR_ASH_GATHER_COUNT, PRETTY_DESK_PRICE
 	goto Route113_GlassWorkshop_EventScript_MakeGlassItem
 	end
@@ -226,8 +254,10 @@ Route113_GlassWorkshop_EventScript_GiveItemAfterNoRoom::
 	case 12, Route113_GlassWorkshop_EventScript_GiveRedFlute
 	case 13, Route113_GlassWorkshop_EventScript_GiveWhiteFlute
 	case 14, Route113_GlassWorkshop_EventScript_GiveBlackFlute
-	case 15, Route113_GlassWorkshop_EventScript_GivePrettyChair
-	case 16, Route113_GlassWorkshop_EventScript_GivePrettyDesk
+	case 15, Route113_GlassWorkshop_EventScript_GiveFlameOrb
+	case 16, Route113_GlassWorkshop_EventScript_GiveToxicOrb
+	case 17, Route113_GlassWorkshop_EventScript_GivePrettyChair
+	case 18, Route113_GlassWorkshop_EventScript_GivePrettyDesk
 	end
 
 Route113_GlassWorkshop_EventScript_GiveBlueFlute::
@@ -261,6 +291,20 @@ Route113_GlassWorkshop_EventScript_GiveWhiteFlute::
 Route113_GlassWorkshop_EventScript_GiveBlackFlute::
 	setvar VAR_0x8009, 0
 	setvar VAR_0x8008, ITEM_BLACK_FLUTE
+	bufferitemname STR_VAR_1, VAR_0x8008
+	goto Route113_GlassWorkshop_EventScript_TryGiveItemAgain
+	end
+
+Route113_GlassWorkshop_EventScript_GiveFlameOrb::
+	setvar VAR_0x8009, 1
+	setvar VAR_0x8008, ITEM_FLAME_ORB
+	bufferitemname STR_VAR_1, VAR_0x8008
+	goto Route113_GlassWorkshop_EventScript_TryGiveItemAgain
+	end
+
+Route113_GlassWorkshop_EventScript_GiveToxicOrb::
+	setvar VAR_0x8009, 1
+	setvar VAR_0x8008, ITEM_TOXIC_ORB
 	bufferitemname STR_VAR_1, VAR_0x8008
 	goto Route113_GlassWorkshop_EventScript_TryGiveItemAgain
 	end

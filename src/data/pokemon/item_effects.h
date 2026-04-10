@@ -133,12 +133,6 @@ const u8 gItemEffect_MaxElixir[7] = {
     [6] = ITEM6_HEAL_PP_FULL,
 };
 
-const u8 gItemEffect_LavaCookie[7] = {
-    [3] = ITEM3_STATUS_ALL,
-    [4] = ITEM4_HEAL_HP,
-    [6] = 10, // Amount of HP to recover
-};
-
 const u8 gItemEffect_BlueFlute[6] = {
     [3] = ITEM3_SLEEP,
 };
@@ -394,7 +388,7 @@ const u8 gItemEffect_LeppaBerry[7] = {
 
 const u8 gItemEffect_OranBerry[7] = {
     [4] = ITEM4_HEAL_HP,
-    [6] = 30, // Amount of HP to recover
+    [6] = 20, // Amount of HP to recover
 };
 
 const u8 gItemEffect_PersimBerry[7] = {
@@ -452,6 +446,12 @@ const u8 gItemEffect_GrepaBerry[10] = {
 const u8 gItemEffect_TamatoBerry[10] = {
     [5] = ITEM5_EV_SPEED | ITEM5_FRIENDSHIP_ALL,
     [6] = ITEM6_SUBTRACT_EV,
+    EV_BERRY_FRIENDSHIP_CHANGE,
+};
+
+const u8 gItemEffect_LavaCookie[10] = {
+    [3] = ITEM3_STATUS_ALL,
+    [5] = ITEM5_FRIENDSHIP_ALL,
     EV_BERRY_FRIENDSHIP_CHANGE,
 };
 

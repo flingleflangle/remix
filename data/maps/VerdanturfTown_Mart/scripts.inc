@@ -13,6 +13,7 @@ VerdanturfTown_Mart_EventScript_Clerk::
 
 	.align 2
 VerdanturfTown_Mart_Pokemart:
+	.2byte ITEM_TASTY_TREAT
 	.2byte ITEM_LUXURY_BALL
 	.2byte ITEM_NEST_BALL
 	.2byte ITEM_SUPER_POTION
