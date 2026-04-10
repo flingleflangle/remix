@@ -55,7 +55,7 @@
     F(TRI_ATTACK) \
     F(GRASS_KNOT) \
     F(BOULDER_DASH) \
-    F(IRON_HEAD) \
+    F(SHIELD_BASH) \
     F(FREEZE_RAY) \
     F(WILL_O_WISP) \
     F(PSYBEAM) \

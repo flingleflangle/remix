@@ -207,9 +207,9 @@ const u8 gItemEffect_TastyTreat[10] = {
     [4] = ITEM4_REVIVE | ITEM4_HEAL_HP,
     [5] = ITEM5_FRIENDSHIP_ALL,
     [6] = ITEM6_HEAL_HP_FULL,
-    [7] = +20, // Friendship change, low
-    [8] = +25, // Friendship change, mid
-    [9] = +30, // Friendship change, high,
+    [7] = +25, // Friendship change, low
+    [8] = +35, // Friendship change, mid
+    [9] = +40, // Friendship change, high,
 };
 
 const u8 gItemEffect_PPUp[9] = {

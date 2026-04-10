@@ -6615,6 +6615,11 @@ static void Cmd_setprotectlike(void)
             gProtectStructs[gBattlerAttacker].endured = 1;
             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BRACED_ITSELF;
         }
+        if (gBattleMoves[gCurrentMove].effect == EFFECT_SHIELD_BASH)
+        {
+            gProtectStructs[gBattlerAttacker].protected = 1;
+            gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_PROTECTED_ITSELF;
+        }
         gDisableStructs[gBattlerAttacker].protectUses++;
     }
     else

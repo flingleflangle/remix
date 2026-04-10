@@ -12533,35 +12533,35 @@ static const struct TrainerMonItemCustomMoves sParty_PowerCrystal[] = {
 static const struct TrainerMonItemCustomMoves sParty_ShadeCrystal[] = {
     {
     .iv = 200,
-    .lvl = 28,
+    .lvl = 27,
     .species = SPECIES_SEVIPER,
     .heldItem = ITEM_SHADE_CRYSTAL,
     .moves = {MOVE_WRAP, MOVE_VILE_CUTTER, MOVE_SUPER_FANG, MOVE_POISON_TAIL}
     },
     {
     .iv = 100,
-    .lvl = 28,
+    .lvl = 27,
     .species = SPECIES_WEAVILE,
     .heldItem = ITEM_SCOPE_LENS,
     .moves = {MOVE_ICE_SLASHER, MOVE_CHISEL, MOVE_SLASH}
     },
     {
     .iv = 100,
-    .lvl = 29,
+    .lvl = 28,
     .species = SPECIES_GENGAR,
     .heldItem = ITEM_NONE,
     .moves = {MOVE_ICE_PUNCH, MOVE_THUNDERBOLT, MOVE_PSYCHIC}
     },
     {
     .iv = 100,
-    .lvl = 30,
+    .lvl = 29,
     .species = SPECIES_NIDOQUEEN,
     .heldItem = ITEM_SHADE_CRYSTAL,
     .moves = {MOVE_VENOM_FANG, MOVE_DOUBLE_KICK, MOVE_DRAGON_LASH, MOVE_ASCENSION}
     },
     {
     .iv = 200,
-    .lvl = 32,
+    .lvl = 30,
     .species = SPECIES_ABSOL,
     .heldItem = ITEM_SPELL_TAG,
     .moves = {MOVE_SPIRIT_PURGE, MOVE_ATTUNEMENT, MOVE_MEGAHORN, MOVE_PAIN_SPLIT}
@@ -12573,14 +12573,14 @@ static const struct TrainerMonItemCustomMoves sParty_MetalCrystal[] = {
     .lvl = 24,
     .species = SPECIES_SCIZOR,
     .heldItem = ITEM_METAL_CRYSTAL,
-    .moves = {MOVE_U_TURN, MOVE_FLYING_KNEE}
+    .moves = {MOVE_U_TURN, MOVE_FLYING_KNEE, MOVE_BULLET_PUNCH}
     },
     {
     .iv = 200,
     .lvl = 24,
     .species = SPECIES_MAWILE,
     .heldItem = ITEM_SITRUS_BERRY,
-    .moves = {MOVE_SEISMIC_TOSS, MOVE_IRON_HEAD, MOVE_DYNAMIC_PUNCH}
+    .moves = {MOVE_SEISMIC_TOSS, MOVE_SHIELD_BASH, MOVE_METEOR_MASH}
     },
     {
     .iv = 100,
@@ -12591,14 +12591,14 @@ static const struct TrainerMonItemCustomMoves sParty_MetalCrystal[] = {
     },
     {
     .iv = 100,
-    .lvl = 26,
+    .lvl = 25,
     .species = SPECIES_FORRETRESS,
     .heldItem = ITEM_METAL_CRYSTAL,
     .moves = {MOVE_PIN_MISSILE, MOVE_SPIKES, MOVE_ZAP_CANNON, MOVE_EXPLOSION}
     },
     {
     .iv = 100,
-    .lvl = 29,
+    .lvl = 26,
     .species = SPECIES_SKARMORY,
     .heldItem = ITEM_METAL_CRYSTAL,
     .moves = {MOVE_SKY_ATTACK, MOVE_FURY_ATTACK, MOVE_FIRE_CRASH, MOVE_COUNTER}

@@ -1537,9 +1537,9 @@ static const u8 sAuraSphereDescription[] = _(
     "Fires a blast of aura power.\n"
     "This attack never misses.");
 
-static const u8 sIronHeadDescription[] = _(
-    "Attacks with a steel-hard\n"
-    "head. May cause flinching.");
+static const u8 sShieldBashDescription[] = _(
+    "Strikes forward in a\n"
+    "highly-guarded stance.");
 
 static const u8 sGrassKnotDescription[] = _(
     "Ensnares to inflict more\n"
@@ -1952,7 +1952,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_AROUND_TOWN - 1] = sAroundTownDescription,
 	[MOVE_HOSTAGE - 1] = sHostageDescription,
 	[MOVE_AURA_SPHERE - 1] = sAuraSphereDescription,
-	[MOVE_IRON_HEAD - 1] = sIronHeadDescription,
+	[MOVE_SHIELD_BASH - 1] = sShieldBashDescription,
 	[MOVE_GRASS_KNOT - 1] = sGrassKnotDescription,
 	[MOVE_BOULDER_DASH - 1] = sBoulderDashDescription,
 	[MOVE_GLORY_BLAZE - 1] = sGloryBlazeDescription,

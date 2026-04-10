@@ -401,7 +401,7 @@ gBattleAnims_Moves::
 	.4byte Move_AROUND_TOWN
 	.4byte Move_HOSTAGE
 	.4byte Move_AURA_SPHERE
-	.4byte Move_IRON_HEAD
+	.4byte Move_SHIELD_BASH
 	.4byte Move_GRASS_KNOT
 	.4byte Move_BOULDER_DASH
 	.4byte Move_GLORY_BLAZE
@@ -10954,18 +10954,24 @@ Move_SYNCHRO_BLAST:
 	call UnsetPsychicBackground
 	end
 
-Move_IRON_HEAD::
+Move_SHIELD_BASH::
 	loadspritegfx ANIM_TAG_GUST
 	loadspritegfx ANIM_TAG_IMPACT
+	loadspritegfx ANIM_TAG_SPARKLE_4
 	loopsewithpan SE_M_HARDEN, SOUND_PAN_ATTACKER, 28, 2
 	createvisualtask AnimTask_MetallicShine, 5, 1, 0, RGB_BLACK
-	waitforvisualfinish
+	delay 30
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 20, 0, ANIM_ATTACKER, TRUE
+	delay 2
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 9, -12, ANIM_ATTACKER, TRUE
+	delay 2
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 0, 20, ANIM_ATTACKER, TRUE
+	delay 20
 	createsprite gBowMonSpriteTemplate, ANIM_ATTACKER, 2, 0
 	playsewithpan SE_M_HEADBUTT, SOUND_PAN_ATTACKER
-	waitforvisualfinish
-	delay 2
+	delay 14
 	createsprite gBowMonSpriteTemplate, ANIM_ATTACKER, 2, 1
-	waitforvisualfinish
+	delay 7
 	createvisualtask AnimTask_ShakeMonInPlace, 2, ANIM_ATTACKER, 2, 0, 4, 1
 	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 5, 0, 7, 1
 	createsprite gBowMonSpriteTemplate, ANIM_ATTACKER, 2, 2

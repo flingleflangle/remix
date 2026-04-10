@@ -1419,9 +1419,9 @@ static const u8 sTM53Desc[] = _(
     "shards on the field.");
 
 static const u8 sTM54Desc[] = _(
-    "Attacks with a\n"
-    "steel-hard head.\n"
-    "May flinch.");
+    "Strikes forward\n"
+    "in a highly-guarded\n"
+    "stance.");
 
 static const u8 sTM55Desc[] = _(
     "A chilling ray\n"

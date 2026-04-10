@@ -4131,7 +4131,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_IRON_HEAD] =
+    [ITEM_TM_SHIELD_BASH] =
     {
         .name = _("TM54"),
         .itemId = ITEM_TM54,

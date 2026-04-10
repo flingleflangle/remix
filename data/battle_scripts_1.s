@@ -269,6 +269,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectHotwire                @ EFFECT_HOTWIRE
 	.4byte BattleScript_EffectSynchroBlast           @ EFFECT_SYNCHRO_BLAST
 	.4byte BattleScript_EffectRockSmash              @ EFFECT_ROCK_SMASH
+	.4byte BattleScript_EffectShieldBash             @ EFFECT_SHIELD_BASH
 	
 
 BattleScript_EffectHit::
@@ -2475,6 +2476,34 @@ BattleScript_EffectEndure::
 	printfromtable gProtectLikeUsedStringIds
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+
+BattleScript_EffectShieldBash::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	setprotectlike
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	printfromtable gProtectLikeUsedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	moveendall
+	end
 
 BattleScript_EffectSpikes::
 	attackcanceler
