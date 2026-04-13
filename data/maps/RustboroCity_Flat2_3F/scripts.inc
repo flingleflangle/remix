@@ -25,8 +25,8 @@ RustboroCity_Flat2_3F_EventScript_PowerTrainer::
 	end
 	
 RustboroCity_Flat2_3F_Text_PowerTrainerIntro:
-	.string "Hey! You there!\n"
-	.string "You wanna see something really cool?$"
+	.string "Yo!\n"
+	.string "You wanna see something cool?$"
 	
 RustboroCity_Flat2_3F_Text_PowerTrainerDefeat:
 	.string "Good stuff, good stuff!$"
@@ -39,7 +39,9 @@ RustboroCity_Flat2_3F_EventScript_GivePowerCrystal::
 	end
 
 RustboroCity_Flat2_3F_Text_GivePowerCrystal:
-	.string "Here's the secret to my quick little\n"
+	.string "You don't even have to say it!\n"
+	.string "“AGGRON? At level 15?” That's right!\p"
+	.string "Here's the secret to my little\n"
 	.string "demonstration! No need to be shy,\l"
 	.string "just take it!$"
 	
@@ -51,16 +53,14 @@ RustboroCity_Flat2_3F_Text_PowerCrystalExplanation:
 	.string "can lower the DEFENSE stat of their\l"
 	.string "opponents just by attacking them.\p"
 	.string "That's not all, though. Some POKéMON\n"
-	.string "can use it to evolve without even\l"
-	.string "needing any experience!\p"
-	.string "This crystal evolves ROCK, GROUND, and\n"
-	.string "FIGHTING POKéMON. Crazy, right?\p"
+	.string "can use it to evolve way early,\l"
+	.string "no experience needed. Crazy, right?\p"
+	.string "This one specifically evolves ROCK,\n"
+	.string "GROUND, and FIGHTING POKéMON.\p"
 	.string "There's a ton of other crystals, too.\n"
-	.string "I'd explain what they all did, but it's\l"
-	.string "not in the cards to give you a lecture.\p"
-	.string "I'm sure you'll figure them out!\n"
-	.string "Usually, the quickest answers are\l"
-	.string "found in the heat of battle.$"
+	.string "I'd explain what they all did, but you\l"
+	.string "look like you're busy. So, get to it!\p"
+	.string "I'm sure you'll figure them out!$"
 	
 
 RustboroCity_Flat2_3F_EventScript_IForgot:
@@ -72,7 +72,8 @@ RustboroCity_Flat2_3F_EventScript_IForgot:
 	end
 
 RustboroCity_Flat2_3F_Text_IForgot:
-	.string "Oh, right. I meant to give you this.$"
+	.string "Oh, right.\n"
+	.string "I meant to give you this, earlier.$"
 	
 RustboroCity_Flat2_3F_Text_BoulderDash:
 	.string "That's the TM for BOULDER DASH.\n"
@@ -83,11 +84,11 @@ RustboroCity_Flat2_3F_Text_BoulderDash:
 	.string "hit with it to see what happens!$"
 	
 RustboroCity_Flat2_3F_Text_NoDrinks:
-	.string "You know, it's mighty inconvenient that\n"
+	.string "Y'know, it's mighty inconvenient that\n"
 	.string "there's no vending machine here.\p"
 	.string "No water fountain, either. You'd think\n"
 	.string "they would've thought of that with all\l"
-	.string "the stairs you have to go up, right?$"
+	.string "the stairs you have to go up.$"
 	
 	
 	

@@ -302,7 +302,7 @@ mus_t_drill_missile_1_003:
 @ 010   ----------------------------------------
 	.byte		VOICE , 2
 	.byte		PAN   , c_v+32
-	.byte		VOL   , 86*mus_t_drill_missile_mvl/mxv
+	.byte		VOL   , 62*mus_t_drill_missile_mvl/mxv
 	.byte		N09   , Ds3 
 	.byte	W09
 	.byte		        Ds3 , v084
@@ -705,7 +705,7 @@ mus_t_drill_missile_2:
 @ 000   ----------------------------------------
 	.byte		VOICE , 57
 	.byte		PAN   , c_v-30
-	.byte		VOL   , 80*mus_t_drill_missile_mvl/mxv
+	.byte		VOL   , 60*mus_t_drill_missile_mvl/mxv
 	.byte		N03   , Dn4 , v120
 	.byte	W06
 	.byte		N06   
@@ -930,7 +930,7 @@ mus_t_drill_missile_2_003:
 	.byte	W96
 @ 021   ----------------------------------------
 	.byte		VOICE , 57
-	.byte		VOL   , 80*mus_t_drill_missile_mvl/mxv
+	.byte		VOL   , 60*mus_t_drill_missile_mvl/mxv
 	.byte		N03   , Bn3 
 	.byte	W06
 	.byte		N06   
@@ -1011,14 +1011,14 @@ mus_t_drill_missile_2_003:
 	.byte	W06
 	.byte		VOICE , 57
 	.byte		MOD   , 0
-	.byte		VOL   , 80*mus_t_drill_missile_mvl/mxv
+	.byte		VOL   , 100*mus_t_drill_missile_mvl/mxv
 	.byte		N06   , Gn3 
 	.byte	W06
 	.byte		        Gs3 
 	.byte	W06
 @ 028   ----------------------------------------
 	.byte		VOICE , 57
-	.byte		VOL   , 80*mus_t_drill_missile_mvl/mxv
+	.byte		VOL   , 60*mus_t_drill_missile_mvl/mxv
 	.byte		PAN   , c_v-32
 	.byte		MOD   , 0
 	.byte		N03   , Bn3 
@@ -1056,9 +1056,10 @@ mus_t_drill_missile_2_003:
 	.byte	W12
 	.byte		        Fs4 
 	.byte	W06
-@ 030   ----------------------------------------
+@ 030   ---------------------------------------- 
 	.byte	GOTO
-	 .word	mus_t_drill_missile_2_003
+	.word	mus_t_drill_missile_2_003
+	.byte	FINE
 
 @**************** Track 3 (Midi-Chn.3) ****************@
 
@@ -1886,9 +1887,10 @@ mus_t_drill_missile_3_023:
 	.byte	W12
 	.byte		        Bn1 
 	.byte	W06
-@ 030   ----------------------------------------
+@ 030   ---------------------------------------- 
 	.byte	GOTO
-	 .word	mus_t_drill_missile_3_003
+	.word	mus_t_drill_missile_3_003
+	.byte	FINE
 
 @**************** Track 4 (Midi-Chn.4) ****************@
 
@@ -2244,7 +2246,7 @@ mus_t_drill_missile_4_003:
 	.byte	W01
 @ 021   ----------------------------------------
 	.byte		VOICE , 56
-	.byte		VOL   , 100*mus_t_drill_missile_mvl/mxv
+	.byte		VOL   , 60*mus_t_drill_missile_mvl/mxv
 	.byte		PAN   , c_v+32
 	.byte		MOD   , 0
 	.byte		N03   , As4 
@@ -2476,9 +2478,9 @@ mus_t_drill_missile_4_003:
 	.byte	W12
 	.byte		        Bn4 
 	.byte	W06
-@ 030   ----------------------------------------
+@ 030   ---------------------------------------- 
 	.byte	GOTO
-	 .word	mus_t_drill_missile_4_003
+	.word	mus_t_drill_missile_4_003
 	.byte	FINE
 
 @**************** Track 5 (Midi-Chn.5) ****************@
@@ -2664,9 +2666,9 @@ mus_t_drill_missile_5_003:
 @ 030   ----------------------------------------
 	.byte		VOICE , 1
 	.byte		PAN   , c_v-32
-	.byte		VOL   , 76*mus_t_drill_missile_mvl/mxv
+	.byte		VOL   , 76*mus_t_drill_missile_mvl/mxv 
 	.byte	GOTO
-	 .word	mus_t_drill_missile_5_003
+	.word	mus_t_drill_missile_5_003
 	.byte	FINE
 
 @**************** Track 6 (Midi-Chn.6) ****************@
@@ -2707,8 +2709,8 @@ mus_t_drill_missile_6_001:
 	.byte	W06
 	.byte	PEND
 @ 002   ----------------------------------------
-mus_t_drill_missile_6_003:
 mus_t_drill_missile_6_002:
+mus_t_drill_missile_6_003:
 	.byte	W12
 	.byte		N06   , Ds3 , v120
 	.byte	W18
@@ -3237,9 +3239,9 @@ mus_t_drill_missile_6_023:
 @ 029   ----------------------------------------
 	.byte	PATT
 	 .word	mus_t_drill_missile_6_001
-@ 030   ----------------------------------------
+@ 030   ---------------------------------------- 
 	.byte	GOTO
-	 .word	mus_t_drill_missile_6_003
+	.word	mus_t_drill_missile_6_003
 	.byte	FINE
 
 @**************** Track 7 (Midi-Chn.7) ****************@
@@ -3280,8 +3282,8 @@ mus_t_drill_missile_7_001:
 	.byte	W06
 	.byte	PEND
 @ 002   ----------------------------------------
-mus_t_drill_missile_7_003:
 mus_t_drill_missile_7_002:
+mus_t_drill_missile_7_003:
 	.byte	W12
 	.byte		N06   , Gn3 , v120
 	.byte	W18
@@ -3829,9 +3831,9 @@ mus_t_drill_missile_7_023:
 @ 029   ----------------------------------------
 	.byte	PATT
 	 .word	mus_t_drill_missile_7_001
-@ 030   ----------------------------------------
+@ 030   ---------------------------------------- 
 	.byte	GOTO
-	 .word	mus_t_drill_missile_7_003
+	.word	mus_t_drill_missile_7_003
 	.byte	FINE
 
 @**************** Track 8 (Midi-Chn.8) ****************@
@@ -4503,9 +4505,9 @@ mus_t_drill_missile_8_022:
 @ 029   ----------------------------------------
 	.byte	PATT
 	 .word	mus_t_drill_missile_8_001
-@ 030   ----------------------------------------
+@ 030   ---------------------------------------- 
 	.byte	GOTO
-	 .word	mus_t_drill_missile_8_003
+	.word	mus_t_drill_missile_8_003
 	.byte	FINE
 
 @**************** Track 9 (Midi-Chn.9) ****************@
@@ -4514,7 +4516,7 @@ mus_t_drill_missile_9:
 	.byte	KEYSH , mus_t_drill_missile_key+0
 @ 000   ----------------------------------------
 	.byte		VOICE , 127
-	.byte		VOL   , 71*mus_t_drill_missile_mvl/mxv
+	.byte		VOL   , 56*mus_t_drill_missile_mvl/mxv
 	.byte		N03   , Cn5 , v092
 	.byte	W06
 	.byte		N06   , Cn5 , v100
@@ -4555,7 +4557,7 @@ mus_t_drill_missile_9:
 	.byte		        Fn5 , v096
 	.byte	W06
 @ 002   ----------------------------------------
-mus_t_drill_missile_9_003:
+mus_t_drill_missile_9_loop:
 	.byte		N01   , Fn5 , v108
 	.byte	W06
 	.byte		        Fn5 , v088
@@ -4591,6 +4593,7 @@ mus_t_drill_missile_9_003:
 	.byte		        Fn5 , v088
 	.byte	W06
 @ 003   ----------------------------------------
+mus_t_drill_missile_9_003:
 	.byte		N01   , Fn5 , v108
 	.byte	W06
 	.byte		        Fn5 , v088
@@ -4960,7 +4963,7 @@ mus_t_drill_missile_9_022:
 	.byte	W96
 @ 030   ----------------------------------------
 	.byte	GOTO
-	 .word	mus_t_drill_missile_9_003
+	.word	mus_t_drill_missile_9_loop
 	.byte	FINE
 
 @**************** Track 10 (Midi-Chn.10) ****************@
@@ -5520,9 +5523,9 @@ mus_t_drill_missile_10_003:
 	.byte		        Bn1 
 	.byte	W06
 @ 030   ----------------------------------------
-	.byte		VOICE , 99
+	.byte		VOICE , 99 
 	.byte	GOTO
-	 .word	mus_t_drill_missile_10_003
+	.word	mus_t_drill_missile_10_003
 	.byte	FINE
 
 @******************************************************@

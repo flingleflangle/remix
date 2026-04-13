@@ -10165,7 +10165,6 @@ Move_SPROUT:
 	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, 0, 10, ANIM_TARGET, 1
 	createsprite gAbsorptionOrbSpriteTemplate, ANIM_ATTACKER, 3, 5, -18, -20, 35
 	waitforvisualfinish
-	playsewithpan SE_M_DOUBLE_SLAP, SOUND_PAN_TARGET
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 4, 0, RGB(13, 31, 12)
 	delay 6
 	call HealingEffect
@@ -10960,13 +10959,13 @@ Move_SHIELD_BASH::
 	loadspritegfx ANIM_TAG_SPARKLE_4
 	loopsewithpan SE_M_HARDEN, SOUND_PAN_ATTACKER, 28, 2
 	createvisualtask AnimTask_MetallicShine, 5, 1, 0, RGB_BLACK
-	delay 30
+	delay 34
 	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 20, 0, ANIM_ATTACKER, TRUE
 	delay 2
 	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 9, -12, ANIM_ATTACKER, TRUE
 	delay 2
 	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 0, 20, ANIM_ATTACKER, TRUE
-	delay 20
+	delay 16
 	createsprite gBowMonSpriteTemplate, ANIM_ATTACKER, 2, 0
 	playsewithpan SE_M_HEADBUTT, SOUND_PAN_ATTACKER
 	delay 14
