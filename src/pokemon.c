@@ -3185,6 +3185,66 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         defense *= 2;
     if (attackerHoldEffect == HOLD_EFFECT_THICK_CLUB && (attacker->species == SPECIES_CUBONE || attacker->species == SPECIES_MAROWAK))
         attack *= 2;
+    //evo stone held effects
+        //eevees
+    if (attackerHoldEffect == HOLD_EFFECT_FIRE_STONE && attacker->species == SPECIES_EEVEE)
+        attack = (250 * attack) / 100;
+    if (attackerHoldEffect == HOLD_EFFECT_FIRE_STONE && (attacker->species == SPECIES_EEVEE || attacker->species == SPECIES_VULPIX))
+        spAttack *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_WATER_STONE && attacker->species == SPECIES_EEVEE)
+        spAttack = (250 * spAttack) / 100;
+    if (defenderHoldEffect == HOLD_EFFECT_WATER_STONE && attacker->species == SPECIES_EEVEE)
+        spDefense *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_THUNDER_STONE && attacker->species == SPECIES_EEVEE)
+        spAttack *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_SUN_STONE && attacker->species == SPECIES_EEVEE)
+        spAttack = (250 * spAttack) / 100;
+    if (defenderHoldEffect == HOLD_EFFECT_MOON_STONE && attacker->species == SPECIES_EEVEE)
+        spDefense = (250 * spDefense) / 100;
+    if (defenderHoldEffect == HOLD_EFFECT_MOON_STONE && attacker->species == SPECIES_EEVEE)
+        defense *= 2;
+        //not eevees
+    if (attackerHoldEffect == HOLD_EFFECT_FIRE_STONE && attacker->species == SPECIES_GROWLITHE)
+        attack *= 2;
+    if (defenderHoldEffect == HOLD_EFFECT_WATER_STONE && defender->species == SPECIES_SHELLDER)
+        defense *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_WATER_STONE && (attacker->species == SPECIES_STARYU || attacker->species == SPECIES_POLIWHIRL))
+        spAttack *= 2;
+    if (defenderHoldEffect == HOLD_EFFECT_WATER_STONE && defender->species == SPECIES_LOMBRE)
+        spDefense *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_THUNDER_STONE && attacker->species == SPECIES_PIKACHU)
+        attack *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_LEAF_STONE && (attacker->species == SPECIES_GLOOM || attacker->species == SPECIES_LOMBRE || attacker->species == SPECIES_WEEPINBELL || attacker->species == SPECIES_NUZLEAF))
+        spAttack *= 2;
+    if (defenderHoldEffect == HOLD_EFFECT_LEAF_STONE && defender->species == SPECIES_EXEGGCUTE)
+        defense *= 2;
+    if (defenderHoldEffect == HOLD_EFFECT_SUN_STONE && defender->species == SPECIES_GLOOM)
+        spDefense *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_SUN_STONE && attacker->species == SPECIES_SUNKERN)
+        attack *= 3;
+    if (attackerHoldEffect == HOLD_EFFECT_SUN_STONE && attacker->species == SPECIES_SUNKERN)
+        attack *= 3;
+    if (defenderHoldEffect == HOLD_EFFECT_SUN_STONE && defender->species == SPECIES_SUNKERN)
+        defense *= 3;
+    if (defenderHoldEffect == HOLD_EFFECT_SUN_STONE && defender->species == SPECIES_SUNKERN)
+        spDefense *= 3;
+    if (attackerHoldEffect == HOLD_EFFECT_MOON_STONE && (attacker->species == SPECIES_NIDORINO || attacker->species == SPECIES_JIGGLYPUFF || attacker->species == SPECIES_SKITTY))
+        attack *= 2;
+    if (defenderHoldEffect == HOLD_EFFECT_MOON_STONE && (defender->species == SPECIES_NIDORINA || defender->species == SPECIES_SKITTY))
+        defense *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_MOON_STONE && (attacker->species == SPECIES_CLEFAIRY || attacker->species == SPECIES_JIGGLYPUFF))
+        spAttack *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_DUSK_STONE && attacker->species == SPECIES_MISDREAVUS)
+        attack *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_DUSK_STONE && attacker->species == SPECIES_MURKROW)
+        spAttack *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_DAWN_STONE && (attacker->species == SPECIES_KIRLIA || attacker->species == SPECIES_SNORUNT))
+        spAttack *= 2;
+    if (defenderHoldEffect == HOLD_EFFECT_DAWN_STONE && (defender->species == SPECIES_KIRLIA || defender->species == SPECIES_SNORUNT))
+        spDefense *= 2;
+    if (attackerHoldEffect == HOLD_EFFECT_SHINY_STONE && (attacker->species == SPECIES_TOGETIC || attacker->species == SPECIES_ROSELIA))
+        attack *= 2;
+
         //intimidatingly large eviolite block! holy shit, look at it.
     if (defenderHoldEffect == HOLD_EFFECT_EVIOLITE && 
     (defender->species == SPECIES_BULBASAUR || defender->species == SPECIES_IVYSAUR || defender->species == SPECIES_CHARMANDER || defender->species == SPECIES_CHARMELEON || defender->species == SPECIES_SQUIRTLE || defender->species == SPECIES_WARTORTLE ||

@@ -545,7 +545,7 @@
 
 #define MUS_T_MARIONETTE            610
 #define MUS_T_DRILL_MISSILE         611
-#define MUS_T_ART_MUSEUM            612
+#define MUS_T_MR_X                  612
 #define MUS_T_CAVEMAN               613
 
 #define MUS_ROUTE118                0x7FFF  // Map is split into 2 music sections. controlled by GetCurrLocationDefaultMusic().
