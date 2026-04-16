@@ -3439,6 +3439,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     gBattleMons[battler].status1 = STATUS1_BURN;
                     BattleScriptExecute(BattleScript_FlameOrb);
                     effect = ITEM_STATUS_CHANGE;
+                    RecordItemEffectBattle(battler, battlerHoldEffect);
                 }
                 break;
             case HOLD_EFFECT_TOXIC_ORB:
@@ -3447,6 +3448,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     gBattleMons[battler].status1 = STATUS1_TOXIC_POISON;
                     BattleScriptExecute(BattleScript_ToxicOrb);
                     effect = ITEM_STATUS_CHANGE;
+                    RecordItemEffectBattle(battler, battlerHoldEffect);
                 }
                 break;
             case HOLD_EFFECT_CONFUSE_SPICY:

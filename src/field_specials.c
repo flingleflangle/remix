@@ -2408,8 +2408,8 @@ static const u8 *const sScrollableMultichoiceOptions[][MAX_SCROLL_MULTI_LENGTH] 
         gText_RedFlute,
         gText_WhiteFlute,
         gText_BlackFlute,
-        gText_PrettyChair,
-        gText_PrettyDesk,
+        gText_FlameOrb,
+        gText_ToxicOrb,
         gText_Exit
     },
     [SCROLL_MULTI_POKEMON_FAN_CLUB_RATER] =

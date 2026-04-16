@@ -3,14 +3,12 @@ Route113_GlassWorkshop_MapScripts::
 	.byte 0
 
 	.set BLUE_FLUTE_PRICE,   100
-	.set YELLOW_FLUTE_PRICE, 250
-	.set RED_FLUTE_PRICE,    250
-	.set WHITE_FLUTE_PRICE,  500
-	.set BLACK_FLUTE_PRICE,  500
-	.set FLAME_ORB_PRICE,  	 1000
-	.set TOXIC_ORB_PRICE,  	 1000
-	.set PRETTY_CHAIR_PRICE, 2000
-	.set PRETTY_DESK_PRICE,  4000
+	.set YELLOW_FLUTE_PRICE, 200
+	.set RED_FLUTE_PRICE,    200
+	.set WHITE_FLUTE_PRICE,  350
+	.set BLACK_FLUTE_PRICE,  350
+	.set FLAME_ORB_PRICE,  	 500
+	.set TOXIC_ORB_PRICE,  	 500
 	.set LOWEST_ASH_PRICE,   BLUE_FLUTE_PRICE
 
 Route113_GlassWorkshop_OnTransition:
@@ -68,9 +66,7 @@ Route113_GlassWorkshop_EventScript_ChooseGlassItem::
 	case 4, Route113_GlassWorkshop_EventScript_BlackFlute
 	case 5, Route113_GlassWorkshop_EventScript_FlameOrb
 	case 6, Route113_GlassWorkshop_EventScript_ToxicOrb
-	case 7, Route113_GlassWorkshop_EventScript_PrettyChair
-	case 8, Route113_GlassWorkshop_EventScript_PrettyDesk
-	case 9, Route113_GlassWorkshop_EventScript_CancelGlassItemSelect
+	case 7, Route113_GlassWorkshop_EventScript_CancelGlassItemSelect
 	case MULTI_B_PRESSED, Route113_GlassWorkshop_EventScript_CancelGlassItemSelect
 	end
 
@@ -155,32 +151,6 @@ Route113_GlassWorkshop_EventScript_ToxicOrb::
 	goto_if_eq VAR_RESULT, NO, Route113_GlassWorkshop_EventScript_ChooseDifferentItem
 	setvar VAR_GLASS_WORKSHOP_STATE, 16
 	subvar VAR_ASH_GATHER_COUNT, TOXIC_ORB_PRICE
-	goto Route113_GlassWorkshop_EventScript_MakeGlassItem
-	end
-
-Route113_GlassWorkshop_EventScript_PrettyChair::
-	setvar VAR_0x8009, 1
-	setvar VAR_0x8008, DECOR_PRETTY_CHAIR
-	bufferdecorationname STR_VAR_1, VAR_0x8008
-	setvar VAR_0x800A, PRETTY_CHAIR_PRICE
-	goto_if_lt VAR_ASH_GATHER_COUNT, PRETTY_CHAIR_PRICE, Route113_GlassWorkshop_EventScript_NotEnoughAshForItem
-	msgbox Route113_GlassWorkshop_Text_IsThatTheItemForYou, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, NO, Route113_GlassWorkshop_EventScript_ChooseDifferentItem
-	setvar VAR_GLASS_WORKSHOP_STATE, 17
-	subvar VAR_ASH_GATHER_COUNT, PRETTY_CHAIR_PRICE
-	goto Route113_GlassWorkshop_EventScript_MakeGlassItem
-	end
-
-Route113_GlassWorkshop_EventScript_PrettyDesk::
-	setvar VAR_0x8009, 1
-	setvar VAR_0x8008, DECOR_PRETTY_DESK
-	bufferdecorationname STR_VAR_1, VAR_0x8008
-	setvar VAR_0x800A, PRETTY_DESK_PRICE
-	goto_if_lt VAR_ASH_GATHER_COUNT, PRETTY_DESK_PRICE, Route113_GlassWorkshop_EventScript_NotEnoughAshForItem
-	msgbox Route113_GlassWorkshop_Text_IsThatTheItemForYou, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, NO, Route113_GlassWorkshop_EventScript_ChooseDifferentItem
-	setvar VAR_GLASS_WORKSHOP_STATE, 18
-	subvar VAR_ASH_GATHER_COUNT, PRETTY_DESK_PRICE
 	goto Route113_GlassWorkshop_EventScript_MakeGlassItem
 	end
 

@@ -746,6 +746,7 @@ AI_CheckViability:
 	if_effect EFFECT_STAGGER, AI_CV_LockOn
 	if_effect EFFECT_SLEEP_TALK, AI_CV_SleepTalk
 	if_effect EFFECT_DESTINY_BOND, AI_CV_DestinyBond
+	if_effect EFFECT_SHIELD_BASH, AI_CV_ShieldBash
 	if_effect EFFECT_VENOM_FANG, AI_CV_VenomFang
 	if_effect EFFECT_FLYING_KNEE, AI_CV_FlyingKnee
 	if_effect EFFECT_FLAIL, AI_CV_Flail
@@ -1908,6 +1909,20 @@ AI_CV_DestinyBond3:
 AI_CV_DestinyBond_End:
 	end
 
+AI_CV_ShieldBash:
+	score -2
+	if_target_faster AI_CV_ShieldBash_End
+	if_random_less_than 128, AI_CV_ShieldBash2
+	score +2
+AI_CV_ShieldBash2:
+	if_random_less_than 128, AI_CV_ShieldBash3
+	score +1
+AI_CV_ShieldBash3:
+	if_random_less_than 100, AI_CV_ShieldBash_End
+	score +2
+AI_CV_ShieldBash_End:
+	end
+
 AI_CV_Flail:
 	if_target_faster AI_CV_Flail2
 	if_hp_more_than AI_USER, 33, AI_CV_Flail_ScoreDown1
@@ -2847,6 +2862,7 @@ AI_Risky_EffectsToEncourage:
 	.byte EFFECT_FOCUS_PUNCH
 	.byte EFFECT_REVENGE
 	.byte EFFECT_TEETER_DANCE
+	.byte EFFECT_SHIELD_BASH
 	.byte -1
 
 AI_PreferBatonPass:

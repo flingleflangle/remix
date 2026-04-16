@@ -4985,17 +4985,17 @@ BattleScript_MoveEffectBurn::
 
 BattleScript_FlameOrb::
 	statusanimation BS_EFFECT_BATTLER
-	printfromtable gGotBurnedStringIds
+	printstring STRINGID_FLAMEORB
 	waitmessage B_WAIT_TIME_LONG
-	updatestatusicon BS_EFFECT_BATTLER
+	updatestatusicon BS_SCRIPTING
 	waitstate
 	end
 
 BattleScript_ToxicOrb::
 	statusanimation BS_EFFECT_BATTLER
-	printfromtable gGotPoisonedStringIds
+	printstring STRINGID_TOXICORB
 	waitmessage B_WAIT_TIME_LONG
-	updatestatusicon BS_EFFECT_BATTLER
+	updatestatusicon BS_SCRIPTING
 	waitstate
 	end
 

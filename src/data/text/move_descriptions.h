@@ -1565,6 +1565,10 @@ static const u8 sSynchroBlastDescription[] = _(
     "Synchronises user status\n"
     "with its foe on hit.");
 
+static const u8 sBraveBirdDescription[] = _(
+    "A low altitude charge that\n"
+    "also hurts the user.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -1959,4 +1963,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_IGNITE - 1] = sIgniteDescription,
     [MOVE_HOTWIRE - 1] = sHotwireDescription,
     [MOVE_SYNCHRO_BLAST - 1] = sSynchroBlastDescription,
+    [MOVE_BRAVE_BIRD - 1] = sBraveBirdDescription,
 };
