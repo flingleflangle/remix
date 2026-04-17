@@ -12572,35 +12572,35 @@ static const struct TrainerMonItemCustomMoves sParty_MetalCrystal[] = {
     .iv = 100,
     .lvl = 23,
     .species = SPECIES_SCIZOR,
-    .heldItem = ITEM_METAL_CRYSTAL,
+    .heldItem = ITEM_NONE,
     .moves = {MOVE_U_TURN, MOVE_FLYING_KNEE, MOVE_BULLET_PUNCH}
     },
     {
     .iv = 200,
     .lvl = 24,
     .species = SPECIES_MAWILE,
-    .heldItem = ITEM_SALAC_BERRY,
+    .heldItem = ITEM_METAL_CRYSTAL,
     .moves = {MOVE_SEISMIC_TOSS, MOVE_SHIELD_BASH, MOVE_METEOR_MASH}
     },
     {
     .iv = 100,
     .lvl = 25,
     .species = SPECIES_MAGNETON,
-    .heldItem = ITEM_SILK_SCARF,
+    .heldItem = ITEM_NONE,
     .moves = {MOVE_TRI_ATTACK, MOVE_THUNDER, MOVE_SONIC_BOOM}
     },
     {
     .iv = 100,
     .lvl = 25,
     .species = SPECIES_FORRETRESS,
-    .heldItem = ITEM_NONE,
+    .heldItem = ITEM_METAL_CRYSTAL,
     .moves = {MOVE_PIN_MISSILE, MOVE_SPIKES, MOVE_ZAP_CANNON, MOVE_EXPLOSION}
     },
     {
     .iv = 100,
     .lvl = 26,
     .species = SPECIES_SKARMORY,
-    .heldItem = ITEM_METAL_CRYSTAL,
+    .heldItem = ITEM_CHARCOAL,
     .moves = {MOVE_SKY_ATTACK, MOVE_FURY_ATTACK, MOVE_FIRE_CRASH, MOVE_COUNTER}
     },
 };
