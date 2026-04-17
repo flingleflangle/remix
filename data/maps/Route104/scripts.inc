@@ -279,7 +279,7 @@ Route104_EventScript_WhiteHerbFlorist::
 	faceplayer
 	goto_if_set FLAG_RECEIVED_WHITE_HERB, Route104_EventScript_ReceivedWhiteHerb
 	msgbox Route104_Text_DontNeedThisTakeIt, MSGBOX_DEFAULT
-	giveitem ITEM_WHITE_HERB
+	giveitem ITEM_EVIOLITE
 	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull
 	setflag FLAG_RECEIVED_WHITE_HERB
 	release
@@ -1043,11 +1043,11 @@ Route104_Text_TMsAreOneTimeUse:
 	.string "Think twice before using it!$"
 
 Route104_Text_DontNeedThisTakeIt:
-	.string "This FLOWER SHOP started selling\n"
-	.string "saplings recently.\p"
-	.string "It made me so happy, I went overboard\n"
-	.string "shopping.\p"
-	.string "I don't need this WHITE HERB anymore.\n"
+	.string "Hey, you're a hotshot trainer, right?\n"
+	.string "I heard about a kid in green cleaning\l"
+	.string "out the POKéMON LEAGUE.\p"
+	.string "I found this neat stone, but I don't\n"
+	.string "think I'll get very much use of it.\l"
 	.string "Would you take it, please?$"
 
 Route104_Text_FlowerShopSellingSaplings:
