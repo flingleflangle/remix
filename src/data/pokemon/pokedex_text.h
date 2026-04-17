@@ -1192,6 +1192,12 @@ const u8 gMurkrowPokedexText[] = _(
     "interest in anything that sparkles. It will\n"
     "even try to steal rings from women.");
 
+const u8 gHonchkrowPokedexText[] = _(
+    "Becoming active at night, it is known\n"
+    "to swarm with numerous MURKROW in tow.\n"
+    "It is said that it never forgives the\n"
+    "mistakes of its cronies.");
+
 const u8 gSlowkingPokedexText[] = _(
     "It undertakes research every day to\n"
     "solve the mysteries of the world.\n"
