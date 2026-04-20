@@ -409,6 +409,7 @@ gBattleAnims_Moves::
 	.4byte Move_HOTWIRE
 	.4byte Move_SYNCHRO_BLAST
 	.4byte Move_BRAVE_BIRD
+	.4byte Move_WAGER
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -8636,6 +8637,73 @@ CreateFlatterConfetti:
 	createsprite gFlatterConfettiSpriteTemplate, ANIM_ATTACKER, 40, ANIM_ATTACKER
 	createsprite gFlatterConfettiSpriteTemplate, ANIM_ATTACKER, 40, ANIM_TARGET
 	return
+
+Move_WAGER:
+	choosetwoturnanim WagerWin, WagerLose
+WagerWin:
+	loadspritegfx ANIM_TAG_X_SIGN
+	loadspritegfx ANIM_TAG_TAG_HAND
+	playse SE_M_FAINT_ATTACK
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 8, RGB_BLACK
+	delay 30
+	playse SE_M_DOUBLE_TEAM
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 2, 4
+	delay 4
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_TARGET, 24, 6, 2, 4
+	delay 12
+	playse SE_M_DOUBLE_TEAM
+	delay 25
+	playsewithpan SE_EXP_MAX, SOUND_PAN_ATTACKER
+	createsprite gClappingHandSpriteTemplate, ANIM_ATTACKER, 2, -2, -12, 0, 0, 2
+	createsprite gClappingHandSpriteTemplate, ANIM_ATTACKER, 2, 2, -12, 1, 0, 2
+	createsprite gClappingHand2SpriteTemplate, ANIM_ATTACKER, 3, -2, -12, 0, 0, 2
+	createsprite gClappingHand2SpriteTemplate, ANIM_ATTACKER, 3, 2, -12, 1, 0, 2
+	delay 32
+	createsprite gRedXSpriteTemplate, ANIM_TARGET, 5, ANIM_TARGET, 50
+	createvisualtask AnimTask_SetGrayscaleOrOriginalPal, 5, ANIM_TARGET, FALSE
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 8, 0, 24, 1
+	playsewithpan SE_SUPER_EFFECTIVE, SOUND_PAN_TARGET
+	delay 32
+	createvisualtask AnimTask_SetGrayscaleOrOriginalPal, 5, ANIM_TARGET, TRUE
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 8, 0, RGB_BLACK
+	clearmonbg ANIM_ATK_PARTNER
+	delay 1
+	monbg ANIM_DEF_PARTNER
+	blendoff
+	clearmonbg ANIM_DEF_PARTNER
+	end
+WagerLose:
+	loadspritegfx ANIM_TAG_X_SIGN
+	loadspritegfx ANIM_TAG_TAG_HAND
+	playse SE_M_FAINT_ATTACK
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 8, RGB_BLACK
+	delay 30
+	playse SE_M_DOUBLE_TEAM
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 2, 4
+	delay 4
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_TARGET, 24, 6, 2, 4
+	delay 12
+	playse SE_M_DOUBLE_TEAM
+	delay 32
+	playsewithpan SE_EXP_MAX, SOUND_PAN_TARGET
+	createsprite gClappingHandSpriteTemplate, ANIM_TARGET, 2, 104, -56, 0, 0, 2
+	createsprite gClappingHandSpriteTemplate, ANIM_TARGET, 2, 108, -56, 1, 0, 2
+	createsprite gClappingHand2SpriteTemplate, ANIM_TARGET, 3, 104, -56, 0, 0, 2
+	createsprite gClappingHand2SpriteTemplate, ANIM_TARGET, 3, 108, -56, 1, 0, 2
+	delay 32
+	createsprite gRedXSpriteTemplate, ANIM_ATTACKER, 5, ANIM_ATTACKER, 50
+	createvisualtask AnimTask_SetGrayscaleOrOriginalPal, 5, ANIM_ATTACKER, FALSE
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_ATTACKER, 8, 0, 24, 1
+	playsewithpan SE_SUPER_EFFECTIVE, SOUND_PAN_ATTACKER
+	delay 25
+	createvisualtask AnimTask_SetGrayscaleOrOriginalPal, 5, ANIM_ATTACKER, TRUE
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 8, 0, RGB_BLACK
+	clearmonbg ANIM_ATK_PARTNER
+	delay 1
+	monbg ANIM_DEF_PARTNER
+	blendoff
+	clearmonbg ANIM_DEF_PARTNER
+	end
 
 Move_ROLE_PLAY:
 	monbg ANIM_ATK_PARTNER

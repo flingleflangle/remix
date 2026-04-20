@@ -270,6 +270,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectSynchroBlast           @ EFFECT_SYNCHRO_BLAST
 	.4byte BattleScript_EffectRockSmash              @ EFFECT_ROCK_SMASH
 	.4byte BattleScript_EffectShieldBash             @ EFFECT_SHIELD_BASH
+	.4byte BattleScript_EffectWager           	     @ EFFECT_WAGER
 	
 
 BattleScript_EffectHit::
@@ -1254,6 +1255,54 @@ BattleScript_EffectDragonFist::
 	waitmessage B_WAIT_TIME_LONG
 	seteffectwithchance
 	end
+
+
+BattleScript_EffectWager::
+	attackcanceler
+	setbyte sB_ANIM_TURN, 0
+	critcalc
+	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_WagerFail
+	attackstring
+	ppreduce
+	typecalc
+	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	setword gBattleMoveDamage, 999
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	setword gBattleMoveDamage, -999
+	adjustsetdamage
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	moveendall
+	end
+BattleScript_WagerFail::
+	setbyte sB_ANIM_TURN, 1
+	attackstring
+	ppreduce
+	typecalc
+	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	setword gBattleMoveDamage, 999
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	setword gBattleMoveDamage, -999
+	adjustsetdamage
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_ATTACKER
+	moveendall
+	end
+
 
 BattleScript_EffectCobraCrush::
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE

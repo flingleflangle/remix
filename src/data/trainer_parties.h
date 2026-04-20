@@ -12539,11 +12539,11 @@ static const struct TrainerMonItemCustomMoves sParty_ShadeCrystal[] = {
     .moves = {MOVE_WRAP, MOVE_VILE_CUTTER, MOVE_SUPER_FANG, MOVE_POISON_TAIL}
     },
     {
-    .iv = 100,
+    .iv = 20,
     .lvl = 27,
     .species = SPECIES_WEAVILE,
     .heldItem = ITEM_SCOPE_LENS,
-    .moves = {MOVE_ICE_SLASHER, MOVE_CHISEL, MOVE_SLASH}
+    .moves = {MOVE_ICE_SLASHER, MOVE_CHISEL, MOVE_WAGER}
     },
     {
     .iv = 100,
