@@ -675,7 +675,6 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
     [MOVE_EFFECT_ATK_DEF_DOWN]     = BattleScript_MoveEffectSleep,
     [MOVE_EFFECT_RECOIL_33]        = BattleScript_MoveEffectRecoil,
     [MOVE_EFFECT_IGNITE]           = BattleScript_MoveEffectIgnite,
-    [MOVE_EFFECT_YOGA_LOOP]        = BattleScript_MoveEffectSleep,
 };
 
 static const struct WindowTemplate sUnusedWinTemplate =
@@ -2981,17 +2980,6 @@ void SetMoveEffect(bool8 primary, u8 certain)
             case MOVE_EFFECT_SP_ATK_TWO_DOWN: // Overheat
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = BattleScript_SAtkDown2;
-                break;
-            case MOVE_EFFECT_YOGA_LOOP:
-                if (gMoveResultFlags &= MOVE_RESULT_MISSED)
-                {
-                    CancelMultiTurnMoves(gActiveBattler);
-                    gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_MULTIPLETURNS;
-                    gBattlescriptCurrInstr = BattleScript_MoveMissedPause;
-                }
-                else
-                    gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
-                    gLockedMoves[gEffectBattler] = gCurrentMove;
                 break;
             }
         }
@@ -8102,25 +8090,46 @@ static void Cmd_mirrorcoatdamagecalculator(void)
 static void Cmd_disablelastusedattack(void)
 {
     s32 i;
+    u16 lastMove = gLastResultingMoves[gBattlerAttacker];
 
-    for (i = 0; i < MAX_MON_MOVES; i++)
-    {
-        if (gBattleMons[gBattlerTarget].moves[i] == gLastMoves[gBattlerTarget])
-            break;
-    }
-    if (gDisableStructs[gBattlerTarget].disabledMove == MOVE_NONE
-        && i != MAX_MON_MOVES && gBattleMons[gBattlerTarget].pp[i] != 0)
-    {
-        PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[gBattlerTarget].moves[i])
+    if (lastMove == MOVE_YOGA_LOOP) {
+        for (i = 0; i < MAX_MON_MOVES; i++)
+        {
+            if (gBattleMons[gBattlerAttacker].moves[i] == gLastMoves[gBattlerAttacker])
+                break;
+        }
+        if (gDisableStructs[gBattlerTarget].disabledMove == MOVE_NONE
+            && i != MAX_MON_MOVES)
+        {
+            gDisableStructs[gBattlerAttacker].disabledMove = gBattleMons[gBattlerAttacker].moves[i];
+            gDisableStructs[gBattlerAttacker].disableTimer = (Random() & 1) + 2;
+            gDisableStructs[gBattlerAttacker].disableTimerStartValue = gDisableStructs[gBattlerAttacker].disableTimer; // used to save the random amount of turns?
+            gBattlescriptCurrInstr += 5;
+        }
+        else
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
+    } else {
+        for (i = 0; i < MAX_MON_MOVES; i++)
+        {
+            if (gBattleMons[gBattlerTarget].moves[i] == gLastMoves[gBattlerTarget])
+                break;
+        }
+        if (gDisableStructs[gBattlerTarget].disabledMove == MOVE_NONE
+            && i != MAX_MON_MOVES && gBattleMons[gBattlerTarget].pp[i] != 0)
+        {
+            PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[gBattlerTarget].moves[i])
 
-        gDisableStructs[gBattlerTarget].disabledMove = gBattleMons[gBattlerTarget].moves[i];
-        gDisableStructs[gBattlerTarget].disableTimer = (Random() & 3) + 2;
-        gDisableStructs[gBattlerTarget].disableTimerStartValue = gDisableStructs[gBattlerTarget].disableTimer; // used to save the random amount of turns?
-        gBattlescriptCurrInstr += 5;
-    }
-    else
-    {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+            gDisableStructs[gBattlerTarget].disabledMove = gBattleMons[gBattlerTarget].moves[i];
+            gDisableStructs[gBattlerTarget].disableTimer = (Random() & 3) + 2;
+            gDisableStructs[gBattlerTarget].disableTimerStartValue = gDisableStructs[gBattlerTarget].disableTimer; // used to save the random amount of turns?
+            gBattlescriptCurrInstr += 5;
+        }
+        else
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
     }
 }
 

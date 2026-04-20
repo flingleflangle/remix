@@ -99,6 +99,7 @@ static const u8 sText_PkmnBurnedBy[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_S
 static const u8 sText_PkmnHurtByBurn[] = _("{B_ATK_NAME_WITH_PREFIX} is hurt\nby its burn!");
 static const u8 sText_PkmnHeatingUp[] = _("{B_EFF_NAME_WITH_PREFIX} is heating up!");
 static const u8 sText_PkmnOnFire[] = _("{B_ATK_NAME_WITH_PREFIX} is on fire!");
+static const u8 sText_YogaLoopBroke[] = _("{B_ATK_NAME_WITH_PREFIX}'s YOGA LOOP\nwas broken!");
 static const u8 sText_PkmnAlreadyHasBurn[] = _("{B_DEF_NAME_WITH_PREFIX} already\nhas a burn.");
 static const u8 sText_PkmnWasFrozen[] = _("{B_EFF_NAME_WITH_PREFIX} was\nfrozen solid!");
 static const u8 sText_PkmnFrozenBy[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nfroze {B_EFF_NAME_WITH_PREFIX} solid!");
@@ -566,6 +567,7 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNHURTBYBURN - BATTLESTRINGS_TABLE_START] = sText_PkmnHurtByBurn,
     [STRINGID_PKMNHEATINGUP - BATTLESTRINGS_TABLE_START] = sText_PkmnHeatingUp,
     [STRINGID_PKMNONFIRE - BATTLESTRINGS_TABLE_START] = sText_PkmnOnFire,
+    [STRINGID_YOGALOOPBROKE - BATTLESTRINGS_TABLE_START] = sText_YogaLoopBroke,
     [STRINGID_PKMNWASFROZEN - BATTLESTRINGS_TABLE_START] = sText_PkmnWasFrozen,
     [STRINGID_PKMNFROZENBY - BATTLESTRINGS_TABLE_START] = sText_PkmnFrozenBy,
     [STRINGID_PKMNISFROZEN - BATTLESTRINGS_TABLE_START] = sText_PkmnIsFrozen,

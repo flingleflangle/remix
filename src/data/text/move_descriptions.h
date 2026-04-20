@@ -1571,7 +1571,11 @@ static const u8 sBraveBirdDescription[] = _(
 
 static const u8 sWagerDescription[] = _(
     "Makes a gamble with the\n"
-    "opponent, winner takes all.");
+    "opponent- winner takes all.");
+
+static const u8 sYogaLoopDescription[] = _(
+    "Guaranteed to flinch target.\n"
+    "Move is disabled upon miss.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -1969,5 +1973,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_SYNCHRO_BLAST - 1] = sSynchroBlastDescription,
     [MOVE_BRAVE_BIRD - 1] = sBraveBirdDescription,
     [MOVE_WAGER - 1] = sWagerDescription,
-    [MOVE_YOGA_LOOP - 1] = sWagerDescription,
+    [MOVE_YOGA_LOOP - 1] = sYogaLoopDescription,
 };

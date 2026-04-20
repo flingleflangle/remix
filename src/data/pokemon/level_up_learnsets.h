@@ -3168,7 +3168,6 @@ static const u16 sMurkrowLevelUpLearnset[] = {
     LEVEL_UP_MOVE(11, MOVE_HAZE),
     LEVEL_UP_MOVE(15, MOVE_WING_ATTACK),
     LEVEL_UP_MOVE(21, MOVE_NIGHT_SHADE),
-    LEVEL_UP_MOVE(23, MOVE_YOGA_LOOP),
     LEVEL_UP_MOVE(25, MOVE_FAINT_ATTACK),
     LEVEL_UP_MOVE(31, MOVE_TAUNT),
     LEVEL_UP_MOVE(36, MOVE_DRILL_PECK),
@@ -5565,6 +5564,7 @@ static const u16 sMedititeLevelUpLearnset[] = {
 };
 
 static const u16 sMedichamLevelUpLearnset[] = {
+    LEVEL_UP_MOVE( 0, MOVE_YOGA_LOOP),
     LEVEL_UP_MOVE( 1, MOVE_FIRE_PUNCH),
     LEVEL_UP_MOVE( 1, MOVE_THUNDER_PUNCH),
     LEVEL_UP_MOVE( 1, MOVE_ICE_PUNCH),

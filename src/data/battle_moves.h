@@ -4683,7 +4683,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_STAGGER] =
     {
         .effect = EFFECT_STAGGER,
-        .power = 25,
+        .power = 35,
         .type = TYPE_FIGHTING,
         .accuracy = 95,
         .pp = 15,
@@ -5125,13 +5125,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_YOGA_LOOP] =
     {
         .effect = EFFECT_YOGA_LOOP,
-        .power = 20,
+        .power = 15,
         .type = TYPE_FIGHTING,
         .accuracy = 70,
-        .pp = 10,
+        .pp = 15,
         .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
-        .priority = 1,
+        .priority = 0,
         .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 };

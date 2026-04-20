@@ -714,17 +714,24 @@ BattleScript_EffectRampage2:
 
 BattleScript_EffectYogaLoop::
 	attackcanceler
-	accuracycheck BattleScript_YogaLoopMissed, ACC_CURR_MOVE
 	attackstring
-	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_YogaLoopHit
-	setmoveeffect MOVE_EFFECT_YOGA_LOOP | MOVE_EFFECT_AFFECTS_USER
 	ppreduce
+	jumpifnotfirstturn BattleScript_YogaLoopAccCheck
+	goto BattleScript_YogaLoopHit
+BattleScript_YogaLoopAccCheck::
+	accuracycheck BattleScript_YogaLoopMissed, ACC_CURR_MOVE
 BattleScript_YogaLoopHit::
+	setmoveeffect MOVE_EFFECT_FLINCH
 	goto BattleScript_HitFromCritCalc
 	end
 BattleScript_YogaLoopMissed::
-	setbyte gMoveResultFlags, MOVE_RESULT_MISSED
-	goto BattleScript_PrintMoveMissed
+	pause B_WAIT_TIME_SHORT
+	disablelastusedattack BattleScript_ButItFailed
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	printstring STRINGID_YOGALOOPBROKE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
 
 BattleScript_EffectRoar::
 	attackcanceler
@@ -3925,7 +3932,6 @@ BattleScript_FaintAttacker::
 	jumpifmove MOVE_HYDRO_CANNON, BattleScript_MoveEnd
 	jumpifmove MOVE_BLAST_BURN, BattleScript_MoveEnd
 	jumpifmove MOVE_FRENZY_PLANT, BattleScript_MoveEnd
-	jumpifmove MOVE_YOGA_LOOP, BattleScript_MoveEnd
 	return
 
 BattleScript_FaintTarget::
