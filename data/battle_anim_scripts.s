@@ -410,6 +410,7 @@ gBattleAnims_Moves::
 	.4byte Move_SYNCHRO_BLAST
 	.4byte Move_BRAVE_BIRD
 	.4byte Move_WAGER
+	.4byte Move_YOGA_LOOP
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -2578,6 +2579,7 @@ HornDrillInContest:
 	createvisualtask AnimTask_StartSlidingBg, 5, 2304, 768, 0, -1
 	goto HornDrillContinue
 
+Move_YOGA_LOOP:
 Move_THRASH:
 	loadspritegfx ANIM_TAG_IMPACT
 	loadspritegfx ANIM_TAG_HANDS_AND_FEET

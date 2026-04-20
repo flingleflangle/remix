@@ -675,6 +675,7 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
     [MOVE_EFFECT_ATK_DEF_DOWN]     = BattleScript_MoveEffectSleep,
     [MOVE_EFFECT_RECOIL_33]        = BattleScript_MoveEffectRecoil,
     [MOVE_EFFECT_IGNITE]           = BattleScript_MoveEffectIgnite,
+    [MOVE_EFFECT_YOGA_LOOP]        = BattleScript_MoveEffectSleep,
 };
 
 static const struct WindowTemplate sUnusedWinTemplate =
@@ -2980,6 +2981,17 @@ void SetMoveEffect(bool8 primary, u8 certain)
             case MOVE_EFFECT_SP_ATK_TWO_DOWN: // Overheat
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = BattleScript_SAtkDown2;
+                break;
+            case MOVE_EFFECT_YOGA_LOOP:
+                if (gMoveResultFlags &= MOVE_RESULT_MISSED)
+                {
+                    CancelMultiTurnMoves(gActiveBattler);
+                    gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_MULTIPLETURNS;
+                    gBattlescriptCurrInstr = BattleScript_MoveMissedPause;
+                }
+                else
+                    gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
+                    gLockedMoves[gEffectBattler] = gCurrentMove;
                 break;
             }
         }

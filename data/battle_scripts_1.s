@@ -271,6 +271,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectRockSmash              @ EFFECT_ROCK_SMASH
 	.4byte BattleScript_EffectShieldBash             @ EFFECT_SHIELD_BASH
 	.4byte BattleScript_EffectWager           	     @ EFFECT_WAGER
+	.4byte BattleScript_EffectYogaLoop           	 @ EFFECT_YOGA_LOOP
 	
 
 BattleScript_EffectHit::
@@ -710,6 +711,20 @@ BattleScript_EffectRampage::
 BattleScript_EffectRampage2:
 	confuseifrepeatingattackends
 	goto BattleScript_HitFromCritCalc
+
+BattleScript_EffectYogaLoop::
+	attackcanceler
+	accuracycheck BattleScript_YogaLoopMissed, ACC_CURR_MOVE
+	attackstring
+	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_YogaLoopHit
+	setmoveeffect MOVE_EFFECT_YOGA_LOOP | MOVE_EFFECT_AFFECTS_USER
+	ppreduce
+BattleScript_YogaLoopHit::
+	goto BattleScript_HitFromCritCalc
+	end
+BattleScript_YogaLoopMissed::
+	setbyte gMoveResultFlags, MOVE_RESULT_MISSED
+	goto BattleScript_PrintMoveMissed
 
 BattleScript_EffectRoar::
 	attackcanceler
@@ -3910,6 +3925,7 @@ BattleScript_FaintAttacker::
 	jumpifmove MOVE_HYDRO_CANNON, BattleScript_MoveEnd
 	jumpifmove MOVE_BLAST_BURN, BattleScript_MoveEnd
 	jumpifmove MOVE_FRENZY_PLANT, BattleScript_MoveEnd
+	jumpifmove MOVE_YOGA_LOOP, BattleScript_MoveEnd
 	return
 
 BattleScript_FaintTarget::

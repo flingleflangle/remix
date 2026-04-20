@@ -395,8 +395,9 @@
 #define MOVE_SYNCHRO_BLAST 391
 #define MOVE_BRAVE_BIRD 392
 #define MOVE_WAGER 393
+#define MOVE_YOGA_LOOP 394
 
-#define MOVES_COUNT 394
+#define MOVES_COUNT 395
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

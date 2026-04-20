@@ -1969,4 +1969,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_SYNCHRO_BLAST - 1] = sSynchroBlastDescription,
     [MOVE_BRAVE_BIRD - 1] = sBraveBirdDescription,
     [MOVE_WAGER - 1] = sWagerDescription,
+    [MOVE_YOGA_LOOP - 1] = sWagerDescription,
 };

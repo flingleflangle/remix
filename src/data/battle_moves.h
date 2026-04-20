@@ -5121,4 +5121,17 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = -1,
         .flags = FLAG_SNATCH_AFFECTED,
     },
+
+    [MOVE_YOGA_LOOP] =
+    {
+        .effect = EFFECT_YOGA_LOOP,
+        .power = 20,
+        .type = TYPE_FIGHTING,
+        .accuracy = 70,
+        .pp = 10,
+        .secondaryEffectChance = 100,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 1,
+        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
 };
