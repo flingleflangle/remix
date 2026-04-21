@@ -273,6 +273,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectWager           	     @ EFFECT_WAGER
 	.4byte BattleScript_EffectYogaLoop           	 @ EFFECT_YOGA_LOOP
 	.4byte BattleScript_EffectTailGlow          	 @ EFFECT_TAIL_GLOW
+	.4byte BattleScript_EffectKaleidoscope           @ EFFECT_KALEIDOSCOPE
 	
 
 BattleScript_EffectHit::
@@ -2778,6 +2779,127 @@ BattleScript_EffectSonicboom::
 	setword gBattleMoveDamage, 20
 	adjustsetdamage
 	goto BattleScript_HitFromAtkAnimation
+
+BattleScript_EffectKaleidoscope::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	typecalc
+	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	jumpiftype BS_ATTACKER, TYPE_FIRE, KaleidoscopeBurn
+	jumpiftype BS_ATTACKER, TYPE_WATER, KaleidoscopeFreeze
+	jumpiftype BS_ATTACKER, TYPE_ICE, KaleidoscopeFreeze
+	jumpiftype BS_ATTACKER, TYPE_ELECTRIC, KaleidoscopeParalyze
+	jumpiftype BS_ATTACKER, TYPE_GRASS, KaleidoscopeDrain
+	jumpiftype BS_ATTACKER, TYPE_BUG, KaleidoscopeDrain
+	jumpiftype BS_ATTACKER, TYPE_FIGHTING, KaleidoscopeConfuse
+	jumpiftype BS_ATTACKER, TYPE_GROUND, KaleidoscopeConfuse
+	jumpiftype BS_ATTACKER, TYPE_ROCK, KaleidoscopeConfuse
+	jumpiftype BS_ATTACKER, TYPE_POISON, KaleidoscopePoison
+	jumpiftype BS_ATTACKER, TYPE_DARK, KaleidoscopePoison
+	jumpiftype BS_ATTACKER, TYPE_PSYCHIC, KaleidoscopeDisable
+	jumpiftype BS_ATTACKER, TYPE_GHOST, KaleidoscopeDisable
+	jumpiftype BS_ATTACKER, TYPE_STEEL, KaleidoscopeFlinch
+	jumpiftype BS_ATTACKER, TYPE_NORMAL, KaleidoscopeDamage
+	jumpiftype BS_ATTACKER, TYPE_DRAGON, KaleidoscopeDamage
+	jumpiftype BS_ATTACKER, TYPE_FLYING, KaleidoscopeDamage
+	jumpiftype BS_ATTACKER, TYPE_MYSTERY, KaleidoscopeUltimate
+KaleidoscopeDamage::
+	setword gBattleMoveDamage, 60
+	adjustsetdamage
+	goto KaleidoEnd
+KaleidoscopeBurn::
+	setword gBattleMoveDamage, 40
+	adjustsetdamage
+	setmoveeffect MOVE_EFFECT_BURN
+	goto KaleidoEnd
+KaleidoscopeFreeze::
+	setword gBattleMoveDamage, 20
+	adjustsetdamage
+	setmoveeffect MOVE_EFFECT_FREEZE
+	goto KaleidoEnd
+KaleidoscopeParalyze::
+	setword gBattleMoveDamage, 40
+	adjustsetdamage
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	goto KaleidoEnd
+KaleidoscopeDrain::
+	setword gBattleMoveDamage, 40
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	setword gBattleMoveDamage, -40
+	adjustsetdamage
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	printfromtable gAbsorbDrainStringIds
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
+KaleidoscopeFlinch::
+	setword gBattleMoveDamage, 20
+	adjustsetdamage
+	setmoveeffect MOVE_EFFECT_FLINCH
+	goto KaleidoEnd
+KaleidoscopePoison::
+	setword gBattleMoveDamage, 20
+	adjustsetdamage
+	setmoveeffect MOVE_EFFECT_TOXIC
+	goto KaleidoEnd
+KaleidoscopeDisable::
+	setword gBattleMoveDamage, 20
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	disablelastusedattack BattleScript_ButItFailed
+	printstring STRINGID_PKMNMOVEWASDISABLED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+KaleidoscopeConfuse::
+	setword gBattleMoveDamage, 40
+	adjustsetdamage
+	setmoveeffect MOVE_EFFECT_CONFUSION
+	goto KaleidoEnd
+KaleidoscopeUltimate::
+	setword gBattleMoveDamage, 33
+	adjustsetdamage
+	setmoveeffect MOVE_EFFECT_ATK_MINUS_1
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_SPD_MINUS_1
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_SP_ATK_MINUS_1
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_SP_DEF_MINUS_1
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_ACC_MINUS_1
+	seteffectwithchance
+	goto KaleidoEnd
+KaleidoEnd::
+	attackanimation
+	waitanimation
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	seteffectwithchance
+	goto BattleScript_MoveEnd
+
+
+
+
 
 BattleScript_EffectMorningSun::
 BattleScript_EffectSynthesis::

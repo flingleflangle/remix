@@ -92,7 +92,7 @@
     F(SYNCHRO_BLAST) \
     F(SUPERPOWER) \
     F(PAIN_SPLIT) \
-    F(REVENGE) \
+    F(KALEIDOSCOPE) \
     F(FISSURE) 
 
 #define FOREACH_HM(F) \

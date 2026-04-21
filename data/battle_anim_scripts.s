@@ -413,6 +413,7 @@ gBattleAnims_Moves::
 	.4byte Move_YOGA_LOOP
 	.4byte Move_SCALD
 	.4byte Move_NASTY_PLOT
+	.4byte Move_KALEIDOSCOPE
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -11151,6 +11152,86 @@ Move_SYNCHRO_BLAST:
 	blendoff
 	waitforvisualfinish
 	call UnsetPsychicBackground
+	end
+	
+Move_KALEIDOSCOPE:
+	loadspritegfx ANIM_TAG_RED_ORB
+	loadspritegfx ANIM_TAG_BLUE_ORB
+	loadspritegfx ANIM_TAG_GLOWY_RED_ORB
+	loadspritegfx ANIM_TAG_GLOWY_GREEN_ORB
+	loadspritegfx ANIM_TAG_SMALL_EMBER
+	loadspritegfx ANIM_TAG_ICE_CRYSTALS
+	loadspritegfx ANIM_TAG_SPARK_2
+	loadspritegfx ANIM_TAG_RAINBOW_RINGS
+	loadspritegfx ANIM_TAG_LEER
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 16, RGB(31, 31, 31)
+	waitbgfadein
+	delay 0
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 0
+	createsprite gHiddenPowerOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 42
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 84
+	createsprite gHiddenPowerOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 126
+	createsprite gReversalOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 168
+	createsprite gHiddenPowerOrbSpriteTemplate, ANIM_ATTACKER, 2, 26, 210
+	createvisualtask AnimTask_FacadeColorBlend, 2, ANIM_ATTACKER, 50
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 8, 0, 16, 1
+	playsewithpan SE_M_TELEPORT, SOUND_PAN_ATTACKER
+	delay 48
+	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_ATTACKER, 1
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 0, 16, RGB_WHITE
+	playsewithpan SE_M_LEER, SOUND_PAN_ATTACKER
+	createsprite gLeerSpriteTemplate, ANIM_ATTACKER, 2, 24, -12
+	setarg 7, 0xFFFF
+	delay 48
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 12, RGB(31, 0, 0)
+	createvisualtask AnimTask_RotateAuroraRingColors, 10, 130
+	createsoundtask SoundTask_LoopSEAdjustPanning, SE_M_HYPER_BEAM2, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 1, 15, 0, 5
+	setarg 7, 0xFFFF
+	call AuroraBeamCreateRings
+	call SignalBeamOrbs
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 8, 0, 16, 1
+	createvisualtask AnimTask_FacadeColorBlend, 2, ANIM_TARGET, 108
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 12, RGB(16, 16, 0)
+	createsprite gFireSpiralInwardSpriteTemplate, ANIM_TARGET, 1, 0
+	createsprite gSparkElectricityFlashingSpriteTemplate, ANIM_TARGET, 4, 0, 0, 32, 44, 64, 40, 1, -32765
+	createsprite gIceCrystalSpiralInwardLarge, ANIM_ATTACKER, 2, 160
+	createsprite gFireSpiralInwardSpriteTemplate, ANIM_TARGET, 1, 196
+	setarg 7, 0xFFFF
+	call AuroraBeamCreateRings
+	call SignalBeamOrbs
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 8, 0, 16, 1
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 12, RGB(0, 31, 0)
+	setarg 7, 0xFFFF
+	call AuroraBeamCreateRings
+	call SignalBeamOrbs
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 12, RGB(0, 16, 16)
+	createsprite gIceCrystalSpiralInwardLarge, ANIM_ATTACKER, 2, 32
+	createsprite gFireSpiralInwardSpriteTemplate, ANIM_TARGET, 1, 64
+	createsprite gSparkElectricityFlashingSpriteTemplate, ANIM_TARGET, 4, 0, 0, 32, 44, 128, 40, 0, -32765
+	createsprite gIceCrystalSpiralInwardLarge, ANIM_ATTACKER, 2, 224
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 8, 0, 16, 1
+	setarg 7, 0xFFFF
+	call AuroraBeamCreateRings
+	call SignalBeamOrbs
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 12, RGB(0, 0, 31)
+	setarg 7, 0xFFFF
+	call AuroraBeamCreateRings
+	call SignalBeamOrbs
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 0, 12, RGB(16, 0, 16)
+	createsprite gSparkElectricityFlashingSpriteTemplate, ANIM_TARGET, 4, 0, 0, 32, 44, 0, 40, 0, -32765
+	createsprite gIceCrystalSpiralInwardLarge, ANIM_ATTACKER, 2, 96
+	createsprite gFireSpiralInwardSpriteTemplate, ANIM_TARGET, 1, 128
+	createsprite gSparkElectricityFlashingSpriteTemplate, ANIM_TARGET, 4, 0, 0, 32, 44, 192, 40, 2, -32765
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 8, 0, 16, 1
+	setarg 7, 0xFFFF
+	call AuroraBeamCreateRings
+	call SignalBeamOrbs
+	delay 12
+	blendoff
+	restorebg
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 16, 0, RGB_WHITE
+	waitforvisualfinish
 	end
 
 Move_SHIELD_BASH::

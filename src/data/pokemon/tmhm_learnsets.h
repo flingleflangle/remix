@@ -21,6 +21,7 @@ const union {
     [SPECIES_NONE] = {},
 
     [SPECIES_BULBASAUR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -50,6 +51,7 @@ const union {
     } },
 
     [SPECIES_IVYSAUR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -79,6 +81,7 @@ const union {
     } },
 
     [SPECIES_VENUSAUR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .GEYSER = TRUE,
@@ -113,6 +116,7 @@ const union {
     } },
 
     [SPECIES_CHARMANDER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .FLAMETHROWER = TRUE,
         .DRAGON_CLAW = TRUE,
@@ -149,6 +153,7 @@ const union {
     } },
 
     [SPECIES_CHARMELEON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
@@ -186,6 +191,7 @@ const union {
     } },
 
     [SPECIES_CHARIZARD] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .DRAGON_CLAW = TRUE,
         .SKULL_BASH = TRUE,
@@ -228,6 +234,7 @@ const union {
     } },
 
     [SPECIES_SQUIRTLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .SKULL_BASH = TRUE,
@@ -267,6 +274,7 @@ const union {
     } },
 
     [SPECIES_WARTORTLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .BOULDER_DASH = TRUE,
@@ -306,6 +314,7 @@ const union {
     } },
 
     [SPECIES_BLASTOISE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -349,12 +358,15 @@ const union {
     } },
 
     [SPECIES_CATERPIE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_METAPOD] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_BUTTERFREE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -383,12 +395,15 @@ const union {
     } },
 
     [SPECIES_WEEDLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_KAKUNA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_BEEDRILL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -417,6 +432,7 @@ const union {
     } },
 
     [SPECIES_PIDGEY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -436,6 +452,7 @@ const union {
     } },
 
     [SPECIES_PIDGEOTTO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .STEEL_WING = TRUE,
@@ -457,6 +474,7 @@ const union {
     } },
 
     [SPECIES_PIDGEOT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -479,6 +497,7 @@ const union {
     } },
 
     [SPECIES_RATTATA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .BLIZZARD = TRUE,
@@ -516,6 +535,7 @@ const union {
     } },
 
     [SPECIES_RATICATE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
 		.U_TURN = TRUE,
         .REVERSAL = TRUE,
@@ -557,6 +577,7 @@ const union {
     } },
 
     [SPECIES_SPEAROW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .TRI_ATTACK = TRUE,
         .SUNNY_DAY = TRUE,
@@ -581,6 +602,7 @@ const union {
     } },
 
     [SPECIES_FEAROW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -607,6 +629,7 @@ const union {
     } },
 
     [SPECIES_EKANS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -638,6 +661,7 @@ const union {
     } },
 
     [SPECIES_ARBOK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -671,6 +695,7 @@ const union {
     } },
 
     [SPECIES_PICHU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LIGHT_SCREEN = TRUE,
         .PROTECT = TRUE,
@@ -696,6 +721,7 @@ const union {
     } },
 
     [SPECIES_PIKACHU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .LIGHT_SCREEN = TRUE,
@@ -728,6 +754,7 @@ const union {
     } },
 
     [SPECIES_RAICHU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .HYPER_BEAM = TRUE,
@@ -767,6 +794,7 @@ const union {
     } },
 
     [SPECIES_SANDSHREW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -804,6 +832,7 @@ const union {
     } },
 
     [SPECIES_SANDSLASH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -842,6 +871,7 @@ const union {
     } },
 
     [SPECIES_NIDORAN_F] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -877,6 +907,7 @@ const union {
     } },
 
     [SPECIES_NIDORINA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .ICE_BEAM = TRUE,
@@ -913,6 +944,7 @@ const union {
     } },
 
     [SPECIES_NIDOQUEEN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -974,6 +1006,7 @@ const union {
     } },
 
     [SPECIES_NIDORAN_M] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1008,6 +1041,7 @@ const union {
     } },
 
     [SPECIES_NIDORINO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1044,6 +1078,7 @@ const union {
     } },
 
     [SPECIES_NIDOKING] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -1104,6 +1139,7 @@ const union {
     } },
 
     [SPECIES_CLEFFA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1144,6 +1180,7 @@ const union {
     } },
 
     [SPECIES_CLEFAIRY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .SAFEGUARD = TRUE,
@@ -1194,6 +1231,7 @@ const union {
     } },
 
     [SPECIES_CLEFABLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .SNATCH = TRUE,
@@ -1248,6 +1286,7 @@ const union {
     } },
 
     [SPECIES_VULPIX] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .SAFEGUARD = TRUE,
@@ -1276,6 +1315,7 @@ const union {
     } },
 
     [SPECIES_NINETALES] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .DIG = TRUE,
@@ -1305,6 +1345,7 @@ const union {
     } },
 
     [SPECIES_IGGLYBUFF] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1342,6 +1383,7 @@ const union {
     } },
 
     [SPECIES_JIGGLYPUFF] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -1391,6 +1433,7 @@ const union {
     } },
 
     [SPECIES_WIGGLYTUFF] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .BULK_UP = TRUE,
         .WATER_PULSE = TRUE,
@@ -1443,6 +1486,7 @@ const union {
     } },
 
     [SPECIES_ZUBAT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -1470,6 +1514,7 @@ const union {
     } },
 
     [SPECIES_GOLBAT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -1498,6 +1543,7 @@ const union {
     } },
 
     [SPECIES_CROBAT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -1526,6 +1572,7 @@ const union {
     } },
 
     [SPECIES_ODDISH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .BULLET_SEED = TRUE,
@@ -1547,6 +1594,7 @@ const union {
     } },
 
     [SPECIES_GLOOM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1570,6 +1618,7 @@ const union {
     } },
 
     [SPECIES_VILEPLUME] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1597,6 +1646,7 @@ const union {
     } },
 
     [SPECIES_BELLOSSOM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1624,6 +1674,7 @@ const union {
     } },
 
     [SPECIES_PARAS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SKULL_BASH = TRUE,
@@ -1649,6 +1700,7 @@ const union {
     } },
 
     [SPECIES_PARASECT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1675,6 +1727,7 @@ const union {
     } },
 
     [SPECIES_VENONAT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -1695,6 +1748,7 @@ const union {
     } },
 
     [SPECIES_VENOMOTH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
 		.U_TURN = TRUE,
@@ -1720,6 +1774,7 @@ const union {
     } },
 
     [SPECIES_DIGLETT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .BOULDER_DASH = TRUE,
@@ -1748,6 +1803,7 @@ const union {
     } },
 
     [SPECIES_DUGTRIO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -1778,6 +1834,7 @@ const union {
     } },
 
     [SPECIES_MEOWTH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1811,6 +1868,7 @@ const union {
     } },
 
     [SPECIES_PERSIAN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .TAUNT = TRUE,
@@ -1846,6 +1904,7 @@ const union {
     } },
 
     [SPECIES_PSYDUCK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
@@ -1885,6 +1944,7 @@ const union {
     } },
 
     [SPECIES_GOLDUCK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
@@ -1931,6 +1991,7 @@ const union {
     } },
 
     [SPECIES_MANKEY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -1973,6 +2034,7 @@ const union {
     } },
 
     [SPECIES_PRIMEAPE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
 		.U_TURN = TRUE,
@@ -2016,6 +2078,7 @@ const union {
     } },
 
     [SPECIES_GROWLITHE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .SKULL_BASH = TRUE,
@@ -2047,6 +2110,7 @@ const union {
     } },
 
     [SPECIES_ARCANINE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -2084,6 +2148,7 @@ const union {
     } },
 
     [SPECIES_POLIWAG] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -2115,6 +2180,7 @@ const union {
     } },
 
     [SPECIES_POLIWHIRL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -2152,6 +2218,7 @@ const union {
     } },
 
     [SPECIES_POLIWRATH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -2200,6 +2267,7 @@ const union {
     } },
 
     [SPECIES_POLITOED] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -2237,6 +2305,7 @@ const union {
     } },
 
     [SPECIES_ABRA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TRI_ATTACK = TRUE,
@@ -2272,6 +2341,7 @@ const union {
     } },
 
     [SPECIES_KADABRA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -2309,6 +2379,7 @@ const union {
     } },
 
     [SPECIES_ALAKAZAM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .SHOCK_WAVE = TRUE,
@@ -2347,6 +2418,7 @@ const union {
     } },
 
     [SPECIES_MACHOP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -2382,6 +2454,7 @@ const union {
     } },
 
     [SPECIES_MACHOKE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .FLAMETHROWER = TRUE,
@@ -2418,6 +2491,7 @@ const union {
     } },
 
     [SPECIES_MACHAMP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .BULK_UP = TRUE,
@@ -2455,6 +2529,7 @@ const union {
     } },
 
     [SPECIES_BELLSPROUT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -2478,6 +2553,7 @@ const union {
     } },
 
     [SPECIES_WEEPINBELL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -2501,6 +2577,7 @@ const union {
     } },
 
     [SPECIES_VICTREEBEL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -2526,6 +2603,7 @@ const union {
     } },
 
     [SPECIES_TENTACOOL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SAFEGUARD = TRUE,
@@ -2554,6 +2632,7 @@ const union {
     } },
 
     [SPECIES_TENTACRUEL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -2583,6 +2662,7 @@ const union {
     } },
 
     [SPECIES_GEODUDE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -2615,6 +2695,7 @@ const union {
     } },
 
     [SPECIES_GRAVELER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -2648,6 +2729,7 @@ const union {
     } },
 
     [SPECIES_GOLEM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -2685,6 +2767,7 @@ const union {
     } },
 
     [SPECIES_PONYTA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -2710,6 +2793,7 @@ const union {
     } },
 
     [SPECIES_RAPIDASH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -2737,6 +2821,7 @@ const union {
     } },
 
     [SPECIES_SLOWPOKE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -2780,6 +2865,7 @@ const union {
     } },
 
     [SPECIES_SLOWBRO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .SKULL_BASH = TRUE,
@@ -2828,6 +2914,7 @@ const union {
     } },
 
     [SPECIES_SLOWKING] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .ICE_BEAM = TRUE,
@@ -2880,6 +2967,7 @@ const union {
     } },
 
     [SPECIES_MAGNEMITE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -2904,6 +2992,7 @@ const union {
     } },
 
     [SPECIES_MAGNETON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -2930,6 +3019,7 @@ const union {
     } },
 
     [SPECIES_FARFETCHD] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
 		.U_TURN = TRUE,
@@ -2956,6 +3046,7 @@ const union {
     } },
 
     [SPECIES_DODUO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -2977,6 +3068,7 @@ const union {
     } },
 
     [SPECIES_DODRIO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -3001,6 +3093,7 @@ const union {
     } },
 
     [SPECIES_SEEL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -3029,6 +3122,7 @@ const union {
     } },
 
     [SPECIES_DEWGONG] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -3058,6 +3152,7 @@ const union {
     } },
 
     [SPECIES_GRIMER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -3089,6 +3184,7 @@ const union {
     } },
 
     [SPECIES_MUK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3126,6 +3222,7 @@ const union {
     } },
 
     [SPECIES_SHELLDER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -3147,6 +3244,7 @@ const union {
     } },
 
     [SPECIES_CLOYSTER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -3172,6 +3270,7 @@ const union {
     } },
 
     [SPECIES_GASTLY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .SKILL_SWAP = TRUE,
@@ -3203,6 +3302,7 @@ const union {
     } },
 
     [SPECIES_HAUNTER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -3234,6 +3334,7 @@ const union {
     } },
 
     [SPECIES_GENGAR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3272,6 +3373,7 @@ const union {
     } },
 
     [SPECIES_ONIX] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -3305,6 +3407,7 @@ const union {
     } },
 
     [SPECIES_STEELIX] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -3341,6 +3444,7 @@ const union {
     } },
 
     [SPECIES_DROWZEE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -3377,6 +3481,7 @@ const union {
     } },
 
     [SPECIES_HYPNO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -3414,6 +3519,7 @@ const union {
     } },
 
     [SPECIES_KRABBY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -3444,6 +3550,7 @@ const union {
     } },
 
     [SPECIES_KINGLER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -3475,6 +3582,7 @@ const union {
     } },
 
     [SPECIES_VOLTORB] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LIGHT_SCREEN = TRUE,
         .PROTECT = TRUE,
@@ -3498,6 +3606,7 @@ const union {
     } },
 
     [SPECIES_ELECTRODE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .HYPER_BEAM = TRUE,
         .LIGHT_SCREEN = TRUE,
@@ -3523,6 +3632,7 @@ const union {
     } },
 
     [SPECIES_EXEGGCUTE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3552,6 +3662,7 @@ const union {
     } },
 
     [SPECIES_EXEGGUTOR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3586,6 +3697,7 @@ const union {
     } },
 
     [SPECIES_CUBONE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3624,6 +3736,7 @@ const union {
     } },
 
     [SPECIES_MAROWAK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3668,6 +3781,7 @@ const union {
     } },
 
     [SPECIES_TYROGUE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -3692,6 +3806,7 @@ const union {
     } },
 
     [SPECIES_HITMONLEE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3721,6 +3836,7 @@ const union {
     } },
 
     [SPECIES_HITMONCHAN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3749,6 +3865,7 @@ const union {
     } },
 
     [SPECIES_HITMONTOP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -3781,6 +3898,7 @@ const union {
     } },
 
     [SPECIES_LICKITUNG] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -3829,6 +3947,7 @@ const union {
     } },
 
     [SPECIES_KOFFING] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -3860,6 +3979,7 @@ const union {
     } },
 
     [SPECIES_WEEZING] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -3892,6 +4012,7 @@ const union {
     } },
 
     [SPECIES_RHYHORN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .CURSE = TRUE,   .RETURN = TRUE,   .FRUSTRATION = TRUE,   .ATTRACT = TRUE,   .HIDDEN_POWER = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3933,6 +4054,7 @@ const union {
     } },
 
     [SPECIES_RHYDON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -3986,6 +4108,7 @@ const union {
     } },
 
     [SPECIES_CHANSEY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .SNATCH = TRUE,
@@ -4038,6 +4161,7 @@ const union {
     } },
 
     [SPECIES_BLISSEY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
@@ -4090,6 +4214,7 @@ const union {
     } },
 
     [SPECIES_TANGELA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -4115,6 +4240,7 @@ const union {
     } },
 
     [SPECIES_KANGASKHAN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CRUNCH = TRUE,
@@ -4173,6 +4299,7 @@ const union {
     } },
 
     [SPECIES_HORSEA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -4200,6 +4327,7 @@ const union {
     } },
 
     [SPECIES_SEADRA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -4228,6 +4356,7 @@ const union {
     } },
 
     [SPECIES_KINGDRA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -4257,6 +4386,7 @@ const union {
     } },
 
     [SPECIES_GOLDEEN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -4286,6 +4416,7 @@ const union {
     } },
 
     [SPECIES_SEAKING] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -4316,6 +4447,7 @@ const union {
     } },
 
     [SPECIES_STARYU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .PSYBEAM = TRUE,
@@ -4351,6 +4483,7 @@ const union {
     } },
 
     [SPECIES_STARMIE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SCALD = TRUE,
@@ -4390,6 +4523,7 @@ const union {
     } },
 
     [SPECIES_MR_MIME] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -4431,6 +4565,7 @@ const union {
     } },
 
     [SPECIES_SCYTHER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .SKULL_BASH = TRUE,
@@ -4459,6 +4594,7 @@ const union {
     } },
 
     [SPECIES_SCIZOR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
 		.U_TURN = TRUE,
@@ -4490,6 +4626,7 @@ const union {
     } },
 
     [SPECIES_SMOOCHUM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .ICE_BEAM = TRUE,
@@ -4522,6 +4659,7 @@ const union {
     } },
 
     [SPECIES_JYNX] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
@@ -4557,6 +4695,7 @@ const union {
     } },
 
      [SPECIES_ELEKID] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .LIGHT_SCREEN = TRUE,
@@ -4589,6 +4728,7 @@ const union {
     } },
 
     [SPECIES_ELECTABUZZ] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .HYPER_BEAM = TRUE,
@@ -4627,6 +4767,7 @@ const union {
     } },
 
     [SPECIES_MAGBY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .TAUNT = TRUE,
@@ -4657,6 +4798,7 @@ const union {
     } },
 
     [SPECIES_MAGMAR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -4693,6 +4835,7 @@ const union {
     } },
 
     [SPECIES_PINSIR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .BULK_UP = TRUE,
@@ -4726,6 +4869,7 @@ const union {
     } },
 
     [SPECIES_TAUROS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SHOCK_WAVE = TRUE,
@@ -4768,9 +4912,11 @@ const union {
     } },
 
     [SPECIES_MAGIKARP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_GYARADOS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -4815,6 +4961,7 @@ const union {
     } },
 
     [SPECIES_LAPRAS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -4857,9 +5004,11 @@ const union {
     } },
 
     [SPECIES_DITTO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_EEVEE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SKULL_BASH = TRUE,
         .FOCUS_ENERGY = TRUE,
@@ -4883,6 +5032,7 @@ const union {
     } },
 
     [SPECIES_VAPOREON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TAUNT = TRUE,
         .TOXIC = TRUE,
@@ -4919,6 +5069,7 @@ const union {
     } },
 
     [SPECIES_JOLTEON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -4949,6 +5100,7 @@ const union {
     } },
 
     [SPECIES_FLAREON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -4980,6 +5132,7 @@ const union {
     } },
 
     [SPECIES_ESPEON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -5017,6 +5170,7 @@ const union {
     } },
 
     [SPECIES_UMBREON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -5053,6 +5207,7 @@ const union {
     } },
 
     [SPECIES_PORYGON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .BLIZZARD = TRUE,
@@ -5087,6 +5242,7 @@ const union {
     } },
 
     [SPECIES_PORYGON2] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .BLIZZARD = TRUE,
@@ -5121,6 +5277,7 @@ const union {
     } },
 
     [SPECIES_OMANYTE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .ROCK_TOMB = TRUE, 
         .TOXIC = TRUE,
@@ -5155,6 +5312,7 @@ const union {
     } },
 
     [SPECIES_OMASTAR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -5193,6 +5351,7 @@ const union {
     } },
 
     [SPECIES_KABUTO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -5224,6 +5383,7 @@ const union {
     } },
 
     [SPECIES_KABUTOPS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -5266,6 +5426,7 @@ const union {
     } },
 
     [SPECIES_AERODACTYL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -5305,6 +5466,7 @@ const union {
     } },
 	
 	[SPECIES_MUNCHLAX] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .SHIELD_BASH = TRUE,
@@ -5352,6 +5514,7 @@ const union {
     } },
 
     [SPECIES_SNORLAX] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CRUNCH = TRUE,
@@ -5401,6 +5564,7 @@ const union {
     } },
 
     [SPECIES_ARTICUNO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .PSYBEAM = TRUE,
@@ -5434,6 +5598,7 @@ const union {
     } },
 
     [SPECIES_ZAPDOS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -5466,6 +5631,7 @@ const union {
     } },
 
     [SPECIES_MOLTRES] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
 		.U_TURN = TRUE,
         .SUNNY_DAY = TRUE,
@@ -5497,6 +5663,7 @@ const union {
     } },
 
     [SPECIES_DRATINI] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -5531,6 +5698,7 @@ const union {
     } },
 
     [SPECIES_DRAGONAIR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .WEATHER_BALL = TRUE,
@@ -5567,6 +5735,7 @@ const union {
     } },
 
     [SPECIES_DRAGONITE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .DRAGON_CLAW = TRUE,
         .WEATHER_BALL = TRUE,
@@ -5626,6 +5795,7 @@ const union {
     } },
 
     [SPECIES_MEWTWO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .WEATHER_BALL = TRUE,
@@ -5692,6 +5862,7 @@ const union {
     } },
 
     [SPECIES_MEW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .DRAGON_CLAW = TRUE,
         .WATER_PULSE = TRUE,
@@ -5792,6 +5963,7 @@ const union {
     } },
 
     [SPECIES_CHIKORITA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -5820,6 +5992,7 @@ const union {
     } },
 
     [SPECIES_BAYLEEF] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -5850,6 +6023,7 @@ const union {
     } },
 
     [SPECIES_MEGANIUM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -5885,6 +6059,7 @@ const union {
     } },
 
     [SPECIES_CYNDAQUIL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -5912,6 +6087,7 @@ const union {
     } },
 
     [SPECIES_QUILAVA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .PSYBEAM = TRUE,
@@ -5945,6 +6121,7 @@ const union {
     } },
 
     [SPECIES_TYPHLOSION] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .CURSE = TRUE,   .RETURN = TRUE,   .FRUSTRATION = TRUE,   .ATTRACT = TRUE,   .HIDDEN_POWER = TRUE,
@@ -5988,6 +6165,7 @@ const union {
     } },
 
     [SPECIES_TOTODILE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -6026,6 +6204,7 @@ const union {
     } },
 
     [SPECIES_CROCONAW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -6069,6 +6248,7 @@ const union {
     } },
 
     [SPECIES_FERALIGATR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .DRAGON_CLAW = TRUE,
         .WATER_PULSE = TRUE,
@@ -6118,6 +6298,7 @@ const union {
     } },
 
     [SPECIES_SENTRET] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -6154,6 +6335,7 @@ const union {
     } },
 
     [SPECIES_FURRET] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .EXTREME_SPEED = TRUE,
@@ -6197,6 +6379,7 @@ const union {
     } },
 
     [SPECIES_HOOTHOOT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .CURSE = TRUE,   .RETURN = TRUE,   .FRUSTRATION = TRUE,   .ATTRACT = TRUE,   .HIDDEN_POWER = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6223,6 +6406,7 @@ const union {
     } },
 
     [SPECIES_NOCTOWL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PSYBEAM = TRUE,
@@ -6250,6 +6434,7 @@ const union {
     } },
 
     [SPECIES_LEDYBA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6276,6 +6461,7 @@ const union {
     } },
 
     [SPECIES_LEDIAN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6306,6 +6492,7 @@ const union {
     } },
 
     [SPECIES_SPINARAK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -6327,6 +6514,7 @@ const union {
     } },
 
     [SPECIES_ARIADOS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -6350,6 +6538,7 @@ const union {
     } },
 
     [SPECIES_CHINCHOU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -6380,6 +6569,7 @@ const union {
     } },
 
     [SPECIES_LANTURN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -6413,6 +6603,7 @@ const union {
     } },
 
     [SPECIES_TOGEPI] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6447,6 +6638,7 @@ const union {
     } },
 
     [SPECIES_TOGETIC] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -6488,6 +6680,7 @@ const union {
     } },
 
     [SPECIES_NATU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6521,6 +6714,7 @@ const union {
     } },
 
     [SPECIES_XATU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
 		.U_TURN = TRUE,
@@ -6555,6 +6749,7 @@ const union {
     } },
 
     [SPECIES_MAREEP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LIGHT_SCREEN = TRUE,
         .PROTECT = TRUE,
@@ -6576,6 +6771,7 @@ const union {
     } },
 
     [SPECIES_FLAAFFY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .LIGHT_SCREEN = TRUE,
@@ -6606,6 +6802,7 @@ const union {
     } },
 
     [SPECIES_AMPHAROS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .HYPER_BEAM = TRUE,
@@ -6643,6 +6840,7 @@ const union {
     } },
 
     [SPECIES_AZURILL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .ICE_BEAM = TRUE,
@@ -6668,6 +6866,7 @@ const union {
     } },
 
     [SPECIES_MARILL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .FREEZE_RAY = TRUE,
@@ -6705,6 +6904,7 @@ const union {
     } },
 
     [SPECIES_AZUMARILL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -6743,6 +6943,7 @@ const union {
     } },
 
 	[SPECIES_BONSLY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6772,6 +6973,7 @@ const union {
     } },
 	
     [SPECIES_SUDOWOODO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -6809,6 +7011,7 @@ const union {
     } },
 
     [SPECIES_HOPPIP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6831,6 +7034,7 @@ const union {
     } },
 
     [SPECIES_SKIPLOOM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
 		.U_TURN = TRUE,
         .LEECH_SEED = TRUE,
@@ -6853,6 +7057,7 @@ const union {
     } },
 
     [SPECIES_JUMPLUFF] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6876,6 +7081,7 @@ const union {
     } },
 
     [SPECIES_AIPOM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -6914,6 +7120,7 @@ const union {
     } },
 
     [SPECIES_SUNKERN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6938,6 +7145,7 @@ const union {
     } },
 
     [SPECIES_SUNFLORA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -6965,6 +7173,7 @@ const union {
     } },
 
     [SPECIES_YANMA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
 		.U_TURN = TRUE,
@@ -6992,6 +7201,7 @@ const union {
     } },
 
     [SPECIES_WOOPER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -7028,6 +7238,7 @@ const union {
     } },
 
     [SPECIES_QUAGSIRE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -7070,6 +7281,7 @@ const union {
     } },
 
     [SPECIES_MURKROW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .TAUNT = TRUE,
@@ -7095,6 +7307,7 @@ const union {
     } },
 
     [SPECIES_HONCHKROW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .TAUNT = TRUE,
@@ -7120,6 +7333,7 @@ const union {
     } },
 
     [SPECIES_MISDREAVUS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SNATCH = TRUE,
@@ -7154,6 +7368,7 @@ const union {
     } },
 
     [SPECIES_MISMAGIUS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SNATCH = TRUE,
@@ -7188,19 +7403,23 @@ const union {
     } },
 
     [SPECIES_UNOWN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_WYNAUT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .SAFEGUARD = TRUE,
         .SKULL_BASH = TRUE,
     } },
 
     [SPECIES_WOBBUFFET] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .SAFEGUARD = TRUE,
         .SKULL_BASH = TRUE,
     } },
 
     [SPECIES_GIRAFARIG] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .PSYBEAM = TRUE,
@@ -7238,6 +7457,7 @@ const union {
     } },
 
     [SPECIES_PINECO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .LIGHT_SCREEN = TRUE,
@@ -7265,6 +7485,7 @@ const union {
     } },
 
     [SPECIES_FORRETRESS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -7295,6 +7516,7 @@ const union {
     } },
 
     [SPECIES_DUNSPARCE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .CRUNCH = TRUE,
@@ -7336,6 +7558,7 @@ const union {
     } },
 
     [SPECIES_GLIGAR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .GEYSER = TRUE,
         .EXTREME_SPEED = TRUE,
@@ -7377,6 +7600,7 @@ const union {
     } },
 	
 	[SPECIES_GLISCOR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -7417,6 +7641,7 @@ const union {
     } },
 
     [SPECIES_SNUBBULL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TORMENT = TRUE,
@@ -7461,6 +7686,7 @@ const union {
     } },
 
     [SPECIES_GRANBULL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .BLAZE_KICK = TRUE,
         .TAUNT = TRUE,
@@ -7511,6 +7737,7 @@ const union {
     } },
 
     [SPECIES_QWILFISH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TAUNT = TRUE,
         .TOXIC = TRUE,
@@ -7540,6 +7767,7 @@ const union {
     } },
 
     [SPECIES_SHUCKLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -7569,6 +7797,7 @@ const union {
     } },
 
     [SPECIES_HERACROSS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
 		.LEECH_SEED = TRUE,
@@ -7606,6 +7835,7 @@ const union {
     } },
 
     [SPECIES_SNEASEL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .CRUNCH = TRUE,
@@ -7648,6 +7878,7 @@ const union {
     } },
 	
 	[SPECIES_WEAVILE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -7690,6 +7921,7 @@ const union {
     } },
 
     [SPECIES_TEDDIURSA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .ROAR = TRUE,
@@ -7728,6 +7960,7 @@ const union {
     } },
 
     [SPECIES_URSARING] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .ROAR = TRUE,
@@ -7770,6 +8003,7 @@ const union {
     } },
 
     [SPECIES_SLUGMA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .LIGHT_SCREEN = TRUE,
@@ -7797,6 +8031,7 @@ const union {
     } },
 
     [SPECIES_MAGCARGO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -7829,6 +8064,7 @@ const union {
     } },
 
     [SPECIES_SWINUB] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
         .BLIZZARD = TRUE,
@@ -7863,6 +8099,7 @@ const union {
     } },
 
     [SPECIES_PILOSWINE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
         .GEYSER = TRUE,
@@ -7899,6 +8136,7 @@ const union {
     } },
 
     [SPECIES_CORSOLA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -7940,6 +8178,7 @@ const union {
     } },
 
     [SPECIES_REMORAID] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -7974,6 +8213,7 @@ const union {
     } },
 
     [SPECIES_OCTILLERY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
@@ -8009,6 +8249,7 @@ const union {
     } },
 
     [SPECIES_DELIBIRD] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -8034,6 +8275,7 @@ const union {
     } },
 
     [SPECIES_MANTINE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .BULLET_SEED = TRUE,
@@ -8068,6 +8310,7 @@ const union {
     } },
 
     [SPECIES_SKARMORY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -8099,6 +8342,7 @@ const union {
     } },
 
     [SPECIES_HOUNDOUR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -8131,6 +8375,7 @@ const union {
     } },
 
     [SPECIES_HOUNDOOM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -8165,6 +8410,7 @@ const union {
     } },
 
     [SPECIES_PHANPY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -8196,6 +8442,7 @@ const union {
     } },
 
     [SPECIES_DONPHAN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -8228,6 +8475,7 @@ const union {
     } },
 
     [SPECIES_STANTLER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .CURSE = TRUE,   .RETURN = TRUE,   .FRUSTRATION = TRUE,   .ATTRACT = TRUE,   .HIDDEN_POWER = TRUE,
         .TOXIC = TRUE,
@@ -8267,9 +8515,11 @@ const union {
     } },
 
     [SPECIES_SMEARGLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_MILTANK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -8309,6 +8559,7 @@ const union {
     } },
 
     [SPECIES_RAIKOU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .THUNDERBOLT = TRUE,
@@ -8344,6 +8595,7 @@ const union {
     } },
 
     [SPECIES_ENTEI] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -8381,6 +8633,7 @@ const union {
     } },
 
     [SPECIES_SUICUNE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -8419,6 +8672,7 @@ const union {
     } },
 
     [SPECIES_LARVITAR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -8452,6 +8706,7 @@ const union {
     } },
 
     [SPECIES_PUPITAR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -8485,6 +8740,7 @@ const union {
     } },
 
     [SPECIES_TYRANITAR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .DRAGON_CLAW = TRUE,
         .WATER_PULSE = TRUE,
@@ -8542,6 +8798,7 @@ const union {
     } },
 
     [SPECIES_LUGIA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -8593,6 +8850,7 @@ const union {
     } },
 
     [SPECIES_HO_OH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -8639,6 +8897,7 @@ const union {
     } },
 
     [SPECIES_CELEBI] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -8681,6 +8940,7 @@ const union {
     } },
 
     [SPECIES_TREECKO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .PSYBEAM = TRUE,
@@ -8721,6 +8981,7 @@ const union {
     } },
 
     [SPECIES_GROVYLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
@@ -8762,6 +9023,7 @@ const union {
     } },
 
     [SPECIES_SCEPTILE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
@@ -8807,6 +9069,7 @@ const union {
     } },
 
     [SPECIES_TORCHIC] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -8838,6 +9101,7 @@ const union {
     } },
 
     [SPECIES_COMBUSKEN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .CURSE = TRUE,   .RETURN = TRUE,   .FRUSTRATION = TRUE,   .ATTRACT = TRUE,   .HIDDEN_POWER = TRUE,
@@ -8873,6 +9137,7 @@ const union {
     } },
 
     [SPECIES_BLAZIKEN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .ROAR = TRUE,
@@ -8913,6 +9178,7 @@ const union {
     } },
 
     [SPECIES_MUDKIP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -8947,6 +9213,7 @@ const union {
     } },
 
     [SPECIES_MARSHTOMP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -8982,6 +9249,7 @@ const union {
     } },
 
     [SPECIES_SWAMPERT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -9025,6 +9293,7 @@ const union {
     } },
 
     [SPECIES_POOCHYENA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -9050,6 +9319,7 @@ const union {
     } },
 
     [SPECIES_MIGHTYENA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -9077,6 +9347,7 @@ const union {
     } },
 
     [SPECIES_ZIGZAGOON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .THUNDERBOLT = TRUE,
         .GRASS_KNOT = TRUE,
@@ -9109,6 +9380,7 @@ const union {
     } },
 
     [SPECIES_LINOONE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TAUNT = TRUE,
         .BOULDER_DASH = TRUE,
@@ -9145,12 +9417,15 @@ const union {
     } },
 
     [SPECIES_WURMPLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_SILCOON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_BEAUTIFLY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -9177,9 +9452,11 @@ const union {
     } },
 
     [SPECIES_CASCOON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
     } },
 
     [SPECIES_DUSTOX] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
 		.U_TURN = TRUE,
@@ -9206,6 +9483,7 @@ const union {
     } },
 
     [SPECIES_LOTAD] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -9236,6 +9514,7 @@ const union {
     } },
 
     [SPECIES_LOMBRE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -9274,6 +9553,7 @@ const union {
     } },
 
     [SPECIES_LUDICOLO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .WEATHER_BALL = TRUE,
@@ -9314,6 +9594,7 @@ const union {
     } },
 
     [SPECIES_SEEDOT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -9338,6 +9619,7 @@ const union {
     } },
 
     [SPECIES_NUZLEAF] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -9376,6 +9658,7 @@ const union {
     } },
 
     [SPECIES_SHIFTRY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -9421,6 +9704,7 @@ const union {
     } },
 
     [SPECIES_NINCADA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .CURSE = TRUE,   .RETURN = TRUE,   .FRUSTRATION = TRUE,   .HIDDEN_POWER = TRUE,
         .SUNNY_DAY = TRUE,
@@ -9443,6 +9727,7 @@ const union {
     } },
 
     [SPECIES_NINJASK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .DIG = TRUE,
@@ -9470,6 +9755,7 @@ const union {
     } },
 
     [SPECIES_SHEDINJA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -9496,6 +9782,7 @@ const union {
     } },
 
     [SPECIES_TAILLOW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -9518,6 +9805,7 @@ const union {
     } },
 
     [SPECIES_SWELLOW] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -9541,6 +9829,7 @@ const union {
     } },
 
     [SPECIES_SHROOMISH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -9563,6 +9852,7 @@ const union {
     } },
 
     [SPECIES_BRELOOM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
@@ -9603,6 +9893,7 @@ const union {
     } },
 
     [SPECIES_SPINDA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
@@ -9643,6 +9934,7 @@ const union {
     } },
 
     [SPECIES_WINGULL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -9670,6 +9962,7 @@ const union {
     } },
 
     [SPECIES_PELIPPER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -9701,6 +9994,7 @@ const union {
     } },
 
     [SPECIES_SURSKIT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .ICE_BEAM = TRUE,
@@ -9728,6 +10022,7 @@ const union {
     } },
 
     [SPECIES_MASQUERAIN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -9762,6 +10057,7 @@ const union {
     } },
 
     [SPECIES_WAILMER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .ICE_BEAM = TRUE,
@@ -9794,6 +10090,7 @@ const union {
     } },
 
     [SPECIES_WAILORD] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .ICE_BEAM = TRUE,
@@ -9828,6 +10125,7 @@ const union {
     } },
 
     [SPECIES_SKITTY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -9860,6 +10158,7 @@ const union {
     } },
 
     [SPECIES_DELCATTY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -9895,6 +10194,7 @@ const union {
     } },
 
     [SPECIES_KECLEON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -9946,6 +10246,7 @@ const union {
     } },
 
     [SPECIES_BALTOY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .GEYSER = TRUE,
@@ -9984,6 +10285,7 @@ const union {
     } },
 
     [SPECIES_CLAYDOL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .SELF_DESTRUCT = TRUE,
@@ -10026,6 +10328,7 @@ const union {
     } },
 
     [SPECIES_NOSEPASS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -10059,6 +10362,7 @@ const union {
     } },
 
     [SPECIES_TORKOAL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -10089,6 +10393,7 @@ const union {
     } },
 
     [SPECIES_SABLEYE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
@@ -10135,6 +10440,7 @@ const union {
     } },
 
     [SPECIES_BARBOACH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .ICE_BEAM = TRUE,
         .TOXIC = TRUE,
@@ -10165,6 +10471,7 @@ const union {
     } },
 
     [SPECIES_WHISCASH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .ICE_BEAM = TRUE,
@@ -10199,6 +10506,7 @@ const union {
     } },
 
     [SPECIES_LUVDISC] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -10222,6 +10530,7 @@ const union {
     } },
 
     [SPECIES_CORPHISH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SCALD = TRUE,
@@ -10257,6 +10566,7 @@ const union {
     } },
 
     [SPECIES_CRAWDAUNT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .TAUNT = TRUE,
@@ -10294,6 +10604,7 @@ const union {
     } },
 
     [SPECIES_FEEBAS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -10316,6 +10627,7 @@ const union {
     } },
 
     [SPECIES_MILOTIC] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .ICE_BEAM = TRUE,
@@ -10348,6 +10660,7 @@ const union {
     } },
 
     [SPECIES_CARVANHA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SCALD = TRUE,
@@ -10376,6 +10689,7 @@ const union {
     } },
 
     [SPECIES_SHARPEDO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -10410,6 +10724,7 @@ const union {
     } },
 
     [SPECIES_TRAPINCH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -10444,6 +10759,7 @@ const union {
     } },
 
     [SPECIES_VIBRAVA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -10485,6 +10801,7 @@ const union {
     } },
 
     [SPECIES_FLYGON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
         .CRUNCH = TRUE,
@@ -10534,6 +10851,7 @@ const union {
     } },
 
     [SPECIES_MAKUHITA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .DIG = TRUE,
@@ -10570,6 +10888,7 @@ const union {
     } },
 
     [SPECIES_HARIYAMA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SHIELD_BASH = TRUE,
@@ -10609,6 +10928,7 @@ const union {
     } },
 
     [SPECIES_ELECTRIKE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .PROTECT = TRUE,
         .RAIN_DANCE = TRUE,
@@ -10637,6 +10957,7 @@ const union {
     } },
 
     [SPECIES_MANECTRIC] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .HYPER_BEAM = TRUE,
         .PROTECT = TRUE,
@@ -10667,6 +10988,7 @@ const union {
     } },
 
     [SPECIES_NUMEL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -10700,6 +11022,7 @@ const union {
     } },
 
     [SPECIES_CAMERUPT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -10734,6 +11057,7 @@ const union {
     } },
 
     [SPECIES_SPHEAL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -10766,6 +11090,7 @@ const union {
     } },
 
     [SPECIES_SEALEO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -10799,6 +11124,7 @@ const union {
     } },
 
     [SPECIES_WALREIN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SHIELD_BASH = TRUE,
@@ -10835,6 +11161,7 @@ const union {
     } },
 
     [SPECIES_CACNEA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
@@ -10861,6 +11188,7 @@ const union {
     } },
 
     [SPECIES_CACTURNE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
@@ -10892,6 +11220,7 @@ const union {
     } },
 
     [SPECIES_SNORUNT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SAFEGUARD = TRUE,
@@ -10919,6 +11248,7 @@ const union {
     } },
 
     [SPECIES_GLALIE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -10953,6 +11283,7 @@ const union {
     } },
 
     [SPECIES_LUNATONE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .HYPER_BEAM = TRUE,
@@ -10992,6 +11323,7 @@ const union {
     } },
 
     [SPECIES_SOLROCK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11035,6 +11367,7 @@ const union {
     } },
 
     [SPECIES_SPOINK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11066,6 +11399,7 @@ const union {
     } },
 
     [SPECIES_GRUMPIG] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -11110,6 +11444,7 @@ const union {
     } },
 
     [SPECIES_PLUSLE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LIGHT_SCREEN = TRUE,
         .PROTECT = TRUE,
@@ -11137,6 +11472,7 @@ const union {
     } },
 
     [SPECIES_MINUN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .PSYBEAM = TRUE,
         .SYNCHRO_BLAST = TRUE,
@@ -11164,6 +11500,7 @@ const union {
     } },
 
     [SPECIES_MAWILE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11203,6 +11540,7 @@ const union {
     } },
 	
 	[SPECIES_MAWILE_EX] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .CALM_MIND = TRUE,
@@ -11236,6 +11574,7 @@ const union {
     } },
 
     [SPECIES_MEDITITE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .BULK_UP = TRUE,
@@ -11274,6 +11613,7 @@ const union {
     } },
 
     [SPECIES_MEDICHAM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .ROCK_SLIDE = TRUE,
@@ -11313,6 +11653,7 @@ const union {
     } },
 
     [SPECIES_SWABLU] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .PROTECT = TRUE,
@@ -11337,6 +11678,7 @@ const union {
     } },
 
     [SPECIES_ALTARIA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
         .WILL_O_WISP = TRUE,
@@ -11374,6 +11716,7 @@ const union {
     } },
 
     [SPECIES_DUSKULL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11407,6 +11750,7 @@ const union {
     } },
 
     [SPECIES_DUSCLOPS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -11450,6 +11794,7 @@ const union {
     } },
 
     [SPECIES_ROSELIA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11475,6 +11820,7 @@ const union {
     } },
 
     [SPECIES_SLAKOTH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -11511,6 +11857,7 @@ const union {
     } },
 
     [SPECIES_VIGOROTH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -11558,6 +11905,7 @@ const union {
     } },
 
     [SPECIES_SLAKING] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .REVERSAL = TRUE,
@@ -11607,6 +11955,7 @@ const union {
     } },
 
     [SPECIES_GULPIN] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
@@ -11637,6 +11986,7 @@ const union {
     } },
 
     [SPECIES_SWALOT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
@@ -11668,6 +12018,7 @@ const union {
     } },
 
     [SPECIES_TROPIUS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
 		.U_TURN = TRUE,
@@ -11703,6 +12054,7 @@ const union {
     } },
 
     [SPECIES_WHISMUR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11729,6 +12081,7 @@ const union {
     } },
 
     [SPECIES_LOUDRED] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11770,6 +12123,7 @@ const union {
     } },
 
     [SPECIES_EXPLOUD] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11813,6 +12167,7 @@ const union {
     } },
 
     [SPECIES_CLAMPERL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .ICE_BEAM = TRUE,
         .TOXIC = TRUE,
@@ -11836,6 +12191,7 @@ const union {
     } },
 
     [SPECIES_HUNTAIL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .ICE_BEAM = TRUE,
@@ -11865,6 +12221,7 @@ const union {
     } },
 
     [SPECIES_GOREBYSS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .ICE_BEAM = TRUE,
         .TOXIC = TRUE,
@@ -11893,6 +12250,7 @@ const union {
     } },
 
     [SPECIES_ABSOL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TAUNT = TRUE,
         .CALM_MIND = TRUE,
@@ -11947,6 +12305,7 @@ const union {
     } },
 
     [SPECIES_SHUPPET] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -11978,6 +12337,7 @@ const union {
     } },
 
     [SPECIES_BANETTE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .THUNDERBOLT = TRUE,
@@ -12012,6 +12372,7 @@ const union {
     } },
 
     [SPECIES_SEVIPER] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .BULK_UP = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12045,6 +12406,7 @@ const union {
     } },
 
     [SPECIES_ZANGOOSE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .EXTREME_SPEED = TRUE,
@@ -12093,6 +12455,7 @@ const union {
     } },
 
     [SPECIES_RELICANTH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .ICE_BEAM = TRUE,
@@ -12126,6 +12489,7 @@ const union {
     } },
 
     [SPECIES_ARON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12162,6 +12526,7 @@ const union {
     } },
 
     [SPECIES_LAIRON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12199,6 +12564,7 @@ const union {
     } },
 
     [SPECIES_AGGRON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .DRAGON_CLAW = TRUE,
         .WATER_PULSE = TRUE,
@@ -12257,6 +12623,7 @@ const union {
     } },
 
     [SPECIES_CASTFORM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -12294,6 +12661,7 @@ const union {
     } },
 
     [SPECIES_VOLBEAT] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -12326,6 +12694,7 @@ const union {
     } },
 
     [SPECIES_ILLUMISE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -12357,6 +12726,7 @@ const union {
     } },
 
     [SPECIES_LILEEP] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12383,6 +12753,7 @@ const union {
     } },
 
     [SPECIES_CRADILY] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .LEECH_SEED = TRUE,
         .BULLET_SEED = TRUE,
@@ -12415,6 +12786,7 @@ const union {
     } },
 
     [SPECIES_ANORITH] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12439,6 +12811,7 @@ const union {
     } },
 
     [SPECIES_ARMALDO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12472,6 +12845,7 @@ const union {
     } },
 
     [SPECIES_RALTS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .PSYBEAM = TRUE,
@@ -12510,6 +12884,7 @@ const union {
     } },
 
     [SPECIES_KIRLIA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12549,6 +12924,7 @@ const union {
     } },
 
     [SPECIES_GARDEVOIR] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12589,6 +12965,7 @@ const union {
     } },
 
     [SPECIES_BAGON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12621,6 +12998,7 @@ const union {
     } },
 
     [SPECIES_SHELGON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
         .CURSE = TRUE,   .RETURN = TRUE,   .FRUSTRATION = TRUE,   .ATTRACT = TRUE,   .HIDDEN_POWER = TRUE,
@@ -12654,6 +13032,7 @@ const union {
     } },
 
     [SPECIES_SALAMENCE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
         .OUTRAGE = TRUE,
@@ -12697,10 +13076,12 @@ const union {
     } },
 
     [SPECIES_BELDUM] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .SHIELD_BASH = TRUE,
     } },
 
     [SPECIES_METANG] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -12739,6 +13120,7 @@ const union {
     } },
 
     [SPECIES_METAGROSS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
         .HYPER_BEAM = TRUE,
@@ -12778,6 +13160,7 @@ const union {
     } },
 
     [SPECIES_REGIROCK] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12817,6 +13200,7 @@ const union {
     } },
 
     [SPECIES_REGICE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
@@ -12853,6 +13237,7 @@ const union {
     } },
 
     [SPECIES_REGISTEEL] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -12889,9 +13274,9 @@ const union {
     } },
 
     [SPECIES_KYOGRE] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
-        .SCALD = TRUE,
         .TOXIC = TRUE,
         .HAIL = TRUE,
         .BLIZZARD = TRUE,
@@ -12927,6 +13312,7 @@ const union {
     } },
 
     [SPECIES_GROUDON] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .TOXIC = TRUE,
         .ROCK_SLIDE = TRUE,
@@ -12974,6 +13360,7 @@ const union {
     } },
 
     [SPECIES_RAYQUAZA] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .WATER_PULSE = TRUE,
         .TOXIC = TRUE,
@@ -13033,6 +13420,7 @@ const union {
     } },
 
     [SPECIES_LATIAS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
@@ -13084,6 +13472,7 @@ const union {
     } },
 
     [SPECIES_LATIOS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .DRAGON_CLAW = TRUE,
         .WATER_PULSE = TRUE,
         .OUTRAGE = TRUE,
@@ -13135,6 +13524,7 @@ const union {
     } },
 
     [SPECIES_JIRACHI] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
@@ -13176,6 +13566,7 @@ const union {
     } },
 
     [SPECIES_DEOXYS] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,
@@ -13228,6 +13619,7 @@ const union {
     } },
 
     [SPECIES_CHIMECHO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .CALM_MIND = TRUE,
         .TOXIC = TRUE,
         .SUNNY_DAY = TRUE,
@@ -13263,6 +13655,7 @@ const union {
     } },
 	
 	[SPECIES_LUCARIO] = { .learnset = {
+        .KALEIDOSCOPE = TRUE,
         .FOCUS_PUNCH = TRUE,
         .WATER_PULSE = TRUE,
         .CALM_MIND = TRUE,

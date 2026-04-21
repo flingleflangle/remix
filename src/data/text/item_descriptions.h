@@ -1604,9 +1604,9 @@ static const u8 sTM90Desc[] = _(
     "shares the total.");
 
 static const u8 sTM91Desc[] = _(
-    "An attack that\n"
-    "gains power if\n"
-    "injured by the foe.");
+    "Effect changes\n"
+    "drastically with\n"
+    "user's type.");
 
 static const u8 sTM92Desc[] = _(
     "A one-hit KO that\n"

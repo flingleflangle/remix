@@ -5160,4 +5160,17 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 0,
         .flags = FLAG_SNATCH_AFFECTED,
     },
+
+    [MOVE_KALEIDOSCOPE] =
+    {
+        .effect = EFFECT_KALEIDOSCOPE,
+        .power = 0,
+        .type = TYPE_MYSTERY,
+        .accuracy = 100,
+        .pp = 20,
+        .secondaryEffectChance = 100,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
 };

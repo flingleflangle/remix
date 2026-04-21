@@ -1585,6 +1585,10 @@ static const u8 sNastyPlotDescription[] = _(
     "Thinks bad thoughts to\n"
     "sharply boost SP. ATK.");
 
+static const u8 sKaleidoscopeDescription[] = _(
+    "Effect changes drastically\n"
+    "with user's type.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -1984,4 +1988,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_YOGA_LOOP - 1] = sYogaLoopDescription,
     [MOVE_SCALD - 1] = sScaldDescription,
     [MOVE_NASTY_PLOT - 1] = sNastyPlotDescription,
+    [MOVE_KALEIDOSCOPE - 1] = sKaleidoscopeDescription,
 };

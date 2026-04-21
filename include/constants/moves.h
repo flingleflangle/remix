@@ -398,8 +398,9 @@
 #define MOVE_YOGA_LOOP 394
 #define MOVE_SCALD 395
 #define MOVE_NASTY_PLOT 396
+#define MOVE_KALEIDOSCOPE 397
 
-#define MOVES_COUNT 397
+#define MOVES_COUNT 398
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF
