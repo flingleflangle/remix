@@ -4470,7 +4470,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_TRICK] =
+    [ITEM_TM_SCALD] =
     {
         .name = _("TM84"),
         .itemId = ITEM_TM84,

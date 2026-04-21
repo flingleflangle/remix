@@ -1577,6 +1577,14 @@ static const u8 sYogaLoopDescription[] = _(
     "Guaranteed to flinch target.\n"
     "Move is disabled upon miss.");
 
+static const u8 sScaldDescription[] = _(
+    "Shoots boiling water at the\n"
+    "foe. May cause a burn.");
+
+static const u8 sNastyPlotDescription[] = _(
+    "Thinks bad thoughts to\n"
+    "sharply boost SP. ATK.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -1974,4 +1982,6 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_BRAVE_BIRD - 1] = sBraveBirdDescription,
     [MOVE_WAGER - 1] = sWagerDescription,
     [MOVE_YOGA_LOOP - 1] = sYogaLoopDescription,
+    [MOVE_SCALD - 1] = sScaldDescription,
+    [MOVE_NASTY_PLOT - 1] = sNastyPlotDescription,
 };

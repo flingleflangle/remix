@@ -85,7 +85,7 @@
     F(DRAGON_DANCE) \
     F(CHISEL) \
     F(LOW_KICK) \
-    F(TRICK) \
+    F(SCALD) \
     F(FOCUS_ENERGY) \
     F(FLYING_KNEE) \
     F(SILVER_WIND) \

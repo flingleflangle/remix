@@ -1443,6 +1443,21 @@ static void Cmd_typecalc(void)
     if (gCurrentMove == MOVE_STRENGTH && (gBattleMons[gBattlerTarget].types[0] == TYPE_ROCK || gBattleMons[gBattlerTarget].types[1] == TYPE_ROCK))
         ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
 
+    if (gCurrentMove == MOVE_SCALD && (gBattleMons[gBattlerTarget].types[0] == TYPE_ICE || gBattleMons[gBattlerTarget].types[1] == TYPE_ICE))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_HYDRO_CANNON && (gBattleMons[gBattlerTarget].types[0] == TYPE_STEEL || gBattleMons[gBattlerTarget].types[1] == TYPE_STEEL))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_BLAST_BURN && (gBattleMons[gBattlerTarget].types[0] == TYPE_ROCK || gBattleMons[gBattlerTarget].types[1] == TYPE_ROCK))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_FRENZY_PLANT && (gBattleMons[gBattlerTarget].types[0] == TYPE_POISON || gBattleMons[gBattlerTarget].types[1] == TYPE_POISON))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_TOMBSTONER && (gBattleMons[gBattlerTarget].types[0] == TYPE_GHOST || gBattleMons[gBattlerTarget].types[1] == TYPE_GHOST))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
     if (gCurrentMove == MOVE_TRI_ATTACK && (
         gBattleMons[gBattlerTarget].types[0] == TYPE_WATER ||
         gBattleMons[gBattlerTarget].types[0] ==  TYPE_GRASS ||

@@ -272,6 +272,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectShieldBash             @ EFFECT_SHIELD_BASH
 	.4byte BattleScript_EffectWager           	     @ EFFECT_WAGER
 	.4byte BattleScript_EffectYogaLoop           	 @ EFFECT_YOGA_LOOP
+	.4byte BattleScript_EffectTailGlow          	 @ EFFECT_TAIL_GLOW
 	
 
 BattleScript_EffectHit::
@@ -1938,6 +1939,11 @@ BattleScript_EffectSpeedUp2::
 	goto BattleScript_EffectStatUp
 
 BattleScript_EffectSpecialAttackUp2::
+	setstatchanger STAT_SPATK, 2, FALSE
+	goto BattleScript_EffectStatUp
+
+BattleScript_EffectTailGlow::
+	setcharge
 	setstatchanger STAT_SPATK, 2, FALSE
 	goto BattleScript_EffectStatUp
 

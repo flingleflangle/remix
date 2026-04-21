@@ -1569,9 +1569,9 @@ static const u8 sTM83Desc[] = _(
     "heavier foes.");
 
 static const u8 sTM84Desc[] = _(
-    "Tricks the foe\n"
-    "into trading\n"
-    "held items.");
+    "Shoots boiling\n"
+    "water at the foe.\n"
+    "May cause a burn.");
 
 static const u8 sTM85Desc[] = _(
     "Focuses power to\n"

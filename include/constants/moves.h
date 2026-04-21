@@ -396,8 +396,10 @@
 #define MOVE_BRAVE_BIRD 392
 #define MOVE_WAGER 393
 #define MOVE_YOGA_LOOP 394
+#define MOVE_SCALD 395
+#define MOVE_NASTY_PLOT 396
 
-#define MOVES_COUNT 395
+#define MOVES_COUNT 397
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF
