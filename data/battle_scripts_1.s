@@ -2787,51 +2787,125 @@ BattleScript_EffectKaleidoscope::
 	ppreduce
 	typecalc
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+@ lots of types, lots of necessary checks
 	jumpiftype BS_ATTACKER, TYPE_FIRE, KaleidoscopeBurn
 	jumpiftype BS_ATTACKER, TYPE_WATER, KaleidoscopeFreeze
 	jumpiftype BS_ATTACKER, TYPE_ICE, KaleidoscopeFreeze
 	jumpiftype BS_ATTACKER, TYPE_ELECTRIC, KaleidoscopeParalyze
+	jumpiftype BS_ATTACKER, TYPE_POISON, KaleidoscopePoison
 	jumpiftype BS_ATTACKER, TYPE_GRASS, KaleidoscopeDrain
 	jumpiftype BS_ATTACKER, TYPE_BUG, KaleidoscopeDrain
+	jumpiftype BS_ATTACKER, TYPE_PSYCHIC, KaleidoscopeDisable
+	jumpiftype BS_ATTACKER, TYPE_GHOST, KaleidoscopeDisable
 	jumpiftype BS_ATTACKER, TYPE_FIGHTING, KaleidoscopeConfuse
 	jumpiftype BS_ATTACKER, TYPE_GROUND, KaleidoscopeConfuse
 	jumpiftype BS_ATTACKER, TYPE_ROCK, KaleidoscopeConfuse
-	jumpiftype BS_ATTACKER, TYPE_POISON, KaleidoscopePoison
-	jumpiftype BS_ATTACKER, TYPE_DARK, KaleidoscopePoison
-	jumpiftype BS_ATTACKER, TYPE_PSYCHIC, KaleidoscopeDisable
-	jumpiftype BS_ATTACKER, TYPE_GHOST, KaleidoscopeDisable
 	jumpiftype BS_ATTACKER, TYPE_STEEL, KaleidoscopeFlinch
 	jumpiftype BS_ATTACKER, TYPE_NORMAL, KaleidoscopeDamage
 	jumpiftype BS_ATTACKER, TYPE_DRAGON, KaleidoscopeDamage
 	jumpiftype BS_ATTACKER, TYPE_FLYING, KaleidoscopeDamage
+	jumpiftype BS_ATTACKER, TYPE_DARK, KaleidoscopePoison
 	jumpiftype BS_ATTACKER, TYPE_MYSTERY, KaleidoscopeUltimate
+@ currently, this is only used on secondary statuses. i need to figure out a clean way to write primaries
+KaleidoscopeType2Check::
+	jumpiftype2 BS_ATTACKER, TYPE_STEEL, KaleidoscopeFlinch2
+	jumpiftype2 BS_ATTACKER, TYPE_FIGHTING, KaleidoscopeConfuse2
+	jumpiftype2 BS_ATTACKER, TYPE_GROUND, KaleidoscopeConfuse2
+	jumpiftype2 BS_ATTACKER, TYPE_ROCK, KaleidoscopeConfuse2
+	jumpiftype2 BS_ATTACKER, TYPE_PSYCHIC, KaleidoscopeDisable2
+	jumpiftype2 BS_ATTACKER, TYPE_GHOST, KaleidoscopeDisable2
+	jumpiftype2 BS_ATTACKER, TYPE_GRASS, KaleidoscopeDrain2
+	jumpiftype2 BS_ATTACKER, TYPE_BUG, KaleidoscopeDrain2
+	jumpiftype2 BS_ATTACKER, TYPE_FIRE, KaleidoscopeBurn2
+	jumpiftype2 BS_ATTACKER, TYPE_WATER, KaleidoscopeFreeze2
+	jumpiftype2 BS_ATTACKER, TYPE_ICE, KaleidoscopeFreeze2
+	jumpiftype2 BS_ATTACKER, TYPE_ELECTRIC, KaleidoscopeParalyze2
+	jumpiftype2 BS_ATTACKER, TYPE_POISON, KaleidoscopePoison2
+	jumpiftype2 BS_ATTACKER, TYPE_DARK, KaleidoscopePoison2
+	goto KaleidoEnd
+
 KaleidoscopeDamage::
-	setword gBattleMoveDamage, 60
+	setword gBattleMoveDamage, 56
 	adjustsetdamage
-	goto KaleidoEnd
+	attackanimation
+	waitanimation
+	goto KaleidoscopeType2Check
+
 KaleidoscopeBurn::
-	setword gBattleMoveDamage, 40
-	adjustsetdamage
-	setmoveeffect MOVE_EFFECT_BURN
-	goto KaleidoEnd
-KaleidoscopeFreeze::
-	setword gBattleMoveDamage, 20
-	adjustsetdamage
-	setmoveeffect MOVE_EFFECT_FREEZE
-	goto KaleidoEnd
-KaleidoscopeParalyze::
-	setword gBattleMoveDamage, 40
-	adjustsetdamage
-	setmoveeffect MOVE_EFFECT_PARALYSIS
-	goto KaleidoEnd
-KaleidoscopeDrain::
 	setword gBattleMoveDamage, 40
 	adjustsetdamage
 	attackanimation
 	waitanimation
+	setmoveeffect MOVE_EFFECT_BURN
+	seteffectwithchance
+	goto KaleidoscopeType2Check
+KaleidoscopeBurn2::
+	jumpifstatus BS_TARGET, STATUS1_BURN, KaleidoEnd
+	setmoveeffect MOVE_EFFECT_BURN
+	seteffectwithchance
+	goto KaleidoEnd
+
+KaleidoscopeFreeze::
+	setword gBattleMoveDamage, 16
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_FREEZE
+	seteffectwithchance
+	goto KaleidoscopeType2Check
+KaleidoscopeFreeze2::
+	jumpifstatus BS_TARGET, STATUS1_FREEZE, KaleidoEnd
+	setmoveeffect MOVE_EFFECT_FREEZE
+	seteffectwithchance
+	goto KaleidoEnd
+
+KaleidoscopeParalyze::
+	setword gBattleMoveDamage, 32
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	seteffectwithchance
+	goto KaleidoscopeType2Check
+KaleidoscopeParalyze2::
+	jumpifstatus BS_TARGET, STATUS1_PARALYSIS, KaleidoEnd
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	seteffectwithchance
+	goto KaleidoEnd
+
+KaleidoscopePoison::
+	setword gBattleMoveDamage, 24
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	jumpiftype BS_TARGET, TYPE_POISON, KaleidoscopeType2Check
+	jumpiftype BS_TARGET, TYPE_STEEL, KaleidoscopeType2Check
+	setmoveeffect MOVE_EFFECT_TOXIC
+	seteffectwithchance
+	goto KaleidoscopeType2Check
+KaleidoscopePoison2::
+	jumpifstatus BS_TARGET, STATUS1_TOXIC_POISON, KaleidoEnd
+	jumpiftype BS_TARGET, TYPE_POISON, KaleidoEnd
+	jumpiftype BS_TARGET, TYPE_STEEL, KaleidoEnd
+	setmoveeffect MOVE_EFFECT_TOXIC
+	seteffectwithchance
+	goto KaleidoEnd
+
+KaleidoscopeDrain::
+	setword gBattleMoveDamage, 48
+	adjustsetdamage
+	attackanimation
+	waitanimation
+@this one works funny, so it never calls kaleido end
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
-	setword gBattleMoveDamage, -40
+	setword gBattleMoveDamage, -24
+	adjustsetdamage
+	goto KaleidoscopeType2Check
+KaleidoscopeDrain2::
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	setword gBattleMoveDamage, -24
 	adjustsetdamage
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
@@ -2841,38 +2915,62 @@ KaleidoscopeDrain::
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET
 	goto BattleScript_MoveEnd
+
 KaleidoscopeFlinch::
-	setword gBattleMoveDamage, 20
-	adjustsetdamage
-	setmoveeffect MOVE_EFFECT_FLINCH
-	goto KaleidoEnd
-KaleidoscopePoison::
-	setword gBattleMoveDamage, 20
-	adjustsetdamage
-	setmoveeffect MOVE_EFFECT_TOXIC
-	goto KaleidoEnd
-KaleidoscopeDisable::
-	setword gBattleMoveDamage, 20
+	setword gBattleMoveDamage, 32
 	adjustsetdamage
 	attackanimation
 	waitanimation
+	setmoveeffect MOVE_EFFECT_FLINCH
+	seteffectwithchance
+	goto KaleidoscopeType2Check
+KaleidoscopeFlinch2::
+	setmoveeffect MOVE_EFFECT_FLINCH
+	seteffectwithchance
+	goto KaleidoEnd
+
+KaleidoscopeDisable::
+	setword gBattleMoveDamage, 24
+	adjustsetdamage
+	attackanimation
+	waitanimation
+	disablelastusedattack KaleidoscopeType2Check
+	printstring STRINGID_PKMNMOVEWASDISABLED
+	goto KaleidoscopeType2Check
+KaleidoscopeDisable2::
+@ this one never calls kaleidoend either
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET
-	disablelastusedattack BattleScript_ButItFailed
+	disablelastusedattack BattleScript_MoveEnd
 	printstring STRINGID_PKMNMOVEWASDISABLED
-	waitmessage B_WAIT_TIME_LONG
+	waitmessage B_WAIT_TIME_SHORT
 	goto BattleScript_MoveEnd
+
 KaleidoscopeConfuse::
 	setword gBattleMoveDamage, 40
 	adjustsetdamage
+	attackanimation
+	waitanimation
+	jumpifstatus2 BS_TARGET, STATUS2_CONFUSION, KaleidoscopeType2Check
+	jumpifability BS_TARGET, ABILITY_OWN_TEMPO, KaleidoscopeType2Check
 	setmoveeffect MOVE_EFFECT_CONFUSION
+	seteffectwithchance
+	goto KaleidoscopeType2Check
+KaleidoscopeConfuse2::
+	jumpifstatus2 BS_TARGET, STATUS2_CONFUSION, KaleidoEnd
+	jumpifability BS_TARGET, ABILITY_OWN_TEMPO, KaleidoEnd
+	setmoveeffect MOVE_EFFECT_CONFUSION
+	seteffectwithchance
 	goto KaleidoEnd
+
 KaleidoscopeUltimate::
-	setword gBattleMoveDamage, 33
+	setword gBattleMoveDamage, 64
 	adjustsetdamage
+	attackanimation
+	waitanimation
 	setmoveeffect MOVE_EFFECT_ATK_MINUS_1
 	seteffectwithchance
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
@@ -2886,15 +2984,13 @@ KaleidoscopeUltimate::
 	setmoveeffect MOVE_EFFECT_ACC_MINUS_1
 	seteffectwithchance
 	goto KaleidoEnd
+
 KaleidoEnd::
-	attackanimation
-	waitanimation
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET
-	seteffectwithchance
 	goto BattleScript_MoveEnd
 
 

@@ -11228,7 +11228,7 @@ Move_KALEIDOSCOPE:
 	call SignalBeamOrbs
 	delay 12
 	blendoff
-	restorebg
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 12, 0, RGB(0, 0, 31)
 	waitforvisualfinish
 	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 16, 0, RGB_WHITE
 	waitforvisualfinish
