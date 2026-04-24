@@ -1589,6 +1589,10 @@ static const u8 sKaleidoscopeDescription[] = _(
     "Effect changes drastically\n"
     "with user's type.");
 
+static const u8 sTremorDescription[] = _(
+    "Shakes the earth to flinch.\n"
+    "May reduce user's accuracy.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -1989,4 +1993,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_SCALD - 1] = sScaldDescription,
     [MOVE_NASTY_PLOT - 1] = sNastyPlotDescription,
     [MOVE_KALEIDOSCOPE - 1] = sKaleidoscopeDescription,
+    [MOVE_TREMOR - 1] = sTremorDescription,
 };

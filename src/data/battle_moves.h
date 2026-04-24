@@ -4793,7 +4793,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .pp = 10,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
-        .priority = 0,
+        .priority = -1,
         .flags = FLAG_MAKES_CONTACT,
     },
 	
@@ -4981,7 +4981,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	
 	[MOVE_HOSTAGE] =
     {
-        .effect = EFFECT_HOSTAGE,
+        .effect = EFFECT_HIT,
         .power = 0,
         .type = TYPE_DARK,
         .accuracy = 100,
@@ -5171,6 +5171,19 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
+
+    [MOVE_TREMOR] =
+    {
+        .effect = EFFECT_TREMOR,
+        .power = 0,
+        .type = TYPE_GROUND,
+        .accuracy = 80,
+        .pp = 10,
+        .secondaryEffectChance = 50,
+        .target = MOVE_TARGET_FOES_AND_ALLY,
+        .priority = 1,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
     },
 };

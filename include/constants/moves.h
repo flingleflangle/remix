@@ -399,8 +399,9 @@
 #define MOVE_SCALD 395
 #define MOVE_NASTY_PLOT 396
 #define MOVE_KALEIDOSCOPE 397
+#define MOVE_TREMOR 398
 
-#define MOVES_COUNT 398
+#define MOVES_COUNT 399
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

@@ -414,6 +414,7 @@ gBattleAnims_Moves::
 	.4byte Move_SCALD
 	.4byte Move_NASTY_PLOT
 	.4byte Move_KALEIDOSCOPE
+	.4byte Move_TREMOR
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -2709,6 +2710,19 @@ Move_LOW_KICK:
 	playsewithpan SE_M_VITAL_THROW2, SOUND_PAN_TARGET
 	waitforvisualfinish
 	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, 0, 1, 4
+	end
+
+Move_TREMOR:
+	createsprite gBowMonSpriteTemplate, ANIM_ATTACKER, 2, 0
+	delay 12
+	createvisualtask AnimTask_HorizontalShake, 5, (MAX_BATTLERS_COUNT + 1), 0, 20
+	createvisualtask AnimTask_HorizontalShake, 5, MAX_BATTLERS_COUNT, 0, 20
+	loopsewithpan SE_M_STRENGTH, SOUND_PAN_TARGET, 7, 7
+	waitforvisualfinish
+	createsprite gBowMonSpriteTemplate, ANIM_ATTACKER, 2, 2
+	waitforvisualfinish
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 6
+	waitforvisualfinish
 	end
 
 Move_EARTHQUAKE:

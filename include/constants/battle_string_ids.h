@@ -388,8 +388,9 @@
 #define STRINGID_FLAMEORB                   388
 #define STRINGID_TOXICORB                   389
 #define STRINGID_YOGALOOPBROKE              390
+#define STRINGID_FINDFOOTING                391
 
-#define BATTLESTRINGS_COUNT                 391
+#define BATTLESTRINGS_COUNT                 392
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,

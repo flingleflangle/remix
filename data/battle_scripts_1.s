@@ -255,7 +255,6 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectCloseCombat            @ EFFECT_CLOSE_COMBAT
 	.4byte BattleScript_EffectDragonLash             @ EFFECT_DRAGON_LASH
 	.4byte BattleScript_EffectUTurn             	 @ EFFECT_U_TURN
-	.4byte BattleScript_EffectHostage             	 @ EFFECT_HOSTAGE
 	.4byte BattleScript_EffectCrunch             	 @ EFFECT_CRUNCH
 	.4byte BattleScript_EffectSweetScent             @ EFFECT_SWEET_SCENT
 	.4byte BattleScript_EffectViceGrip               @ EFFECT_VICE_GRIP
@@ -274,6 +273,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectYogaLoop           	 @ EFFECT_YOGA_LOOP
 	.4byte BattleScript_EffectTailGlow          	 @ EFFECT_TAIL_GLOW
 	.4byte BattleScript_EffectKaleidoscope           @ EFFECT_KALEIDOSCOPE
+	.4byte BattleScript_EffectTremor        	     @ EFFECT_TREMOR
 	
 
 BattleScript_EffectHit::
@@ -1661,9 +1661,6 @@ BattleScript_EffectCrunchEX::
 
 BattleScript_EffectSweetScent::
 	setstatchanger STAT_EVASION, 1, TRUE
-	jumpifability BS_ATTACKER, ABILITY_HUGE_POWER_EX, BattleScript_EffectSweetScentEX
-	goto BattleScript_EffectStatDown
-BattleScript_EffectSweetScentEX::
 	attackcanceler
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_FailedFromAtkString
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
@@ -2806,7 +2803,6 @@ BattleScript_EffectKaleidoscope::
 	jumpiftype BS_ATTACKER, TYPE_FLYING, KaleidoscopeDamage
 	jumpiftype BS_ATTACKER, TYPE_DARK, KaleidoscopePoison
 	jumpiftype BS_ATTACKER, TYPE_MYSTERY, KaleidoscopeUltimate
-@ currently, this is only used on secondary statuses. i need to figure out a clean way to write primaries
 KaleidoscopeType2Check::
 	jumpiftype2 BS_ATTACKER, TYPE_STEEL, KaleidoscopeFlinch2
 	jumpiftype2 BS_ATTACKER, TYPE_FIGHTING, KaleidoscopeConfuse2
@@ -2850,10 +2846,13 @@ KaleidoscopeFreeze::
 	adjustsetdamage
 	attackanimation
 	waitanimation
+	jumpiftype BS_TARGET, TYPE_ICE, KaleidoscopeType2Check
+	jumpifstatus BS_TARGET, STATUS1_FREEZE, KaleidoscopeType2Check
 	setmoveeffect MOVE_EFFECT_FREEZE
 	seteffectwithchance
 	goto KaleidoscopeType2Check
 KaleidoscopeFreeze2::
+	jumpiftype BS_TARGET, TYPE_ICE, KaleidoEnd
 	jumpifstatus BS_TARGET, STATUS1_FREEZE, KaleidoEnd
 	setmoveeffect MOVE_EFFECT_FREEZE
 	seteffectwithchance
@@ -2864,6 +2863,7 @@ KaleidoscopeParalyze::
 	adjustsetdamage
 	attackanimation
 	waitanimation
+	jumpifstatus BS_TARGET, STATUS1_PARALYSIS, KaleidoscopeType2Check
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	seteffectwithchance
 	goto KaleidoscopeType2Check
@@ -2901,17 +2901,17 @@ KaleidoscopeDrain::
 	datahpupdate BS_TARGET
 	setword gBattleMoveDamage, -24
 	adjustsetdamage
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
 	goto KaleidoscopeType2Check
 KaleidoscopeDrain2::
-	healthbarupdate BS_TARGET
-	datahpupdate BS_TARGET
 	setword gBattleMoveDamage, -24
 	adjustsetdamage
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
-	printfromtable gAbsorbDrainStringIds
+	printstring STRINGID_PKMNENERGYDRAINED
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET
 	goto BattleScript_MoveEnd
@@ -3333,6 +3333,37 @@ BattleScript_EffectFakeOut::
 	jumpifnotfirstturn BattleScript_FailedFromAtkString
 	setmoveeffect MOVE_EFFECT_FLINCH | MOVE_EFFECT_CERTAIN
 	goto BattleScript_EffectHit
+
+BattleScript_EffectTremor::
+	attackcanceler
+	attackstring
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	jumpifnodamage TremorFooting
+	ppreduce
+	printstring STRINGID_PKMNLOSTFOCUS
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+TremorFooting::
+	jumpifnotfirstturn TremorUse
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_FINDFOOTING
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+TremorUse::
+	ppreduce
+	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	setmoveeffect MOVE_EFFECT_FLINCH | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	attackanimation
+	waitanimation
+	effectivenesssound
+	setmoveeffect MOVE_EFFECT_ACC_MINUS_1 | MOVE_EFFECT_AFFECTS_USER
+	hitanimation BS_TARGET
+	waitstate
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	goto BattleScript_MoveEnd
 
 BattleScript_FailedFromAtkString::
 	attackstring
