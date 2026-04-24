@@ -255,13 +255,8 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectCloseCombat            @ EFFECT_CLOSE_COMBAT
 	.4byte BattleScript_EffectDragonLash             @ EFFECT_DRAGON_LASH
 	.4byte BattleScript_EffectUTurn             	 @ EFFECT_U_TURN
-	.4byte BattleScript_EffectCrunch             	 @ EFFECT_CRUNCH
 	.4byte BattleScript_EffectSweetScent             @ EFFECT_SWEET_SCENT
 	.4byte BattleScript_EffectViceGrip               @ EFFECT_VICE_GRIP
-	.4byte BattleScript_EffectFakeTears              @ EFFECT_FAKE_TEARS
-	.4byte BattleScript_EffectLeafBlade              @ EFFECT_LEAF_BLADE
-	.4byte BattleScript_EffectAgility                @ EFFECT_AGILITY
-	.4byte BattleScript_EffectBulletSeed             @ EFFECT_BULLET_SEED
 	.4byte BattleScript_EffectBoulderDash            @ EFFECT_BOULDER_DASH
 	.4byte BattleScript_EffectGloryBlaze             @ EFFECT_GLORY_BLAZE
 	.4byte BattleScript_EffectIgnite                 @ EFFECT_IGNITE
@@ -1257,14 +1252,11 @@ BattleScript_EffectDragonFist::
 	attackstring
 	ppreduce
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
-	setword gBattleMoveDamage, 999
 	jumpifability BS_TARGET, ABILITY_STURDY, BattleScript_SturdyPreventsOHKO
+	setword gBattleMoveDamage, 999
 	adjustsetdamage
 	attackanimation
 	waitanimation
-	critcalc
-	damagecalc
-	typecalc
 	effectivenesssound
 	hitanimation BS_TARGET
 	waitstate
@@ -1583,17 +1575,6 @@ BattleScript_EffectUTurn::
 	waitstate
 	switchineffects BS_ATTACKER
 	goto BattleScript_MoveEnd
-	
-BattleScript_EffectHostage::
-	attackcanceler
-	attackstring
-	ppreduce
-	setforcedtargetevil
-	attackanimation
-	waitanimation
-	printstring STRINGID_PKMNCENTERATTENTION
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
 
 BattleScript_EffectSynchroBlast::
 	attackstring
@@ -1648,17 +1629,6 @@ BattleScript_EffectSynchroParalyze::
 	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
 	goto BattleScript_HitFromCritCalc
 
-BattleScript_EffectCrunch::
-	jumpifability BS_ATTACKER, ABILITY_HUGE_POWER_EX, BattleScript_EffectCrunchEX
-	setmoveeffect MOVE_EFFECT_SP_DEF_MINUS_1
-	goto BattleScript_EffectHit
-BattleScript_EffectCrunchEX::
-	setmoveeffect MOVE_EFFECT_SP_DEF_MINUS_1 || MOVE_EFFECT_CERTAIN
-	jumpifnotfirstturn BattleScript_EffectHit
-	setbyte sDMG_MULTIPLIER, 2
-	setbyte sB_ANIM_TURN, 1
-	goto BattleScript_EffectHit
-
 BattleScript_EffectSweetScent::
 	setstatchanger STAT_EVASION, 1, TRUE
 	attackcanceler
@@ -1672,7 +1642,6 @@ BattleScript_EffectSweetScent::
 	pause B_WAIT_TIME_SHORT
 	goto BattleScript_SweetScentPrintString
 BattleScript_SweetScentDoAnim::
-	setbyte sB_ANIM_TURN, 1
 	attackanimation
 	waitanimation
 	setgraphicalstatchangevalues
@@ -1691,9 +1660,6 @@ BattleScript_SweetScentEnd::
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectViceGrip::
-	jumpifability BS_ATTACKER, ABILITY_HUGE_POWER_EX, BattleScript_EffectViceGripEX
-	goto BattleScript_EffectHit
-BattleScript_EffectViceGripEX::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
@@ -1703,7 +1669,6 @@ BattleScript_EffectViceGripEX::
 	damagecalc
 	typecalc
 	adjustnormaldamage
-	setbyte sB_ANIM_TURN, 1
 	attackanimation
 	waitanimation
 	effectivenesssound
@@ -1733,146 +1698,6 @@ BattleScript_EffectViceGripEXContinue::
 	tryfaintmon BS_TARGET
 	goto BattleScript_MoveEnd
 
-BattleScript_EffectFakeTears::
-	setstatchanger STAT_SPDEF, 2, TRUE
-	jumpifability BS_ATTACKER, ABILITY_HUGE_POWER_EX, BattleScript_EffectFakeTearsEX
-	goto BattleScript_EffectStatDown
-BattleScript_EffectFakeTearsEX::
-	attackcanceler
-	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_FailedFromAtkString
-	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
-	attackstring
-	ppreduce
-	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_StatDownEnd
-	jumpifbyte CMP_LESS_THAN, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_DECREASE, BattleScript_FakeTearsDoAnim
-	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_FELL_EMPTY, BattleScript_FakeTearsUp
-	pause B_WAIT_TIME_SHORT
-	goto BattleScript_FakeTearsPrintString
-BattleScript_FakeTearsDoAnim::
-	setbyte sB_ANIM_TURN, 1
-	attackanimation
-	waitanimation
-	setgraphicalstatchangevalues
-	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-BattleScript_FakeTearsPrintString::
-	printfromtable gStatDownStringIds
-	waitmessage B_WAIT_TIME_LONG
-BattleScript_FakeTearsUp::
-	setstatchanger STAT_SPATK, 1, FALSE
-	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_FakeTearsEnd
-	setgraphicalstatchangevalues
-	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-	printfromtable gStatUpStringIds
-	waitmessage B_WAIT_TIME_LONG
-BattleScript_FakeTearsEnd::
-	goto BattleScript_MoveEnd
-
-BattleScript_EffectLeafBlade::
-	jumpifability BS_ATTACKER, ABILITY_LIGHTNING_ROD_EX, BattleScript_EffectLeafBladeEX
-	goto BattleScript_EffectHit
-BattleScript_EffectLeafBladeEX::
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
-	attackstring
-	ppreduce
-	critcalc
-	damagecalc
-	setbyte sB_ANIM_TURN, 1
-	bicbyte gMoveResultFlags, MOVE_RESULT_NOT_VERY_EFFECTIVE
-	goto BattleScript_HitFromAtkAnimation
-
-BattleScript_EffectAgility:
-	jumpifability BS_ATTACKER, ABILITY_LIGHTNING_ROD_EX, BattleScript_EffectAgilityEX
-	goto BattleScript_EffectSpeedUp2
-BattleScript_EffectAgilityEX:
-	setbyte sB_ANIM_TURN, 1
-	attackcanceler
-	attackstring
-	ppreduce
-	jumpifstat BS_ATTACKER, CMP_LESS_THAN, STAT_SPEED, MAX_STAT_STAGE, BattleScript_AgilityDoMoveAnim
-	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_ACC, MAX_STAT_STAGE, BattleScript_CantRaiseMultipleStats
-BattleScript_AgilityDoMoveAnim::
-	attackanimation
-	waitanimation
-	setbyte sSTAT_ANIM_PLAYED, FALSE
-	playstatchangeanimation BS_ATTACKER, BIT_ATK | BIT_DEF, 0
-	setstatchanger STAT_SPEED, 2, FALSE
-	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_AgilityTryAcc
-	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_AgilityTryAcc
-	printfromtable gStatUpStringIds
-	waitmessage B_WAIT_TIME_LONG
-BattleScript_AgilityTryAcc::
-	setstatchanger STAT_ACC, 1, FALSE
-	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_AgilityEnd
-	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_AgilityEnd
-	printfromtable gStatUpStringIds
-	waitmessage B_WAIT_TIME_LONG
-BattleScript_AgilityEnd::
-	goto BattleScript_MoveEnd
-
-
-BattleScript_EffectBulletSeed::
-	jumpifability BS_ATTACKER, ABILITY_LIGHTNING_ROD_EX, BattleScript_EffectBulletSeedEX
-	goto BattleScript_EffectMultiHit
-BattleScript_EffectBulletSeedEX::
-	setbyte sDMG_MULTIPLIER, 2
-	setbyte sB_ANIM_TURN, 1
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
-	attackstring
-	ppreduce
-	setmultihitcounter 4
-	initmultihitstring
-	setbyte sMULTIHIT_EFFECT, 0
-BattleScript_BulletSeedLoop::
-	jumpifhasnohp BS_ATTACKER, BattleScript_BulletSeedEnd
-	jumpifhasnohp BS_TARGET, BattleScript_BulletSeedPrintStrings
-	jumpifhalfword CMP_EQUAL, gChosenMove, MOVE_SLEEP_TALK, BattleScript_DoBulletSeed
-	jumpifstatus BS_ATTACKER, STATUS1_SLEEP, BattleScript_BulletSeedPrintStrings
-BattleScript_DoBulletSeed::
-	movevaluescleanup
-	copybyte cEFFECT_CHOOSER, sMULTIHIT_EFFECT
-	critcalc
-	damagecalc
-	typecalc
-	jumpifmovehadnoeffect BattleScript_BulletSeedNoMoreHits
-	adjustnormaldamage
-	attackanimation
-	waitanimation
-	effectivenesssound
-	hitanimation BS_TARGET
-	waitstate
-	healthbarupdate BS_TARGET
-	datahpupdate BS_TARGET
-	critmessage
-	waitmessage B_WAIT_TIME_LONG
-	printstring STRINGID_EMPTYSTRING3
-	waitmessage 1
-	addbyte sMULTIHIT_STRING + 4, 1
-	moveendto MOVEEND_NEXT_TARGET
-	jumpifbyte CMP_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_FOE_ENDURED, BattleScript_BulletSeedPrintStrings
-	setbyte sB_ANIM_TURN, 0
-	decrementmultihit BattleScript_BulletSeedLoop
-	goto BattleScript_BulletSeedPrintStrings
-BattleScript_BulletSeedNoMoreHits::
-	pause B_WAIT_TIME_SHORT
-BattleScript_BulletSeedPrintStrings::
-	resultmessage
-	waitmessage B_WAIT_TIME_LONG
-	jumpifmovehadnoeffect BattleScript_BulletSeedEnd
-	copyarray gBattleTextBuff1, sMULTIHIT_STRING, 6
-	printstring STRINGID_HITXTIMES
-	waitmessage B_WAIT_TIME_LONG
-BattleScript_BulletSeedEnd::
-	seteffectwithchance
-	tryfaintmon BS_TARGET
-	setseeded
-	printfromtable gLeechSeedStringIds
-	waitmessage B_WAIT_TIME_LONG
-	moveendcase MOVEEND_SYNCHRONIZE_TARGET
-	moveendfrom MOVEEND_IMMUNITY_ABILITIES
-	end
-
 BattleScript_EffectBoulderDash::
 	attackcanceler
 	attackstring
@@ -1880,6 +1705,10 @@ BattleScript_EffectBoulderDash::
 	critcalc
 	damagecalc
 	typecalc
+	setmoveeffect MOVE_EFFECT_FLINCH
+	jumpifnostatus3 BS_TARGET, STATUS3_MINIMIZED, BoulderDashContinue
+	setbyte sDMG_MULTIPLIER, 2
+BoulderDashContinue:
 	adjustnormaldamage
 	attackanimation
 	waitanimation
@@ -2068,11 +1897,17 @@ BattleScript_EffectAccuracyDownHit::
 	goto BattleScript_EffectHit
 
 BattleScript_EffectSkyAttack::
+	jumpifmove MOVE_DRAGON_FIST, DragonFistTypeCheck
+DragonFistTypeChecked::
 	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_TwoTurnMovesSecondTurn
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_NO_ATTACKSTRING, BattleScript_TwoTurnMovesSecondTurn
 	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_SKY_ATTACK
 	call BattleScriptFirstChargingTurn
 	goto BattleScript_MoveEnd
+DragonFistTypeCheck:
+	jumpiftype BS_ATTACKER, TYPE_DRAGON, DragonFistTypeChecked
+	attackstring
+	goto BattleScript_ButItFailed
 	
 
 BattleScript_EffectConfuseHit::
@@ -2342,6 +2177,7 @@ BattleScript_EffectDestinyBond::
 	attackcanceler
 	attackstring
 	ppreduce
+	setforcedtarget
 	setdestinybond
 	attackanimation
 	waitanimation
@@ -2825,6 +2661,8 @@ KaleidoscopeDamage::
 	adjustsetdamage
 	attackanimation
 	waitanimation
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoscopeType2Check
 
 KaleidoscopeBurn::
@@ -2834,6 +2672,8 @@ KaleidoscopeBurn::
 	waitanimation
 	setmoveeffect MOVE_EFFECT_BURN
 	seteffectwithchance
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoscopeType2Check
 KaleidoscopeBurn2::
 	jumpifstatus BS_TARGET, STATUS1_BURN, KaleidoEnd
@@ -2850,6 +2690,8 @@ KaleidoscopeFreeze::
 	jumpifstatus BS_TARGET, STATUS1_FREEZE, KaleidoscopeType2Check
 	setmoveeffect MOVE_EFFECT_FREEZE
 	seteffectwithchance
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoscopeType2Check
 KaleidoscopeFreeze2::
 	jumpiftype BS_TARGET, TYPE_ICE, KaleidoEnd
@@ -2866,6 +2708,8 @@ KaleidoscopeParalyze::
 	jumpifstatus BS_TARGET, STATUS1_PARALYSIS, KaleidoscopeType2Check
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	seteffectwithchance
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoscopeType2Check
 KaleidoscopeParalyze2::
 	jumpifstatus BS_TARGET, STATUS1_PARALYSIS, KaleidoEnd
@@ -2882,6 +2726,8 @@ KaleidoscopePoison::
 	jumpiftype BS_TARGET, TYPE_STEEL, KaleidoscopeType2Check
 	setmoveeffect MOVE_EFFECT_TOXIC
 	seteffectwithchance
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoscopeType2Check
 KaleidoscopePoison2::
 	jumpifstatus BS_TARGET, STATUS1_TOXIC_POISON, KaleidoEnd
@@ -2923,6 +2769,8 @@ KaleidoscopeFlinch::
 	waitanimation
 	setmoveeffect MOVE_EFFECT_FLINCH
 	seteffectwithchance
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoscopeType2Check
 KaleidoscopeFlinch2::
 	setmoveeffect MOVE_EFFECT_FLINCH
@@ -2936,6 +2784,8 @@ KaleidoscopeDisable::
 	waitanimation
 	disablelastusedattack KaleidoscopeType2Check
 	printstring STRINGID_PKMNMOVEWASDISABLED
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoscopeType2Check
 KaleidoscopeDisable2::
 @ this one never calls kaleidoend either
@@ -2958,6 +2808,8 @@ KaleidoscopeConfuse::
 	jumpifability BS_TARGET, ABILITY_OWN_TEMPO, KaleidoscopeType2Check
 	setmoveeffect MOVE_EFFECT_CONFUSION
 	seteffectwithchance
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoscopeType2Check
 KaleidoscopeConfuse2::
 	jumpifstatus2 BS_TARGET, STATUS2_CONFUSION, KaleidoEnd
@@ -2983,11 +2835,11 @@ KaleidoscopeUltimate::
 	seteffectwithchance
 	setmoveeffect MOVE_EFFECT_ACC_MINUS_1
 	seteffectwithchance
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
 	goto KaleidoEnd
 
 KaleidoEnd::
-	healthbarupdate BS_TARGET
-	datahpupdate BS_TARGET
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET

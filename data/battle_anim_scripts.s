@@ -399,7 +399,6 @@ gBattleAnims_Moves::
 	.4byte Move_REVOLVER
 	.4byte Move_FLY_SWAT
 	.4byte Move_AROUND_TOWN
-	.4byte Move_HOSTAGE
 	.4byte Move_AURA_SPHERE
 	.4byte Move_SHIELD_BASH
 	.4byte Move_GRASS_KNOT
@@ -2837,10 +2836,6 @@ Move_MEDITATE:
 	end
 
 Move_AGILITY:
-	choosetwoturnanim Agility, AgilityEX
-AgilityEX:
-	call EXMove
-Agility:
 	monbg ANIM_ATK_PARTNER
 	setalpha 12, 8
 	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 4, 4
@@ -5512,7 +5507,6 @@ Move_BITE:
 	end
 
 Move_CRUNCH:
-	choosetwoturnanim Crunch, CrunchEX
 CrunchEnd:
 	end
 Crunch:
@@ -8936,10 +8930,6 @@ Move_MUDDY_WATER:
 	end
 
 Move_BULLET_SEED:
-	choosetwoturnanim BulletSeed, BulletSeedEX
-BulletSeedEX:
-	call EXMove
-BulletSeed:
 	loadspritegfx ANIM_TAG_SEED
 	createsprite gBulletSeedSpriteTemplate, ANIM_TARGET, 2, 20, 0
 	delay 3
@@ -11091,7 +11081,6 @@ Move_AROUND_TOWN:
 	blendoff
 	end
 
-Move_HOSTAGE:
 Move_AURA_SPHERE:
 	loadspritegfx ANIM_TAG_IMPACT_2
 	loadspritegfx ANIM_TAG_LEER

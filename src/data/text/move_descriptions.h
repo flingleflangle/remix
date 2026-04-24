@@ -1528,10 +1528,6 @@ static const u8 sFlySwatDescription[] = _(
 static const u8 sAroundTownDescription[] = _(
     "User switches with ally\n"
     "immediately after attacking.");
-	
-static const u8 sHostageDescription[] = _(
-    "Redirects all attacks to\n"
-    "the selected foe.");
 
 static const u8 sAuraSphereDescription[] = _(
     "Fires a blast of aura power.\n"
@@ -1978,7 +1974,6 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_REVOLVER - 1] = sRevolverDescription,
 	[MOVE_FLY_SWAT - 1] = sFlySwatDescription,
 	[MOVE_AROUND_TOWN - 1] = sAroundTownDescription,
-	[MOVE_HOSTAGE - 1] = sHostageDescription,
 	[MOVE_AURA_SPHERE - 1] = sAuraSphereDescription,
 	[MOVE_SHIELD_BASH - 1] = sShieldBashDescription,
 	[MOVE_GRASS_KNOT - 1] = sGrassKnotDescription,

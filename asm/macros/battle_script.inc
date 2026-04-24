@@ -1261,12 +1261,8 @@
 	.byte 0xfa
 	.endm
 	
-	.macro setforcedtargetevil
-	.byte 0xfb
-	.endm
-	
 	.macro ballthrowend
-	.byte 0xfc
+	.byte 0xfb
 	.endm
 
 
