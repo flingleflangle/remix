@@ -400,8 +400,10 @@
 #define MOVE_KALEIDOSCOPE 396
 #define MOVE_TREMOR 397
 #define MOVE_MIND_CRUSH 398
+#define MOVE_X_SCISSOR 399
+#define MOVE_NIGHT_SLASH 400
 
-#define MOVES_COUNT 399
+#define MOVES_COUNT 401
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

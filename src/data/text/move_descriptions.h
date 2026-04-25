@@ -1593,6 +1593,14 @@ static const u8 sMindCrushDescription[] = _(
     "Harshly punishes opponents\n"
     "with raised stat stages.");
 
+static const u8 sXScissorDescription[] = _(
+    "Slashes the foe with crossed\n"
+    "scythes, claws, etc.");
+
+static const u8 sNightSlashDescription[] = _(
+    "Seizes the opportunity.\n"
+    "High critical-hit ratio.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -1994,4 +2002,6 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_KALEIDOSCOPE - 1] = sKaleidoscopeDescription,
     [MOVE_TREMOR - 1] = sTremorDescription,
     [MOVE_MIND_CRUSH - 1] = sMindCrushDescription,
+    [MOVE_X_SCISSOR - 1] = sXScissorDescription,
+    [MOVE_NIGHT_SLASH - 1] = sNightSlashDescription,
 };
