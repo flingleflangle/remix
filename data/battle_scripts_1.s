@@ -269,6 +269,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectTailGlow          	 @ EFFECT_TAIL_GLOW
 	.4byte BattleScript_EffectKaleidoscope           @ EFFECT_KALEIDOSCOPE
 	.4byte BattleScript_EffectTremor        	     @ EFFECT_TREMOR
+	.4byte BattleScript_EffectMindCrush       	     @ EFFECT_MIND_CRUSH
 	
 
 BattleScript_EffectHit::
@@ -2532,6 +2533,36 @@ BattleScript_EffectAttract::
 	attackanimation
 	waitanimation
 	printstring STRINGID_PKMNFELLINLOVE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+
+BattleScript_EffectMindCrush::
+	attackstring
+	ppreduce
+	jumpiftype BS_ATTACKER, TYPE_PSYCHIC, MindCrushViable
+	goto BattleScript_ButItFailed
+MindCrushViable::
+	jumpifstatus2 BS_TARGET, STATUS2_FOCUS_ENERGY, MindCrushSuccess
+	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_ATK, DEFAULT_STAT_STAGE, MindCrushSuccess
+	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_SPATK, DEFAULT_STAT_STAGE, MindCrushSuccess
+	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_DEF, DEFAULT_STAT_STAGE, MindCrushSuccess
+	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_SPDEF, DEFAULT_STAT_STAGE, MindCrushSuccess
+	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_SPEED, DEFAULT_STAT_STAGE, MindCrushSuccess
+	jumpifstat BS_TARGET, CMP_GREATER_THAN, STAT_ACC, DEFAULT_STAT_STAGE, MindCrushSuccess
+	goto BattleScript_ButItFailed
+MindCrushSuccess::
+	jumpifstatus BS_TARGET, STATUS1_SLEEP, BattleScript_AlreadyAsleep
+	jumpifcantmakeasleep BattleScript_CantMakeAsleep
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_SLEEP
+	seteffectprimary
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffectprimary
+	setmoveeffect MOVE_EFFECT_NIGHTMARE
+	seteffectprimary
+	printstring STRINGID_PKMNFELLINTONIGHTMARE
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 

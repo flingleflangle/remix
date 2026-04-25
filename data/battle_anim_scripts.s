@@ -414,6 +414,7 @@ gBattleAnims_Moves::
 	.4byte Move_NASTY_PLOT
 	.4byte Move_KALEIDOSCOPE
 	.4byte Move_TREMOR
+	.4byte Move_MIND_CRUSH
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -10745,6 +10746,60 @@ Move_CHISEL:
 	createsprite gBrickBreakWallShardSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 3, 8, 8
 	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 5, 0, 6, 1
 	waitforvisualfinish
+	end
+
+Move_MIND_CRUSH:
+	loadspritegfx ANIM_TAG_SWEAT_BEAD
+	loadspritegfx ANIM_TAG_ICE_CRYSTALS
+	loadspritegfx ANIM_TAG_TORN_METAL
+	loadspritegfx ANIM_TAG_LEER
+	monbg ANIM_TARGET
+	fadetobgfromset BG_GUILLOTINE_OPPONENT, BG_GUILLOTINE_PLAYER, BG_GUILLOTINE_CONTESTS
+	waitbgfadein
+	delay 0
+	splitbgprio ANIM_TARGET
+	setalpha 8, 8
+	delay 12
+	playsewithpan SE_M_LEER, SOUND_PAN_ATTACKER
+	createsprite gLeerSpriteTemplate, ANIM_ATTACKER, 2, 24, -12
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 8, 0, 24, 1
+	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_TARGET, 1
+	createvisualtask AnimTask_InvertScreenColor, 2, 257, 257, 257
+	waitforvisualfinish
+	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 1, 1
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 4, 0, 5, 1
+	createvisualtask AnimTask_StretchTargetUp, 3
+	playsewithpan SE_M_BRICK_BREAK, SOUND_PAN_TARGET
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, -30, 18, 8, 4
+	delay 1
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, 5, 20, -24, 14, 4
+	delay 1
+	playsewithpan SE_M_BRICK_BREAK, SOUND_PAN_TARGET
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, -5, 0, -20, -24, 14, 4
+	delay 1
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, -30, -18, 8, 4
+	delay 1
+	playsewithpan SE_M_BRICK_BREAK, SOUND_PAN_TARGET
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 5, 0, -20, 24, 14, 4
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, -5, 0, -20, -24, 14, 4
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 30, -18, 8, 4
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, -30, 18, 8, 4
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 20, 24, 14, 4
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, 5, 20, -24, 14, 4
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, -5, 30, 18, 8, 4
+	createsprite gIceBallImpactShardSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, -30, -18, 8, 4
+	createsprite gBrickBreakWallShardSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 0, -8, -8
+	createsprite gBrickBreakWallShardSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 1, 8, -8
+	createsprite gBrickBreakWallShardSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 2, -8, 8
+	createsprite gBrickBreakWallShardSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 3, 8, 8
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 5, 0, 6, 1
+	delay 12
+	createvisualtask AnimTask_InvertScreenColor, 2, 257, 257, 257
+	clearmonbg ANIM_ATTACKER
+	blendoff
+	delay 1
+	restorebg
+	waitbgfadein
 	end
 	
 Move_ASCENSION:

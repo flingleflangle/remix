@@ -6253,6 +6253,7 @@ static const u16 sArmaldoLevelUpLearnset[] = {
 
 static const u16 sRaltsLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_GROWL),
+    LEVEL_UP_MOVE( 6, MOVE_MIND_CRUSH),
     LEVEL_UP_MOVE( 7, MOVE_CONFUSION),
     LEVEL_UP_MOVE( 9, MOVE_DOUBLE_TEAM),
     LEVEL_UP_MOVE( 9, MOVE_TELEPORT),
