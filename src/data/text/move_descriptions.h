@@ -1605,6 +1605,10 @@ static const u8 sPanicDescription[] = _(
     "Power increases sharply\n"
     "when under high stress.");
 
+static const u8 sLastStandDescription[] = _(
+    "Greatly boosts stats if\n"
+    "user is the last POKéMON.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -2009,4 +2013,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_X_SCISSOR - 1] = sXScissorDescription,
     [MOVE_NIGHT_SLASH - 1] = sNightSlashDescription,
     [MOVE_PANIC - 1] = sPanicDescription,
+    [MOVE_LAST_STAND - 1] = sLastStandDescription,
 };

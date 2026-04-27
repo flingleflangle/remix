@@ -403,8 +403,9 @@
 #define MOVE_X_SCISSOR 399
 #define MOVE_NIGHT_SLASH 400
 #define MOVE_PANIC 401
+#define MOVE_LAST_STAND 402
 
-#define MOVES_COUNT 402
+#define MOVES_COUNT 403
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF
