@@ -54,6 +54,7 @@ extern const u8 BattleScript_BideStoringEnergy[];
 extern const u8 BattleScript_BideAttack[];
 extern const u8 BattleScript_BideNoEnergyToAttack[];
 extern const u8 BattleScript_SuccessForceOut[];
+extern const u8 BattleScript_SuccessForceOut2[];
 extern const u8 BattleScript_MistProtected[];
 extern const u8 BattleScript_RageIsBuilding[];
 extern const u8 BattleScript_MoveUsedIsDisabled[];

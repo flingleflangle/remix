@@ -7289,8 +7289,15 @@ static bool8 TryDoForceSwitchOut(void)
         *(gBattleStruct->battlerPartyIndexes + gBattlerTarget) = gBattlerPartyIndexes[gBattlerTarget];
     }
 
+    
+    if (gCurrentMove == MOVE_FLUSH) {
+    gBattlescriptCurrInstr = BattleScript_SuccessForceOut2;
+    return TRUE;
+    }
+    else {
     gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
     return TRUE;
+    }
 }
 
 static void Cmd_forcerandomswitch(void)

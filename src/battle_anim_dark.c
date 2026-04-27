@@ -16,6 +16,8 @@ static void AnimTearDrop(struct Sprite *);
 static void AnimClawSlash(struct Sprite *);
 static void AnimTask_AttackerFadeToInvisible_Step(u8);
 static void AnimTask_AttackerFadeFromInvisible_Step(u8);
+static void AnimTask_TargetFadeToInvisible_Step(u8);
+static void AnimTask_TargetFadeFromInvisible_Step(u8);
 static void AnimBite_Step1(struct Sprite *);
 static void AnimBite_Step2(struct Sprite *);
 static void AnimTearDrop_Step(struct Sprite *);
@@ -216,6 +218,44 @@ static void AnimTask_AttackerFadeToInvisible_Step(u8 taskId)
         if (blendA == 16)
         {
             gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].invisible = TRUE;
+            DestroyAnimVisualTask(taskId);
+        }
+    }
+    else
+    {
+        gTasks[taskId].data[2]++;
+    }
+}
+
+void AnimTask_TargetFadeToInvisible(u8 taskId)
+{
+    int battler;
+    gTasks[taskId].data[0] = gBattleAnimArgs[0];
+    battler = gBattleAnimTarget;
+    gTasks[taskId].data[1] = 16;
+    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(16, 0));
+    if (GetBattlerSpriteBGPriorityRank(battler) == 1)
+        SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND | BLDCNT_TGT1_BG1);
+    else
+        SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND | BLDCNT_TGT1_BG2);
+
+    gTasks[taskId].func = AnimTask_TargetFadeToInvisible_Step;
+}
+
+static void AnimTask_TargetFadeToInvisible_Step(u8 taskId)
+{
+    u8 blendA = gTasks[taskId].data[1] >> 8;
+    u8 blendB = gTasks[taskId].data[1];
+    if (gTasks[taskId].data[2] == (u8)gTasks[taskId].data[0])
+    {
+        blendA++;
+        blendB--;
+        gTasks[taskId].data[1] = BLDALPHA_BLEND(blendB, blendA);
+        SetGpuReg(REG_OFFSET_BLDALPHA, gTasks[taskId].data[1]);
+        gTasks[taskId].data[2] = 0;
+        if (blendA == 16)
+        {
+            gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible = TRUE;
             DestroyAnimVisualTask(taskId);
         }
     }

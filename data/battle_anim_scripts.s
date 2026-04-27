@@ -419,6 +419,7 @@ gBattleAnims_Moves::
 	.4byte Move_NIGHT_SLASH
 	.4byte Move_PANIC
 	.4byte Move_LAST_STAND
+	.4byte Move_FLUSH
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -9681,6 +9682,42 @@ DiveAttack:
 DiveAttackWaterDroplets:
 	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 0, 1
 	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 1, 1
+	return
+
+Move_FLUSH:
+	loadspritegfx ANIM_TAG_SPLASH
+	loadspritegfx ANIM_TAG_SWEAT_BEAD
+	loadspritegfx ANIM_TAG_WATER_ORB
+	monbg ANIM_DEF_PARTNER
+	splitbgprio ANIM_TARGET
+	setalpha 12, 8
+	delay 0
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 0, F_PAL_TARGET, 2, 0, 7, RGB(0, 13, 23)
+	playsewithpan SE_M_WHIRLPOOL, SOUND_PAN_TARGET
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_TARGET, 18, 6, 3, 3
+	call WhirlpoolEffect
+	call WhirlpoolEffect
+	call WhirlpoolEffect
+	delay 8
+	createvisualtask AnimTask_TargetFadeToInvisible, 4, 0
+	delay 4
+	playsewithpan SE_M_DIVE, SOUND_PAN_TARGET
+	createsprite gDiveWaterSplashSpriteTemplate, ANIM_TARGET, 30, 30
+	call FlushWaterDroplets
+	call FlushWaterDroplets
+	call FlushWaterDroplets
+	call FlushWaterDroplets
+	call FlushWaterDroplets
+	delay 2
+	createvisualtask AnimTask_SlideOffScreen, 5, ANIM_TARGET, 2
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_PARTNER
+	blendoff
+	end
+
+FlushWaterDroplets:
+	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 0, 30
+	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 1, 30
 	return
 
 Move_ROCK_BLAST:

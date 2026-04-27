@@ -737,10 +737,16 @@ BattleScript_EffectRoar::
 	ppreduce
 	jumpifability BS_TARGET, ABILITY_SUCTION_CUPS, BattleScript_AbilityPreventsPhasingOut
 	jumpifstatus3 BS_TARGET, STATUS3_ROOTED, BattleScript_PrintMonIsRooted
+	jumpifmove MOVE_FLUSH, FlushFail
+BackToRoar:
 	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC_CHECK_LOCK_ON
 	accuracycheck BattleScript_MoveMissedPause, ACC_CURR_MOVE
 	jumpifbattletype BATTLE_TYPE_ARENA, BattleScript_ButItFailed
 	forcerandomswitch BattleScript_ButItFailed
+FlushFail:
+	jumpifstatus2 BS_TARGET, STATUS2_ESCAPE_PREVENTION, BattleScript_ButItFailed
+	goto BackToRoar
+	
 
 BattleScript_EffectMultiHit::
 	attackcanceler
@@ -4657,6 +4663,29 @@ BattleScript_TrainerBattleForceOut::
 	waitstate
 	printstring STRINGID_PKMNWASDRAGGEDOUT
 	switchineffects BS_TARGET
+	goto BattleScript_MoveEnd
+
+BattleScript_SuccessForceOut2::
+	attackanimation
+	waitanimation
+	switchoutabilities BS_TARGET
+	returntoball BS_TARGET
+	waitstate
+	jumpifbattletype BATTLE_TYPE_TRAINER, BattleScript_TrainerBattleForceOut2
+	setoutcomeonteleport BS_ATTACKER
+	finishaction
+
+BattleScript_TrainerBattleForceOut2::
+	getswitchedmondata BS_TARGET
+	switchindataupdate BS_TARGET
+	switchinanim BS_TARGET, FALSE
+	waitstate
+	printstring STRINGID_PKMNWASDRAGGEDOUT
+	switchineffects BS_TARGET
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	printstring STRINGID_TARGETCANTESCAPENOW
+	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
 BattleScript_MistProtected::
