@@ -4709,13 +4709,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_SPROUT] =
     {
         .effect = EFFECT_SPROUT,
-        .power = 80,
+        .power = 120,
         .type = TYPE_GRASS,
         .accuracy = 0,
         .pp = 10,
-        .secondaryEffectChance = 0,
+        .secondaryEffectChance = 30,
         .target = MOVE_TARGET_SELECTED,
-        .priority = 0,
+        .priority = 1,
         .flags = FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 	
@@ -4735,9 +4735,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_ENTWINE] =
     {
         .effect = EFFECT_ENTWINE,
-        .power = 40,
+        .power = 50,
         .type = TYPE_GRASS,
-        .accuracy = 90,
+        .accuracy = 100,
         .pp = 20,
         .secondaryEffectChance = 10,
         .target = MOVE_TARGET_SELECTED,
@@ -5151,7 +5151,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_KALEIDOSCOPE] =
     {
         .effect = EFFECT_KALEIDOSCOPE,
-        .power = 0,
+        .power = 1,
         .type = TYPE_MYSTERY,
         .accuracy = 65,
         .pp = 20,

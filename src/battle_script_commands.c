@@ -6828,7 +6828,11 @@ static void Cmd_setreflect(void)
 
 static void Cmd_setseeded(void)
 {
-    if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT || gStatuses3[gBattlerTarget] & STATUS3_LEECHSEED)
+    if (gCurrentMove == MOVE_SPROUT)
+    {
+        gStatuses3[gBattlerTarget] &= ~STATUS3_LEECHSEED;
+    }
+    else if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT || gStatuses3[gBattlerTarget] & STATUS3_LEECHSEED)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_LEECH_SEED_MISS;
@@ -9038,8 +9042,14 @@ static void Cmd_rapidspinfree(void)
 
 static void Cmd_setdefensecurlbit(void)
 {
+    if (gCurrentMove == MOVE_DEFENSE_CURL) {
     gBattleMons[gBattlerAttacker].status2 |= STATUS2_DEFENSE_CURL;
     gBattlescriptCurrInstr++;
+    }
+    else {
+    gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_DEFENSE_CURL;
+    gBattlescriptCurrInstr++;
+    }
 }
 
 static void Cmd_recoverbasedonsunlight(void)

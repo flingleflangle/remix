@@ -320,6 +320,10 @@ BattleScript_MoveMissed::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+BattleScript_CurlMoveMissed::
+	setdefensecurlbit
+	goto BattleScript_MoveMissed
+
 BattleScript_EffectSleep::
 	attackcanceler
 	attackstring
@@ -423,6 +427,15 @@ BattleScript_EffectFreezeHit::
 
 BattleScript_EffectParalyzeHit::
 	setmoveeffect MOVE_EFFECT_PARALYSIS
+	jumpifmove MOVE_SPARK, SparkCurlCheck
+	goto BattleScript_EffectHit
+
+SparkCurlCheck:
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, SparkDoubleDmg
+	goto BattleScript_EffectHit
+SparkDoubleDmg::
+	setdefensecurlbit
+	setbyte sDMG_MULTIPLIER, 2
 	goto BattleScript_EffectHit
 
 BattleScript_EffectIgnite::
@@ -917,6 +930,7 @@ BattleScript_EffectOHKO::
 	attackstring
 	ppreduce
 	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC_CHECK_LOCK_ON
+	jumpifstatus2 BS_TARGET, STATUS2_DEFENSE_CURL, BattleScript_ButItFailed
 	typecalc
 	jumpifmovehadnoeffect BattleScript_HitFromAtkAnimation
 	tryKO BattleScript_KOFail
@@ -1005,6 +1019,7 @@ BattleScript_EffectRecoilIfMiss::
 	accuracycheck BattleScript_MoveMissedDoDamage, ACC_CURR_MOVE
 	goto BattleScript_HitFromAtkString
 BattleScript_MoveMissedDoDamage::
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, BattleScript_CurlMoveMissed
 	attackstring
 	ppreduce
 	pause B_WAIT_TIME_LONG
@@ -1049,10 +1064,37 @@ BattleScript_EffectFocusEnergy::
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectRecoil::
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, NegateRecoil
 	setmoveeffect MOVE_EFFECT_RECOIL_25 | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	jumpifnotmove MOVE_STRUGGLE, BattleScript_EffectHit
 	incrementgamestat GAME_STAT_USED_STRUGGLE
 	goto BattleScript_EffectHit
+
+NegateRecoil:
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	setdefensecurlbit
+	moveendall
+	end
 	
 BattleScript_EffectFinalSting::
 	attackstring
@@ -1189,6 +1231,7 @@ BattleScript_EffectSprout::
 	ppreduce
 	jumpifnostatus3 BS_TARGET, STATUS3_LEECHSEED, BattleScript_ButItFailed
 	jumpifstatus2 BS_TARGET, STATUS2_WRAPPED, BattleScript_ButItFailed
+	setseeded
 	attackanimation
 	waitanimation
 	critcalc
@@ -1200,6 +1243,8 @@ BattleScript_EffectSprout::
 	healthbarupdate BS_TARGET
 	setmoveeffect MOVE_EFFECT_WRAP
 	seteffectprimary
+	setmoveeffect MOVE_EFFECT_FLINCH
+	seteffectwithchance
 	datahpupdate BS_TARGET
 	critmessage
 	waitmessage B_WAIT_TIME_LONG
@@ -1230,6 +1275,7 @@ BattleScript_EffectDragonFist::
 	ppreduce
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	jumpifability BS_TARGET, ABILITY_STURDY, BattleScript_SturdyPreventsOHKO
+	jumpifstatus2 BS_TARGET, STATUS2_DEFENSE_CURL, BattleScript_ButItFailed
 	setword gBattleMoveDamage, 999
 	adjustsetdamage
 	attackanimation
@@ -1728,14 +1774,15 @@ BattleScript_EffectBoulderDash::
 	attackcanceler
 	attackstring
 	ppreduce
-	critcalc
-	damagecalc
-	typecalc
-	setmoveeffect MOVE_EFFECT_FLINCH
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, BoulderDashDoubleDmg
 	jumpifnostatus3 BS_TARGET, STATUS3_MINIMIZED, BoulderDashContinue
 	setbyte sDMG_MULTIPLIER, 2
 BoulderDashContinue:
+	critcalc
+	damagecalc
+	typecalc
 	adjustnormaldamage
+	setmoveeffect MOVE_EFFECT_FLINCH
 	attackanimation
 	waitanimation
 	effectivenesssound
@@ -1753,6 +1800,11 @@ BoulderDashContinue:
 	printstring STRINGID_SPIKESSCATTERED
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+
+BoulderDashDoubleDmg::
+	setdefensecurlbit
+	setbyte sDMG_MULTIPLIER, 2
+	goto BoulderDashContinue
 
 
 BattleScript_EffectConfuse::
@@ -2456,6 +2508,8 @@ BattleScript_EffectShieldBash::
 	attackstring
 	ppreduce
 	setprotectlike
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, ShieldBashDoubleDmg
+ShieldBashContinue:
 	critcalc
 	damagecalc
 	typecalc
@@ -2477,6 +2531,11 @@ BattleScript_EffectShieldBash::
 	tryfaintmon BS_TARGET
 	moveendall
 	end
+
+ShieldBashDoubleDmg::
+	setdefensecurlbit
+	setbyte sDMG_MULTIPLIER, 2
+	goto ShieldBashContinue
 
 BattleScript_EffectSpikes::
 	attackcanceler
@@ -2655,7 +2714,17 @@ BattleScript_EffectSafeguard::
 
 BattleScript_EffectThawHit::
 	setmoveeffect MOVE_EFFECT_BURN
+	jumpifmove MOVE_FLAME_WHEEL, FlameWheelCurlCheck
 	goto BattleScript_EffectHit
+
+FlameWheelCurlCheck:
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, FlameWheelDoubleDmg
+	goto BattleScript_EffectHit
+FlameWheelDoubleDmg::
+	setdefensecurlbit
+	setbyte sDMG_MULTIPLIER, 2
+	goto BattleScript_EffectHit
+
 
 BattleScript_EffectMagnitude::
 	attackcanceler
@@ -3036,6 +3105,7 @@ BattleScript_EffectMirrorCoat::
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectSkullBash::
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, BattleScript_TwoTurnMovesSecondTurn
 	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_TwoTurnMovesSecondTurn
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_NO_ATTACKSTRING, BattleScript_TwoTurnMovesSecondTurn
 	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_SKULL_BASH
@@ -3534,11 +3604,16 @@ BattleScript_FacadeDoubleDmg::
 
 BattleScript_EffectFocusPunch::
 	attackcanceler
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, FocusPunchFollowThrough
 	jumpifnodamage BattleScript_HitFromAccCheck
 	ppreduce
 	printstring STRINGID_PKMNLOSTFOCUS
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+
+FocusPunchFollowThrough:
+	setdefensecurlbit
+	goto BattleScript_HitFromAccCheck
 
 BattleScript_EffectSmellingsalt::
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_EffectHit
@@ -3852,6 +3927,7 @@ BattleScript_EffectSecretPower::
 	goto BattleScript_EffectHit
 
 BattleScript_EffectDoubleEdge::
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, NegateRecoil
 	setmoveeffect MOVE_EFFECT_RECOIL_33 | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	goto BattleScript_EffectHit
 
