@@ -499,6 +499,8 @@ static const u16 sSpeciesToHoennPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_HOENN(GLISCOR),
     SPECIES_TO_HOENN(MISMAGIUS),
     SPECIES_TO_HOENN(HONCHKROW),
+    SPECIES_TO_HOENN(FROSLASS),
+    SPECIES_TO_HOENN(GALLADE),
     SPECIES_TO_HOENN(LUCARIO),
 };
 
@@ -897,6 +899,8 @@ static const u16 sSpeciesToNationalPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_NATIONAL(GLISCOR),
     SPECIES_TO_NATIONAL(MISMAGIUS),
     SPECIES_TO_NATIONAL(HONCHKROW),
+    SPECIES_TO_NATIONAL(FROSLASS),
+    SPECIES_TO_NATIONAL(GALLADE),
     SPECIES_TO_NATIONAL(LUCARIO),
 };
 
@@ -1295,6 +1299,8 @@ static const u16 sHoennToNationalOrder[NUM_SPECIES - 1] =
     HOENN_TO_NATIONAL(GLISCOR),
     HOENN_TO_NATIONAL(MISMAGIUS),
     HOENN_TO_NATIONAL(HONCHKROW),
+    HOENN_TO_NATIONAL(FROSLASS),
+    HOENN_TO_NATIONAL(GALLADE),
     HOENN_TO_NATIONAL(LUCARIO),
 };
 
@@ -1676,6 +1682,7 @@ static const u8 sMonFrontAnimIdsTable[NUM_SPECIES - 1] =
     [SPECIES_CACTURNE - 1]    = ANIM_V_SLIDE,
     [SPECIES_SNORUNT - 1]     = ANIM_V_SQUISH_AND_BOUNCE_SLOW,
     [SPECIES_GLALIE - 1]      = ANIM_ZIGZAG_FAST,
+    [SPECIES_FROSLASS - 1]      = ANIM_ZIGZAG_FAST,
     [SPECIES_LUNATONE - 1]    = ANIM_SWING_CONVEX_FAST,
     [SPECIES_SOLROCK - 1]     = ANIM_ROTATE_TO_SIDES_TWICE,
     [SPECIES_AZURILL - 1]     = ANIM_V_SQUISH_AND_BOUNCE,
@@ -1723,6 +1730,7 @@ static const u8 sMonFrontAnimIdsTable[NUM_SPECIES - 1] =
     [SPECIES_RALTS - 1]       = ANIM_V_SQUISH_AND_BOUNCE_SLOW,
     [SPECIES_KIRLIA - 1]      = ANIM_V_SQUISH_AND_BOUNCE,
     [SPECIES_GARDEVOIR - 1]   = ANIM_V_SQUISH_AND_BOUNCE,
+    [SPECIES_GALLADE - 1]     = ANIM_V_SQUISH_AND_BOUNCE_SLOW,
     [SPECIES_BAGON - 1]       = ANIM_V_SHAKE_TWICE,
     [SPECIES_SHELGON - 1]     = ANIM_V_SLIDE,
     [SPECIES_SALAMENCE - 1]   = ANIM_H_SHAKE,
@@ -5816,6 +5824,20 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem)
         {
             if (gEvolutionTable[species][i].method == EVO_ITEM
              && gEvolutionTable[species][i].param == evolutionItem)
+            {
+                targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                break;
+            }
+            else if (gEvolutionTable[species][i].method == EVO_ITEM_MALE
+             && gEvolutionTable[species][i].param == evolutionItem
+             && gSpeciesInfo[species].genderRatio <= (personality & 0xFF))
+            {
+                targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                break;
+            }
+            else if (gEvolutionTable[species][i].method == EVO_ITEM_FEMALE
+             && gEvolutionTable[species][i].param == evolutionItem
+             && gSpeciesInfo[species].genderRatio > (personality & 0xFF))
             {
                 targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;

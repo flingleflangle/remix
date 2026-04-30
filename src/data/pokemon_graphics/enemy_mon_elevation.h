@@ -50,6 +50,7 @@ const u8 gEnemyMonElevation[NUM_SPECIES] =
     [SPECIES_CLAYDOL] = 10,
     [SPECIES_FLYGON] = 7,
     [SPECIES_GLALIE] = 12,
+    [SPECIES_FROSLASS] = 12,
     [SPECIES_LUNATONE] = 13,
     [SPECIES_SOLROCK] = 4,
     [SPECIES_SWABLU] = 12,

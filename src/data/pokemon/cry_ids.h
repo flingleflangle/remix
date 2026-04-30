@@ -406,5 +406,7 @@ const u16 gSpeciesIdToCryId[] =
     [SPECIES_WEAVILE - 1] = 391,
     [SPECIES_MISMAGIUS - 1] = 392,
     [SPECIES_HONCHKROW - 1] = 393,
-    [SPECIES_LUCARIO - 1] = 394,
+    [SPECIES_FROSLASS - 1] = 394,
+    [SPECIES_GALLADE - 1] = 395,
+    [SPECIES_LUCARIO - 1] = 396,
 };

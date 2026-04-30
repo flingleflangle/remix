@@ -91,7 +91,7 @@
     F(SILVER_WIND) \
     F(SYNCHRO_BLAST) \
     F(SUPERPOWER) \
-    F(PAIN_SPLIT) \
+    F(THUNDER_WAVE) \
     F(KALEIDOSCOPE) \
     F(FISSURE) 
 

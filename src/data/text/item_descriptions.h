@@ -1599,9 +1599,9 @@ static const u8 sTM89Desc[] = _(
     "all abilities.");
 
 static const u8 sTM90Desc[] = _(
-    "Adds the user and\n"
-    "foe's HP, then\n"
-    "shares the total.");
+    "A weak jolt of\n"
+    "electricity that\n"
+    "paralyzes the foe.");
 
 static const u8 sTM91Desc[] = _(
     "Effect changes\n"

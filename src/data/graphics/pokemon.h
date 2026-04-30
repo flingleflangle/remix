@@ -2755,6 +2755,20 @@ const u32 gMonShinyPalette_Honchkrow[] = INCBIN_U32("graphics/pokemon/honchkrow/
 const u8 gMonIcon_Honchkrow[] = INCBIN_U8("graphics/pokemon/honchkrow/icon.4bpp");
 const u8 gMonFootprint_Honchkrow[] = INCBIN_U8("graphics/pokemon/honchkrow/footprint.1bpp");
 
+const u32 gMonStillFrontPic_Froslass[] = INCBIN_U32("graphics/pokemon/froslass/front.4bpp.lz");
+const u32 gMonPalette_Froslass[] = INCBIN_U32("graphics/pokemon/froslass/normal.gbapal.lz");
+const u32 gMonBackPic_Froslass[] = INCBIN_U32("graphics/pokemon/froslass/back.4bpp.lz");
+const u32 gMonShinyPalette_Froslass[] = INCBIN_U32("graphics/pokemon/froslass/shiny.gbapal.lz");
+const u8 gMonIcon_Froslass[] = INCBIN_U8("graphics/pokemon/froslass/icon.4bpp");
+const u8 gMonFootprint_Froslass[] = INCBIN_U8("graphics/pokemon/froslass/footprint.1bpp");
+
+const u32 gMonStillFrontPic_Gallade[] = INCBIN_U32("graphics/pokemon/gallade/front.4bpp.lz");
+const u32 gMonPalette_Gallade[] = INCBIN_U32("graphics/pokemon/gallade/normal.gbapal.lz");
+const u32 gMonBackPic_Gallade[] = INCBIN_U32("graphics/pokemon/gallade/back.4bpp.lz");
+const u32 gMonShinyPalette_Gallade[] = INCBIN_U32("graphics/pokemon/gallade/shiny.gbapal.lz");
+const u8 gMonIcon_Gallade[] = INCBIN_U8("graphics/pokemon/gallade/icon.4bpp");
+const u8 gMonFootprint_Gallade[] = INCBIN_U8("graphics/pokemon/gallade/footprint.1bpp");
+
 const u32 gMonStillFrontPic_Lucario[] = INCBIN_U32("graphics/pokemon/lucario/front.4bpp.lz");
 const u32 gMonPalette_Lucario[] = INCBIN_U32("graphics/pokemon/lucario/normal.gbapal.lz");
 const u32 gMonBackPic_Lucario[] = INCBIN_U32("graphics/pokemon/lucario/back.4bpp.lz");

@@ -4536,7 +4536,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_PAIN_SPLIT] =
+    [ITEM_TM_THUNDER_WAVE] =
     {
         .name = _("TM90"),
         .itemId = ITEM_TM90,

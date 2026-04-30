@@ -1965,6 +1965,14 @@ Cry_Mismagius::
 	.align 2
 Cry_Honchkrow::
 	.incbin "sound/direct_sound_samples/cries/honchkrow.bin"
+
+	.align 2
+Cry_Froslass::
+	.incbin "sound/direct_sound_samples/cries/froslass.bin"
+
+	.align 2
+Cry_Gallade::
+	.incbin "sound/direct_sound_samples/cries/gallade.bin"
 	
 
 	.align 2

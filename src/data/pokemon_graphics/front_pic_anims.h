@@ -3805,6 +3805,16 @@ static const union AnimCmd sAnim_Glalie_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Froslass_1[] =
+{
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Lunatone_1[] =
 {
     ANIMCMD_FRAME(0, 15),
@@ -3922,6 +3932,18 @@ static const union AnimCmd sAnim_Meditite_1[] =
 };
 
 static const union AnimCmd sAnim_Medicham_1[] =
+{
+    ANIMCMD_FRAME(0, 11),
+    ANIMCMD_FRAME(1, 11),
+    ANIMCMD_FRAME(0, 11),
+    ANIMCMD_FRAME(1, 11),
+    ANIMCMD_FRAME(0, 11),
+    ANIMCMD_FRAME(1, 11),
+    ANIMCMD_FRAME(0, 11),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Gallade_1[] =
 {
     ANIMCMD_FRAME(0, 11),
     ANIMCMD_FRAME(1, 11),
@@ -5217,6 +5239,7 @@ SINGLE_ANIMATION(Cacnea);
 SINGLE_ANIMATION(Cacturne);
 SINGLE_ANIMATION(Snorunt);
 SINGLE_ANIMATION(Glalie);
+SINGLE_ANIMATION(Froslass);
 DOUBLE_ANIMATION(Lunatone);
 DOUBLE_ANIMATION(Solrock);
 SINGLE_ANIMATION(Azurill);
@@ -5269,6 +5292,7 @@ SINGLE_ANIMATION(Armaldo);
 SINGLE_ANIMATION(Ralts);
 SINGLE_ANIMATION(Kirlia);
 SINGLE_ANIMATION(Gardevoir);
+SINGLE_ANIMATION(Gallade);
 SINGLE_ANIMATION(Bagon);
 SINGLE_ANIMATION(Shelgon);
 SINGLE_ANIMATION(Salamence);
@@ -5645,6 +5669,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_CACTURNE]    = sAnims_Cacturne,
     [SPECIES_SNORUNT]     = sAnims_Snorunt,
     [SPECIES_GLALIE]      = sAnims_Glalie,
+    [SPECIES_FROSLASS]    = sAnims_Froslass,
     [SPECIES_LUNATONE]    = sAnims_Lunatone,
     [SPECIES_SOLROCK]     = sAnims_Solrock,
     [SPECIES_AZURILL]     = sAnims_Azurill,
@@ -5693,6 +5718,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_RALTS]       = sAnims_Ralts,
     [SPECIES_KIRLIA]      = sAnims_Kirlia,
     [SPECIES_GARDEVOIR]   = sAnims_Gardevoir,
+    [SPECIES_GALLADE]     = sAnims_Gallade,
     [SPECIES_BAGON]       = sAnims_Bagon,
     [SPECIES_SHELGON]     = sAnims_Shelgon,
     [SPECIES_SALAMENCE]   = sAnims_Salamence,
