@@ -849,6 +849,7 @@ const u8 gMonIconPaletteIndices[] =
     [SPECIES_RALTS] = 1,
     [SPECIES_KIRLIA] = 1,
     [SPECIES_GARDEVOIR] = 1,
+    [SPECIES_GALLADE] = 1,
     [SPECIES_BAGON] = 2,
     [SPECIES_SHELGON] = 2,
     [SPECIES_SALAMENCE] = 0,

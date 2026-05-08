@@ -1708,6 +1708,12 @@ const u8 gGardevoirPokedexText[] = _(
     "psychic power. It will give its life to\n"
     "protect its TRAINER.");
 
+const u8 gGalladePokedexText[] = _(
+    "A master of courtesy and swordsmanship,\n"
+    "it fights using extending swords on its\n"
+    "elbows when trying to protect someone.\n"
+    "It can sense what its foe is thinking.");
+
 const u8 gSurskitPokedexText[] = _(
     "They gather on puddles after evening\n"
     "downpours, gliding across the surface\n"
@@ -2187,6 +2193,12 @@ const u8 gGlaliePokedexText[] = _(
     "freeze moisture in the atmosphere.\n"
     "A dazzling cloud of diamondlike ice\n"
     "crystals forms around its body.");
+
+const u8 gFroslassPokedexText[] = _(
+    "When it finds people or POKéMON it likes,\n"
+    "it freezes them and takes them to its\n"
+    "chilly den, where they become its\n"
+    "decorations.");
 
 const u8 gSphealPokedexText[] = _(
     "It is completely covered with plushy fur.\n"

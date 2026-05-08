@@ -3420,6 +3420,18 @@ const struct PokedexEntry gPokedexEntries[] =
         .trainerOffset = 0,
     },
 
+    [NATIONAL_DEX_GALLADE] =
+    {
+        .categoryName = _("BLADE"),
+        .height = 16,
+        .weight = 520,
+        .description = gGalladePokedexText,
+        .pokemonScale = 259,
+        .pokemonOffset = 1,
+        .trainerScale = 296,
+        .trainerOffset = 1,
+    },
+
     [NATIONAL_DEX_SURSKIT] =
     {
         .categoryName = _("POND SKATER"),
@@ -4377,6 +4389,18 @@ const struct PokedexEntry gPokedexEntries[] =
         .pokemonScale = 256,
         .pokemonOffset = 3,
         .trainerScale = 344,
+        .trainerOffset = 0,
+    },
+
+    [NATIONAL_DEX_FROSLASS] =
+    {
+        .categoryName = _("SNOW LAND"),
+        .height = 13,
+        .weight = 266,
+        .description = gFroslassPokedexText,
+        .pokemonScale = 272,
+        .pokemonOffset = 3,
+        .trainerScale = 256,
         .trainerOffset = 0,
     },
 
