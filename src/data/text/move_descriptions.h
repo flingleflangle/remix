@@ -1458,8 +1458,8 @@ static const u8 sEntwineDescription[] = _(
     "vines, preventing escape.");
 	
 static const u8 sDragonFistDescription[] = _(
-    "A one-hit KO attack that\n"
-    "charges a finishing blow.");
+    "Only usable by DRAGON type.\n"
+    "Charges a finishing blow.");
 	
 static const u8 sCobraCrushDescription[] = _(
     "Wields poison to double\n"
@@ -1470,7 +1470,7 @@ static const u8 sIceSlasherDescription[] = _(
     "hit ratio. May freeze.");
 	
 static const u8 sSpiritPurgeDescription[] = _(
-    "Attacks with dark power.\n"
+    "Only usable by GHOST type.\n"
     "More damage on loyal foes.");
 	
 static const u8 sUTurnDescription[] = _(
@@ -1590,12 +1590,12 @@ static const u8 sTremorDescription[] = _(
     "May reduce user's accuracy.");
 
 static const u8 sMindCrushDescription[] = _(
-    "Harshly punishes opponents\n"
-    "with raised stat stages.");
+    "Only usable by PSYCHIC type.\n"
+    "Punishes boosted opponents.");
 
-static const u8 sXScissorDescription[] = _(
-    "Slashes the foe with crossed\n"
-    "scythes, claws, etc.");
+static const u8 sScissorKickDescription[] = _(
+    "Guaranteed critical-hits\n"
+    "on foes with lower HP.");
 
 static const u8 sNightSlashDescription[] = _(
     "Seizes the opportunity.\n"
@@ -2014,7 +2014,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_KALEIDOSCOPE - 1] = sKaleidoscopeDescription,
     [MOVE_TREMOR - 1] = sTremorDescription,
     [MOVE_MIND_CRUSH - 1] = sMindCrushDescription,
-    [MOVE_X_SCISSOR - 1] = sXScissorDescription,
+    [MOVE_SCISSOR_KICK - 1] = sScissorKickDescription,
     [MOVE_NIGHT_SLASH - 1] = sNightSlashDescription,
     [MOVE_PANIC - 1] = sPanicDescription,
     [MOVE_LAST_STAND - 1] = sLastStandDescription,

@@ -149,7 +149,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectHit                    @ EFFECT_PURSUIT
 	.4byte BattleScript_EffectRapidSpin              @ EFFECT_RAPID_SPIN
 	.4byte BattleScript_EffectSonicboom              @ EFFECT_SONICBOOM
-	.4byte BattleScript_EffectHit                    @ EFFECT_UNUSED_83
+	.4byte BattleScript_EffectScissorKick            @ EFFECT_SCISSOR_KICK
 	.4byte BattleScript_EffectMorningSun             @ EFFECT_MORNING_SUN
 	.4byte BattleScript_EffectSynthesis              @ EFFECT_SYNTHESIS
 	.4byte BattleScript_EffectMoonlight              @ EFFECT_MOONLIGHT
@@ -2640,7 +2640,6 @@ BattleScript_FuryCutterHit::
 	goto BattleScript_HitFromAtkAnimation
 BattleScript_EffectFuryCutterEX:
 	setbyte sB_ANIM_TURN, 1
-	setbyte sDMG_MULTIPLIER, 3
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
 	goto BattleScript_HitFromAtkAnimation
 
@@ -3068,6 +3067,34 @@ BattleScript_EffectBellyDrum::
 	printstring STRINGID_PKMNCUTHPMAXEDATTACK
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+
+BattleScript_EffectScissorKick:
+	maxattackhalvehp BattleScript_EffectHit
+	setbyte gCritMultiplier, 2
+	setbyte sB_ANIM_TURN, 1
+	attackcanceler
+	attackstring
+	ppreduce
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	moveendall
+	end
+
+
 
 BattleScript_EffectHotwire::
 	attackcanceler

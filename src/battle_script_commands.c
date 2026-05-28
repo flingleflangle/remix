@@ -8944,7 +8944,13 @@ static void Cmd_setsunny(void)
 // Belly Drum
 static void Cmd_maxattackhalvehp(void)
 {
-    
+    if (gCurrentMove == MOVE_SCISSOR_KICK) {
+        u32 halfHp = gBattleMons[gBattlerTarget].maxHP / 2;
+
+        if (gBattleMons[gBattlerTarget].hp < halfHp) {gBattlescriptCurrInstr += 5;}
+        else {gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);}
+    }
+
     if (gCurrentMove == MOVE_BELLY_DRUM) {
         u32 halfHp = gBattleMons[gBattlerAttacker].maxHP / 2;
 
