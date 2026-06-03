@@ -242,7 +242,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectSprout             	 @ EFFECT_SPROUT
 	.4byte BattleScript_EffectShred             	 @ EFFECT_SHRED
 	.4byte BattleScript_EffectEntwine             	 @ EFFECT_ENTWINE
-	.4byte BattleScript_EffectCobraCrush             @ EFFECT_COBRA_CRUSH
+	.4byte BattleScript_EffectSoulSteal              @ EFFECT_SOUL_STEAL
 	.4byte BattleScript_EffectFreezeHit              @ EFFECT_ICE_SLASHER
 	.4byte BattleScript_EffectSpiritPurge            @ EFFECT_SPIRIT_PURGE
 	.4byte BattleScript_EffectChisel            	 @ EFFECT_CHISEL
@@ -1345,43 +1345,16 @@ BattleScript_WagerFail::
 	end
 
 
-BattleScript_EffectCobraCrush::
-	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
-	setmoveeffect MOVE_EFFECT_POISON
-	jumpifstatus BS_ATTACKER, STATUS1_POISON | STATUS1_TOXIC_POISON, BattleScript_EffectCobraCrushed
-	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_EffectCobraCrushed
-	jumpiftype BS_ATTACKER, TYPE_STEEL, BattleScript_EffectCobraCrushed
-	goto BattleScript_HitFromAtkString
-	
-BattleScript_EffectCobraCrushed::
-	setbyte sDMG_MULTIPLIER, 2
-	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_HitFromAtkString
-	jumpiftype BS_ATTACKER, TYPE_STEEL, BattleScript_HitFromAtkString
-	setmoveeffect MOVE_EFFECT_POISON | MOVE_EFFECT_CERTAIN
-	attackstring
-	ppreduce
-	cureifburnedparalysedorpoisoned BattleScript_ButItFailed
-	attackanimation
-	waitanimation
-	critcalc
-	damagecalc
-	typecalc
-	effectivenesssound
-	hitanimation BS_TARGET
-	waitstate
-	healthbarupdate BS_TARGET
-	datahpupdate BS_TARGET
-	critmessage
-	waitmessage B_WAIT_TIME_LONG
-	resultmessage
-	waitmessage B_WAIT_TIME_LONG
-	seteffectwithchance
-	tryfaintmon BS_TARGET
-	waitmessage B_WAIT_TIME_LONG
-	printstring STRINGID_PKMNSTATUSNORMAL
-	waitmessage B_WAIT_TIME_LONG
-	updatestatusicon BS_ATTACKER
-	end
+BattleScript_EffectSoulSteal::
+	tryhealhalfhealth SoulStolen, BS_ATTACKER
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	tryhealhalfhealth SoulStolen, BS_ATTACKER
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+SoulStolen::
+	goto BattleScript_MoveEnd
+
 	
 BattleScript_EffectChisel::
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_EffectHit
@@ -4248,6 +4221,7 @@ BattleScript_FaintTarget::
 	jumpifmove MOVE_BLAST_BURN, BattleScript_MoveEnd
 	jumpifmove MOVE_FRENZY_PLANT, BattleScript_MoveEnd
 	jumpifmove MOVE_VICE_GRIP, BattleScript_MoveEnd
+	jumpifmove MOVE_SOUL_STEAL, BattleScript_EffectSoulSteal
 	return
 
 BattleScript_GiveExp::

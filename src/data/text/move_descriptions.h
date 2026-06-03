@@ -1461,9 +1461,9 @@ static const u8 sDragonFistDescription[] = _(
     "Only usable by DRAGON type.\n"
     "Charges a finishing blow.");
 	
-static const u8 sCobraCrushDescription[] = _(
-    "Wields poison to double\n"
-    "its striking power.");
+static const u8 sSoulStealDescription[] = _(
+    "Fully heals the user if\n"
+    "the opponent faints.");
 
 static const u8 sIceSlasherDescription[] = _(
     "A slash with a high critical-\n"
@@ -1981,7 +1981,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 	[MOVE_SHRED - 1] = sShredDescription,
 	[MOVE_ENTWINE - 1] = sEntwineDescription,
 	[MOVE_DRAGON_FIST - 1] = sDragonFistDescription,
-	[MOVE_COBRA_CRUSH - 1] = sCobraCrushDescription,
+	[MOVE_SOUL_STEAL - 1] = sCobraCrushDescription,
 	[MOVE_ICE_SLASHER - 1] = sIceSlasherDescription,
 	[MOVE_SPIRIT_PURGE - 1] = sSpiritPurgeDescription,
 	[MOVE_U_TURN - 1] = sUTurnDescription,

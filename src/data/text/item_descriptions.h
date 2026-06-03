@@ -1434,9 +1434,9 @@ static const u8 sTM56Desc[] = _(
     "intense fire.");
 
 static const u8 sTM57Desc[] = _(
-    "Fires a peculiar\n"
-    "ray that may\n"
-    "confuse the foe.");
+    "Guaranteed critical\n"
+    "hits on foes with\n"
+    "lower HP.");
 
 static const u8 sTM58Desc[] = _(
     "Attacks with a\n"

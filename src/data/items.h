@@ -4173,7 +4173,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_PSYBEAM] =
+    [ITEM_TM_SCISSOR_KICK] =
     {
         .name = _("TM57"),
         .itemId = ITEM_TM57,

@@ -58,7 +58,7 @@
     F(SHIELD_BASH) \
     F(FREEZE_RAY) \
     F(WILL_O_WISP) \
-    F(PSYBEAM) \
+    F(SCISSOR_KICK) \
     F(MAGICAL_LEAF) \
     F(TOMBSTONER) \
     F(DRAGON_LASH) \
