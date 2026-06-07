@@ -128,7 +128,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectNightmare              @ EFFECT_NIGHTMARE
 	.4byte BattleScript_EffectMinimize               @ EFFECT_MINIMIZE
 	.4byte BattleScript_EffectCurse                  @ EFFECT_CURSE
-	.4byte BattleScript_EffectHit                    @ EFFECT_UNUSED_6E
+	.4byte BattleScript_EffectExploit                @ EFFECT_EXPLOIT
 	.4byte BattleScript_EffectProtect                @ EFFECT_PROTECT
 	.4byte BattleScript_EffectSpikes                 @ EFFECT_SPIKES
 	.4byte BattleScript_EffectForesight              @ EFFECT_FORESIGHT
@@ -1265,6 +1265,18 @@ BattleScript_EffectShred::
 	critcalc
 	damagecalc
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	goto BattleScript_HitFromAtkAnimation
+
+BattleScript_EffectExploit:
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	bicbyte gMoveResultFlags, MOVE_RESULT_NOT_VERY_EFFECTIVE
+	setbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE 
+	setbyte gCritMultiplier, 2
+	damagecalc
+	typecalc
 	goto BattleScript_HitFromAtkAnimation
 	
 BattleScript_EffectDragonFist::

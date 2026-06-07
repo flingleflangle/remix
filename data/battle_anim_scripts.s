@@ -416,7 +416,7 @@ gBattleAnims_Moves::
 	.4byte Move_TREMOR
 	.4byte Move_MIND_CRUSH
 	.4byte Move_SCISSOR_KICK
-	.4byte Move_NIGHT_SLASH
+	.4byte Move_EXPLOIT
 	.4byte Move_PANIC
 	.4byte Move_LAST_STAND
 	.4byte Move_FLUSH
@@ -3915,10 +3915,15 @@ ScissorKick:
 	blendoff
 	end
 
-Move_NIGHT_SLASH::
+Move_EXPLOIT::
+	loadspritegfx ANIM_TAG_RAPID_SPIN
+	loadspritegfx ANIM_TAG_IMPACT
 	loadspritegfx ANIM_TAG_SLASH
+	monbg ANIM_ATTACKER
 	createvisualtask AnimTask_BlendNightSlash, 2, ANIM_TARGET, 2, 0, 8, 1
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 0, 12, RGB_BLACK
+	createsprite gRapidSpinSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 32, -32, 40, -2
+	createvisualtask AnimTask_RapinSpinMonElevation, 2, 0, 2, 0
 	waitforvisualfinish
 	createsprite gNightSlashLeftSpriteTemplate, ANIM_TARGET, 2, 1, -8, 0
 	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
@@ -3931,8 +3936,10 @@ Move_NIGHT_SLASH::
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 4, 0, 18, 1
 	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
 	waitforvisualfinish
+	createvisualtask AnimTask_RapinSpinMonElevation, 2, 0, 2, 1
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 12, 0, RGB_BLACK
 	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
 	end
 
 Move_CHARGE:

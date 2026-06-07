@@ -4364,7 +4364,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .pp = 5,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
-        .priority = 0,
+        .priority = 3,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
     },
 
@@ -4761,7 +4761,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_SOUL_STEAL] =
     {
         .effect = EFFECT_HIT,
-        .power = 40,
+        .power = 50,
         .type = TYPE_GHOST,
         .accuracy = 90,
         .pp = 2,
@@ -5200,13 +5200,13 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 
-    [MOVE_NIGHT_SLASH] =
+    [MOVE_EXPLOIT] =
     {
-        .effect = EFFECT_HIGH_CRITICAL,
-        .power = 70,
+        .effect = EFFECT_EXPLOIT,
+        .power = 18,
         .type = TYPE_DARK,
         .accuracy = 100,
-        .pp = 20,
+        .pp = 15,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,

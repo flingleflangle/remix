@@ -1468,6 +1468,39 @@ static void Cmd_typecalc(void)
         gBattleMons[gBattlerTarget].types[1] == TYPE_FLYING || 
         gBattleMons[gBattlerTarget].types[1] == TYPE_DRAGON))
         ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_EXPLOIT && (
+        gBattleMons[gBattlerTarget].types[0] == TYPE_FIRE ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_WATER ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_GRASS ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_ELECTRIC ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_ICE ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_POISON ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_ROCK ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_GROUND ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_STEEL ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_BUG ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_FIGHTING ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_PSYCHIC ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_GHOST ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_FLYING || 
+        gBattleMons[gBattlerTarget].types[0] == TYPE_DRAGON || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_FIRE ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_WATER ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_GRASS ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_ELECTRIC ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_ICE ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_POISON ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_ROCK ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_GROUND ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_STEEL ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_BUG ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_FIGHTING ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_PSYCHIC ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_GHOST ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_FLYING || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_DRAGON))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
 }
 
 static void CheckWonderGuardAndLevitate(void)
