@@ -5107,7 +5107,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
                 retVal = FALSE;
             }
             break;
-
+            
         // Handle ITEM3 effects (Guard Spec, Rare Candy, cure status)
         case 3:
 

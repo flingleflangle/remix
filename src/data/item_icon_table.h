@@ -90,18 +90,18 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_POKE_DOLL] = {gItemIcon_PokeDoll, gItemIconPalette_PokeDoll},
     [ITEM_FLUFFY_TAIL] = {gItemIcon_FluffyTail, gItemIconPalette_FluffyTail},
     // ????????
-    [ITEM_052] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_X_SPDEF] = {gItemIcon_BattleStatItem, gItemIconPalette_XSpecial},
     // Field items
     [ITEM_SUPER_REPEL] = {gItemIcon_Repel, gItemIconPalette_SuperRepel},
     [ITEM_MAX_REPEL] = {gItemIcon_Repel, gItemIconPalette_MaxRepel},
     [ITEM_ESCAPE_ROPE] = {gItemIcon_EscapeRope, gItemIconPalette_EscapeRope},
     [ITEM_REPEL] = {gItemIcon_Repel, gItemIconPalette_Repel},
     // ????????
-    [ITEM_057] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_058] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_059] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_05A] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_05B] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_V_ATTACK] = {gItemIcon_BattleStatItem2, gItemIconPalette_XAttack},
+    [ITEM_V_DEFEND] = {gItemIcon_BattleStatItem2, gItemIconPalette_XDefend},
+    [ITEM_V_SPEED] = {gItemIcon_BattleStatItem2, gItemIconPalette_XSpeed},
+    [ITEM_V_ACCURACY] = {gItemIcon_BattleStatItem2, gItemIconPalette_XAccuracy},
+    [ITEM_V_SPECIAL] = {gItemIcon_BattleStatItem2, gItemIconPalette_XSpecial},
     [ITEM_05C] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     // Evolution stones
     [ITEM_SUN_STONE] = {gItemIcon_SunStone, gItemIconPalette_SunStone},

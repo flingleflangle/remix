@@ -3538,6 +3538,7 @@ extern const u32 gItemIcon_PPMax[];
 extern const u32 gItemIconPalette_PPMax[];
 // Battle items
 extern const u32 gItemIcon_BattleStatItem[];
+extern const u32 gItemIcon_BattleStatItem2[];
 extern const u32 gItemIconPalette_GuardSpec[];
 extern const u32 gItemIconPalette_DireHit[];
 extern const u32 gItemIconPalette_XAttack[];

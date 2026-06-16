@@ -383,6 +383,36 @@ static const u8 sXSpecialDesc[] = _(
     "SP. ATK during one\n"
     "battle.");
 
+static const u8 sXSpDefDesc[] = _(
+    "Raises the stat\n"
+    "SP. DEF during one\n"
+    "battle.");
+
+static const u8 sVAttackDesc[] = _(
+    "Maxes the stat\n"
+    "ATTACK during one\n"
+    "battle.");
+
+static const u8 sVDefendDesc[] = _(
+    "Maxes the stat\n"
+    "DEFENSE during one\n"
+    "battle.");
+
+static const u8 sVSpeedDesc[] = _(
+    "Maxes the stat\n"
+    "SPEED during one\n"
+    "battle.");
+
+static const u8 sVAccuracyDesc[] = _(
+    "Maxes accuracy\n"
+    "of attack moves\n"
+    "during one battle.");
+
+static const u8 sVSpecialDesc[] = _(
+    "Maxes the stat\n"
+    "SP. ATK during one\n"
+    "battle.");
+
 static const u8 sPokeDollDesc[] = _(
     "Use to flee from\n"
     "any battle with\n"

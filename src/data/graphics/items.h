@@ -157,6 +157,7 @@ const u32 gItemIconPalette_GuardSpec[] = INCBIN_U32("graphics/items/icon_palette
 const u32 gItemIconPalette_DireHit[] = INCBIN_U32("graphics/items/icon_palettes/dire_hit.gbapal.lz");
 const u32 gItemIconPalette_XAttack[] = INCBIN_U32("graphics/items/icon_palettes/x_attack.gbapal.lz");
 const u32 gItemIcon_BattleStatItem[] = INCBIN_U32("graphics/items/icons/battle_stat_item.4bpp.lz");
+const u32 gItemIcon_BattleStatItem2[] = INCBIN_U32("graphics/items/icons/battle_stat_item_2.4bpp.lz");
 const u32 gItemIconPalette_XDefend[] = INCBIN_U32("graphics/items/icon_palettes/x_defend.gbapal.lz");
 const u32 gItemIconPalette_XSpeed[] = INCBIN_U32("graphics/items/icon_palettes/x_speed.gbapal.lz");
 const u32 gItemIconPalette_XAccuracy[] = INCBIN_U32("graphics/items/icon_palettes/x_accuracy.gbapal.lz");

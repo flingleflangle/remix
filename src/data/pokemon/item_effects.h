@@ -250,31 +250,70 @@ const u8 gItemEffect_DireHit[8] = {
 };
 
 const u8 gItemEffect_XAttack[8] = {
-    [0] = 1, // ITEM0_X_ATTACK
+    [0] = 2, // ITEM0_X_ATTACK
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
 const u8 gItemEffect_XDefend[8] = {
-    [1] = 1 << 4, /// ITEM1_X_DEFEND
+    [1] = 2 << 4, /// ITEM1_X_DEFEND
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
 const u8 gItemEffect_XSpeed[8] = {
-    [1] = 1, // ITEM1_X_SPEED
+    [1] = 2, // ITEM1_X_SPEED
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
 const u8 gItemEffect_XAccuracy[8] = {
-    [2] = 1 << 4, // ITEM2_X_ACCURACY
+    [2] = 2 << 4, // ITEM2_X_ACCURACY
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
 const u8 gItemEffect_XSpecial[8] = {
-    [2] = 1, // ITEM2_X_SPATK
+    [2] = 2, // ITEM2_X_SPATK
+    [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
+    STAT_BOOST_FRIENDSHIP_CHANGE,
+};
+
+
+// special defense is currently nonfunctional and I don't know what to do about that
+const u8 gItemEffect_XSpDef[8] = {
+    [2] = 2, // ITEM2_X_SPDEF
+    [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
+    STAT_BOOST_FRIENDSHIP_CHANGE,
+};
+
+// v items are just x items on crack
+const u8 gItemEffect_VAttack[8] = {
+    [0] = 12, // ITEM0_X_ATTACK
+    [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
+    STAT_BOOST_FRIENDSHIP_CHANGE,
+};
+
+const u8 gItemEffect_VDefend[8] = {
+    [1] = 12 << 4, /// ITEM1_X_DEFEND
+    [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
+    STAT_BOOST_FRIENDSHIP_CHANGE,
+};
+
+const u8 gItemEffect_VSpeed[8] = {
+    [1] = 12, // ITEM1_X_SPEED
+    [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
+    STAT_BOOST_FRIENDSHIP_CHANGE,
+};
+
+const u8 gItemEffect_VAccuracy[8] = {
+    [2] = 12 << 4, // ITEM2_X_ACCURACY
+    [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
+    STAT_BOOST_FRIENDSHIP_CHANGE,
+};
+
+const u8 gItemEffect_VSpecial[8] = {
+    [2] = 12, // ITEM2_X_SPATK
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
@@ -505,6 +544,12 @@ const u8 *const gItemEffectTable[] =
     [ITEM_X_SPEED - ITEM_POTION]       = gItemEffect_XSpeed,
     [ITEM_X_ACCURACY - ITEM_POTION]    = gItemEffect_XAccuracy,
     [ITEM_X_SPECIAL - ITEM_POTION]     = gItemEffect_XSpecial,
+    [ITEM_X_SPDEF - ITEM_POTION]      = gItemEffect_XSpDef,
+    [ITEM_V_ATTACK - ITEM_POTION]      = gItemEffect_VAttack,
+    [ITEM_V_DEFEND - ITEM_POTION]      = gItemEffect_VDefend,
+    [ITEM_V_SPEED - ITEM_POTION]       = gItemEffect_VSpeed,
+    [ITEM_V_ACCURACY - ITEM_POTION]    = gItemEffect_VAccuracy,
+    [ITEM_V_SPECIAL - ITEM_POTION]     = gItemEffect_VSpecial,
     [ITEM_SUN_STONE - ITEM_POTION]     = gItemEffect_SunStone,
     [ITEM_MOON_STONE - ITEM_POTION]    = gItemEffect_MoonStone,
     [ITEM_FIRE_STONE - ITEM_POTION]    = gItemEffect_FireStone,
