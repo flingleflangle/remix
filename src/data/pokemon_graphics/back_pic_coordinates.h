@@ -400,6 +400,8 @@ const struct MonCoords gMonBackPicCoords[] =
     [SPECIES_HONCHKROW]   = { .size = 0x78, .y_offset =  1 },
     [SPECIES_FROSLASS]    = { .size = 0x78, .y_offset =  1 },
     [SPECIES_GALLADE]     = { .size = 0x78, .y_offset =  1 },
+    [SPECIES_TOGEKISS]    = { .size = 0x78, .y_offset =  1 },
+    [SPECIES_ROSERADE]    = { .size = 0x78, .y_offset =  1 },
     [SPECIES_LUCARIO]     = { .size = MON_COORDS_SIZE(64, 57), .y_offset =  5 },
     [SPECIES_EGG]         = { .size = MON_COORDS_SIZE(24, 48), .y_offset = 10 },
     [SPECIES_UNOWN_B]     = { .size = MON_COORDS_SIZE(40, 48), .y_offset =  9 },

@@ -283,6 +283,7 @@ static const u16 sSpeciesToHoennPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_HOENN(IGGLYBUFF),
     SPECIES_TO_HOENN(TOGEPI),
     SPECIES_TO_HOENN(TOGETIC),
+    SPECIES_TO_HOENN(TOGEKISS),
     SPECIES_TO_HOENN(NATU),
     SPECIES_TO_HOENN(XATU),
     SPECIES_TO_HOENN(MAREEP),
@@ -445,6 +446,7 @@ static const u16 sSpeciesToHoennPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_HOENN(DUSKULL),
     SPECIES_TO_HOENN(DUSCLOPS),
     SPECIES_TO_HOENN(ROSELIA),
+    SPECIES_TO_HOENN(ROSERADE),
     SPECIES_TO_HOENN(SLAKOTH),
     SPECIES_TO_HOENN(VIGOROTH),
     SPECIES_TO_HOENN(SLAKING),
@@ -901,6 +903,8 @@ static const u16 sSpeciesToNationalPokedexNum[NUM_SPECIES - 1] =
     SPECIES_TO_NATIONAL(HONCHKROW),
     SPECIES_TO_NATIONAL(FROSLASS),
     SPECIES_TO_NATIONAL(GALLADE),
+    SPECIES_TO_NATIONAL(TOGEKISS),
+    SPECIES_TO_NATIONAL(ROSERADE),
     SPECIES_TO_NATIONAL(LUCARIO),
 };
 
@@ -1301,6 +1305,8 @@ static const u16 sHoennToNationalOrder[NUM_SPECIES - 1] =
     HOENN_TO_NATIONAL(HONCHKROW),
     HOENN_TO_NATIONAL(FROSLASS),
     HOENN_TO_NATIONAL(GALLADE),
+    HOENN_TO_NATIONAL(TOGEKISS),
+    HOENN_TO_NATIONAL(ROSERADE),
     HOENN_TO_NATIONAL(LUCARIO),
 };
 
@@ -1534,6 +1540,7 @@ static const u8 sMonFrontAnimIdsTable[NUM_SPECIES - 1] =
     [SPECIES_IGGLYBUFF - 1]   = ANIM_SWING_CONCAVE_FAST,
     [SPECIES_TOGEPI - 1]      = ANIM_SWING_CONCAVE,
     [SPECIES_TOGETIC - 1]     = ANIM_V_SQUISH_AND_BOUNCE,
+    [SPECIES_TOGEKISS - 1]    = ANIM_SWING_CONVEX,
     [SPECIES_NATU - 1]        = ANIM_H_JUMPS,
     [SPECIES_XATU - 1]        = ANIM_GROW_VIBRATE,
     [SPECIES_MAREEP - 1]      = ANIM_V_SQUISH_AND_BOUNCE,
@@ -1699,6 +1706,7 @@ static const u8 sMonFrontAnimIdsTable[NUM_SPECIES - 1] =
     [SPECIES_DUSKULL - 1]     = ANIM_ZIGZAG_FAST,
     [SPECIES_DUSCLOPS - 1]    = ANIM_H_VIBRATE,
     [SPECIES_ROSELIA - 1]     = ANIM_V_SQUISH_AND_BOUNCE_SLOW,
+    [SPECIES_ROSERADE - 1]    = ANIM_H_VIBRATE,
     [SPECIES_SLAKOTH - 1]     = ANIM_V_SQUISH_AND_BOUNCE_SLOW,
     [SPECIES_VIGOROTH - 1]    = ANIM_H_JUMPS,
     [SPECIES_SLAKING - 1]     = ANIM_V_SQUISH_AND_BOUNCE_SLOW,
@@ -3152,13 +3160,13 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         attack *= 2;
 
     if (ShouldGetStatBadgeBoost(FLAG_BADGE01_GET, battlerIdAtk))
-        attack = (110 * attack) / 100;
+        attack = (115 * attack) / 100;
     if (ShouldGetStatBadgeBoost(FLAG_BADGE05_GET, battlerIdDef))
-        defense = (110 * defense) / 100;
+        defense = (115 * defense) / 100;
     if (ShouldGetStatBadgeBoost(FLAG_BADGE07_GET, battlerIdAtk))
-        spAttack = (110 * spAttack) / 100;
+        spAttack = (115 * spAttack) / 100;
     if (ShouldGetStatBadgeBoost(FLAG_BADGE07_GET, battlerIdDef))
-        spDefense = (110 * spDefense) / 100;
+        spDefense = (115 * spDefense) / 100;
 
     // Apply type-bonus hold item
     for (i = 0; i < ARRAY_COUNT(sHoldEffectToType); i++)
@@ -5107,7 +5115,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
                 retVal = FALSE;
             }
             break;
-            
+
         // Handle ITEM3 effects (Guard Spec, Rare Candy, cure status)
         case 3:
 

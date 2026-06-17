@@ -396,6 +396,8 @@ gCryTable::
 	cry Cry_Honchkrow
 	cry Cry_Froslass
 	cry Cry_Gallade
+	cry Cry_Togekiss
+	cry Cry_Roserade
 	cry Cry_Lucario
 
 	.align 2
@@ -796,4 +798,6 @@ gCryTable_Reverse::
 	cry_reverse Cry_Honchkrow
 	cry_reverse Cry_Froslass
 	cry_reverse Cry_Gallade
+	cry_reverse Cry_Togekiss
+	cry_reverse Cry_Roserade
 	cry_reverse Cry_Lucario

@@ -1973,6 +1973,14 @@ Cry_Froslass::
 	.align 2
 Cry_Gallade::
 	.incbin "sound/direct_sound_samples/cries/gallade.bin"
+
+	.align 2
+Cry_Togekiss::
+	.incbin "sound/direct_sound_samples/cries/togekiss.bin"
+
+	.align 2
+Cry_Roserade::
+	.incbin "sound/direct_sound_samples/cries/roserade.bin"
 	
 
 	.align 2

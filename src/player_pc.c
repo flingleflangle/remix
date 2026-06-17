@@ -226,8 +226,6 @@ static const u16 sNewGamePCItems[][2] =
 {
     { ITEM_TM01, 1 },
     { ITEM_TM80, 1 },
-    { ITEM_X_ATTACK, 4 },
-    { ITEM_V_ATTACK, 1 },
     { ITEM_FRESH_WATER, 1},
     { ITEM_TASTY_TREAT, 5 },
     { ITEM_LUCKY_EGG, 1 },

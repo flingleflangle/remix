@@ -2769,6 +2769,20 @@ const u32 gMonShinyPalette_Gallade[] = INCBIN_U32("graphics/pokemon/gallade/shin
 const u8 gMonIcon_Gallade[] = INCBIN_U8("graphics/pokemon/gallade/icon.4bpp");
 const u8 gMonFootprint_Gallade[] = INCBIN_U8("graphics/pokemon/gallade/footprint.1bpp");
 
+const u32 gMonStillFrontPic_Togekiss[] = INCBIN_U32("graphics/pokemon/togekiss/front.4bpp.lz");
+const u32 gMonPalette_Togekiss[] = INCBIN_U32("graphics/pokemon/togekiss/normal.gbapal.lz");
+const u32 gMonBackPic_Togekiss[] = INCBIN_U32("graphics/pokemon/togekiss/back.4bpp.lz");
+const u32 gMonShinyPalette_Togekiss[] = INCBIN_U32("graphics/pokemon/togekiss/shiny.gbapal.lz");
+const u8 gMonIcon_Togekiss[] = INCBIN_U8("graphics/pokemon/togekiss/icon.4bpp");
+const u8 gMonFootprint_Togekiss[] = INCBIN_U8("graphics/pokemon/togekiss/footprint.1bpp");
+
+const u32 gMonStillFrontPic_Roserade[] = INCBIN_U32("graphics/pokemon/roserade/front.4bpp.lz");
+const u32 gMonPalette_Roserade[] = INCBIN_U32("graphics/pokemon/roserade/normal.gbapal.lz");
+const u32 gMonBackPic_Roserade[] = INCBIN_U32("graphics/pokemon/roserade/back.4bpp.lz");
+const u32 gMonShinyPalette_Roserade[] = INCBIN_U32("graphics/pokemon/roserade/shiny.gbapal.lz");
+const u8 gMonIcon_Roserade[] = INCBIN_U8("graphics/pokemon/roserade/icon.4bpp");
+const u8 gMonFootprint_Roserade[] = INCBIN_U8("graphics/pokemon/roserade/footprint.1bpp");
+
 const u32 gMonStillFrontPic_Lucario[] = INCBIN_U32("graphics/pokemon/lucario/front.4bpp.lz");
 const u32 gMonPalette_Lucario[] = INCBIN_U32("graphics/pokemon/lucario/normal.gbapal.lz");
 const u32 gMonBackPic_Lucario[] = INCBIN_U32("graphics/pokemon/lucario/back.4bpp.lz");

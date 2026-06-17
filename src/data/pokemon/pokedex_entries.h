@@ -2124,6 +2124,18 @@ const struct PokedexEntry gPokedexEntries[] =
         .trainerOffset = 0,
     },
 
+    [NATIONAL_DEX_TOGEKISS] =
+    {
+        .categoryName = _("JUBILEE"),
+        .height = 15,
+        .weight = 380,
+        .description = gTogeticPokedexText,
+        .pokemonScale = 268,
+        .pokemonOffset = 2,
+        .trainerScale = 271,
+        .trainerOffset = 0,
+    },
+
     [NATIONAL_DEX_NATU] =
     {
         .categoryName = _("TINY BIRD"),
@@ -3824,6 +3836,18 @@ const struct PokedexEntry gPokedexEntries[] =
         .description = gRoseliaPokedexText,
         .pokemonScale = 677,
         .pokemonOffset = 20,
+        .trainerScale = 256,
+        .trainerOffset = 0,
+    },
+
+    [NATIONAL_DEX_ROSERADE] =
+    {
+        .categoryName = _("BOUQUET"),
+        .height = 9,
+        .weight = 145,
+        .description = gRoseradePokedexText,
+        .pokemonScale = 338,
+        .pokemonOffset = 10,
         .trainerScale = 256,
         .trainerOffset = 0,
     },

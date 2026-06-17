@@ -408,5 +408,7 @@ const u16 gSpeciesIdToCryId[] =
     [SPECIES_HONCHKROW - 1] = 393,
     [SPECIES_FROSLASS - 1] = 394,
     [SPECIES_GALLADE - 1] = 395,
-    [SPECIES_LUCARIO - 1] = 396,
+    [SPECIES_TOGEKISS - 1] = 396,
+    [SPECIES_ROSERADE - 1] = 397,
+    [SPECIES_LUCARIO - 1] = 398,
 };

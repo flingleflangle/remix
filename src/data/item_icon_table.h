@@ -96,7 +96,7 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_MAX_REPEL] = {gItemIcon_Repel, gItemIconPalette_MaxRepel},
     [ITEM_ESCAPE_ROPE] = {gItemIcon_EscapeRope, gItemIconPalette_EscapeRope},
     [ITEM_REPEL] = {gItemIcon_Repel, gItemIconPalette_Repel},
-    // ????????
+    // v items
     [ITEM_V_ATTACK] = {gItemIcon_BattleStatItem2, gItemIconPalette_XAttack},
     [ITEM_V_DEFEND] = {gItemIcon_BattleStatItem2, gItemIconPalette_XDefend},
     [ITEM_V_SPEED] = {gItemIcon_BattleStatItem2, gItemIconPalette_XSpeed},

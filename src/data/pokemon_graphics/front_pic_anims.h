@@ -2093,6 +2093,18 @@ static const union AnimCmd sAnim_Togetic_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Togekiss_1[] =
+{
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Natu_1[] =
 {
     ANIMCMD_FRAME(0, 15),
@@ -4035,6 +4047,13 @@ static const union AnimCmd sAnim_Roselia_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Roserade_1[] =
+{
+    ANIMCMD_FRAME(1, 20),
+    ANIMCMD_FRAME(0, 20),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Slakoth_1[] =
 {
     ANIMCMD_FRAME(0, 13),
@@ -5082,6 +5101,7 @@ SINGLE_ANIMATION(Cleffa);
 DOUBLE_ANIMATION(Igglybuff);
 SINGLE_ANIMATION(Togepi);
 SINGLE_ANIMATION(Togetic);
+SINGLE_ANIMATION(Togekiss);
 DOUBLE_ANIMATION(Natu);
 DOUBLE_ANIMATION(Xatu);
 SINGLE_ANIMATION(Mareep);
@@ -5256,6 +5276,7 @@ SINGLE_ANIMATION(Wynaut);
 SINGLE_ANIMATION(Duskull);
 SINGLE_ANIMATION(Dusclops);
 SINGLE_ANIMATION(Roselia);
+SINGLE_ANIMATION(Roserade);
 SINGLE_ANIMATION(Slakoth);
 SINGLE_ANIMATION(Vigoroth);
 SINGLE_ANIMATION(Slaking);
@@ -5523,6 +5544,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_IGGLYBUFF]   = sAnims_Igglybuff,
     [SPECIES_TOGEPI]      = sAnims_Togepi,
     [SPECIES_TOGETIC]     = sAnims_Togetic,
+    [SPECIES_TOGEKISS]    = sAnims_Togekiss,
     [SPECIES_NATU]        = sAnims_Natu,
     [SPECIES_XATU]        = sAnims_Xatu,
     [SPECIES_MAREEP]      = sAnims_Mareep,
@@ -5687,6 +5709,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_DUSKULL]     = sAnims_Duskull,
     [SPECIES_DUSCLOPS]    = sAnims_Dusclops,
     [SPECIES_ROSELIA]     = sAnims_Roselia,
+    [SPECIES_ROSERADE]    = sAnims_Roserade,
     [SPECIES_SLAKOTH]     = sAnims_Slakoth,
     [SPECIES_VIGOROTH]    = sAnims_Vigoroth,
     [SPECIES_SLAKING]     = sAnims_Slaking,

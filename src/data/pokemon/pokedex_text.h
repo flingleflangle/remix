@@ -1060,6 +1060,12 @@ const u8 gTogeticPokedexText[] = _(
     "of heart, a TOGETIC appears and shares its\n"
     "happiness with that person.");
 
+const u8 gTogekissPokedexText[] = _(
+    "As everyone knows, it visits peaceful\n"
+    "regions, bringing them gifts of kindness\n"
+    "and sweet blessings. It will never appear\n"
+    "where there is strife.");
+
 const u8 gNatuPokedexText[] = _(
     "It runs up short trees that grow on the\n"
     "savanna to peck at new shoots.\n"
@@ -1911,6 +1917,12 @@ const u8 gRoseliaPokedexText[] = _(
     "springwater blooms with lovely flowers.\n"
     "The fragrance of its flowers has the\n"
     "effect of making its foes careless.");
+
+const u8 gRoseradePokedexText[] = _(
+    "Its sweet aroma attracts prey.\n"
+    "With the movements of a dancer,\n"
+    "it strikes with whips that are densely\n"
+    "lined with poison thorns.");
 
 const u8 gGulpinPokedexText[] = _(
     "This POKéMON's stomach fluid can even\n"

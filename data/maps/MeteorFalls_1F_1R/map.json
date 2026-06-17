@@ -237,6 +237,14 @@
       "elevation": 0,
       "item": "ITEM_MOON_STONE",
       "flag": "FLAG_ITEM_METEOR_FALLS_1F_1R_MOON_STONE_4"
+    },
+    {
+      "type": "hidden_item",
+      "x": 3,
+      "y": 32,
+      "elevation": 0,
+      "item": "ITEM_SHINY_STONE",
+      "flag": "FLAG_TEMP_1"
     }
   ]
 }

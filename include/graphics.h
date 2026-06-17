@@ -1266,6 +1266,16 @@ extern const u32 gMonShinyPalette_Togetic[];
 extern const u32 gMonStillFrontPic_Togetic[];
 extern const u8 gMonIcon_Togetic[];
 extern const u8 gMonFootprint_Togetic[];
+
+
+extern const u32 gMonFrontPic_Togekiss[];
+extern const u32 gMonPalette_Togekiss[];
+extern const u32 gMonBackPic_Togekiss[];
+extern const u32 gMonShinyPalette_Togekiss[];
+extern const u32 gMonStillFrontPic_Togekiss[];
+extern const u8 gMonIcon_Togekiss[];
+extern const u8 gMonFootprint_Togekiss[];
+
 extern const u32 gMonFrontPic_Natu[];
 extern const u32 gMonPalette_Natu[];
 extern const u32 gMonBackPic_Natu[];
@@ -2406,6 +2416,13 @@ extern const u32 gMonShinyPalette_Roselia[];
 extern const u32 gMonStillFrontPic_Roselia[];
 extern const u8 gMonIcon_Roselia[];
 extern const u8 gMonFootprint_Roselia[];
+extern const u32 gMonFrontPic_Roserade[];
+extern const u32 gMonPalette_Roserade[];
+extern const u32 gMonBackPic_Roserade[];
+extern const u32 gMonShinyPalette_Roserade[];
+extern const u32 gMonStillFrontPic_Roserade[];
+extern const u8 gMonIcon_Roserade[];
+extern const u8 gMonFootprint_Roserade[];
 extern const u32 gMonFrontPic_Slakoth[];
 extern const u32 gMonPalette_Slakoth[];
 extern const u32 gMonBackPic_Slakoth[];
