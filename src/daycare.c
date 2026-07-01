@@ -39,6 +39,8 @@ EWRAM_DATA static u16 sHatchedEggMotherMoves[MAX_MON_MOVES] = {0};
 
 #include "data/pokemon/egg_moves.h"
 
+const u8 stepMult = 3;
+
 static const struct WindowTemplate sDaycareLevelMenuWindowTemplate =
 {
     .bg = 0,
@@ -252,7 +254,7 @@ static u16 TakeSelectedPokemonFromDaycare(struct DaycareMon *daycareMon)
 
     if (GetMonData(&pokemon, MON_DATA_LEVEL) != MAX_LEVEL)
     {
-        experience = GetMonData(&pokemon, MON_DATA_EXP) + daycareMon->steps;
+        experience = GetMonData(&pokemon, MON_DATA_EXP) + (stepMult * daycareMon->steps);
         SetMonData(&pokemon, MON_DATA_EXP, &experience);
         ApplyDaycareExperience(&pokemon);
     }
@@ -287,7 +289,7 @@ static u8 GetLevelAfterDaycareSteps(struct BoxPokemon *mon, u32 steps)
 {
     struct BoxPokemon tempMon = *mon;
 
-    u32 experience = GetBoxMonData(mon, MON_DATA_EXP) + steps;
+    u32 experience = GetBoxMonData(mon, MON_DATA_EXP) + (stepMult * steps);
     SetBoxMonData(&tempMon, MON_DATA_EXP,  &experience);
     return GetLevelFromBoxMonExp(&tempMon);
 }
@@ -411,57 +413,40 @@ static u16 GetEggSpecies(u16 species)
     return species;
 }
 
-static s32 GetParentToInheritNature(struct DayCare *daycare)
+static u8 GetParentToInheritNature(struct DayCare *daycare)
 {
-    u32 species[DAYCARE_MON_COUNT];
-    s32 i;
-    s32 dittoCount;
-    s32 parent = -1;
-
-    // search for female gender
-    for (i = 0; i < DAYCARE_MON_COUNT; i++)
+    u16 motherItem = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM);
+    u16 fatherItem = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM);
+    if(motherItem == ITEM_EVERSTONE && fatherItem == ITEM_EVERSTONE)
     {
-        if (GetBoxMonGender(&daycare->mons[i].mon) == MON_FEMALE)
-            parent = i;
-    }
-
-    // search for ditto
-    for (dittoCount = 0, i = 0; i < DAYCARE_MON_COUNT; i++)
-    {
-        species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES);
-        if (species[i] == SPECIES_DITTO)
-            dittoCount++, parent = i;
-    }
-
-    // coin flip on ...two Dittos
-    if (dittoCount == DAYCARE_MON_COUNT)
-    {
-        if (Random() >= USHRT_MAX / 2)
-            parent = 0;
+    	if (Random() >= USHRT_MAX / 2)
+            return 0;
         else
-            parent = 1;
-    }
-
-    // Don't inherit nature if not holding Everstone
-    if (GetBoxMonData(&daycare->mons[parent].mon, MON_DATA_HELD_ITEM) != ITEM_EVERSTONE
-        || Random() >= USHRT_MAX / 2)
+            return 1;
+    }else
     {
-        return -1;
+    	if(motherItem == ITEM_EVERSTONE)
+    	{
+    		return 0;
+    	}
+    	if(fatherItem == ITEM_EVERSTONE)
+    	{
+    		return 1;
+    	}
     }
-
-    return parent;
+    return 2;
 }
 
 static void _TriggerPendingDaycareEgg(struct DayCare *daycare)
 {
-    s32 parent;
+    u8 parent;
     s32 natureTries = 0;
 
     SeedRng2(gMain.vblankCounter2);
     parent = GetParentToInheritNature(daycare);
 
     // don't inherit nature
-    if (parent < 0)
+    if (parent > 1)
     {
         daycare->offspringPersonality = (Random2() << 16) | ((Random() % 0xfffe) + 1);
     }
@@ -524,76 +509,37 @@ static void RemoveIVIndexFromList(u8 *ivs, u8 selectedIv)
     }
 }
 
+// Competitive IVs for most stats
+static const u8 Egg_IV_List[] =
+{
+	20, 
+    22,
+    23,
+    25,
+    27,
+    28,
+    30,
+	31
+};
+
 static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare)
 {
-    u8 i;
-    u8 selectedIvs[INHERITED_IV_COUNT];
-    u8 availableIVs[NUM_STATS];
-    u8 whichParents[INHERITED_IV_COUNT];
     u8 iv;
 
-    // Initialize a list of IV indices.
-    for (i = 0; i < NUM_STATS; i++)
-    {
-        availableIVs[i] = i;
-    }
-
-    // Select the 3 IVs that will be inherited.
-    for (i = 0; i < INHERITED_IV_COUNT; i++)
-    {
-        // Randomly pick an IV from the available list and stop from being chosen again.
-        // BUG: Instead of removing the IV that was just picked, this
-        // removes position 0 (HP) then position 1 (DEF), then position 2. This is why HP and DEF
-        // have a lower chance to be inherited in Emerald and why the IV picked for inheritance can
-        // be repeated. Amusingly, FRLG and RS also got this wrong. They remove selectedIvs[i], which
-        // is not an index! This means that it can sometimes remove the wrong stat.
-        #ifndef BUGFIX
-        selectedIvs[i] = availableIVs[Random() % (NUM_STATS - i)];
-        RemoveIVIndexFromList(availableIVs, i);
-        #else
-        u8 index = Random() % (NUM_STATS - i);
-        selectedIvs[i] = availableIVs[index];
-        RemoveIVIndexFromList(availableIVs, index);
-        #endif
-    }
-
-    // Determine which parent each of the selected IVs should inherit from.
-    for (i = 0; i < INHERITED_IV_COUNT; i++)
-    {
-        whichParents[i] = Random() % DAYCARE_MON_COUNT;
-    }
-
-    // Set each of inherited IVs on the egg mon.
-    for (i = 0; i < INHERITED_IV_COUNT; i++)
-    {
-        switch (selectedIvs[i])
-        {
-            case 0:
-                iv = GetBoxMonData(&daycare->mons[whichParents[i]].mon, MON_DATA_HP_IV);
-                SetMonData(egg, MON_DATA_HP_IV, &iv);
-                break;
-            case 1:
-                iv = GetBoxMonData(&daycare->mons[whichParents[i]].mon, MON_DATA_ATK_IV);
-                SetMonData(egg, MON_DATA_ATK_IV, &iv);
-                break;
-            case 2:
-                iv = GetBoxMonData(&daycare->mons[whichParents[i]].mon, MON_DATA_DEF_IV);
-                SetMonData(egg, MON_DATA_DEF_IV, &iv);
-                break;
-            case 3:
-                iv = GetBoxMonData(&daycare->mons[whichParents[i]].mon, MON_DATA_SPEED_IV);
-                SetMonData(egg, MON_DATA_SPEED_IV, &iv);
-                break;
-            case 4:
-                iv = GetBoxMonData(&daycare->mons[whichParents[i]].mon, MON_DATA_SPATK_IV);
-                SetMonData(egg, MON_DATA_SPATK_IV, &iv);
-                break;
-            case 5:
-                iv = GetBoxMonData(&daycare->mons[whichParents[i]].mon, MON_DATA_SPDEF_IV);
-                SetMonData(egg, MON_DATA_SPDEF_IV, &iv);
-                break;
-        }
-    }
+	// Note: If you only want perfect IVs, change each instance of "iv = etc" to this:
+	//iv = 31;
+	iv = 30;
+	SetMonData(egg, MON_DATA_HP_IV, &iv);
+	iv = Egg_IV_List[Random() % 8];
+	SetMonData(egg, MON_DATA_ATK_IV, &iv);
+	iv = Egg_IV_List[Random() % 8];
+	SetMonData(egg, MON_DATA_DEF_IV, &iv);
+	iv = Egg_IV_List[Random() % 8];
+	SetMonData(egg, MON_DATA_SPEED_IV, &iv);
+	iv = Egg_IV_List[Random() % 8];
+	SetMonData(egg, MON_DATA_SPATK_IV, &iv);
+	iv = Egg_IV_List[Random() % 8];
+	SetMonData(egg, MON_DATA_SPDEF_IV, &iv);
 }
 
 // Counts the number of egg moves a Pokémon learns and stores the moves in
@@ -654,9 +600,8 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
         sHatchedEggFatherMoves[i] = GetBoxMonData(father, MON_DATA_MOVE1 + i);
         sHatchedEggMotherMoves[i] = GetBoxMonData(mother, MON_DATA_MOVE1 + i);
     }
-
+//Inherit egg moves:
     numEggMoves = GetEggMoves(egg, sHatchedEggEggMoves);
-
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
         if (sHatchedEggFatherMoves[i] != MOVE_NONE)
@@ -671,11 +616,24 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
                 }
             }
         }
+		if (sHatchedEggMotherMoves[i] != MOVE_NONE)
+        {
+            for (j = 0; j < numEggMoves; j++)
+            {
+                if (sHatchedEggMotherMoves[i] == sHatchedEggEggMoves[j])
+                {
+                    if (GiveMoveToMon(egg, sHatchedEggMotherMoves[i]) == MON_HAS_MAX_MOVES)
+                        DeleteFirstMoveAndGiveMoveToMon(egg, sHatchedEggMotherMoves[i]);
+                    break;
+                }
+            }
+        }
         else
         {
             break;
         }
     }
+//Inherit TM/HM moves:
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
         if (sHatchedEggFatherMoves[i] != MOVE_NONE)
@@ -689,7 +647,19 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
                 }
             }
         }
+		if (sHatchedEggMotherMoves[i] != MOVE_NONE)
+        {
+            for (j = 0; j < NUM_TECHNICAL_MACHINES + NUM_HIDDEN_MACHINES; j++)
+            {
+                if (sHatchedEggMotherMoves[i] == ItemIdToBattleMoveId(ITEM_TM01 + j) && CanMonLearnTMHM(egg, j))
+                {
+                    if (GiveMoveToMon(egg, sHatchedEggMotherMoves[i]) == MON_HAS_MAX_MOVES)
+                        DeleteFirstMoveAndGiveMoveToMon(egg, sHatchedEggMotherMoves[i]);
+                }
+            }
+        }
     }
+//Inherit level up moves if both parents know that move?:
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
         if (sHatchedEggFatherMoves[i] == MOVE_NONE)
@@ -752,10 +722,208 @@ static void GiveVoltTackleIfLightBall(struct Pokemon *mon, struct DayCare *dayca
     u32 motherItem = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM);
     u32 fatherItem = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM);
 
-    if (motherItem == ITEM_LIGHT_BALL || fatherItem == ITEM_LIGHT_BALL)
+    if (motherItem == ITEM_LIGHT_BALL || fatherItem == ITEM_LIGHT_BALL || motherItem == ITEM_VOLT_CRYSTAL || fatherItem == ITEM_VOLT_CRYSTAL)
     {
         if (GiveMoveToMon(mon, MOVE_VOLT_TACKLE) == MON_HAS_MAX_MOVES)
             DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_VOLT_TACKLE);
+    }
+
+    if (motherItem == ITEM_STAR_CRYSTAL || fatherItem == ITEM_STAR_CRYSTAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_SKETCH) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SKETCH);
+    }
+
+    if (motherItem == ITEM_FLARE_CRYSTAL || fatherItem == ITEM_FLARE_CRYSTAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_SACRED_FIRE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SACRED_FIRE);
+    }
+
+    if (motherItem == ITEM_AQUA_CRYSTAL || fatherItem == ITEM_AQUA_CRYSTAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_WATER_SPOUT) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_WATER_SPOUT);
+    }
+
+    if (motherItem == ITEM_LAND_CRYSTAL || fatherItem == ITEM_LAND_CRYSTAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_PETAL_DANCE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_PETAL_DANCE);
+    }
+
+    if (motherItem == ITEM_POWER_CRYSTAL || fatherItem == ITEM_POWER_CRYSTAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_SUPERPOWER) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SUPERPOWER);
+    }
+
+    if (motherItem == ITEM_MIND_CRYSTAL || fatherItem == ITEM_MIND_CRYSTAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_PSYCHO_BOOST) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_PSYCHO_BOOST);
+    }
+
+    if (motherItem == ITEM_SHADE_CRYSTAL || fatherItem == ITEM_SHADE_CRYSTAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_NASTY_PLOT) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_NASTY_PLOT);
+    }
+
+    if (motherItem == ITEM_METAL_CRYSTAL || fatherItem == ITEM_METAL_CRYSTAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_DOOM_DESIRE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_DOOM_DESIRE);
+    }
+
+    if (motherItem == ITEM_FLAME_ORB || fatherItem == ITEM_FLAME_ORB)
+    {
+        if (GiveMoveToMon(mon, MOVE_IGNITE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_IGNITE);
+    }
+
+    if (motherItem == ITEM_TOXIC_ORB || fatherItem == ITEM_TOXIC_ORB)
+    {
+        if (GiveMoveToMon(mon, MOVE_TOXIC) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_TOXIC);
+    }
+
+    if (motherItem == ITEM_LUCKY_EGG || fatherItem == ITEM_LUCKY_EGG)
+    {
+        if (GiveMoveToMon(mon, MOVE_SOFT_BOILED) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SOFT_BOILED);
+    }
+
+    if (motherItem == ITEM_AMULET_COIN || fatherItem == ITEM_AMULET_COIN)
+    {
+        if (GiveMoveToMon(mon, MOVE_PAY_DAY) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_PAY_DAY);
+    }
+
+    if (motherItem == ITEM_LUCKY_PUNCH || fatherItem == ITEM_LUCKY_PUNCH)
+    {
+        if (GiveMoveToMon(mon, MOVE_DYNAMIC_PUNCH) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_DYNAMIC_PUNCH);
+    }
+
+    if (motherItem == ITEM_THICK_CLUB || fatherItem == ITEM_THICK_CLUB)
+    {
+        if (GiveMoveToMon(mon, MOVE_BONEMERANG) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_BONEMERANG);
+    }
+
+    if (motherItem == ITEM_STICK || fatherItem == ITEM_STICK)
+    {
+        if (GiveMoveToMon(mon, MOVE_SLASH) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SLASH);
+    }
+
+    if (motherItem == ITEM_SOUL_DEW || fatherItem == ITEM_SOUL_DEW)
+    {
+        if (GiveMoveToMon(mon, MOVE_LUSTER_PURGE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_LUSTER_PURGE);
+    }
+
+    if (motherItem == ITEM_SILK_SCARF || fatherItem == ITEM_SILK_SCARF)
+    {
+        if (GiveMoveToMon(mon, MOVE_EXTREME_SPEED) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_EXTREME_SPEED);
+    }
+
+    if (motherItem == ITEM_CHARCOAL || fatherItem == ITEM_CHARCOAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_FLAMETHROWER) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_FLAMETHROWER);
+    }
+
+    if (motherItem == ITEM_MIRACLE_SEED || fatherItem == ITEM_MIRACLE_SEED)
+    {
+        if (GiveMoveToMon(mon, MOVE_GIGA_DRAIN) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_GIGA_DRAIN);
+    }
+
+    if (motherItem == ITEM_MYSTIC_WATER || fatherItem == ITEM_MYSTIC_WATER)
+    {
+        if (GiveMoveToMon(mon, MOVE_SURF) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SURF);
+    }
+
+    if (motherItem == ITEM_MAGNET || fatherItem == ITEM_MAGNET)
+    {
+        if (GiveMoveToMon(mon, MOVE_THUNDERBOLT) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_THUNDERBOLT);
+    }
+    
+    if (motherItem == ITEM_NEVER_MELT_ICE || fatherItem == ITEM_NEVER_MELT_ICE)
+    {
+        if (GiveMoveToMon(mon, MOVE_ICE_BEAM) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_ICE_BEAM);
+    }
+
+    if (motherItem == ITEM_BLACK_GLASSES || fatherItem == ITEM_BLACK_GLASSES)
+    {
+        if (GiveMoveToMon(mon, MOVE_CRUNCH) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_CRUNCH);
+    }
+
+    if (motherItem == ITEM_SOFT_SAND || fatherItem == ITEM_SOFT_SAND)
+    {
+        if (GiveMoveToMon(mon, MOVE_EARTHQUAKE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_EARTHQUAKE);
+    }
+
+    if (motherItem == ITEM_SHARP_BEAK || fatherItem == ITEM_SHARP_BEAK)
+    {
+        if (GiveMoveToMon(mon, MOVE_AERIAL_ACE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_AERIAL_ACE);
+    }
+
+    if (motherItem == ITEM_SILVER_POWDER || fatherItem == ITEM_SILVER_POWDER)
+    {
+        if (GiveMoveToMon(mon, MOVE_SILVER_WIND) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SILVER_WIND);
+    }
+
+    if (motherItem == ITEM_TWISTED_SPOON || fatherItem == ITEM_TWISTED_SPOON)
+    {
+        if (GiveMoveToMon(mon, MOVE_EXTRASENSORY) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_EXTRASENSORY);
+    }
+
+    if (motherItem == ITEM_SPELL_TAG || fatherItem == ITEM_SPELL_TAG)
+    {
+        if (GiveMoveToMon(mon, MOVE_SHADOW_BALL) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SHADOW_BALL);
+    }
+
+    if (motherItem == ITEM_METAL_COAT || fatherItem == ITEM_SPELL_TAG)
+    {
+        if (GiveMoveToMon(mon, MOVE_SHIELD_BASH) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SHIELD_BASH);
+    }
+
+    if (motherItem == ITEM_DRAGON_FANG || fatherItem == ITEM_SPELL_TAG)
+    {
+        if (GiveMoveToMon(mon, MOVE_DRAGON_BREATH) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_DRAGON_BREATH);
+    }
+
+    if (motherItem == ITEM_HARD_STONE || fatherItem == ITEM_HARD_STONE)
+    {
+        if (GiveMoveToMon(mon, MOVE_ROCK_SLIDE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_ROCK_SLIDE);
+    }
+
+    if (motherItem == ITEM_BLACK_BELT || fatherItem == ITEM_BLACK_BELT)
+    {
+        if (GiveMoveToMon(mon, MOVE_CROSS_CHOP) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_CROSS_CHOP);
+    }
+
+    if (motherItem == ITEM_POISON_BARB || fatherItem == ITEM_POISON_BARB)
+    {
+        if (GiveMoveToMon(mon, MOVE_SLUDGE_BOMB) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SLUDGE_BOMB);
     }
 }
 
@@ -814,7 +982,17 @@ static void _GiveEggFromDaycare(struct DayCare *daycare)
     InheritIVs(&egg, daycare);
     BuildEggMoveset(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
 
-    if (species == SPECIES_PICHU)
+    // insert Oprah joke
+    if (species == SPECIES_PICHU || species == SPECIES_IGGLYBUFF || species == SPECIES_CLEFFA || species == SPECIES_TOGEPI || 
+        species == SPECIES_TYROGUE || species == SPECIES_MAGBY || species == SPECIES_SMOOCHUM || species == SPECIES_ELEKID ||
+        species == SPECIES_AZURILL || species == SPECIES_WYNAUT || species == SPECIES_MUNCHLAX || species == SPECIES_BONSLY ||
+        species == SPECIES_DRATINI || species == SPECIES_LARVITAR || species == SPECIES_BAGON || species == SPECIES_CUBONE ||
+        species == SPECIES_MEOWTH || species == SPECIES_SENTRET || species == SPECIES_ZIGZAGOON || species == SPECIES_ZUBAT || species == SPECIES_RATTATA || species == SPECIES_PIDGEY ||
+        species == SPECIES_ABRA || species == SPECIES_RALTS || species == SPECIES_PSYDUCK || species == SPECIES_MEDITITE || species == SPECIES_SLOWPOKE ||
+        species == SPECIES_WOOPER || species == SPECIES_GOLDEEN || species == SPECIES_HORSEA || species == SPECIES_SPHEAL || species == SPECIES_SWABLU ||
+        species == SPECIES_TRAPINCH || species == SPECIES_SANDSHREW || species == SPECIES_EKANS || species == SPECIES_NIDORAN_F || species == SPECIES_NIDORAN_M ||
+        species == SPECIES_SKITTY || species == SPECIES_EEVEE || species == SPECIES_HOPPIP || species == SPECIES_SNUBBULL || 
+        species == SPECIES_NATU || species == SPECIES_LEDYBA || species == SPECIES_VULPIX || species == SPECIES_SEEDOT || species == SPECIES_VENONAT)
         GiveVoltTackleIfLightBall(&egg, daycare);
 
     isEgg = TRUE;
