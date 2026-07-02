@@ -1435,9 +1435,6 @@ static void Cmd_typecalc(void)
     gBattlescriptCurrInstr++;
 
 // exceptions for specific moves to be supereffective outside of their type
-    if (gCurrentMove == MOVE_CUT && (gBattleMons[gBattlerTarget].types[0] == TYPE_GRASS || gBattleMons[gBattlerTarget].types[1] == TYPE_GRASS))
-        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
-
     if (gCurrentMove == MOVE_STRENGTH && (gBattleMons[gBattlerTarget].types[0] == TYPE_ROCK || gBattleMons[gBattlerTarget].types[1] == TYPE_ROCK))
         ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
 

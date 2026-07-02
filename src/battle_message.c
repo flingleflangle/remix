@@ -1349,7 +1349,7 @@ static const u8 sText_ApostropheS[] = _("'s");
 
 // For displaying names of invalid moves.
 // This is large enough that the text for TYPE_ELECTRIC will exceed TEXT_BUFF_ARRAY_COUNT.
-static const u8 sATypeMove_Table[NUMBER_OF_MON_TYPES][17] =
+static const u8 sATypeMove_Table[NUMBER_OF_MON_TYPES][20] =
 {
     [TYPE_NORMAL]   = _("a NORMAL move"),
     [TYPE_FIGHTING] = _("a FIGHTING move"),
@@ -1360,6 +1360,7 @@ static const u8 sATypeMove_Table[NUMBER_OF_MON_TYPES][17] =
     [TYPE_BUG]      = _("a BUG move"),
     [TYPE_GHOST]    = _("a GHOST move"),
     [TYPE_STEEL]    = _("a STEEL move"),
+    [TYPE_BLADE]    = _("a BLADE move"),
     [TYPE_MYSTERY]  = _("a ??? move"),
     [TYPE_FIRE]     = _("a FIRE move"),
     [TYPE_WATER]    = _("a WATER move"),
@@ -1368,7 +1369,9 @@ static const u8 sATypeMove_Table[NUMBER_OF_MON_TYPES][17] =
     [TYPE_PSYCHIC]  = _("a PSYCHIC move"),
     [TYPE_ICE]      = _("an ICE move"),
     [TYPE_DRAGON]   = _("a DRAGON move"),
-    [TYPE_DARK]     = _("a DARK move")
+    [TYPE_DARK]     = _("a DARK move"),
+    [TYPE_ASTRAL]   = _("an ASTRAL move"),
+    [TYPE_SOUND]     = _("a SOUND move")
 };
 
 const u8 gText_BattleTourney[] = _("BATTLE TOURNEY");

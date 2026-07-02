@@ -56,7 +56,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_MULTI_HIT,
         .power = 25,
-        .type = TYPE_NORMAL,
+        .type = TYPE_ASTRAL,
         .accuracy = 100,
         .pp = 25,
         .secondaryEffectChance = 0,
@@ -160,7 +160,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_OHKO,
         .power = 1,
-        .type = TYPE_NORMAL,
+        .type = TYPE_BLADE,
         .accuracy = 30,
         .pp = 5,
         .secondaryEffectChance = 0,
@@ -173,7 +173,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_RAZOR_WIND,
         .power = 80,
-        .type = TYPE_FLYING,
+        .type = TYPE_BLADE,
         .accuracy = 100,
         .pp = 15,
         .secondaryEffectChance = 0,
@@ -186,7 +186,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_ATTACK_UP_2,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_BLADE,
         .accuracy = 0,
         .pp = 30,
         .secondaryEffectChance = 0,
@@ -199,7 +199,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_HIGH_CRITICAL,
         .power = 55,
-        .type = TYPE_NORMAL,
+        .type = TYPE_BLADE,
         .accuracy = 95,
         .pp = 30,
         .secondaryEffectChance = 0,
@@ -589,7 +589,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_ATTACK_DOWN,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 40,
         .secondaryEffectChance = 0,
@@ -602,7 +602,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_ROAR,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 20,
         .secondaryEffectChance = 0,
@@ -615,7 +615,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_SLEEP,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 50,
         .pp = 15,
         .secondaryEffectChance = 0,
@@ -628,7 +628,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_CONFUSE,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 55,
         .pp = 20,
         .secondaryEffectChance = 0,
@@ -641,7 +641,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_SONICBOOM,
         .power = 1,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 20,
         .secondaryEffectChance = 0,
@@ -1343,7 +1343,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_DEFENSE_DOWN_2,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 85,
         .pp = 40,
         .secondaryEffectChance = 0,
@@ -1369,7 +1369,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_RESTORE_HP,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_ASTRAL,
         .accuracy = 0,
         .pp = 20,
         .secondaryEffectChance = 0,
@@ -1512,7 +1512,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_FOCUS_ENERGY,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_ASTRAL,
         .accuracy = 0,
         .pp = 30,
         .secondaryEffectChance = 0,
@@ -1681,7 +1681,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_ALWAYS_HIT,
         .power = 60,
-        .type = TYPE_NORMAL,
+        .type = TYPE_ASTRAL,
         .accuracy = 0,
         .pp = 20,
         .secondaryEffectChance = 0,
@@ -1707,7 +1707,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_MULTI_HIT,
         .power = 30,
-        .type = TYPE_STEEL,
+        .type = TYPE_BLADE,
         .accuracy = 100,
         .pp = 15,
         .secondaryEffectChance = 0,
@@ -2123,7 +2123,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_HIGH_CRITICAL,
         .power = 70,
-        .type = TYPE_NORMAL,
+        .type = TYPE_BLADE,
         .accuracy = 100,
         .pp = 20,
         .secondaryEffectChance = 0,
@@ -2253,7 +2253,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_SNORE,
         .power = 40,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 20,
         .secondaryEffectChance = 30,
@@ -2539,7 +2539,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_PERISH_SONG,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 0,
         .pp = 5,
         .secondaryEffectChance = 0,
@@ -2734,7 +2734,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_FURY_CUTTER,
         .power = 40,
-        .type = TYPE_BUG,
+        .type = TYPE_BLADE,
         .accuracy = 95,
         .pp = 20,
         .secondaryEffectChance = 100,
@@ -2799,7 +2799,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_HEAL_BELL,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 0,
         .pp = 5,
         .secondaryEffectChance = 0,
@@ -2955,7 +2955,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_ENCORE,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 5,
         .secondaryEffectChance = 0,
@@ -3072,7 +3072,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_MOONLIGHT,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_ASTRAL,
         .accuracy = 0,
         .pp = 5,
         .secondaryEffectChance = 0,
@@ -3293,7 +3293,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_UPROAR,
         .power = 50,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 25,
         .secondaryEffectChance = 100,
@@ -3553,7 +3553,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_WISH,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_ASTRAL,
         .accuracy = 100,
         .pp = 10,
         .secondaryEffectChance = 0,
@@ -3956,7 +3956,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_CONFUSE_HIT,
         .power = 120,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 10,
         .secondaryEffectChance = 30,
@@ -4190,7 +4190,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_COSMIC_POWER,
         .power = 0,
-        .type = TYPE_PSYCHIC,
+        .type = TYPE_ASTRAL,
         .accuracy = 0,
         .pp = 20,
         .secondaryEffectChance = 0,
@@ -4372,7 +4372,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_ATTACK_UP,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 0,
         .pp = 40,
         .secondaryEffectChance = 0,
@@ -4645,7 +4645,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_EVIL,
         .power = 1,
-        .type = TYPE_POISON,
+        .type = TYPE_BLADE,
         .accuracy = 100,
         .pp = 15,
         .secondaryEffectChance = 0,
@@ -4723,7 +4723,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_SHRED,
         .power = 70,
-        .type = TYPE_NORMAL,
+        .type = TYPE_BLADE,
         .accuracy = 95,
         .pp = 15,
         .secondaryEffectChance = 0,
