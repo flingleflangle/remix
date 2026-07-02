@@ -766,8 +766,8 @@ static void GiveVoltTackleIfLightBall(struct Pokemon *mon, struct DayCare *dayca
 
     if (motherItem == ITEM_SHADE_CRYSTAL || fatherItem == ITEM_SHADE_CRYSTAL)
     {
-        if (GiveMoveToMon(mon, MOVE_NASTY_PLOT) == MON_HAS_MAX_MOVES)
-            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_NASTY_PLOT);
+        if (GiveMoveToMon(mon, MOVE_WAGER) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_WAGER);
     }
 
     if (motherItem == ITEM_METAL_CRYSTAL || fatherItem == ITEM_METAL_CRYSTAL)
@@ -924,6 +924,42 @@ static void GiveVoltTackleIfLightBall(struct Pokemon *mon, struct DayCare *dayca
     {
         if (GiveMoveToMon(mon, MOVE_SLUDGE_BOMB) == MON_HAS_MAX_MOVES)
             DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SLUDGE_BOMB);
+    }
+
+    if (motherItem == ITEM_X_ATTACK || fatherItem == ITEM_X_ATTACK)
+    {
+        if (GiveMoveToMon(mon, MOVE_SWORDS_DANCE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_SWORDS_DANCE);
+    }
+
+    if (motherItem == ITEM_X_DEFEND || fatherItem == ITEM_X_DEFEND)
+    {
+        if (GiveMoveToMon(mon, MOVE_IRON_DEFENSE) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_IRON_DEFENSE);
+    }
+
+    if (motherItem == ITEM_X_SPEED || fatherItem == ITEM_X_SPEED)
+    {
+        if (GiveMoveToMon(mon, MOVE_AGILITY) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_AGILITY);
+    }
+
+    if (motherItem == ITEM_X_SPECIAL || fatherItem == ITEM_X_SPECIAL)
+    {
+        if (GiveMoveToMon(mon, MOVE_NASTY_PLOT) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_NASTY_PLOT);
+    }
+
+    if (motherItem == ITEM_DIRE_HIT || fatherItem == ITEM_DIRE_HIT)
+    {
+        if (GiveMoveToMon(mon, MOVE_FOCUS_ENERGY) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_FOCUS_ENERGY);
+    }
+
+    if (motherItem == ITEM_GUARD_SPEC || fatherItem == ITEM_GUARD_SPEC)
+    {
+        if (GiveMoveToMon(mon, MOVE_MIST) == MON_HAS_MAX_MOVES)
+            DeleteFirstMoveAndGiveMoveToMon(mon, MOVE_MIST);
     }
 }
 

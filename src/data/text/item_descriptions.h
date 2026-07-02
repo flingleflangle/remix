@@ -1624,9 +1624,9 @@ static const u8 sTM88Desc[] = _(
     "foe on hit.");
 
 static const u8 sTM89Desc[] = _(
-    "Boosts strength\n"
-    "sharply, but lowers\n"
-    "all abilities.");
+    "Fights in close\n"
+    "range, lowering\n"
+    "defenses.");
 
 static const u8 sTM90Desc[] = _(
     "A weak jolt of\n"

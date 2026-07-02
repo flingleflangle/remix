@@ -47,6 +47,7 @@ PetalburgCity_Mart_Pokemart_Expanded:
 	.2byte ITEM_X_SPEED
 	.2byte ITEM_X_ATTACK
 	.2byte ITEM_X_DEFEND
+	.2byte ITEM_V_DEFEND
 	.2byte ITEM_CHOICE_BAND
 	.2byte ITEM_CHOICE_SPECS
 	.2byte ITEM_CHOICE_SCARF

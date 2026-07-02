@@ -28,6 +28,7 @@ RustboroCity_Mart_Pokemart_Basic:
 	.2byte ITEM_X_SPEED
 	.2byte ITEM_X_ATTACK
 	.2byte ITEM_X_DEFEND
+	.2byte ITEM_V_ATTACK
 	.2byte ITEM_POWER_CRYSTAL
 	pokemartlistend
 
