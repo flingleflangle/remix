@@ -420,6 +420,12 @@ gBattleAnims_Moves::
 	.4byte Move_PANIC
 	.4byte Move_LAST_STAND
 	.4byte Move_FLUSH
+	.4byte Move_OLD_FURY_CUTTER
+	.4byte Move_TRIPLE_SLASH
+	.4byte Move_WIDE_SLASH
+	.4byte Move_VACUUM_CUT
+	.4byte Move_PIERCE
+	.4byte Move_FOIL
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -1468,10 +1474,7 @@ FireSpinEffect:
 	return
 
 Move_FURY_CUTTER:
-	choosetwoturnanim FuryCutter, FuryCutterEX
-FuryCutterEX:
-	call EXMove
-	delay 4
+Move_OLD_FURY_CUTTER:
 FuryCutter:
 	loadspritegfx ANIM_TAG_CUT
 	monbg ANIM_TARGET
@@ -2479,6 +2482,7 @@ Move_HEADBUTT:
 	waitforvisualfinish
 	end
 
+Move_FOIL:
 Move_HORN_ATTACK:
 	loadspritegfx ANIM_TAG_IMPACT
 	loadspritegfx ANIM_TAG_HORN_HIT
@@ -3467,6 +3471,8 @@ Move_ROLLOUT:
 	blendoff
 	end
 
+
+Move_WIDE_SLASH:
 Move_FALSE_SWIPE:
 	loadspritegfx ANIM_TAG_SLASH_2
 	loadspritegfx ANIM_TAG_IMPACT
@@ -6614,6 +6620,7 @@ Move_SPIKES:
 	clearmonbg ANIM_DEF_PARTNER
 	end
 
+Move_PIERCE:
 Move_MEGAHORN:
 	loadspritegfx ANIM_TAG_HORN_HIT_2
 	loadspritegfx ANIM_TAG_IMPACT
@@ -6705,6 +6712,34 @@ Move_PECK:
 	createvisualtask AnimTask_RotateMonToSideAndRestore, 2, 3, -768, ANIM_TARGET, 2
 	createsprite gFlashingHitSplatSpriteTemplate, ANIM_TARGET, 3, -12, 0, ANIM_TARGET, 3
 	waitforvisualfinish
+	end
+
+
+Move_VACUUM_CUT:
+	loadspritegfx ANIM_TAG_AIR_WAVE_2
+	loadspritegfx ANIM_TAG_IMPACT
+	playsewithpan SE_M_JUMP_KICK, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 1, 5
+	createsprite gAirWaveCrescentSpriteTemplate, ANIM_ATTACKER, 2, 14, -12, 0, -12, 14, 0, 0
+	createsprite gAirWaveCrescentSpriteTemplate, ANIM_ATTACKER, 2, 26, 8, 12, 8, 12, 0, 0
+	delay 1
+	createsprite gAirWaveCrescentSpriteTemplate, ANIM_ATTACKER, 2, 6, -20, 0, -20, 14, 0, 0
+	createsprite gAirWaveCrescentSpriteTemplate, ANIM_ATTACKER, 2, 34, 16, 12, 16, 12, 0, 0
+	createsprite gAirWaveCrescentSpriteTemplate, ANIM_ATTACKER, 2, -2, -20, 0, -28, 14, 0, 0
+	createsprite gAirWaveCrescentSpriteTemplate, ANIM_ATTACKER, 2, 42, 24, 12, 24, 12, 0, 0
+	delay 1
+	createsprite gAirWaveCrescentSpriteTemplate, ANIM_ATTACKER, 2, -10, -28, 0, -36, 14, 0, 0
+	createsprite gAirWaveCrescentSpriteTemplate, ANIM_ATTACKER, 2, 50, 32, 12, 30, 12, 0, 0
+	delay 3
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_DEF_PARTNER, 2, 0, 12, 1
+	delay 4
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 12, 1
+	delay 4
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATK_PARTNER, 2, 0, 12, 1
+	delay 0
 	end
 
 Move_AEROBLAST:
@@ -7082,6 +7117,7 @@ Move_DOUBLE_KICK:
 	end
 
 Move_TRIPLE_KICK:
+Move_TRIPLE_SLASH:
 	loadspritegfx ANIM_TAG_HANDS_AND_FEET
 	loadspritegfx ANIM_TAG_IMPACT
 	monbg ANIM_DEF_PARTNER

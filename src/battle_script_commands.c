@@ -1280,6 +1280,8 @@ static void Cmd_critcalc(void)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_ICE_SLASHER)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_FLYING_KNEE)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_BOULDER_DASH)
+                + (gBattleMoves[gCurrentMove].effect == EFFECT_FURY_CUTTER)
+                + (gBattleMoves[gCurrentMove].effect == EFFECT_PIERCE)
                 + 4 * (gBattleMoves[gCurrentMove].effect == EFFECT_WAGER)
                 + (holdEffect == HOLD_EFFECT_SCOPE_LENS)
                 + 2 * (holdEffect == HOLD_EFFECT_LUCKY_PUNCH && gBattleMons[gBattlerAttacker].species == SPECIES_CHANSEY)
@@ -8772,17 +8774,26 @@ static void Cmd_furycuttercalc(void)
         gDisableStructs[gBattlerAttacker].furyCutterCounter = 0;
         gBattlescriptCurrInstr = BattleScript_MoveMissedPause;
     }
-    else
+    else if (gCurrentMove == MOVE_FURY_CUTTER)
     {
         s32 i;
 
-        if (gDisableStructs[gBattlerAttacker].furyCutterCounter != 5)
+        if (gDisableStructs[gBattlerAttacker].furyCutterCounter != 4)
             gDisableStructs[gBattlerAttacker].furyCutterCounter++;
 
         gDynamicBasePower = gBattleMoves[gCurrentMove].power;
 
         for (i = 1; i < gDisableStructs[gBattlerAttacker].furyCutterCounter; i++)
             gDynamicBasePower *= 2;
+
+        gBattlescriptCurrInstr++;
+    }
+    else
+    {
+        s32 i;
+
+        if (gDisableStructs[gBattlerAttacker].furyCutterCounter != 4)
+            gDisableStructs[gBattlerAttacker].furyCutterCounter++;
 
         gBattlescriptCurrInstr++;
     }

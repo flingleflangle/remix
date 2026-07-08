@@ -197,7 +197,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_CUT] =
     {
-        .effect = EFFECT_HIGH_CRITICAL,
+        .effect = EFFECT_FURY_CUTTER,
         .power = 55,
         .type = TYPE_BLADE,
         .accuracy = 95,
@@ -639,14 +639,14 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SONIC_BOOM] =
     {
-        .effect = EFFECT_SONICBOOM,
+        .effect = EFFECT_FIXED_DAMAGE,
         .power = 1,
         .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 20,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
-        .priority = 0,
+        .priority = 1,
         .flags = FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 
@@ -1068,7 +1068,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_DRAGON_RAGE] =
     {
-        .effect = EFFECT_DRAGON_RAGE,
+        .effect = EFFECT_FIXED_DAMAGE,
         .power = 1,
         .type = TYPE_DRAGON,
         .accuracy = 100,
@@ -2121,7 +2121,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SLASH] =
     {
-        .effect = EFFECT_HIGH_CRITICAL,
+        .effect = EFFECT_FURY_CUTTER,
         .power = 70,
         .type = TYPE_BLADE,
         .accuracy = 100,
@@ -2176,7 +2176,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .effect = EFFECT_TRIPLE_KICK,
         .power = 20,
         .type = TYPE_FIGHTING,
-        .accuracy = 100,
+        .accuracy = 90,
         .pp = 20,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
@@ -2682,7 +2682,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_FALSE_SWIPE,
         .power = 40,
-        .type = TYPE_NORMAL,
+        .type = TYPE_BLADE,
         .accuracy = 100,
         .pp = 40,
         .secondaryEffectChance = 0,
@@ -2733,11 +2733,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_FURY_CUTTER] =
     {
         .effect = EFFECT_FURY_CUTTER,
-        .power = 40,
+        .power = 20,
         .type = TYPE_BLADE,
         .accuracy = 95,
         .pp = 20,
-        .secondaryEffectChance = 100,
+        .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
@@ -3955,12 +3955,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_HYPER_VOICE] =
     {
         .effect = EFFECT_CONFUSE_HIT,
-        .power = 120,
+        .power = 90,
         .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 10,
         .secondaryEffectChance = 30,
-        .target = MOVE_TARGET_FOES_AND_ALLY,
+        .target = MOVE_TARGET_BOTH,
         .priority = 0,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
     },
@@ -5252,4 +5252,81 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags = FLAG_MIRROR_MOVE_AFFECTED,
     },
 
+    [MOVE_OLD_FURY_CUTTER] =
+    {
+        .effect = EFFECT_FURY_CUTTER,
+        .power = 20,
+        .type = TYPE_BUG,
+        .accuracy = 95,
+        .pp = 20,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+
+    [MOVE_TRIPLE_SLASH] =
+    {
+        .effect = EFFECT_TRIPLE_KICK,
+        .power = 20,
+        .type = TYPE_BLADE,
+        .accuracy = 90,
+        .pp = 20,
+        .secondaryEffectChance = 90,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+
+    [MOVE_WIDE_SLASH] =
+    {
+        .effect = EFFECT_FURY_CUTTER,
+        .power = 60,
+        .type = TYPE_BLADE,
+        .accuracy = 90,
+        .pp = 10,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_BOTH,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+
+    [MOVE_VACUUM_CUT] =
+    {
+        .effect = EFFECT_FIXED_DAMAGE,
+        .power = 1,
+        .type = TYPE_BLADE,
+        .accuracy = 0,
+        .pp = 10,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_FOES_AND_ALLY,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+
+    [MOVE_PIERCE] =
+    {
+        .effect = EFFECT_PIERCE,
+        .power = 55,
+        .type = TYPE_BLADE,
+        .accuracy = 95,
+        .pp = 10,
+        .secondaryEffectChance = 30,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+
+    [MOVE_FOIL] =
+    {
+        .effect = EFFECT_FLINCH_HIT,
+        .power = 30,
+        .type = TYPE_BLADE,
+        .accuracy = 100,
+        .pp = 10,
+        .secondaryEffectChance = 30,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 1,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
 };

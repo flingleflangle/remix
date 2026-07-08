@@ -59,7 +59,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectOHKO                   @ EFFECT_OHKO
 	.4byte BattleScript_EffectRazorWind              @ EFFECT_RAZOR_WIND
 	.4byte BattleScript_EffectSuperFang              @ EFFECT_SUPER_FANG
-	.4byte BattleScript_EffectDragonRage             @ EFFECT_DRAGON_RAGE
+	.4byte BattleScript_EffectFixedDamage            @ EFFECT_FIXED_DAMAGE
 	.4byte BattleScript_EffectTrap                   @ EFFECT_TRAP
 	.4byte BattleScript_EffectHit                    @ EFFECT_HIGH_CRITICAL
 	.4byte BattleScript_EffectDoubleHit              @ EFFECT_DOUBLE_HIT
@@ -148,7 +148,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectBatonPass              @ EFFECT_BATON_PASS
 	.4byte BattleScript_EffectHit                    @ EFFECT_PURSUIT
 	.4byte BattleScript_EffectRapidSpin              @ EFFECT_RAPID_SPIN
-	.4byte BattleScript_EffectSonicboom              @ EFFECT_SONICBOOM
+	.4byte BattleScript_EffectPierce                 @ EFFECT_PIERCE
 	.4byte BattleScript_EffectScissorKick            @ EFFECT_SCISSOR_KICK
 	.4byte BattleScript_EffectMorningSun             @ EFFECT_MORNING_SUN
 	.4byte BattleScript_EffectSynthesis              @ EFFECT_SYNTHESIS
@@ -833,6 +833,11 @@ BattleScript_EffectConversion::
 
 BattleScript_EffectFlinchHit::
 	setmoveeffect MOVE_EFFECT_FLINCH
+	jumpifmove MOVE_FOIL, FoilIsABladeMove
+	goto BattleScript_EffectHit
+
+FoilIsABladeMove:
+	furycuttercalc
 	goto BattleScript_EffectHit
 
 BattleScript_EffectRestoreHp::
@@ -984,14 +989,51 @@ BattleScript_EffectSuperFang::
 	damagetohalftargethp
 	goto BattleScript_HitFromAtkAnimation
 
-BattleScript_EffectDragonRage::
+
+BattleScript_EffectFixedDamage::
 	attackcanceler
+	jumpifmove MOVE_VACUUM_CUT, VacuumCut
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
 	typecalc
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	jumpifmove MOVE_DRAGON_RAGE, DragonRage
+	jumpifmove MOVE_SONIC_BOOM, SonicBoom
+
+DragonRage::
 	setword gBattleMoveDamage, 40
+	adjustsetdamage
+	goto BattleScript_HitFromAtkAnimation
+
+VacuumCut::
+	furycuttercalc
+	attackstring
+	ppreduce
+	typecalc
+	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	setword gBattleMoveDamage, 35
+	adjustsetdamage
+	attackanimation
+	waitanimation
+VacuumLoop::
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid VacuumLoop
+	tryfaintmon BS_ATTACKER
+	end
+
+SonicBoom::
+	setword gBattleMoveDamage, 20
 	adjustsetdamage
 	goto BattleScript_HitFromAtkAnimation
 
@@ -2292,6 +2334,7 @@ BattleScript_PartyHealEnd::
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectTripleKick::
+	jumpifmove MOVE_TRIPLE_SLASH, BattleScript_EffectTripleSlash
 	attackcanceler
 	attackstring
 	ppreduce
@@ -2342,6 +2385,64 @@ BattleScript_TripleKickPrintStrings::
 	printstring STRINGID_HITXTIMES
 	waitmessage B_WAIT_TIME_LONG
 BattleScript_TripleKickEnd::
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	moveendfrom MOVEEND_UPDATE_LAST_MOVES
+	end
+
+
+BattleScript_EffectTripleSlash::
+	attackcanceler
+	attackstring
+	ppreduce
+	sethword sTRIPLE_KICK_POWER, 0
+	initmultihitstring
+	setmultihit 3
+BattleScript_TripleSlashLoop::
+	jumpifhasnohp BS_ATTACKER, BattleScript_TripleSlashEnd
+	jumpifhasnohp BS_TARGET, BattleScript_TripleSlashNoMoreHits
+	jumpifhalfword CMP_EQUAL, gChosenMove, MOVE_SLEEP_TALK, BattleScript_DoTripleSlashAttack
+	jumpifstatus BS_ATTACKER, STATUS1_SLEEP, BattleScript_TripleSlashNoMoreHits
+BattleScript_DoTripleSlashAttack::
+	accuracycheck BattleScript_TripleSlashNoMoreHits, ACC_CURR_MOVE
+	movevaluescleanup
+	addbyte sTRIPLE_KICK_POWER, 20
+	addbyte sMULTIHIT_STRING + 4, 1
+	copyhword gDynamicBasePower, sTRIPLE_KICK_POWER
+	furycuttercalc
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	jumpifmovehadnoeffect BattleScript_TripleSlashNoMoreHits
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifbyte CMP_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_FOE_ENDURED, BattleScript_TripleSlashPrintStrings
+	decrementmultihit BattleScript_TripleSlashLoop
+	goto BattleScript_TripleSlashPrintStrings
+BattleScript_TripleSlashNoMoreHits::
+	pause B_WAIT_TIME_SHORT
+	jumpifbyte CMP_EQUAL, sMULTIHIT_STRING + 4, 0, BattleScript_TripleSlashPrintStrings
+	bicbyte gMoveResultFlags, MOVE_RESULT_MISSED
+BattleScript_TripleSlashPrintStrings::
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	jumpifbyte CMP_EQUAL, sMULTIHIT_STRING + 4, 0, BattleScript_TripleSlashEnd
+	jumpifbyte CMP_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_DOESNT_AFFECT_FOE, BattleScript_TripleSlashEnd
+	copyarray gBattleTextBuff1, sMULTIHIT_STRING, 6
+	printstring STRINGID_HITXTIMES
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_TripleSlashEnd::
 	seteffectwithchance
 	tryfaintmon BS_TARGET
 	moveendfrom MOVEEND_UPDATE_LAST_MOVES
@@ -2621,11 +2722,6 @@ BattleScript_FuryCutterHit::
 	typecalc
 	jumpifmovehadnoeffect BattleScript_FuryCutterHit
 	adjustnormaldamage
-	jumpifability BS_ATTACKER, ABILITY_LIGHTNING_ROD_EX, BattleScript_EffectFuryCutterEX
-	goto BattleScript_HitFromAtkAnimation
-BattleScript_EffectFuryCutterEX:
-	setbyte sB_ANIM_TURN, 1
-	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectAttract::
@@ -3052,6 +3148,18 @@ BattleScript_EffectBellyDrum::
 	printstring STRINGID_PKMNCUTHPMAXEDATTACK
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+
+BattleScript_EffectPierce:
+	furycuttercalc
+	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	jumpifstat BS_TARGET, CMP_LESS_THAN, STAT_DEF, DEFAULT_STAT_STAGE, DoublePierce
+	goto BattleScript_EffectHit
+
+DoublePierce:
+	setbyte sDMG_MULTIPLIER, 2
+	goto BattleScript_EffectHit
+
 
 BattleScript_EffectScissorKick:
 	maxattackhalvehp BattleScript_EffectHit

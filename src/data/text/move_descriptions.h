@@ -58,8 +58,8 @@ static const u8 sSwordsDanceDescription[] = _(
     "sharply raises ATTACK.");
 
 static const u8 sCutDescription[] = _(
-    "Super effective against\n"
-    "GRASS types.");
+    "Cuts the foe with sharp\n"
+    "scythes, claws, etc.");
 
 static const u8 sGustDescription[] = _(
     "Strikes the foe with a gust\n"
@@ -841,6 +841,10 @@ static const u8 sFuryCutterDescription[] = _(
     "An attack that intensifies\n"
     "on each successive hit.");
 
+static const u8 sOldFuryCutterDescription[] = _(
+    "Successive hits raise\n"
+    "attack power.");
+
 static const u8 sSteelWingDescription[] = _(
     "Strikes the foe with hard\n"
     "wings spread wide.");
@@ -1613,6 +1617,26 @@ static const u8 sFlushDescription[] = _(
     "Washes the opponent away.\n"
     "Next POKéMON can't switch.");
 
+static const u8 sTripleSlashDescription[] = _(
+    "Slashes up to 3 times, each\n"
+    "strike rising in power.");
+
+static const u8 sWideSlashDescription[] = _(
+    "A broad stroke that cuts\n"
+    "through all opponents.");
+
+static const u8 sVacuumCutDescription[] = _(
+    "A slicing vortex deals 35\n"
+    "HP damage to all POKéMON.");
+
+static const u8 sPierceDescription[] = _(
+    "A lunging attack that\n"
+    "cuts through defenses.");
+
+static const u8 sFoilDescription[] = _(
+    "A fast, long-range poke\n"
+    "that may disrupt the foe.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -2019,4 +2043,10 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_PANIC - 1] = sPanicDescription,
     [MOVE_LAST_STAND - 1] = sLastStandDescription,
     [MOVE_FLUSH - 1] = sFlushDescription,
+    [MOVE_OLD_FURY_CUTTER - 1] = sOldFuryCutterDescription,
+    [MOVE_TRIPLE_SLASH - 1] = sTripleSlashDescription,
+    [MOVE_WIDE_SLASH - 1] = sWideSlashDescription,
+    [MOVE_VACUUM_CUT - 1] = sVacuumCutDescription,
+    [MOVE_PIERCE - 1] = sPierceDescription,
+    [MOVE_FOIL - 1] = sFoilDescription,
 };

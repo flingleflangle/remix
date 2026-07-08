@@ -405,8 +405,14 @@
 #define MOVE_PANIC 401
 #define MOVE_LAST_STAND 402
 #define MOVE_FLUSH 403
+#define MOVE_OLD_FURY_CUTTER 404
+#define MOVE_TRIPLE_SLASH 405
+#define MOVE_WIDE_SLASH 406
+#define MOVE_VACUUM_CUT 407
+#define MOVE_PIERCE 408
+#define MOVE_FOIL 409
 
-#define MOVES_COUNT 405
+#define MOVES_COUNT 410
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF
