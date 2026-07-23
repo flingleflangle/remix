@@ -159,7 +159,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectDefenseUpHit           @ EFFECT_DEFENSE_UP_HIT
 	.4byte BattleScript_EffectAttackUpHit            @ EFFECT_ATTACK_UP_HIT
 	.4byte BattleScript_EffectAllStatsUpHit          @ EFFECT_ALL_STATS_UP_HIT
-	.4byte BattleScript_EffectHit                    @ EFFECT_UNUSED_8D
+	.4byte BattleScript_EffectSound                  @ EFFECT_SOUND
 	.4byte BattleScript_EffectBellyDrum              @ EFFECT_BELLY_DRUM
 	.4byte BattleScript_EffectPsychUp                @ EFFECT_PSYCH_UP
 	.4byte BattleScript_EffectMirrorCoat             @ EFFECT_MIRROR_COAT
@@ -3135,6 +3135,52 @@ BattleScript_EffectAllStatsUpHit::
 	setmoveeffect MOVE_EFFECT_ALL_STATS_UP | MOVE_EFFECT_AFFECTS_USER
 	goto BattleScript_EffectHit
 
+BattleScript_EffectSound::
+	jumpifmove MOVE_ECHO, BattleScript_Echo
+
+BattleScript_Echo:
+	attackcanceler
+	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, EchoAmped
+	accuracycheck BattleScript_EchoMiss, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	trysetfutureattack BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	printfromtable gFutureMoveUsedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	moveendall
+	end
+BattleScript_EchoMiss:
+	setdefensecurlbit
+	attackstring
+	ppreduce
+	pause B_WAIT_TIME_SHORT
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+EchoAmped::
+	setseeded
+	setbyte sDMG_MULTIPLIER, 3
+	setbyte sB_ANIM_TURN, 1
+	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC
+	goto BattleScript_HitFromAtkString
+
 BattleScript_EffectBellyDrum::
 	attackcanceler
 	attackstring
@@ -5549,6 +5595,7 @@ BattleScript_RecoilEnd::
 
 BattleScript_ItemSteal::
 	playanimation BS_TARGET, B_ANIM_ITEM_STEAL
+	setmoveeffect MOVE_EFFECT_FLINCH | MOVE_EFFECT_CERTAIN
 	printstring STRINGID_PKMNSTOLEITEM
 	waitmessage B_WAIT_TIME_LONG
 	return

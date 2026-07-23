@@ -1637,6 +1637,10 @@ static const u8 sFoilDescription[] = _(
     "A fast, long-range poke\n"
     "that may disrupt the foe.");
 
+static const u8 sEchoDescription[] = _(
+    "A rebounding sound wave.\n"
+    "Can amplify if failed.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -2049,4 +2053,8 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_VACUUM_CUT - 1] = sVacuumCutDescription,
     [MOVE_PIERCE - 1] = sPierceDescription,
     [MOVE_FOIL - 1] = sFoilDescription,
+    [MOVE_SERENADE - 1] = sFoilDescription,
+    [MOVE_RESONATE - 1] = sFoilDescription,
+    [MOVE_SHRIEK - 1] = sFoilDescription,
+    [MOVE_ECHO - 1] = sEchoDescription,
 };

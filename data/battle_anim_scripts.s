@@ -426,6 +426,10 @@ gBattleAnims_Moves::
 	.4byte Move_VACUUM_CUT
 	.4byte Move_PIERCE
 	.4byte Move_FOIL
+	.4byte Move_SERENADE
+	.4byte Move_RESONATE
+	.4byte Move_SHRIEK
+	.4byte Move_ECHO
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -676,6 +680,9 @@ Move_BODY_SLAM:
 	blendoff
 	end
 
+Move_SERENADE:
+Move_RESONATE:
+Move_SHRIEK:
 Move_SUPERSONIC:
 	loadspritegfx ANIM_TAG_GOLD_RING
 	monbg ANIM_ATK_PARTNER
@@ -697,6 +704,40 @@ SupersonicRing:
 	createsprite gSupersonicRingSpriteTemplate, ANIM_TARGET, 2, 16, 0, 0, 0, 30, 0
 	delay 2
 	return
+
+
+Move_ECHO:
+	loadspritegfx ANIM_TAG_GOLD_RING
+	loadspritegfx ANIM_TAG_THIN_RING
+	choosetwoturnanim Echo, EchoAmped
+Echo:
+	monbg ANIM_ATK_PARTNER
+	splitbgprio_foes ANIM_ATTACKER
+	setalpha 12, 8
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 2, 0, 8, 1
+	call SupersonicRing
+	call SupersonicRing
+	call SupersonicRing
+	call SupersonicRing
+	call SupersonicRing
+	call SupersonicRing
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_PARTNER
+	blendoff
+	end
+EchoAmped:
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 2, 0, 8, 1
+	createvisualtask SoundTask_PlayCryWithEcho, 5, FALSE
+	call HyperVoiceEffect
+	delay 3
+	createvisualtask SoundTask_PlayCryWithEcho, 5, FALSE
+	call HyperVoiceEffect
+	delay 3
+	createvisualtask SoundTask_PlayCryWithEcho, 5, TRUE
+	call HyperVoiceEffect
+	waitforvisualfinish
+	end
+
 
 Move_SCREECH:
 	loadspritegfx ANIM_TAG_PURPLE_RING

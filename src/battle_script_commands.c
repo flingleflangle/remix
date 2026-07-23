@@ -1668,9 +1668,6 @@ u8 TypeCalc(u16 move, u8 attacker, u8 defender)
         flags |= MOVE_RESULT_MISSED;
     }
 
-    if (gCurrentMove == MOVE_CUT && (gBattleMons[defender].types[0] == TYPE_GRASS || gBattleMons[defender].types[1] == TYPE_GRASS))
-        ModulateDmgByType2(TYPE_MUL_SUPER_EFFECTIVE, move, &flags);
-
     if (gCurrentMove == MOVE_STRENGTH && (gBattleMons[defender].types[0] == TYPE_ROCK || gBattleMons[defender].types[1] == TYPE_ROCK))
             ModulateDmgByType2(TYPE_MUL_SUPER_EFFECTIVE, move, &flags);
 
@@ -6874,6 +6871,10 @@ static void Cmd_setseeded(void)
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_LEECH_SEED_FAIL;
     }
+    else if (gCurrentMove == MOVE_ECHO)
+        {
+        gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_DEFENSE_CURL;
+        }
     else
     {
         gStatuses3[gBattlerTarget] |= gBattlerAttacker;
@@ -9089,11 +9090,10 @@ static void Cmd_rapidspinfree(void)
 
 static void Cmd_setdefensecurlbit(void)
 {
-    if (gCurrentMove == MOVE_DEFENSE_CURL) {
+    if (gCurrentMove == MOVE_DEFENSE_CURL || gCurrentMove == MOVE_ECHO ) {
     gBattleMons[gBattlerAttacker].status2 |= STATUS2_DEFENSE_CURL;
     gBattlescriptCurrInstr++;
-    }
-    else {
+    } else {
     gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_DEFENSE_CURL;
     gBattlescriptCurrInstr++;
     }
@@ -9166,29 +9166,59 @@ static void Cmd_selectfirstvalidtarget(void)
 
 static void Cmd_trysetfutureattack(void)
 {
-    if (gWishFutureKnock.futureSightCounter[gBattlerTarget] != 0)
-    {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-    }
-    else
-    {
-        gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)] |= SIDE_STATUS_FUTUREATTACK;
-        gWishFutureKnock.futureSightMove[gBattlerTarget] = gCurrentMove;
-        gWishFutureKnock.futureSightAttacker[gBattlerTarget] = gBattlerAttacker;
-        gWishFutureKnock.futureSightCounter[gBattlerTarget] = 3;
-        gWishFutureKnock.futureSightDmg[gBattlerTarget] = CalculateBaseDamage(&gBattleMons[gBattlerAttacker], &gBattleMons[gBattlerTarget], gCurrentMove,
-                                                    gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)], 0,
-                                                    0, gBattlerAttacker, gBattlerTarget);
-
-        if (gProtectStructs[gBattlerAttacker].helpingHand)
-            gWishFutureKnock.futureSightDmg[gBattlerTarget] = gWishFutureKnock.futureSightDmg[gBattlerTarget] * 15 / 10;
-
-        if (gCurrentMove == MOVE_DOOM_DESIRE)
-            gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DOOM_DESIRE;
+    
+    if (gCurrentMove == MOVE_ECHO) {
+        if (gWishFutureKnock.futureSightCounter[gBattlerTarget] != 0)
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
         else
-            gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FUTURE_SIGHT;
+        {
+            gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)] |= SIDE_STATUS_FUTUREATTACK;
+            gWishFutureKnock.futureSightMove[gBattlerTarget] = gCurrentMove;
+            gWishFutureKnock.futureSightAttacker[gBattlerTarget] = gBattlerAttacker;
+            gWishFutureKnock.futureSightCounter[gBattlerTarget] = 2;
+            gWishFutureKnock.futureSightDmg[gBattlerTarget] = CalculateBaseDamage(&gBattleMons[gBattlerAttacker], &gBattleMons[gBattlerTarget], gCurrentMove,
+                                                        gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)], 0,
+                                                        0, gBattlerAttacker, gBattlerTarget);
 
-        gBattlescriptCurrInstr += 5;
+            if (gProtectStructs[gBattlerAttacker].helpingHand)
+                gWishFutureKnock.futureSightDmg[gBattlerTarget] = gWishFutureKnock.futureSightDmg[gBattlerTarget] * 15 / 10;
+
+            if (gCurrentMove == MOVE_DOOM_DESIRE)
+                gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DOOM_DESIRE;
+            else
+                gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FUTURE_SIGHT;
+
+            gBattlescriptCurrInstr += 5;
+        }
+    }
+
+    else {
+        if (gWishFutureKnock.futureSightCounter[gBattlerTarget] != 0)
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
+        else
+        {
+            gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)] |= SIDE_STATUS_FUTUREATTACK;
+            gWishFutureKnock.futureSightMove[gBattlerTarget] = gCurrentMove;
+            gWishFutureKnock.futureSightAttacker[gBattlerTarget] = gBattlerAttacker;
+            gWishFutureKnock.futureSightCounter[gBattlerTarget] = 3;
+            gWishFutureKnock.futureSightDmg[gBattlerTarget] = CalculateBaseDamage(&gBattleMons[gBattlerAttacker], &gBattleMons[gBattlerTarget], gCurrentMove,
+                                                        gSideStatuses[GET_BATTLER_SIDE(gBattlerTarget)], 0,
+                                                        0, gBattlerAttacker, gBattlerTarget);
+
+            if (gProtectStructs[gBattlerAttacker].helpingHand)
+                gWishFutureKnock.futureSightDmg[gBattlerTarget] = gWishFutureKnock.futureSightDmg[gBattlerTarget] * 15 / 10;
+
+            if (gCurrentMove == MOVE_DOOM_DESIRE)
+                gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DOOM_DESIRE;
+            else
+                gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FUTURE_SIGHT;
+
+            gBattlescriptCurrInstr += 5;
+        }
     }
 }
 

@@ -411,8 +411,12 @@
 #define MOVE_VACUUM_CUT 407
 #define MOVE_PIERCE 408
 #define MOVE_FOIL 409
+#define MOVE_SERENADE 410
+#define MOVE_RESONATE 411
+#define MOVE_SHRIEK 412
+#define MOVE_ECHO 413
 
-#define MOVES_COUNT 410
+#define MOVES_COUNT 414
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF
