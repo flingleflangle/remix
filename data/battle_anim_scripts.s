@@ -680,7 +680,6 @@ Move_BODY_SLAM:
 	blendoff
 	end
 
-Move_SERENADE:
 Move_RESONATE:
 Move_SHRIEK:
 Move_SUPERSONIC:
@@ -2768,6 +2767,8 @@ Move_NASTY_PLOT::
 	call UnsetPsychicBackground
 	end
 
+
+Move_SERENADE:
 Move_SING:
 	loadspritegfx ANIM_TAG_MUSIC_NOTES
 	monbg ANIM_DEF_PARTNER

@@ -415,8 +415,9 @@
 #define MOVE_RESONATE 411
 #define MOVE_SHRIEK 412
 #define MOVE_ECHO 413
+#define MOVE_ABYSS 414
 
-#define MOVES_COUNT 414
+#define MOVES_COUNT 415
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

@@ -1634,7 +1634,7 @@ static const u8 sPierceDescription[] = _(
     "cuts through defenses.");
 
 static const u8 sFoilDescription[] = _(
-    "A fast, long-range poke\n"
+    "A blindingly fast slash\n"
     "that may disrupt the foe.");
 
 static const u8 sEchoDescription[] = _(

@@ -1498,7 +1498,10 @@ static void Cmd_typecalc(void)
         gBattleMons[gBattlerTarget].types[1] == TYPE_PSYCHIC ||
         gBattleMons[gBattlerTarget].types[1] == TYPE_GHOST ||
         gBattleMons[gBattlerTarget].types[1] == TYPE_FLYING || 
-        gBattleMons[gBattlerTarget].types[1] == TYPE_DRAGON))
+        gBattleMons[gBattlerTarget].types[1] == TYPE_DRAGON || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_BLADE || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_SOUND || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_ASTRAL))
         ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
 }
 
@@ -1518,6 +1521,14 @@ static void CheckWonderGuardAndLevitate(void)
         gLastUsedAbility = ABILITY_LEVITATE;
         gBattleCommunication[MISS_TYPE] = B_MSG_GROUND_MISS;
         RecordAbilityBattle(gBattlerTarget, ABILITY_LEVITATE);
+        return;
+    }
+
+    if (gBattleMons[gBattlerTarget].ability == ABILITY_SOUNDPROOF && moveType == TYPE_SOUND)
+    {
+        gLastUsedAbility = ABILITY_SOUNDPROOF;
+        gBattleCommunication[MISS_TYPE] = B_MSG_AVOIDED_DMG;
+        RecordAbilityBattle(gBattlerTarget, ABILITY_SOUNDPROOF);
         return;
     }
 
@@ -9082,6 +9093,14 @@ static void Cmd_rapidspinfree(void)
         BattleScriptPushCursor();
         gBattlescriptCurrInstr = BattleScript_SpikesFree;
     }
+    else if (gBattleMons[gBattlerAttacker].status1 & (STATUS1_BURN))
+        {
+            gBattleMons[gBattlerAttacker].status1 = 0;
+            gBattlescriptCurrInstr += 5;
+            gActiveBattler = gBattlerAttacker;
+            BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+            MarkBattlerForControllerExec(gActiveBattler);
+        }
     else
     {
         gBattlescriptCurrInstr++;

@@ -2841,7 +2841,39 @@ BattleScript_EffectBatonPass::
 
 BattleScript_EffectRapidSpin::
 	setmoveeffect MOVE_EFFECT_RAPIDSPIN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
-	goto BattleScript_EffectHit
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MAX_STAT_STAGE, BattleScript_MoveEnd
+	setbyte sSTAT_ANIM_PLAYED, FALSE
+	playstatchangeanimation BS_ATTACKER, BIT_SPEED, 0
+	setstatchanger STAT_SPEED, 1, FALSE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_MoveEnd
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_MoveEnd
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+	datahpupdate BS_ATTACKER
+	updatestatusicon BS_ATTACKER
+	moveendall
+	end
 
 BattleScript_EffectSonicboom::
 	attackcanceler
@@ -5080,6 +5112,7 @@ BattleScript_RapidSpinAway::
 	rapidspinfree
 	return
 
+
 BattleScript_WrapFree::
 	printstring STRINGID_PKMNGOTFREE
 	waitmessage B_WAIT_TIME_LONG
@@ -5488,6 +5521,7 @@ BattleScript_TargetFRZHeal::
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_TARGET
 	return
+
 
 BattleScript_MoveEffectSleep::
 	statusanimation BS_EFFECT_BATTLER

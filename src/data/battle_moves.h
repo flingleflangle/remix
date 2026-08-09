@@ -5332,12 +5332,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SERENADE] =
     {
-        .effect = EFFECT_SOUND,
+        .effect = EFFECT_MULTI_HIT,
         .power = 45,
         .type = TYPE_SOUND,
         .accuracy = 80,
         .pp = 10,
-        .secondaryEffectChance = 30,
+        .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
         .priority = 1,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -5380,5 +5380,18 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
+
+    [MOVE_ABYSS] =
+    {
+        .effect = EFFECT_OHKO,
+        .power = 1,
+        .type = TYPE_WATER,
+        .accuracy = 20,
+        .pp = 5,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = 0,
     },
 };
