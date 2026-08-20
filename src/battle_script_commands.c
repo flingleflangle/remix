@@ -9580,7 +9580,8 @@ static void Cmd_tryswapitems(void)
 static void Cmd_trycopyability(void)
 {
     if (gBattleMons[gBattlerTarget].ability != ABILITY_NONE
-        && gBattleMons[gBattlerTarget].ability != ABILITY_WONDER_GUARD)
+        && gBattleMons[gBattlerTarget].ability != ABILITY_WONDER_GUARD
+        && gBattleMons[gBattlerTarget].ability != gBattleMons[gBattlerAttacker].ability)
     {
         gBattleMons[gBattlerAttacker].ability = gBattleMons[gBattlerTarget].ability;
         gLastUsedAbility = gBattleMons[gBattlerTarget].ability;

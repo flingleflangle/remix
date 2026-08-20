@@ -1017,6 +1017,7 @@ VacuumCut::
 	attackanimation
 	waitanimation
 VacuumLoop::
+	jumpiftype BS_TARGET, TYPE_STEEL, VacuumNoEffectOnSteel
 	effectivenesssound
 	hitanimation BS_TARGET
 	waitstate
@@ -1031,6 +1032,13 @@ VacuumLoop::
 	jumpifnexttargetvalid VacuumLoop
 	tryfaintmon BS_ATTACKER
 	end
+VacuumNoEffectOnSteel::
+	printstring STRINGID_ITDOESNTAFFECT
+	waitmessage B_WAIT_TIME_SHORT
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid VacuumLoop
+	end
+
 
 SonicBoom::
 	setword gBattleMoveDamage, 20
@@ -3169,6 +3177,8 @@ BattleScript_EffectAllStatsUpHit::
 
 BattleScript_EffectSound::
 	jumpifmove MOVE_ECHO, BattleScript_Echo
+	jumpifmove MOVE_SHRIEK, BattleScript_Shriek
+	jumpifmove MOVE_RESONATE, BattleScript_Resonate
 
 BattleScript_Echo:
 	attackcanceler
@@ -3212,6 +3222,29 @@ EchoAmped::
 	setbyte sB_ANIM_TURN, 1
 	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC
 	goto BattleScript_HitFromAtkString
+
+BattleScript_Resonate::
+	attackcanceler
+	attackstring
+	ppreduce
+	accuracycheck BattleScript_ButItFailed, NO_ACC_CALC_CHECK_LOCK_ON
+	trycopyability BattleScript_ButItFailed
+	copyfoestats BattleScript_ButItFailed
+	painsplitdmgcalc BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	copyword gBattleMoveDamage, sPAINSPLIT_HP
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	printstring STRINGID_PKMNCOPIEDFOE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+BattleScript_Shriek:
+	attackcanceler
 
 BattleScript_EffectBellyDrum::
 	attackcanceler

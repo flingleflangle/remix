@@ -1742,6 +1742,7 @@ static void DrawTextEntryBox(void)
     sDrawTextEntryBoxFuncs[sNamingScreen->templateNum]();
 }
 
+//Look into these later for the EX Icon drawing
 static void DummyGenderIcon(void);
 static void DrawGenderIcon(void);
 

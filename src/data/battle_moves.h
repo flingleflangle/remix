@@ -3545,7 +3545,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .pp = 10,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
-        .priority = 0,
+        .priority = 1,
         .flags = 0,
     },
 
@@ -5345,14 +5345,14 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_RESONATE] =   
     {
-        .effect = EFFECT_HELPING_HAND,
+        .effect = EFFECT_SOUND,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 20,
-        .secondaryEffectChance = 0,
-        .target = MOVE_TARGET_USER,
-        .priority = 5,
+        .secondaryEffectChance = 100,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
         .flags = 0,
     },
 
