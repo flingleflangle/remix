@@ -1642,12 +1642,20 @@ static const u8 sEchoDescription[] = _(
     "Can amplify if failed.");
 
 static const u8 sSerenadeDescription[] = _(
-    "Blasts the foe with music\n"
-    "2 to 5 times.");
+    "Locks the foe down with\n"
+    "an alluring song.");
 
 static const u8 sResonateDescription[] = _(
     "Syncs up with the target's\n"
     "HP, stats, and ability.");
+
+static const u8 sShriekDescription[] = _(
+    "Startles foes with a wicked\n"
+    "scream. May lower SP.DEF.");
+
+static const u8 sDissDescription[] = _(
+    "Focuses on the opponent to\n"
+    "optimize emotional damage.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -2063,6 +2071,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_FOIL - 1] = sFoilDescription,
     [MOVE_SERENADE - 1] = sSerenadeDescription,
     [MOVE_RESONATE - 1] = sResonateDescription,
-    [MOVE_SHRIEK - 1] = sFoilDescription,
+    [MOVE_SHRIEK - 1] = sShriekDescription,
     [MOVE_ECHO - 1] = sEchoDescription,
+    [MOVE_DISS - 1] = sDissDescription,
 };

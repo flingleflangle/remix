@@ -2684,6 +2684,7 @@ BattleScript_EffectSandstorm::
 	goto BattleScript_MoveWeatherChange
 
 BattleScript_EffectRollout::
+	jumpifmove MOVE_SERENADE, BattleScript_EffectSerenade
 	attackcanceler
 	attackstring
 	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_RolloutCheckAccuracy
@@ -2694,6 +2695,46 @@ BattleScript_RolloutHit::
 	typecalc2
 	rolloutdamagecalculation
 	goto BattleScript_HitFromCritCalc
+
+BattleScript_EffectSerenade::
+	jumpifnodamage SerenadeStart
+	goto BattleScript_SerenadeMiss
+SerenadeStart::
+	attackcanceler
+	attackstring
+	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_SerenadeCheckAccuracy
+	ppreduce
+	goto BattleScript_SerenadeHit
+BattleScript_SerenadeCheckAccuracy::
+	accuracycheck BattleScript_SerenadeMiss, ACC_CURR_MOVE
+BattleScript_SerenadeHit::
+	typecalc2
+	rolloutdamagecalculation
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffectprimary
+	setmoveeffect MOVE_EFFECT_FLINCH | MOVE_EFFECT_CERTAIN
+	goto BattleScript_HitFromCritCalc
+	end
+BattleScript_SerenadeMiss::
+	pause B_WAIT_TIME_SHORT
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPATK, MIN_STAT_STAGE, BattleScript_SerenadeMinMiss
+	printstring STRINGID_SERENADESKIP
+	waitmessage B_WAIT_TIME_LONG
+	setstatchanger STAT_SPATK, 2, TRUE
+	playstatchangeanimation BS_ATTACKER, BIT_SPATK, 1
+	setseeded
+	disablelastusedattack BattleScript_MoveEnd
+	datahpupdate BS_ATTACKER
+	moveendall
+	end
+BattleScript_SerenadeMinMiss::
+	printstring STRINGID_SERENADESKIP2
+	waitmessage B_WAIT_TIME_LONG
+	setseeded
+	disablelastusedattack BattleScript_MoveEnd
+	datahpupdate BS_ATTACKER
+	moveendall
+	end
 
 BattleScript_EffectSwagger::
 	attackcanceler
@@ -3177,8 +3218,44 @@ BattleScript_EffectAllStatsUpHit::
 
 BattleScript_EffectSound::
 	jumpifmove MOVE_ECHO, BattleScript_Echo
-	jumpifmove MOVE_SHRIEK, BattleScript_Shriek
 	jumpifmove MOVE_RESONATE, BattleScript_Resonate
+	jumpifmove MOVE_DISS, BattleScript_Diss
+
+BattleScript_Diss::
+	attackcanceler
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	setbyte sSTAT_ANIM_PLAYED, FALSE
+	playstatchangeanimation BS_TARGET, BIT_ATK | BIT_SPATK | BIT_SPEED, STAT_CHANGE_NEGATIVE | STAT_CHANGE_MULTIPLE_STATS
+	playstatchangeanimation BS_TARGET, BIT_ATK, STAT_CHANGE_NEGATIVE
+	setstatchanger STAT_ATK, 1, TRUE
+	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_EffectDissTrySpAtk
+@ Greater than B_MSG_DEFENDER_STAT_FELL is checking if the stat cannot decrease
+	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, B_MSG_DEFENDER_STAT_FELL, BattleScript_EffectDissTrySpAtk
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_SHORT
+BattleScript_EffectDissTrySpAtk:
+	playstatchangeanimation BS_TARGET, BIT_SPATK, STAT_CHANGE_NEGATIVE
+	setstatchanger STAT_SPATK, 1, TRUE
+	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_EffectDissTrySpeed
+@ Greater than B_MSG_DEFENDER_STAT_FELL is checking if the stat cannot decrease
+	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, B_MSG_DEFENDER_STAT_FELL, BattleScript_EffectDissTrySpeed
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_SHORT
+BattleScript_EffectDissTrySpeed:
+	playstatchangeanimation BS_TARGET, BIT_SPEED, STAT_CHANGE_NEGATIVE
+	setstatchanger STAT_SPEED, 1, TRUE
+	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_EffectDissBurnCheck
+@ Greater than B_MSG_DEFENDER_STAT_FELL is checking if the stat cannot decrease
+	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, B_MSG_DEFENDER_STAT_FELL, BattleScript_EffectDissBurnCheck
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_SHORT
+BattleScript_EffectDissBurnCheck:
+	setmoveeffect MOVE_EFFECT_BURN
+	seteffectwithchance
+	goto BattleScript_MoveEnd
 
 BattleScript_Echo:
 	attackcanceler
@@ -3242,9 +3319,6 @@ BattleScript_Resonate::
 	printstring STRINGID_PKMNCOPIEDFOE
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
-
-BattleScript_Shriek:
-	attackcanceler
 
 BattleScript_EffectBellyDrum::
 	attackcanceler
@@ -4451,9 +4525,15 @@ BattleScript_FaintTarget::
 	jumpifmove MOVE_HYDRO_CANNON, BattleScript_MoveEnd
 	jumpifmove MOVE_BLAST_BURN, BattleScript_MoveEnd
 	jumpifmove MOVE_FRENZY_PLANT, BattleScript_MoveEnd
+	jumpifmove MOVE_SERENADE, BattleScript_SerenadeFaint
 	jumpifmove MOVE_VICE_GRIP, BattleScript_MoveEnd
 	jumpifmove MOVE_SOUL_STEAL, BattleScript_EffectSoulSteal
 	return
+
+
+BattleScript_SerenadeFaint::
+	setseeded
+	goto BattleScript_MoveEnd
 
 BattleScript_GiveExp::
 	setbyte sGIVEEXP_STATE, 0

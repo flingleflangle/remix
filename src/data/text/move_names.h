@@ -414,4 +414,5 @@ const u8 gMoveNames[MOVES_COUNT][MOVE_NAME_LENGTH + 1] =
 	[MOVE_RESONATE] = _("RESONATE"),
 	[MOVE_SHRIEK] = _("SHRIEK"),
 	[MOVE_ECHO] = _("ECHO"),
+	[MOVE_DISS] = _("DISS"),
 };

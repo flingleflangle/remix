@@ -1694,7 +1694,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_SKULL_BASH,
         .power = 130,
-        .type = TYPE_NORMAL,
+        .type = TYPE_ROCK,
         .accuracy = 100,
         .pp = 15,
         .secondaryEffectChance = 0,
@@ -3657,7 +3657,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_YAWN,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_SOUND,
         .accuracy = 100,
         .pp = 10,
         .secondaryEffectChance = 0,
@@ -4696,7 +4696,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_TOMBSTONER] =
     {
         .effect = EFFECT_TOMBSTONER,
-        .power = 135,
+        .power = 150,
         .type = TYPE_ROCK,
         .accuracy = 90,
         .pp = 5,
@@ -5332,11 +5332,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SERENADE] =
     {
-        .effect = EFFECT_MULTI_HIT,
+        .effect = EFFECT_ROLLOUT,
         .power = 45,
         .type = TYPE_SOUND,
-        .accuracy = 80,
-        .pp = 10,
+        .accuracy = 70,
+        .pp = 5,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
         .priority = 1,
@@ -5349,7 +5349,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .power = 0,
         .type = TYPE_SOUND,
         .accuracy = 100,
-        .pp = 20,
+        .pp = 5,
         .secondaryEffectChance = 100,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
@@ -5358,12 +5358,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SHRIEK] =
     {
-        .effect = EFFECT_SOUND,
-        .power = 60,
+        .effect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+        .power = 40,
         .type = TYPE_SOUND,
         .accuracy = 100,
-        .pp = 10,
-        .secondaryEffectChance = 30,
+        .pp = 30,
+        .secondaryEffectChance = 20,
         .target = MOVE_TARGET_SELECTED,
         .priority = 1,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -5382,6 +5382,19 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
     },
 
+    [MOVE_DISS] =
+    {
+        .effect = EFFECT_SOUND,
+        .power = 0,
+        .type = TYPE_SOUND,
+        .accuracy = 100,
+        .pp = 20,
+        .secondaryEffectChance = 50,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = -3,
+        .flags = FLAG_PROTECT_AFFECTED,
+    },
+
     [MOVE_ABYSS] =
     {
         .effect = EFFECT_OHKO,
@@ -5394,4 +5407,5 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .priority = 0,
         .flags = 0,
     },
+
 };

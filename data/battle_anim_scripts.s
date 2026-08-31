@@ -430,6 +430,7 @@ gBattleAnims_Moves::
 	.4byte Move_RESONATE
 	.4byte Move_SHRIEK
 	.4byte Move_ECHO
+	.4byte Move_DISS
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -5504,6 +5505,8 @@ RoarEffect:
 	createsprite gRoarNoiseLineSpriteTemplate, ANIM_ATTACKER, 2, 24, 8, 1
 	return
 
+
+Move_DISS:
 Move_GROWL:
 	loadspritegfx ANIM_TAG_NOISE_LINE
 	createvisualtask SoundTask_PlayDoubleCry, 2, ANIM_ATTACKER, DOUBLE_CRY_GROWL

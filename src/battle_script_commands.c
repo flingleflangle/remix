@@ -1276,6 +1276,7 @@ static void Cmd_critcalc(void)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_HIGH_CRITICAL)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_SKY_ATTACK)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_BLAZE_KICK)
+                + (gBattleMoves[gCurrentMove].effect == EFFECT_SKULL_BASH)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_POISON_TAIL)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_ICE_SLASHER)
                 + (gBattleMoves[gCurrentMove].effect == EFFECT_FLYING_KNEE)
@@ -6872,6 +6873,11 @@ static void Cmd_setseeded(void)
     {
         gStatuses3[gBattlerTarget] &= ~STATUS3_LEECHSEED;
     }
+    if (gCurrentMove == MOVE_SERENADE)
+    {
+        gBattleMons[gBattlerTarget].status2 &= ~STATUS2_ESCAPE_PREVENTION;
+        gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_MULTIPLETURNS;
+    }
     else if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT || gStatuses3[gBattlerTarget] & STATUS3_LEECHSEED)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
@@ -8160,7 +8166,7 @@ static void Cmd_disablelastusedattack(void)
     s32 i;
     u16 lastMove = gLastResultingMoves[gBattlerAttacker];
 
-    if (lastMove == MOVE_YOGA_LOOP) {
+    if (lastMove == MOVE_YOGA_LOOP || MOVE_SERENADE) {
         for (i = 0; i < MAX_MON_MOVES; i++)
         {
             if (gBattleMons[gBattlerAttacker].moves[i] == gLastMoves[gBattlerAttacker])

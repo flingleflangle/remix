@@ -5162,6 +5162,14 @@ static void CheckFocusPunch_ClearVarsBeforeTurnStarts(void)
                 BattleScriptExecute(BattleScript_FocusPunchSetUp);
                 return;
             }
+            else if (gChosenMoveByBattler[gActiveBattler] == MOVE_DISS
+                && !(gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP)
+                && !(gDisableStructs[gBattlerAttacker].truantCounter)
+                && !(gProtectStructs[gActiveBattler].noValidMoves))
+            {
+                BattleScriptExecute(BattleScript_FocusPunchSetUp);
+                return;
+            }
         }
     }
 
