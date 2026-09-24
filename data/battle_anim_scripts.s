@@ -431,6 +431,12 @@ gBattleAnims_Moves::
 	.4byte Move_SHRIEK
 	.4byte Move_ECHO
 	.4byte Move_DISS
+	.4byte Move_ABYSS
+	.4byte Move_STAR_BARRAGE
+	.4byte Move_COSMIC_FLARE
+	.4byte Move_NEBULA_CRASH
+	.4byte Move_CHAKRA_SURGE
+	.4byte Move_MANDALA_RAY
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -950,6 +956,7 @@ Move_TWINEEDLE:
 	blendoff
 	end
 
+
 Move_FIRE_BLAST:
 	loadspritegfx ANIM_TAG_SMALL_EMBER
 	createsoundtask SoundTask_FireBlast, SE_M_FLAME_WHEEL, SE_M_FLAME_WHEEL2
@@ -1010,6 +1017,54 @@ Move_LEECH_SEED:
 	createsprite gLeechSeedSpriteTemplate, ANIM_TARGET, 2, 15, 0, 16, 24, 35, -37
 	delay 12
 	loopsewithpan SE_M_TAIL_WHIP, SOUND_PAN_TARGET, 10, 8
+	waitforvisualfinish
+	end
+
+
+Move_COSMIC_FLARE:
+	loadspritegfx ANIM_TAG_FIRE
+	loadspritegfx ANIM_TAG_FIRE_PLUME
+	loadspritegfx ANIM_TAG_SMALL_EMBER
+	loopsewithpan SE_M_EMBER, SOUND_PAN_ATTACKER, 5, 2
+	createsprite gEmberSpriteTemplate, ANIM_TARGET, 2, 20, 0, -16, 24, 20, 1
+	delay 4
+	createsprite gEmberSpriteTemplate, ANIM_TARGET, 2, 20, 0, 0, 24, 20, 1
+	delay 4
+	createsprite gEmberSpriteTemplate, ANIM_TARGET, 2, 20, 0, 16, 24, 20, 1
+	delay 16
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 0, 12, RGB_BLACK
+	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_TARGET, 1
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 0, 16, RGB_WHITEALPHA
+	delay 6
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 15, 0, RGB_WHITEALPHA
+	delay 32
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 12, 0, RGB_BLACK
+	createvisualtask AnimTask_ShakeMon2, 5, ANIM_TARGET, 8, 0, 40, 1
+	createvisualtask AnimTask_FacadeColorBlend, 2, ANIM_TARGET, 72
+	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_TARGET
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, 0
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 0, 1
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, -1
+	delay 1
+	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_TARGET
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 2, 1
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 1, -1
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, 1
+	delay 1
+	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_TARGET
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 1, -2
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 3, 1
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 0, 1
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 1, -1
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, 0
 	waitforvisualfinish
 	end
 
@@ -3582,6 +3637,8 @@ Move_MILK_DRINK:
 	waitforvisualfinish
 	end
 
+
+Move_ABYSS:
 Move_MAGNITUDE:
 	createvisualtask AnimTask_IsPowerOver99, 2
 	waitforvisualfinish
@@ -7043,6 +7100,8 @@ FlyUnleash:
 	blendoff
 	goto FlyEnd
 
+
+Move_STAR_BARRAGE:
 Move_BOUNCE:
 	loadspritegfx ANIM_TAG_ROUND_SHADOW
 	loadspritegfx ANIM_TAG_IMPACT
@@ -7068,6 +7127,7 @@ BounceUnleash:
 	clearmonbg ANIM_DEF_PARTNER
 	blendoff
 	goto BounceEnd
+	
 
 Move_KARATE_CHOP:
 	loadspritegfx ANIM_TAG_HANDS_AND_FEET
@@ -9027,6 +9087,8 @@ SoulStealFlash:
 	delay 4
 	return
 
+
+Move_MANDALA_RAY:
 Move_HYPER_BEAM:
 	loadspritegfx ANIM_TAG_ORBS
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 4, 0, 16, RGB_BLACK
@@ -9784,6 +9846,8 @@ ReturnStrongestHit:
 	waitforvisualfinish
 	return
 
+
+Move_CHAKRA_SURGE:
 Move_COSMIC_POWER:
 	loadspritegfx ANIM_TAG_SPARKLE_2
 	createvisualtask SoundTask_PlaySE2WithPanning, 5, SE_M_COSMIC_POWER, 0
@@ -10563,6 +10627,8 @@ Move_VILE_CUTTER:
 	waitforvisualfinish
 	end
 	
+
+Move_NEBULA_CRASH:
 Move_FIRE_CRASH:
 	loadspritegfx ANIM_TAG_SMALL_EMBER
 	playsewithpan SE_M_FLAME_WHEEL, SOUND_PAN_ATTACKER

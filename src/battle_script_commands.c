@@ -1504,6 +1504,47 @@ static void Cmd_typecalc(void)
         gBattleMons[gBattlerTarget].types[1] == TYPE_SOUND || 
         gBattleMons[gBattlerTarget].types[1] == TYPE_ASTRAL))
         ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_STAR_BARRAGE && (
+        gBattleMons[gBattlerTarget].types[0] == TYPE_NORMAL ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_FIRE ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_WATER ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_GRASS ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_ELECTRIC ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_ICE ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_POISON ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_ROCK ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_GROUND ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_STEEL ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_BUG ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_FIGHTING ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_PSYCHIC ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_GHOST ||
+        gBattleMons[gBattlerTarget].types[0] == TYPE_FLYING || 
+        gBattleMons[gBattlerTarget].types[0] == TYPE_DRAGON || 
+        gBattleMons[gBattlerTarget].types[0] == TYPE_BLADE || 
+        gBattleMons[gBattlerTarget].types[0] == TYPE_SOUND || 
+        gBattleMons[gBattlerTarget].types[0] == TYPE_ASTRAL ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_NORMAL ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_FIRE ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_WATER ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_GRASS ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_ELECTRIC ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_ICE ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_POISON ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_ROCK ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_GROUND ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_STEEL ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_BUG ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_FIGHTING ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_PSYCHIC ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_GHOST ||
+        gBattleMons[gBattlerTarget].types[1] == TYPE_FLYING || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_DRAGON || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_BLADE || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_SOUND || 
+        gBattleMons[gBattlerTarget].types[1] == TYPE_ASTRAL))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
 }
 
 static void CheckWonderGuardAndLevitate(void)
@@ -7748,11 +7789,24 @@ static void Cmd_tryKO(void)
 // Super Fang
 static void Cmd_damagetohalftargethp(void)
 {
+
+    if (gCurrentMove == MOVE_SUPER_FANG)
+    {
     gBattleMoveDamage = gBattleMons[gBattlerTarget].hp / 2;
     if (gBattleMoveDamage == 0)
         gBattleMoveDamage = 1;
 
     gBattlescriptCurrInstr++;
+    }
+
+    else if (gCurrentMove == MOVE_STAR_BARRAGE)
+    {
+    gBattleMoveDamage = gBattleMons[gBattlerTarget].maxHP / 4.8;
+    if (gBattleMoveDamage == 0)
+        gBattleMoveDamage = 1;
+
+    gBattlescriptCurrInstr++;
+    }
 }
 
 static void Cmd_setsandstorm(void)
@@ -8166,7 +8220,7 @@ static void Cmd_disablelastusedattack(void)
     s32 i;
     u16 lastMove = gLastResultingMoves[gBattlerAttacker];
 
-    if (lastMove == MOVE_YOGA_LOOP || MOVE_SERENADE) {
+    if (lastMove == MOVE_YOGA_LOOP || MOVE_SERENADE || MOVE_COSMIC_FLARE) {
         for (i = 0; i < MAX_MON_MOVES; i++)
         {
             if (gBattleMons[gBattlerAttacker].moves[i] == gLastMoves[gBattlerAttacker])
@@ -9305,6 +9359,7 @@ static void Cmd_setsemiinvulnerablebit(void)
     {
     case MOVE_FLY:
     case MOVE_BOUNCE:
+    case MOVE_STAR_BARRAGE:
         gStatuses3[gBattlerAttacker] |= STATUS3_ON_AIR;
         break;
     case MOVE_DIG:

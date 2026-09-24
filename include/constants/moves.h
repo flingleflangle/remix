@@ -417,8 +417,14 @@
 #define MOVE_ECHO 413
 #define MOVE_DISS 414
 #define MOVE_ABYSS 415
+#define MOVE_STAR_BARRAGE 416
+#define MOVE_COSMIC_FLARE 417
+#define MOVE_NEBULA_CRASH 418
+#define MOVE_CHAKRA_SURGE 419
+#define MOVE_MANDALA_RAY 420
 
-#define MOVES_COUNT 416
+
+#define MOVES_COUNT 421
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

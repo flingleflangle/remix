@@ -764,6 +764,7 @@ FlushFail:
 BattleScript_EffectMultiHit::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+StarBarrageTurn2:
 	attackstring
 	ppreduce
 	setmultihitcounter 0
@@ -777,8 +778,10 @@ BattleScript_MultiHitLoop::
 BattleScript_DoMultiHit::
 	movevaluescleanup
 	copybyte cEFFECT_CHOOSER, sMULTIHIT_EFFECT
+jumpifmove MOVE_STAR_BARRAGE, StarBarrageDamageCalc
 	critcalc
 	damagecalc
+StarBarragePostCalc:
 	typecalc
 	jumpifmovehadnoeffect BattleScript_MultiHitNoMoreHits
 	adjustnormaldamage
@@ -791,6 +794,8 @@ BattleScript_DoMultiHit::
 	datahpupdate BS_TARGET
 	critmessage
 	waitmessage B_WAIT_TIME_LONG
+	jumpifmove MOVE_STAR_BARRAGE, StarBarrageRecoil
+StarBarrageReturn:
 	printstring STRINGID_EMPTYSTRING3
 	waitmessage 1
 	addbyte sMULTIHIT_STRING + 4, 1
@@ -815,9 +820,24 @@ BattleScript_MultiHitPrintStrings::
 BattleScript_MultiHitEnd::
 	seteffectwithchance
 	tryfaintmon BS_TARGET
+	tryfaintmon BS_ATTACKER
 	moveendcase MOVEEND_SYNCHRONIZE_TARGET
 	moveendfrom MOVEEND_IMMUNITY_ABILITIES
 	end
+
+StarBarrageRecoil:
+	damagecalc
+	damagetohalftargethp
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	goto StarBarrageReturn
+
+StarBarrageDamageCalc:
+	setbyte sB_ANIM_TURN, 1
+	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+	damagetohalftargethp
+	goto StarBarragePostCalc
+	
 
 
 BattleScript_EffectConversion::
@@ -900,8 +920,40 @@ BattleScript_EffectLightScreen::
 	goto BattleScript_PrintReflectLightScreenSafeguardString
 
 BattleScript_EffectTriAttack::
+	jumpifmove MOVE_NEBULA_CRASH, NebulaCrash
 	setmoveeffect MOVE_EFFECT_TRI_ATTACK
+	jumpifmove MOVE_COSMIC_FLARE, CosmicFlare
 	goto BattleScript_EffectHit
+
+CosmicFlare:
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	setmoveeffect MOVE_EFFECT_SP_ATK_TWO_DOWN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	moveendall
+	end
+
+NebulaCrash:
+
 
 BattleScript_EffectRest::
 	attackcanceler
@@ -3578,6 +3630,7 @@ BattleScript_EffectSemiInvulnerable::
 	jumpifmove MOVE_FLY, BattleScript_FirstTurnFly
 	jumpifmove MOVE_DIVE, BattleScript_FirstTurnDive
 	jumpifmove MOVE_BOUNCE, BattleScript_FirstTurnBounce
+	jumpifmove MOVE_STAR_BARRAGE, BattleScript_FirstTurnFly
 	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_DIG
 	goto BattleScript_FirstTurnSemiInvulnerable
 
@@ -3607,6 +3660,7 @@ BattleScript_SecondTurnSemiInvulnerable::
 BattleScript_SemiInvulnerableTryHit::
 	accuracycheck BattleScript_SemiInvulnerableMiss, ACC_CURR_MOVE
 	clearsemiinvulnerablebit
+	jumpifmove MOVE_STAR_BARRAGE, StarBarrageTurn2
 	goto BattleScript_HitFromAtkString
 
 BattleScript_SemiInvulnerableMiss::

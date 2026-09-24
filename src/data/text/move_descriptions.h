@@ -1657,6 +1657,30 @@ static const u8 sDissDescription[] = _(
     "Focuses on the opponent to\n"
     "optimize emotional damage.");
 
+static const u8 sAbyssDescription[] = _(
+    "Fatal.\n"
+    " ");
+
+static const u8 sStarBarrageDescription[] = _(
+    "Burns through the user's HP\n"
+    "to damage the foe 2-5 times.");
+
+static const u8 sCosmicFlareDescription[] = _(
+    "Star bullets hit 2-5 times.\n"
+    "Recoil taken for every shot.");
+
+static const u8 sNebulaCrashDescription[] = _(
+    "Star bullets hit 2-5 times.\n"
+    "Recoil taken for every shot.");
+
+static const u8 sChakraSurgeDescription[] = _(
+    "Star bullets hit 2-5 times.\n"
+    "Recoil taken for every shot.");
+
+static const u8 sMandalaRayDescription[] = _(
+    "Star bullets hit 2-5 times.\n"
+    "Recoil taken for every shot.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -2074,4 +2098,10 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_SHRIEK - 1] = sShriekDescription,
     [MOVE_ECHO - 1] = sEchoDescription,
     [MOVE_DISS - 1] = sDissDescription,
+    [MOVE_ABYSS - 1] = sAbyssDescription,
+    [MOVE_STAR_BARRAGE - 1] = sStarBarrageDescription,
+    [MOVE_COSMIC_FLARE - 1] = sCosmicFlareDescription,
+    [MOVE_NEBULA_CRASH - 1] = sNebulaCrashDescription,
+    [MOVE_CHAKRA_SURGE - 1] = sChakraSurgeDescription,
+    [MOVE_MANDALA_RAY - 1] = sMandalaRayDescription,
 };
