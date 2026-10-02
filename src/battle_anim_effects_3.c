@@ -3918,6 +3918,22 @@ void AnimTask_StatusClearedEffect(u8 taskId)
         gCureBubblesPal);
 }
 
+void AnimTask_StatusClearedEffect2(u8 taskId)
+{
+    StartMonScrollingBgMask(
+        taskId,
+        0,
+        0x1A0,
+        gBattleAnimTarget,
+        gBattleAnimArgs[0],
+        10,
+        2,
+        30,
+        gCureBubblesGfx,
+        gCureBubblesTilemap,
+        gCureBubblesPal);
+}
+
 // Moves a noise line from the mon.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

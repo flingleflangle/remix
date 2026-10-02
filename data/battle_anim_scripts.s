@@ -436,7 +436,7 @@ gBattleAnims_Moves::
 	.4byte Move_COSMIC_FLARE
 	.4byte Move_NEBULA_CRASH
 	.4byte Move_CHAKRA_SURGE
-	.4byte Move_MANDALA_RAY
+	.4byte Move_BLACK_HOLE
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -1023,8 +1023,10 @@ Move_LEECH_SEED:
 
 Move_COSMIC_FLARE:
 	loadspritegfx ANIM_TAG_FIRE
+	loadspritegfx ANIM_TAG_WISP_FIRE
 	loadspritegfx ANIM_TAG_FIRE_PLUME
-	loadspritegfx ANIM_TAG_SMALL_EMBER
+	loadspritegfx ANIM_TAG_PURPLE_FLAME
+	loadspritegfx ANIM_TAG_SMALL_EMBER	
 	loopsewithpan SE_M_EMBER, SOUND_PAN_ATTACKER, 5, 2
 	createsprite gEmberSpriteTemplate, ANIM_TARGET, 2, 20, 0, -16, 24, 20, 1
 	delay 4
@@ -1033,38 +1035,75 @@ Move_COSMIC_FLARE:
 	createsprite gEmberSpriteTemplate, ANIM_TARGET, 2, 20, 0, 16, 24, 20, 1
 	delay 16
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 0, 12, RGB_BLACK
-	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_TARGET, 1
-	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 0, 16, RGB_WHITEALPHA
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 5, 1
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 0, 16, RGB(30, 4, 22)
 	delay 6
-	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 15, 0, RGB_WHITEALPHA
-	delay 32
+	createvisualtask AnimTask_GrudgeFlames2, 3
+	createsprite gFireSpiralInwardSpriteTemplate, ANIM_TARGET, 1, 0
+	createsprite gFireSpiralInwardSpriteTemplate, ANIM_TARGET, 1, 128
+	delay 4
+	createvisualtask AnimTask_StatusClearedEffect2, 2, 0
+	playsewithpan SE_M_SOLAR_BEAM, SOUND_PAN_TARGET
+	delay 28
+	createvisualtask AnimTask_TransparentCloneGrowAndShrink, 5, ANIM_TARGET
+	createsprite gFireSpiralInwardSpriteTemplate, ANIM_TARGET, 1, 64
+	createsprite gFireSpiralInwardSpriteTemplate, ANIM_TARGET, 1, 196
+	delay 28
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 12, 0, RGB_BLACK
-	createvisualtask AnimTask_ShakeMon2, 5, ANIM_TARGET, 8, 0, 40, 1
-	createvisualtask AnimTask_FacadeColorBlend, 2, ANIM_TARGET, 72
+	stopsound
 	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_TARGET
+	createvisualtask AnimTask_InvertScreenColor, 1, 257, 257, 257
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 5, 0, 20, 1
+@About right here was where the old version split off
+	createsprite gWillOWispFireSpriteTemplate, ANIM_ATTACKER, 2, 0
+	delay 1
+	createvisualtask AnimTask_InvertScreenColor, 1, 257, 257, 257
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, -1
+	createsprite gWillOWispFireSpriteTemplate, ANIM_ATTACKER, 2, 168
+	delay 1
+	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_TARGET
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 1, 1
+	delay 1
+	createvisualtask AnimTask_InvertScreenColor, 1, 257, 257, 257
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 1, -1
+	createsprite gWillOWispFireSpriteTemplate, ANIM_ATTACKER, 2, 126
+	delay 1
+	createvisualtask AnimTask_InvertScreenColor, 1, 257, 257, 257
+	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_TARGET
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 15, 0, RGB(30, 4, 22)
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, -2
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, 1
+	delay 1
+	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, 0
+	waitforvisualfinish
+	end
+
+
+@Old version of Cosmic Flare anim
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, 0
 	delay 1
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 0, 1
 	delay 1
+	createvisualtask AnimTask_InvertScreenColor, 1, 257, 257, 257
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, -1
 	delay 1
 	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_TARGET
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 2, 1
 	delay 1
+	createvisualtask AnimTask_InvertScreenColor, 1, 257, 257, 257
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 1, -1
 	delay 1
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, 1
 	delay 1
+	createvisualtask AnimTask_InvertScreenColor, 1, 257, 257, 257
 	playsewithpan SE_M_FLAME_WHEEL2, SOUND_PAN_TARGET
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 15, 0, RGB(30, 4, 22)
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 1, -2
-	delay 1
-	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 3, 1
 	delay 1
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 0, 1
 	delay 1
 	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, 1, -1
-	delay 1
-	createsprite gLargeFlameScatterSpriteTemplate, ANIM_TARGET, 2, 0, 0, 30, 30, -1, 0
 	waitforvisualfinish
 	end
 
@@ -9088,7 +9127,7 @@ SoulStealFlash:
 	return
 
 
-Move_MANDALA_RAY:
+Move_BLACK_HOLE:
 Move_HYPER_BEAM:
 	loadspritegfx ANIM_TAG_ORBS
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 4, 0, 16, RGB_BLACK

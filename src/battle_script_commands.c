@@ -2758,6 +2758,17 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     SetMoveEffect(FALSE, 0);
                 }
                 break;
+            case MOVE_EFFECT_RANDOM:
+                if (gBattleMons[gEffectBattler].status1)
+                {
+                    gBattlescriptCurrInstr++;
+                }
+                else
+                {
+                    gBattleCommunication[MOVE_EFFECT_BYTE] = Random() % 9 + 1;
+                    SetMoveEffect(FALSE, 0);
+                }
+                break;
             case MOVE_EFFECT_CHARGING:
                 gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
                 gLockedMoves[gEffectBattler] = gCurrentMove;

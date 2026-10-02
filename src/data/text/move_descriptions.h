@@ -1666,8 +1666,8 @@ static const u8 sStarBarrageDescription[] = _(
     "to damage the foe 2-5 times.");
 
 static const u8 sCosmicFlareDescription[] = _(
-    "Star bullets hit 2-5 times.\n"
-    "Recoil taken for every shot.");
+    "Ethereal flames may inflict\n"
+    "a random status effect.");
 
 static const u8 sNebulaCrashDescription[] = _(
     "Star bullets hit 2-5 times.\n"
@@ -1677,7 +1677,7 @@ static const u8 sChakraSurgeDescription[] = _(
     "Star bullets hit 2-5 times.\n"
     "Recoil taken for every shot.");
 
-static const u8 sMandalaRayDescription[] = _(
+static const u8 sBlackHoleDescription[] = _(
     "Star bullets hit 2-5 times.\n"
     "Recoil taken for every shot.");
 
@@ -2103,5 +2103,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_COSMIC_FLARE - 1] = sCosmicFlareDescription,
     [MOVE_NEBULA_CRASH - 1] = sNebulaCrashDescription,
     [MOVE_CHAKRA_SURGE - 1] = sChakraSurgeDescription,
-    [MOVE_MANDALA_RAY - 1] = sMandalaRayDescription,
+    [MOVE_BLACK_HOLE - 1] = sBlackHoleDescription,
 };

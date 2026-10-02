@@ -945,10 +945,9 @@ CosmicFlare:
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
+	setmoveeffect MOVE_EFFECT_RANDOM
 	seteffectwithchance
 	tryfaintmon BS_TARGET
-	setmoveeffect MOVE_EFFECT_SP_ATK_TWO_DOWN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
-	seteffectwithchance
 	moveendall
 	end
 
