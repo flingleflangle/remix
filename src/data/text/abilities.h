@@ -76,6 +76,8 @@ static const u8 sPurePowerDescription[] = _("Raises ATTACK.");
 static const u8 sShellArmorDescription[] = _("Blocks critical hits.");
 static const u8 sCacophonyDescription[] = _("Avoids sound-based moves.");
 static const u8 sAirLockDescription[] = _("Negates weather effects.");
+static const u8 sSnowWarningDescription[] = _("Summons hail in battle.");
+static const u8 sSnowCloakDescription[] = _("Ups evasion in hail.");
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
 {
@@ -111,14 +113,12 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_CLEAR_BODY] = _("CLEAR BODY"),
     [ABILITY_NATURAL_CURE] = _("NATURAL CURE"),
     [ABILITY_LIGHTNING_ROD] = _("LIGHTNINGROD"),
-    [ABILITY_LIGHTNING_ROD_EX] = _("LIGHTNINGROD"),
     [ABILITY_SERENE_GRACE] = _("SERENE GRACE"),
     [ABILITY_SWIFT_SWIM] = _("SWIFT SWIM"),
     [ABILITY_CHLOROPHYLL] = _("CHLOROPHYLL"),
     [ABILITY_ILLUMINATE] = _("ILLUMINATE"),
     [ABILITY_TRACE] = _("TRACE"),
     [ABILITY_HUGE_POWER] = _("HUGE POWER"),
-    [ABILITY_HUGE_POWER_EX] = _("HUGE POWER"),
     [ABILITY_POISON_POINT] = _("POISON POINT"),
     [ABILITY_INNER_FOCUS] = _("INNER FOCUS"),
     [ABILITY_MAGMA_ARMOR] = _("MAGMA ARMOR"),
@@ -159,6 +159,8 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_SHELL_ARMOR] = _("SHELL ARMOR"),
     [ABILITY_CACOPHONY] = _("CACOPHONY"),
     [ABILITY_AIR_LOCK] = _("AIR LOCK"),
+    [ABILITY_SNOW_WARNING] = _("SNOW WARNING"),
+    [ABILITY_SNOW_CLOAK] = _("SNOW CLOAK"),
 };
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
@@ -195,14 +197,12 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_CLEAR_BODY] = sClearBodyDescription,
     [ABILITY_NATURAL_CURE] = sNaturalCureDescription,
     [ABILITY_LIGHTNING_ROD] = sLightningRodDescription,
-    [ABILITY_LIGHTNING_ROD_EX] = sLightningRodDescription,
     [ABILITY_SERENE_GRACE] = sSereneGraceDescription,
     [ABILITY_SWIFT_SWIM] = sSwiftSwimDescription,
     [ABILITY_CHLOROPHYLL] = sChlorophyllDescription,
     [ABILITY_ILLUMINATE] = sIlluminateDescription,
     [ABILITY_TRACE] = sTraceDescription,
     [ABILITY_HUGE_POWER] = sHugePowerDescription,
-    [ABILITY_HUGE_POWER_EX] = sHugePowerDescription,
     [ABILITY_POISON_POINT] = sPoisonPointDescription,
     [ABILITY_INNER_FOCUS] = sInnerFocusDescription,
     [ABILITY_MAGMA_ARMOR] = sMagmaArmorDescription,
@@ -243,4 +243,6 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_SHELL_ARMOR] = sShellArmorDescription,
     [ABILITY_CACOPHONY] = sCacophonyDescription,
     [ABILITY_AIR_LOCK] = sAirLockDescription,
+    [ABILITY_SNOW_WARNING] = sSnowWarningDescription,
+    [ABILITY_SNOW_CLOAK] = sSnowCloakDescription,
 };

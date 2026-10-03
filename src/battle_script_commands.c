@@ -992,7 +992,7 @@ static void Cmd_attackcanceler(void)
     if (gSpecialStatuses[gBattlerTarget].lightningRodRedirected)
     {
         gSpecialStatuses[gBattlerTarget].lightningRodRedirected = FALSE;
-        gLastUsedAbility = (ABILITY_LIGHTNING_ROD || ABILITY_LIGHTNING_ROD_EX);
+        gLastUsedAbility = (ABILITY_LIGHTNING_ROD);
         BattleScriptPushCursor();
         gBattlescriptCurrInstr = BattleScript_TookAttack;
         RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
@@ -1160,7 +1160,9 @@ static void Cmd_accuracycheck(void)
         if (gBattleMons[gBattlerAttacker].ability == ABILITY_COMPOUND_EYES)
             calc = (calc * 130) / 100; // 1.3 compound eyes boost
         if (WEATHER_HAS_EFFECT && gBattleMons[gBattlerTarget].ability == ABILITY_SAND_VEIL && gBattleWeather & B_WEATHER_SANDSTORM)
-            calc = (calc * 80) / 100; // 1.2 sand veil loss
+            calc = (calc * 75) / 100; // 1.25 sand veil loss
+        if (WEATHER_HAS_EFFECT && gBattleMons[gBattlerTarget].ability == ABILITY_SNOW_CLOAK && gBattleWeather & B_WEATHER_HAIL)
+            calc = (calc * 75) / 100; // 1.25 snow cloak loss
         if (gBattleMons[gBattlerAttacker].ability == ABILITY_HUSTLE && IS_TYPE_PHYSICAL(type))
             calc = (calc * 80) / 100; // 1.2 hustle loss
 
@@ -7864,6 +7866,12 @@ static void Cmd_weatherdamage(void)
         if (gBattleWeather & B_WEATHER_HAIL)
         {
             if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_ICE)
+                && gBattleMons[gBattlerAttacker].types[0] != TYPE_ASTRAL
+                && gBattleMons[gBattlerAttacker].types[0] != TYPE_FIGHTING
+                && gBattleMons[gBattlerAttacker].types[1] != TYPE_ASTRAL
+                && gBattleMons[gBattlerAttacker].types[1] != TYPE_FIGHTING
+                && gBattleMons[gBattlerAttacker].ability != ABILITY_THICK_FAT
+                && gBattleMons[gBattlerAttacker].ability != ABILITY_SNOW_CLOAK
                 && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND)
                 && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
             {

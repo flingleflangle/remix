@@ -391,8 +391,9 @@
 #define STRINGID_FINDFOOTING                391
 #define STRINGID_SERENADESKIP               392
 #define STRINGID_SERENADESKIP2              393
+#define STRINGID_PKMNSXWHIPPEDUPHAILSTORM   394
 
-#define BATTLESTRINGS_COUNT                 394
+#define BATTLESTRINGS_COUNT                 395
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,

@@ -230,5 +230,6 @@ extern const u8 BattleScript_ActionThrowPokeblock[];
 extern const u8 BattleScript_BallThrowEnd[];
 extern const u8 BattleScript_MoveEffectIgnite[];
 extern const u8 BattleScript_IgniteTurnDmg[];
+extern const u8 BattleScript_SnowWarningActivates[];
 
 #endif // GUARD_BATTLE_SCRIPTS_H

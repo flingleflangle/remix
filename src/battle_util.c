@@ -158,7 +158,7 @@ void HandleAction_UseMove(void)
              && gSideTimers[side].followmeTimer == 0
              && (gBattleMoves[gCurrentMove].power != 0
                  || gBattleMoves[gCurrentMove].target != MOVE_TARGET_USER)
-             && gBattleMons[*(gBattleStruct->moveTarget + gBattlerAttacker)].ability != (ABILITY_LIGHTNING_ROD || ABILITY_LIGHTNING_ROD_EX)
+             && gBattleMons[*(gBattleStruct->moveTarget + gBattlerAttacker)].ability != (ABILITY_LIGHTNING_ROD)
              && gBattleMoves[gCurrentMove].type == TYPE_ELECTRIC)
     {
         side = GetBattlerSide(gBattlerAttacker);
@@ -166,7 +166,7 @@ void HandleAction_UseMove(void)
         {
             if (side != GetBattlerSide(gActiveBattler)
                 && *(gBattleStruct->moveTarget + gBattlerAttacker) != gActiveBattler
-                && gBattleMons[gActiveBattler].ability == (ABILITY_LIGHTNING_ROD || ABILITY_LIGHTNING_ROD_EX)
+                && gBattleMons[gActiveBattler].ability == (ABILITY_LIGHTNING_ROD)
                 && GetBattlerTurnOrderNum(gActiveBattler) < var)
             {
                 var = GetBattlerTurnOrderNum(gActiveBattler);
@@ -1412,7 +1412,7 @@ u8 DoFieldEndTurnEffects(void)
         case ENDTURN_HAIL:
             if (gBattleWeather & B_WEATHER_HAIL)
             {
-                if (--gWishFutureKnock.weatherDuration == 0)
+                if (!(gBattleWeather & B_WEATHER_HAIL_PERMANENT) && --gWishFutureKnock.weatherDuration == 0)
                 {
                     gBattleWeather &= ~B_WEATHER_HAIL_TEMPORARY;
                     gBattlescriptCurrInstr = BattleScript_SandStormHailEnds;
@@ -2562,6 +2562,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                 {
                     gBattleWeather = B_WEATHER_SUN;
                     BattleScriptPushCursorAndCallback(BattleScript_DroughtActivates);
+                    gBattleScripting.battler = battler;
+                    effect++;
+                }
+                break;
+            case ABILITY_SNOW_WARNING:
+                if (!(gBattleWeather & B_WEATHER_HAIL_PERMANENT))
+                {
+                    gBattleWeather = B_WEATHER_HAIL;
+                    BattleScriptPushCursorAndCallback(BattleScript_SnowWarningActivates);
                     gBattleScripting.battler = battler;
                     effect++;
                 }
@@ -4023,8 +4032,8 @@ u8 GetMoveTarget(u16 move, u8 setTarget)
                 targetBattler = Random() % gBattlersCount;
             } while (targetBattler == gBattlerAttacker || side == GetBattlerSide(targetBattler) || gAbsentBattlerFlags & gBitTable[targetBattler]);
             if (gBattleMoves[move].type == TYPE_ELECTRIC
-                && AbilityBattleEffects(ABILITYEFFECT_COUNT_OTHER_SIDE, gBattlerAttacker, (ABILITY_LIGHTNING_ROD || ABILITY_LIGHTNING_ROD_EX), 0, 0)
-                && gBattleMons[targetBattler].ability != (ABILITY_LIGHTNING_ROD || ABILITY_LIGHTNING_ROD_EX))
+                && AbilityBattleEffects(ABILITYEFFECT_COUNT_OTHER_SIDE, gBattlerAttacker, (ABILITY_LIGHTNING_ROD), 0, 0)
+                && gBattleMons[targetBattler].ability != (ABILITY_LIGHTNING_ROD))
             {
                 targetBattler ^= BIT_FLANK;
                 RecordAbilityBattle(targetBattler, gBattleMons[targetBattler].ability);

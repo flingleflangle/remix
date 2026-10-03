@@ -423,7 +423,13 @@ BattleScript_EffectBurnHit::
 
 BattleScript_EffectFreezeHit::
 	setmoveeffect MOVE_EFFECT_FREEZE
+	jumpifmove MOVE_BLIZZARD, AlwaysHitInHail
 	goto BattleScript_EffectHit
+
+AlwaysHitInHail:
+	jumpifhalfword CMP_COMMON_BITS, gBattleWeather, B_WEATHER_HAIL, BattleScript_HitFromAtkString
+	goto BattleScript_EffectHit
+
 
 BattleScript_EffectParalyzeHit::
 	setmoveeffect MOVE_EFFECT_PARALYSIS
@@ -1103,7 +1109,13 @@ BattleScript_EffectTrap::
 	setbyte sDMG_MULTIPLIER, 2
 BattleScript_DoWrapEffect::
 	setmoveeffect MOVE_EFFECT_WRAP
+	jumpifnotmove MOVE_SAND_TOMB, BattleScript_EffectHit
+	jumpifhalfword CMP_COMMON_BITS, gBattleWeather, B_WEATHER_SANDSTORM, SandTomb2
 	goto BattleScript_EffectHit
+SandTomb2::
+	setbyte sDMG_MULTIPLIER, 2
+	goto BattleScript_HitFromAtkString
+
 
 BattleScript_EffectDoubleHit::
 	attackcanceler
@@ -5833,6 +5845,14 @@ BattleScript_SandstreamActivates::
 	printstring STRINGID_PKMNSXWHIPPEDUPSANDSTORM
 	waitstate
 	playanimation BS_BATTLER_0, B_ANIM_SANDSTORM_CONTINUES
+	call BattleScript_WeatherFormChanges
+	end3
+
+BattleScript_SnowWarningActivates::
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_PKMNSXWHIPPEDUPHAILSTORM
+	waitstate
+	playanimation BS_BATTLER_0, B_ANIM_HAIL_CONTINUES
 	call BattleScript_WeatherFormChanges
 	end3
 
