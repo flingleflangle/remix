@@ -257,6 +257,10 @@
 #define EVO_BEAUTY           15 // Pokémon levels up with beauty ≥ specified value
 #define EVO_ITEM_MALE        16 // specified item is used on Pokémon of the proper gender
 #define EVO_ITEM_FEMALE      17 // specified item is used on Pokémon of the proper gender
+#define EVO_TOUGH            18 // Pokémon levels up with tough ≥ specified value
+#define EVO_SMART            19 // Pokémon levels up with smart ≥ specified value
+#define EVO_COOL             20 // Pokémon levels up with cool ≥ specified value
+#define EVO_CUTE             21 // Pokémon levels up with cute ≥ specified value
 
 #define EVOS_PER_MON 8
 

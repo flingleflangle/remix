@@ -5735,6 +5735,10 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem)
     u8 level;
     u16 friendship;
     u8 beauty = GetMonData(mon, MON_DATA_BEAUTY, 0);
+    u8 cute = GetMonData(mon, MON_DATA_CUTE, 0);
+    u8 cool = GetMonData(mon, MON_DATA_COOL, 0);
+    u8 tough = GetMonData(mon, MON_DATA_TOUGH, 0);
+    u8 smart = GetMonData(mon, MON_DATA_SMART, 0);
     u16 upperPersonality = personality >> 16;
     u8 holdEffect;
 
@@ -5800,9 +5804,69 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem)
                 if (gEvolutionTable[species][i].param <= level)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
+    // contest stat evo requirements.
+    // i programmed it weird because feebas has so many, and I needed to account for ties
+    // feebas has a priority bracket in evolving. it goes beauty, cute, cool, tough, and smart
+    // every other pokemon doesn't, so if it's not feebas specifically, it just checks if its high enough. it'd cancel out otherwise
             case EVO_BEAUTY:
-                if (gEvolutionTable[species][i].param <= beauty)
+            if (targetSpecies == (SPECIES_FEEBAS)) {
+                if (gEvolutionTable[species][i].param <= beauty
+                && (GetMonData(mon, MON_DATA_BEAUTY, 0) >= GetMonData(mon, MON_DATA_CUTE, 0))
+                && (GetMonData(mon, MON_DATA_BEAUTY, 0) >= GetMonData(mon, MON_DATA_COOL, 0))
+                && (GetMonData(mon, MON_DATA_BEAUTY, 0) >= GetMonData(mon, MON_DATA_TOUGH, 0))
+                && (GetMonData(mon, MON_DATA_BEAUTY, 0) >= GetMonData(mon, MON_DATA_SMART, 0)))
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
+            }
+            else if (gEvolutionTable[species][i].param <= beauty)
+                targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                break;
+            case EVO_CUTE:
+            if (targetSpecies == (SPECIES_FEEBAS)) {
+                if (gEvolutionTable[species][i].param <= cute
+                && (GetMonData(mon, MON_DATA_CUTE, 0) > GetMonData(mon, MON_DATA_BEAUTY, 0))
+                && (GetMonData(mon, MON_DATA_CUTE, 0) >= GetMonData(mon, MON_DATA_COOL, 0))
+                && (GetMonData(mon, MON_DATA_CUTE, 0) >= GetMonData(mon, MON_DATA_TOUGH, 0))
+                && (GetMonData(mon, MON_DATA_CUTE, 0) >= GetMonData(mon, MON_DATA_SMART, 0)))
+                    targetSpecies = gEvolutionTable[species][i].targetSpecies;
+            }
+            else if (gEvolutionTable[species][i].param <= cute)
+                targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                break;
+            case EVO_COOL:
+            if (targetSpecies == (SPECIES_FEEBAS)) {
+                if (gEvolutionTable[species][i].param <= cool
+                && (GetMonData(mon, MON_DATA_COOL, 0) > GetMonData(mon, MON_DATA_CUTE, 0))
+                && (GetMonData(mon, MON_DATA_COOL, 0) > GetMonData(mon, MON_DATA_BEAUTY, 0))
+                && (GetMonData(mon, MON_DATA_COOL, 0) >= GetMonData(mon, MON_DATA_TOUGH, 0))
+                && (GetMonData(mon, MON_DATA_COOL, 0) >= GetMonData(mon, MON_DATA_SMART, 0)))
+                    targetSpecies = gEvolutionTable[species][i].targetSpecies;
+            }
+            else if (gEvolutionTable[species][i].param <= cool)
+                targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                break;
+            case EVO_TOUGH:
+            if (targetSpecies == (SPECIES_FEEBAS)) {
+                if (gEvolutionTable[species][i].param <= tough
+                && (GetMonData(mon, MON_DATA_TOUGH, 0) > GetMonData(mon, MON_DATA_CUTE, 0))
+                && (GetMonData(mon, MON_DATA_TOUGH, 0) > GetMonData(mon, MON_DATA_BEAUTY, 0))
+                && (GetMonData(mon, MON_DATA_TOUGH, 0) > GetMonData(mon, MON_DATA_COOL, 0))
+                && (GetMonData(mon, MON_DATA_TOUGH, 0) >= GetMonData(mon, MON_DATA_SMART, 0)))
+                    targetSpecies = gEvolutionTable[species][i].targetSpecies;
+            }
+            else if (gEvolutionTable[species][i].param <= tough)
+                targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                break;
+            case EVO_SMART:
+            if (targetSpecies == (SPECIES_FEEBAS)) {
+                if (gEvolutionTable[species][i].param <= smart
+                && (GetMonData(mon, MON_DATA_SMART, 0) > GetMonData(mon, MON_DATA_CUTE, 0))
+                && (GetMonData(mon, MON_DATA_SMART, 0) > GetMonData(mon, MON_DATA_BEAUTY, 0))
+                && (GetMonData(mon, MON_DATA_SMART, 0) > GetMonData(mon, MON_DATA_COOL, 0))
+                && (GetMonData(mon, MON_DATA_SMART, 0) > GetMonData(mon, MON_DATA_TOUGH, 0)))
+                    targetSpecies = gEvolutionTable[species][i].targetSpecies;
+            }
+            else if (gEvolutionTable[species][i].param <= smart)
+                targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             }
         }
