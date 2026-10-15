@@ -411,4 +411,5 @@ const u16 *const gLevelUpLearnsets[NUM_SPECIES] =
     [SPECIES_GLISCOR] = sGliscorLevelUpLearnset,
     [SPECIES_WEAVILE] = sWeavileLevelUpLearnset,
     [SPECIES_LUCARIO] = sLucarioLevelUpLearnset,
+    [SPECIES_COOLOTIC] = sCooloticLevelUpLearnset,
 };

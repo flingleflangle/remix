@@ -400,6 +400,7 @@ const struct CompressedSpriteSheet gMonStillFrontPicTable[] =
     SPECIES_SPRITE(TOGEKISS,      gMonStillFrontPic_Togekiss),
     SPECIES_SPRITE(ROSERADE,      gMonStillFrontPic_Roserade),
     SPECIES_SPRITE(LUCARIO,       gMonStillFrontPic_Lucario),
+    SPECIES_SPRITE(COOLOTIC,      gMonStillFrontPic_Coolotic),
     SPECIES_SPRITE(EGG,           gMonStillFrontPic_Egg),
     SPECIES_SPRITE(UNOWN_B,       gMonStillFrontPic_UnownB),
     SPECIES_SPRITE(UNOWN_C,       gMonStillFrontPic_UnownC),

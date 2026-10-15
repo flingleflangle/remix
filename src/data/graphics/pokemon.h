@@ -2790,6 +2790,13 @@ const u32 gMonShinyPalette_Lucario[] = INCBIN_U32("graphics/pokemon/lucario/shin
 const u8 gMonIcon_Lucario[] = INCBIN_U8("graphics/pokemon/lucario/icon.4bpp");
 const u8 gMonFootprint_Lucario[] = INCBIN_U8("graphics/pokemon/lucario/footprint.1bpp");
 
+const u32 gMonStillFrontPic_Coolotic[] = INCBIN_U32("graphics/pokemon/milotic2/front.4bpp.lz");
+const u32 gMonPalette_Coolotic[] = INCBIN_U32("graphics/pokemon/milotic2/normal.gbapal.lz");
+const u32 gMonBackPic_Coolotic[] = INCBIN_U32("graphics/pokemon/milotic2/back.4bpp.lz");
+const u32 gMonShinyPalette_Coolotic[] = INCBIN_U32("graphics/pokemon/milotic2/shiny.gbapal.lz");
+const u8 gMonIcon_Coolotic[] = INCBIN_U8("graphics/pokemon/milotic2/icon.4bpp");
+const u8 gMonFootprint_Coolotic[] = INCBIN_U8("graphics/pokemon/milotic2/footprint.1bpp");
+
 const u32 gMonStillFrontPic_Egg[] = INCBIN_U32("graphics/pokemon/egg/front.4bpp.lz");
 const u32 gMonPalette_Egg[] = INCBIN_U32("graphics/pokemon/egg/normal.gbapal.lz");
 

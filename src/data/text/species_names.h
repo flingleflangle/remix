@@ -411,4 +411,5 @@ const u8 gSpeciesNames[][POKEMON_NAME_LENGTH + 1] = {
     [SPECIES_TOGEKISS] = _("TOGEKISS"),
     [SPECIES_ROSERADE] = _("ROSERADE"),
     [SPECIES_LUCARIO] = _("LUCARIO"),
+    [SPECIES_COOLOTIC] = _("MILOTIC…?"),
 };

@@ -411,4 +411,5 @@ const u16 gSpeciesIdToCryId[] =
     [SPECIES_TOGEKISS - 1] = 396,
     [SPECIES_ROSERADE - 1] = 397,
     [SPECIES_LUCARIO - 1] = 398,
+    [SPECIES_COOLOTIC - 1] = 260,
 };

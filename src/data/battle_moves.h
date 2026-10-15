@@ -4645,7 +4645,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_EVIL,
         .power = 1,
-        .type = TYPE_BLADE,
+        .type = TYPE_POISON,
         .accuracy = 100,
         .pp = 15,
         .secondaryEffectChance = 0,

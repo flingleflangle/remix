@@ -2832,6 +2832,14 @@ extern const u32 gMonStillFrontPic_Lucario[];
 extern const u8 gMonIcon_Lucario[];
 extern const u8 gMonFootprint_Lucario[];
 
+extern const u32 gMonFrontPic_Coolotic[];
+extern const u32 gMonPalette_Coolotic[];
+extern const u32 gMonBackPic_Coolotic[];
+extern const u32 gMonShinyPalette_Coolotic[];
+extern const u32 gMonStillFrontPic_Coolotic[];
+extern const u8 gMonIcon_Coolotic[];
+extern const u8 gMonFootprint_Coolotic[];
+
 extern const u32 gMonPic_Egg[];
 extern const u32 gMonPalette_Egg[];
 extern const u32 gMonFrontPic_Egg[];

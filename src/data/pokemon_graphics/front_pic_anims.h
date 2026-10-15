@@ -3611,6 +3611,20 @@ static const union AnimCmd sAnim_Milotic_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Coolotic_1[] =
+{
+    ANIMCMD_FRAME(0, 6),
+    ANIMCMD_FRAME(1, 6),
+    ANIMCMD_FRAME(0, 6),
+    ANIMCMD_FRAME(1, 6),
+    ANIMCMD_FRAME(0, 6),
+    ANIMCMD_FRAME(1, 6),
+    ANIMCMD_FRAME(0, 6),
+    ANIMCMD_FRAME(1, 6),
+    ANIMCMD_FRAME(0, 22),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Carvanha_1[] =
 {
     ANIMCMD_FRAME(0, 6),
@@ -5241,6 +5255,7 @@ SINGLE_ANIMATION(Corphish);
 SINGLE_ANIMATION(Crawdaunt);
 SINGLE_ANIMATION(Feebas);
 SINGLE_ANIMATION(Milotic);
+SINGLE_ANIMATION(Coolotic);
 SINGLE_ANIMATION(Carvanha);
 SINGLE_ANIMATION(Sharpedo);
 SINGLE_ANIMATION(Trapinch);
@@ -5673,6 +5688,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_CRAWDAUNT]   = sAnims_Crawdaunt,
     [SPECIES_FEEBAS]      = sAnims_Feebas,
     [SPECIES_MILOTIC]     = sAnims_Milotic,
+    [SPECIES_COOLOTIC]    = sAnims_Coolotic,
     [SPECIES_CARVANHA]    = sAnims_Carvanha,
     [SPECIES_SHARPEDO]    = sAnims_Sharpedo,
     [SPECIES_TRAPINCH]    = sAnims_Trapinch,

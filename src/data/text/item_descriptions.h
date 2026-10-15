@@ -866,8 +866,8 @@ static const u8 sEverstoneDesc[] = _(
 
 static const u8 sFocusBandDesc[] = _(
     "A hold item that\n"
-    "occasionally\n"
-    "prevents fainting.");
+    "retains 1 HP to\n"
+    "prevent fainting.");
 
 static const u8 sLuckyEggDesc[] = _(
     "A hold item that\n"

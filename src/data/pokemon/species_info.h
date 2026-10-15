@@ -9366,6 +9366,36 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .noFlip = FALSE,
     },
 
+    [SPECIES_COOLOTIC] =
+    {
+        .baseHP        = 79,
+        .baseAttack    = 125,
+        .baseDefense   = 81,
+        .baseSpeed     = 100,
+        .baseSpAttack  = 95,
+        .baseSpDefense = 60,
+        .types = { TYPE_ICE, TYPE_POISON },
+        .catchRate = 60,
+        .expYield = 213,
+        .evYield_HP        = 0,
+        .evYield_Attack    = 4,
+        .evYield_Defense   = 0,
+        .evYield_Speed     = 0,
+        .evYield_SpAttack  = 0,
+        .evYield_SpDefense = 0,
+        .itemCommon = ITEM_SPELON_BERRY,
+        .itemRare   = ITEM_SPELON_BERRY,
+        .genderRatio = PERCENT_FEMALE(50),
+        .eggCycles = 10,
+        .friendship = STANDARD_FRIENDSHIP,
+        .growthRate = GROWTH_FLUCTUATING,
+        .eggGroups = { EGG_GROUP_WATER_1, EGG_GROUP_DRAGON },
+        .abilities = {ABILITY_MARVEL_SCALE, ABILITY_CUTE_CHARM},
+        .safariZoneFleeRate = 0,
+        .bodyColor = BODY_COLOR_BLUE,
+        .noFlip = FALSE,
+    },
+
     [SPECIES_CARVANHA] =
     {
         .baseHP        = 45,
