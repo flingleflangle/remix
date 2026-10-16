@@ -322,7 +322,7 @@ const struct Evolution gEvolutionTable[NUM_SPECIES][EVOS_PER_MON] =
 							{EVO_ITEM, ITEM_SHADE_CRYSTAL, SPECIES_CRAWDAUNT}},
     [SPECIES_FEEBAS]     = {{EVO_SMART, 170, SPECIES_RELICANTH},
                             {EVO_TOUGH, 170, SPECIES_GYARADOS},
-                            {EVO_COOL, 170, SPECIES_COOLOTIC},
+                            {EVO_COOL, 170, SPECIES_LEVIATIC},
                             {EVO_CUTE, 170, SPECIES_LANTURN},
                             {EVO_BEAUTY, 170, SPECIES_MILOTIC}},
     [SPECIES_CARVANHA]   = {{EVO_LEVEL, 30, SPECIES_SHARPEDO},

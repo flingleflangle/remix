@@ -9366,7 +9366,7 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .noFlip = FALSE,
     },
 
-    [SPECIES_COOLOTIC] =
+    [SPECIES_LEVIATIC] =
     {
         .baseHP        = 79,
         .baseAttack    = 125,
@@ -9390,7 +9390,7 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .friendship = STANDARD_FRIENDSHIP,
         .growthRate = GROWTH_FLUCTUATING,
         .eggGroups = { EGG_GROUP_WATER_1, EGG_GROUP_DRAGON },
-        .abilities = {ABILITY_MARVEL_SCALE, ABILITY_CUTE_CHARM},
+        .abilities = {ABILITY_PRISM_SCALE, ABILITY_POISON_POINT},
         .safariZoneFleeRate = 0,
         .bodyColor = BODY_COLOR_BLUE,
         .noFlip = FALSE,

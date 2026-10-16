@@ -398,6 +398,6 @@ const u8 *const gMonFootprintTable[] =
     [SPECIES_TOGEKISS] = gMonFootprint_Togekiss,
     [SPECIES_ROSERADE] = gMonFootprint_Roserade,
     [SPECIES_LUCARIO] = gMonFootprint_Lucario,
-    [SPECIES_COOLOTIC] = gMonFootprint_Coolotic,
+    [SPECIES_LEVIATIC] = gMonFootprint_Leviatic,
     [SPECIES_EGG] = gMonFootprint_Bulbasaur,
 };

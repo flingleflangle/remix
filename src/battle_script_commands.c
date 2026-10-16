@@ -1163,6 +1163,8 @@ static void Cmd_accuracycheck(void)
             calc = (calc * 75) / 100; // 1.25 sand veil loss
         if (WEATHER_HAS_EFFECT && gBattleMons[gBattlerTarget].ability == ABILITY_SNOW_CLOAK && gBattleWeather & B_WEATHER_HAIL)
             calc = (calc * 75) / 100; // 1.25 snow cloak loss
+        if (WEATHER_HAS_EFFECT && gBattleMons[gBattlerAttacker].ability == ABILITY_PRISM_SCALE && gBattleWeather & B_WEATHER_ANY)
+            calc = (calc * 130) / 100; // 1.3 prism scale boost
         if (gBattleMons[gBattlerAttacker].ability == ABILITY_HUSTLE && IS_TYPE_PHYSICAL(type))
             calc = (calc * 80) / 100; // 1.2 hustle loss
 
@@ -7851,6 +7853,7 @@ static void Cmd_weatherdamage(void)
                 && gBattleMons[gBattlerAttacker].types[1] != TYPE_STEEL
                 && gBattleMons[gBattlerAttacker].types[1] != TYPE_GROUND
                 && gBattleMons[gBattlerAttacker].ability != ABILITY_SAND_VEIL
+                && gBattleMons[gBattlerAttacker].ability != ABILITY_PRISM_SCALE
                 && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND)
                 && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
             {
@@ -7872,6 +7875,7 @@ static void Cmd_weatherdamage(void)
                 && gBattleMons[gBattlerAttacker].types[1] != TYPE_FIGHTING
                 && gBattleMons[gBattlerAttacker].ability != ABILITY_THICK_FAT
                 && gBattleMons[gBattlerAttacker].ability != ABILITY_SNOW_CLOAK
+                && gBattleMons[gBattlerAttacker].ability != ABILITY_PRISM_SCALE
                 && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND)
                 && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))
             {

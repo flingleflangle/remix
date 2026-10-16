@@ -5001,7 +5001,7 @@ static const u16 sMiloticLevelUpLearnset[] = {
     LEVEL_UP_END
 };
 
-static const u16 sCooloticLevelUpLearnset[] = {
+static const u16 sLeviaticLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 0, MOVE_VILE_CUTTER),
     LEVEL_UP_MOVE( 1, MOVE_WATER_GUN),
     LEVEL_UP_MOVE( 1, MOVE_WRAP),

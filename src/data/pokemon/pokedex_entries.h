@@ -4272,6 +4272,18 @@ const struct PokedexEntry gPokedexEntries[] =
         .trainerOffset = 7,
     },
 
+    [NATIONAL_DEX_LEVIATIC] =
+    {
+        .categoryName = _("VANITY"),
+        .height = 62,
+        .weight = 1620,
+        .description = gLeviaticPokedexText,
+        .pokemonScale = 256,
+        .pokemonOffset = 0,
+        .trainerScale = 360,
+        .trainerOffset = 7,
+    },
+
     [NATIONAL_DEX_CASTFORM] =
     {
         .categoryName = _("WEATHER"),

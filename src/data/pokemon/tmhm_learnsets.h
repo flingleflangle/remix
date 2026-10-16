@@ -10753,7 +10753,7 @@ const union {
     } },
 
     
-    [SPECIES_COOLOTIC] = { .learnset = {
+    [SPECIES_LEVIATIC] = { .learnset = {
         .KALEIDOSCOPE = TRUE,
         .WATER_PULSE = TRUE,
         .SCALD = TRUE,

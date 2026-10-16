@@ -2134,6 +2134,12 @@ const u8 gMiloticPokedexText[] = _(
     "beautiful of all POKéMON, it has been\n"
     "depicted in paintings and statues.");
 
+const u8 gLeviaticPokedexText[] = _(
+    "It is said to live at the bottom of\n"
+    "large lakes. Considered to be the most\n"
+    "beautiful of all POKéMON, it has been\n"
+    "depicted in paintings and statues.");
+
 const u8 gCastformPokedexText[] = _(
     "It alters its form depending on the\n"
     "weather. Changes in the climate such as\n"
