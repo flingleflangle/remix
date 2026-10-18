@@ -3294,6 +3294,20 @@ bool32 IsBattlerFloatingOnAirBalloon(u8 battler)
     return GetItemHoldEffect(gBattleMons[battler].item) == HOLD_EFFECT_AIR_BALLOON;
 }
 
+// A popped Air Balloon or Bubble Coat is gone for good, like a consumed berry, so the
+// party mon's held item is cleared too, not just the battle copy
+void PopBattlerHeldItem(u8 battler)
+{
+    u8 savedActiveBattler = gActiveBattler;
+
+    gBattleStruct->usedHeldItems[battler] = gBattleMons[battler].item; // So Recycle can restore it
+    gBattleMons[battler].item = ITEM_NONE;
+    gActiveBattler = battler;
+    BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_HELDITEM_BATTLE, 0, sizeof(gBattleMons[battler].item), &gBattleMons[battler].item);
+    MarkBattlerForControllerExec(battler);
+    gActiveBattler = savedActiveBattler;
+}
+
 static bool32 IsSingleStatusCureHoldEffect(u8 holdEffect)
 {
     switch (holdEffect)
@@ -3889,15 +3903,13 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                 }
                 break;
             case HOLD_EFFECT_AIR_BALLOON:
-            case HOLD_EFFECT_BUBBLE_COAT: // Only reaches here after an Electric move pierces it
-                // Pops when its holder is damaged by someone else's move. Like Knock Off, it's
-                // only gone for the rest of the battle, and Thief or Covet can't take it.
+            case HOLD_EFFECT_BUBBLE_COAT: // Only reaches here after an Electric, Steel, or Blade move pierces it
+                // Pops when its holder is damaged by someone else's move, and is lost for good
                 if (battler != gBattlerAttacker
                  && gBattleMons[battler].hp != 0
                  && (gSpecialStatuses[battler].physicalDmg || gSpecialStatuses[battler].specialDmg))
                 {
-                    gBattleMons[battler].item = ITEM_NONE;
-                    gWishFutureKnock.knockedOffMons[GetBattlerSide(battler)] |= gBitTable[gBattlerPartyIndexes[battler]];
+                    PopBattlerHeldItem(battler);
                     gBattleScripting.battler = battler;
                     gPotentialItemEffectBattler = battler;
                     BattleScriptPushCursor();

@@ -1362,6 +1362,7 @@ const s8 gNatureStatTable[NUM_NATURES][NUM_NATURE_STATS + 1] =
 #include "data/pokemon/level_up_learnsets.h"
 #include "data/pokemon/evolution.h"
 #include "data/pokemon/level_up_learnset_pointers.h"
+#include "data/pokemon/ex_species.h"
 
 // SPECIES_NONE are ignored in the following two tables, so decrement before accessing these arrays to get the right result
 
@@ -6743,6 +6744,19 @@ bool32 IsSpeciesInHoennDex(u16 species)
         return FALSE;
     else
         return TRUE;
+}
+
+// Whether the species is in the EX list (see data/pokemon/ex_species.h)
+bool32 IsSpeciesEx(u16 species)
+{
+    u32 i;
+
+    for (i = 0; sExSpecies[i] != SPECIES_NONE; i++)
+    {
+        if (sExSpecies[i] == species)
+            return TRUE;
+    }
+    return FALSE;
 }
 
 void ClearBattleMonForms(void)

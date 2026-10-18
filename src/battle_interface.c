@@ -1998,12 +1998,13 @@ static void UpdateStatusIconInHealthbox(u8 healthboxSpriteId)
     const u8 *statusGfxPtr;
     s16 tileNumAdder;
     u8 statusPalId;
+    struct Pokemon *mon;
 
     battler = gSprites[healthboxSpriteId].hMain_Battler;
     healthBarSpriteId = gSprites[healthboxSpriteId].hMain_HealthBarSpriteId;
     if (GetBattlerSide(battler) == B_SIDE_PLAYER)
     {
-        status = GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_STATUS);
+        mon = &gPlayerParty[gBattlerPartyIndexes[battler]];
         if (!IsDoubleBattle())
             tileNumAdder = 0x1A;
         else
@@ -2011,9 +2012,10 @@ static void UpdateStatusIconInHealthbox(u8 healthboxSpriteId)
     }
     else
     {
-        status = GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_STATUS);
+        mon = &gEnemyParty[gBattlerPartyIndexes[battler]];
         tileNumAdder = 0x11;
     }
+    status = GetMonData(mon, MON_DATA_STATUS);
 
     if (status & STATUS1_SLEEP)
     {
@@ -2051,6 +2053,10 @@ static void UpdateStatusIconInHealthbox(u8 healthboxSpriteId)
 
         for (i = 0; i < 3; i++)
             CpuCopy32(statusGfxPtr, (void *)(OBJ_VRAM0 + (gSprites[healthboxSpriteId].oam.tileNum + tileNumAdder + i) * TILE_SIZE_4BPP), 32);
+
+        // With no status icon to show, EX Pokemon get the EX logo in its place
+        if (IsSpeciesEx(GetMonData(mon, MON_DATA_SPECIES)))
+            CpuCopy32(gHealthboxExLogoGfx, (void *)(OBJ_VRAM0 + (gSprites[healthboxSpriteId].oam.tileNum + tileNumAdder) * TILE_SIZE_4BPP), 96);
 
         if (!gBattleSpritesDataPtr->battlerData[battler].hpNumbersNoBars)
             CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_1), (void *)(OBJ_VRAM0 + gSprites[healthBarSpriteId].oam.tileNum * TILE_SIZE_4BPP), 64);

@@ -870,8 +870,8 @@ static const u8 sAirBalloonDesc[] = _(
     "hit by an attack.");
 
 static const u8 sBubbleCoatDesc[] = _(
-    "A bubble that takes\n"
-    "one hit. Electric\n"
+    "Soaks a hit. ELEC,\n"
+    "STEEL, and BLADE\n"
     "moves pierce it.");
 
 static const u8 sFocusBandDesc[] = _(

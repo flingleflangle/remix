@@ -1082,8 +1082,9 @@ static bool32 IsMultiHitMove(u16 move)
 }
 
 // Bubble Coat takes the first damaging hit for its holder, then pops. Status moves pass
-// through it, and Electric moves pierce it, hitting the holder and popping it afterwards
-// (see ItemBattleEffects). Like Knock Off, it's only gone for the rest of the battle.
+// through it, and Electric, Steel, and Blade moves pierce it, hitting the holder and
+// popping it afterwards (see ItemBattleEffects). Once popped, it's gone for good, like
+// a consumed berry.
 // A normal move is blocked entirely (see JumpIfMoveAffectedByProtect), but a multi-hit
 // move only has its first hit blocked, and the rest land (see TryBubbleCoatFirstHit).
 static bool32 TryPopBubbleCoat(void)
@@ -1097,12 +1098,11 @@ static bool32 TryPopBubbleCoat(void)
         return FALSE;
 
     GET_MOVE_TYPE(gCurrentMove, moveType);
-    if (moveType == TYPE_ELECTRIC)
+    if (moveType == TYPE_ELECTRIC || moveType == TYPE_STEEL || moveType == TYPE_BLADE)
         return FALSE;
 
     gLastUsedItem = gBattleMons[gBattlerTarget].item;
-    gBattleMons[gBattlerTarget].item = ITEM_NONE;
-    gWishFutureKnock.knockedOffMons[GetBattlerSide(gBattlerTarget)] |= gBitTable[gBattlerPartyIndexes[gBattlerTarget]];
+    PopBattlerHeldItem(gBattlerTarget);
     RecordItemEffectBattle(gBattlerTarget, HOLD_EFFECT_BUBBLE_COAT);
     return TRUE;
 }

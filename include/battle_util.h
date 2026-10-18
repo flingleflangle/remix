@@ -92,6 +92,7 @@ void BattleScriptExecute(const u8 *BS_ptr);
 void BattleScriptPushCursorAndCallback(const u8 *BS_ptr);
 u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn);
 bool32 IsBattlerFloatingOnAirBalloon(u8 battler);
+void PopBattlerHeldItem(u8 battler);
 void ClearFuryCutterDestinyBondGrudge(u8 battler);
 void HandleAction_RunBattleScript(void);
 u8 GetMoveTarget(u16 move, u8 setTarget);
