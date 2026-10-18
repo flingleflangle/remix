@@ -391,6 +391,7 @@ static void UpdatePartyMonAilmentGfx(u8, struct PartyMenuBox *);
 static u8 GetPartyLayoutFromBattleType(void);
 static void Task_SetSacredAshCB(u8);
 static void CB2_ReturnToBagMenu(void);
+static void ShowPartyMenuForItemUse(MainCallback callback);
 static void Task_DisplayHPRestoredMessage(u8);
 static u16 ItemEffectToMonEv(struct Pokemon *, u8);
 static void ItemEffectToStatString(u8, u8 *);
@@ -4296,7 +4297,23 @@ static void LoadPartyMenuAilmentGfx(void)
 
 void CB2_ShowPartyMenuForItemUse(void)
 {
-    MainCallback callback = CB2_ReturnToBagMenu;
+    ShowPartyMenuForItemUse(CB2_ReturnToBagMenu);
+}
+
+static void CB2_ReturnToFieldFromRegisteredItemUse(void)
+{
+    gFieldCallback = FieldCB_ReturnToFieldNoScript;
+    SetMainCallback2(CB2_ReturnToField);
+}
+
+// Using an item registered to Select, which returns to the field instead of the bag
+void CB2_ShowPartyMenuForRegisteredItemUse(void)
+{
+    ShowPartyMenuForItemUse(CB2_ReturnToFieldFromRegisteredItemUse);
+}
+
+static void ShowPartyMenuForItemUse(MainCallback callback)
+{
     u8 partyLayout;
     u8 menuType;
     u8 i;
@@ -5265,7 +5282,8 @@ static void Task_TryLearningNextMove(u8 taskId)
 static void CB2_ReturnToPartyMenuUsingRareCandy(void)
 {
     gItemUseCB = ItemUseCB_RareCandy;
-    SetMainCallback2(CB2_ShowPartyMenuForItemUse);
+    // Keep the original exit, so a Rare Candy registered to Select still returns to the field
+    ShowPartyMenuForItemUse(gPartyMenu.exitCallback);
 }
 
 static void PartyMenuTryEvolution(u8 taskId)

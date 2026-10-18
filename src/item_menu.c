@@ -326,6 +326,13 @@ static const u8 sContextMenuItems_ItemsPocket[] = {
     ACTION_TOSS,        ACTION_CANCEL
 };
 
+// Items pocket, for items that can be registered to Select
+static const u8 sContextMenuItems_RegisterablePocket[] = {
+    ACTION_USE,         ACTION_GIVE,
+    ACTION_TOSS,        ACTION_CANCEL,
+    ACTION_REGISTER,    ACTION_DUMMY
+};
+
 static const u8 sContextMenuItems_KeyItemsPocket[] = {
     ACTION_USE,         ACTION_REGISTER,
     ACTION_DUMMY,       ACTION_CANCEL
@@ -1151,6 +1158,7 @@ static void BagMenu_ItemPrintCallback(u8 windowId, u32 itemIndex, u8 y)
     u16 itemId;
     u16 itemQuantity;
     s32 offset;
+    s32 registeredIndex;
 
     if (itemIndex != LIST_CANCEL)
     {
@@ -1170,12 +1178,17 @@ static void BagMenu_ItemPrintCallback(u8 windowId, u32 itemIndex, u8 y)
         if (itemId >= ITEM_HM01 && itemId <= ITEM_HM08)
             BlitBitmapToWindow(windowId, gBagMenuHMIcon_Gfx, 8, y - 1, 16, 16);
 
+        // Registered non-key items show the registered icon, with their quantity moved left of it
+        registeredIndex = (gBagPosition.pocket != KEYITEMS_POCKET && itemId) ? RegisteredItemIndex(itemId) : -1;
+        if (registeredIndex >= 0)
+            BlitBitmapToWindow(windowId, sRegisteredSelect_Gfx[registeredIndex], 96, y - 1, 24, 16);
+
         if (gBagPosition.pocket == BERRIES_POCKET)
         {
             // Print berry quantity
             ConvertIntToDecimalStringN(gStringVar1, itemQuantity, STR_CONV_MODE_RIGHT_ALIGN, BERRY_CAPACITY_DIGITS);
             StringExpandPlaceholders(gStringVar4, gText_xVar1);
-            offset = GetStringRightAlignXOffset(FONT_NARROW, gStringVar4, 119);
+            offset = GetStringRightAlignXOffset(FONT_NARROW, gStringVar4, registeredIndex >= 0 ? 95 : 119);
             BagMenu_Print(windowId, FONT_NARROW, gStringVar4, offset, y, 0, 0, TEXT_SKIP_DRAW, COLORID_NORMAL);
         }
         else if (gBagPosition.pocket != KEYITEMS_POCKET && GetItemImportance(itemId) == FALSE)
@@ -1183,7 +1196,7 @@ static void BagMenu_ItemPrintCallback(u8 windowId, u32 itemIndex, u8 y)
             // Print item quantity
             ConvertIntToDecimalStringN(gStringVar1, itemQuantity, STR_CONV_MODE_RIGHT_ALIGN, BAG_ITEM_CAPACITY_DIGITS);
             StringExpandPlaceholders(gStringVar4, gText_xVar1);
-            offset = GetStringRightAlignXOffset(FONT_NARROW, gStringVar4, 119);
+            offset = GetStringRightAlignXOffset(FONT_NARROW, gStringVar4, registeredIndex >= 0 ? 95 : 119);
             BagMenu_Print(windowId, FONT_NARROW, gStringVar4, offset, y, 0, 0, TEXT_SKIP_DRAW, COLORID_NORMAL);
         }
         else if (itemId && (offset = RegisteredItemIndex(itemId)) >= 0)
@@ -1752,8 +1765,34 @@ static void CancelItemSwap(u8 taskId)
     gTasks[taskId].func = Task_BagMenu_HandleInput;
 }
 
+// Non-key items can be registered to Select if they have a use outside of battle
+static bool8 CanRegisterNonKeyItem(u16 itemId)
+{
+    ItemUseFunc func = GetItemFieldFunc(itemId);
+
+    if (GetItemPocket(itemId) == POCKET_KEY_ITEMS || GetItemPocket(itemId) == POCKET_POKE_BALLS || ItemIsMail(itemId))
+        return FALSE;
+    // Evolution stones and crystals
+    if (func == ItemUseOutOfBattle_EvolutionStone || (itemId >= ITEM_STAR_CRYSTAL && itemId <= ITEM_METAL_CRYSTAL))
+        return FALSE;
+    // Berries can be planted from the bag, see ItemUseOutOfBattle_Berry
+    if (GetItemPocket(itemId) == POCKET_BERRIES)
+        return TRUE;
+    return func != NULL && func != ItemUseOutOfBattle_CannotUse;
+}
+
+// Berries use their own field func so they can be planted, as they are in the bag
+static ItemUseFunc GetRegisteredItemFieldFunc(u16 itemId)
+{
+    if (GetItemPocket(itemId) == POCKET_BERRIES)
+        return ItemUseOutOfBattle_Berry;
+    return GetItemFieldFunc(itemId);
+}
+
 static void OpenContextMenu(u8 taskId)
 {
+    u32 i;
+
     switch (gBagPosition.location)
     {
     case ITEMMENULOCATION_BATTLE:
@@ -1833,8 +1872,16 @@ static void OpenContextMenu(u8 taskId)
             {
             case ITEMS_POCKET:
                 gBagMenu->contextMenuItemsPtr = gBagMenu->contextMenuItemsBuffer;
-                gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_ItemsPocket);
-                memcpy(&gBagMenu->contextMenuItemsBuffer, &sContextMenuItems_ItemsPocket, sizeof(sContextMenuItems_ItemsPocket));
+                if (CanRegisterNonKeyItem(gSpecialVar_ItemId))
+                {
+                    gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_RegisterablePocket);
+                    memcpy(&gBagMenu->contextMenuItemsBuffer, &sContextMenuItems_RegisterablePocket, sizeof(sContextMenuItems_RegisterablePocket));
+                }
+                else
+                {
+                    gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_ItemsPocket);
+                    memcpy(&gBagMenu->contextMenuItemsBuffer, &sContextMenuItems_ItemsPocket, sizeof(sContextMenuItems_ItemsPocket));
+                }
                 if (ItemIsMail(gSpecialVar_ItemId) == TRUE)
                     gBagMenu->contextMenuItemsBuffer[0] = ACTION_CHECK;
                 break;
@@ -1848,8 +1895,6 @@ static void OpenContextMenu(u8 taskId)
                     gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_KeyItemsPocket);
                     memcpy(&gBagMenu->contextMenuItemsBuffer, &sContextMenuItems_KeyItemsPocket, sizeof(sContextMenuItems_KeyItemsPocket));
                 }
-                if (RegisteredItemIndex(gSpecialVar_ItemId) >= 0)
-                    gBagMenu->contextMenuItemsBuffer[1] = ACTION_DESELECT;
                 if (gSpecialVar_ItemId == ITEM_MACH_BIKE || gSpecialVar_ItemId == ITEM_ACRO_BIKE)
                 {
                     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
@@ -1861,13 +1906,29 @@ static void OpenContextMenu(u8 taskId)
                 gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_BallsPocket);
                 break;
             case TMHM_POCKET:
-                gBagMenu->contextMenuItemsPtr = sContextMenuItems_TmHmPocket;
+                gBagMenu->contextMenuItemsPtr = gBagMenu->contextMenuItemsBuffer;
                 gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_TmHmPocket);
+                memcpy(&gBagMenu->contextMenuItemsBuffer, &sContextMenuItems_TmHmPocket, sizeof(sContextMenuItems_TmHmPocket));
+                if (CanRegisterNonKeyItem(gSpecialVar_ItemId))
+                    gBagMenu->contextMenuItemsBuffer[2] = ACTION_REGISTER;
                 break;
             case BERRIES_POCKET:
-                gBagMenu->contextMenuItemsPtr = sContextMenuItems_BerriesPocket;
+                gBagMenu->contextMenuItemsPtr = gBagMenu->contextMenuItemsBuffer;
                 gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_BerriesPocket);
+                memcpy(&gBagMenu->contextMenuItemsBuffer, &sContextMenuItems_BerriesPocket, sizeof(sContextMenuItems_BerriesPocket));
+                if (CanRegisterNonKeyItem(gSpecialVar_ItemId))
+                    gBagMenu->contextMenuItemsBuffer[5] = ACTION_REGISTER;
                 break;
+            }
+
+            // Already registered items get Deselect instead of Register
+            if (gBagMenu->contextMenuItemsPtr == gBagMenu->contextMenuItemsBuffer && RegisteredItemIndex(gSpecialVar_ItemId) >= 0)
+            {
+                for (i = 0; i < gBagMenu->contextMenuNumItems; i++)
+                {
+                    if (gBagMenu->contextMenuItemsBuffer[i] == ACTION_REGISTER)
+                        gBagMenu->contextMenuItemsBuffer[i] = ACTION_DESELECT;
+                }
             }
         }
     }
@@ -2201,6 +2262,23 @@ s32 RegisteredItemIndex(u16 item) {
     return -1;
 }
 
+// Clears every registration of the item, e.g. when the last one leaves the bag
+void UnregisterItem(u16 itemId)
+{
+    s32 index;
+
+    if (itemId == ITEM_NONE)
+        return;
+    // Clear the vanilla registered item first, or RegisteredItemIndex would restore it to slot 0
+    if (gSaveBlock1Ptr->registeredItemCompat == itemId)
+        gSaveBlock1Ptr->registeredItemCompat = ITEM_NONE;
+    while ((index = RegisteredItemIndex(itemId)) >= 0)
+        gSaveBlock1Ptr->registeredItems[index] = ITEM_NONE;
+    // Point the vanilla registered item at whatever is left, if anything
+    if (gSaveBlock1Ptr->registeredItemCompat == ITEM_NONE && (index = RegisteredItemIndex(ITEM_NONE)) >= 0)
+        gSaveBlock1Ptr->registeredItemCompat = gSaveBlock1Ptr->registeredItems[index];
+}
+
 static void ItemMenu_Register(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
@@ -2369,7 +2447,7 @@ bool8 UseRegisteredKeyItemOnField(void)
     } else if (i > 0) {
         if (CheckBagHasItem(gSaveBlock1Ptr->registeredItemCompat, 1) == TRUE) {
             gSpecialVar_ItemId = gSaveBlock1Ptr->registeredItemCompat;
-            func = GetItemFieldFunc(gSaveBlock1Ptr->registeredItemCompat);
+            func = GetRegisteredItemFieldFunc(gSaveBlock1Ptr->registeredItemCompat);
         } else {
             gSaveBlock1Ptr->registeredItemCompat = ITEM_NONE;
         }
@@ -2491,7 +2569,7 @@ static void Task_KeyItemWheel(u8 taskId) {
         if (!gSprites[data[15]].affineAnimEnded)
             break;
         FreeKeyItemWheelGfx(data);
-        i = CreateTask(GetItemFieldFunc(gSaveBlock1Ptr->registeredItemCompat), 8);
+        i = CreateTask(GetRegisteredItemFieldFunc(gSaveBlock1Ptr->registeredItemCompat), 8);
         gTasks[i].tUsingRegisteredKeyItem = TRUE;
         DestroyTask(taskId);
         break;

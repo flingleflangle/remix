@@ -24,6 +24,7 @@ void ItemId_GetHoldEffectParam_Script()
 
 static bool8 CheckPyramidBagHasItem(u16 itemId, u16 count);
 static bool8 CheckPyramidBagHasSpace(u16 itemId, u16 count);
+static bool8 RemoveBagItem_Internal(u16 itemId, u16 count);
 
 EWRAM_DATA struct BagPocket gBagPockets[POCKETS_COUNT] = {0};
 
@@ -357,6 +358,21 @@ bool8 AddBagItem(u16 itemId, u16 count)
 }
 
 bool8 RemoveBagItem(u16 itemId, u16 count)
+{
+    bool8 removed = RemoveBagItem_Internal(itemId, count);
+
+    // Unregister non-key items from Select once the last one has left the bag.
+    // Key items are left alone, since scripts like the bike swap rely on them staying registered.
+    if (removed
+     && GetItemPocket(itemId) != POCKET_KEY_ITEMS
+     && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE
+     && FlagGet(FLAG_STORING_ITEMS_IN_PYRAMID_BAG) != TRUE
+     && !CheckBagHasItem(itemId, 1))
+        UnregisterItem(itemId);
+    return removed;
+}
+
+static bool8 RemoveBagItem_Internal(u16 itemId, u16 count)
 {
     u8 i;
     u16 totalQuantity = 0;

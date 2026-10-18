@@ -72,7 +72,7 @@ struct BagMenu
     u8 pocketScrollArrowsTask;
     u8 pocketSwitchArrowsTask;
     const u8 *contextMenuItemsPtr;
-    u8 contextMenuItemsBuffer[4];
+    u8 contextMenuItemsBuffer[6];
     u8 contextMenuNumItems;
     u8 numItemStacks[POCKETS_COUNT];
     u8 numShownItems[POCKETS_COUNT];
@@ -108,5 +108,6 @@ void DisplayItemMessage(u8 taskId, u8 fontId, const u8 *str, void (*callback)(u8
 void DisplayItemMessageOnField(u8 taskId, const u8 *string, TaskFunc callback);
 void CloseItemMessage(u8 taskId);
 s32 RegisteredItemIndex(u16 item);
+void UnregisterItem(u16 itemId);
 
 #endif //GUARD_ITEM_MENU_H

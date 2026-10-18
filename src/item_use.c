@@ -71,6 +71,7 @@ static void Task_StartUseRepel(u8);
 static void Task_UseRepel(u8);
 void Cycle_Through_Repels(void);
 static void Task_CloseCantUseKeyItemMessage(u8);
+static void DisplayCannotUseItemMessage(u8 taskId, bool8 isUsingRegisteredKeyItemOnField, const u8 *str);
 static void SetDistanceOfClosestHiddenItem(u8, s16, s16);
 static void CB2_OpenPokeblockFromBag(void);
 
@@ -97,10 +98,39 @@ static const struct YesNoFuncTable sUseTMHMYesNoFuncTable =
     .noFunc = CloseItemMessage,
 };
 
+static void Task_OpenPartyMenuForRegisteredItem(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        CleanupOverworldWindowsAndTilemaps();
+        SetMainCallback2(CB2_ShowPartyMenuForRegisteredItemUse);
+        DestroyTask(taskId);
+    }
+}
+
+// For items registered to Select that are used on a party Pokémon (gItemUseCB must be set)
+// There's no bag to close, so fade straight from the field to the party menu
+static void OpenPartyMenuForRegisteredItem(u8 taskId)
+{
+    if (CalculatePlayerPartyCount() == 0)
+    {
+        DisplayCannotUseItemMessage(taskId, TRUE, gText_NoPokemon);
+        return;
+    }
+    FadeScreen(FADE_TO_BLACK, 0);
+    gTasks[taskId].func = Task_OpenPartyMenuForRegisteredItem;
+}
+
 #define tEnigmaBerryType data[4]
 static void SetUpItemUseCallback(u8 taskId)
 {
     u8 type;
+    // Registered items only get here if they use the party menu, see SetUpItemUseOnFieldCallback
+    if (gTasks[taskId].tUsingRegisteredKeyItem == TRUE)
+    {
+        OpenPartyMenuForRegisteredItem(taskId);
+        return;
+    }
     if (gSpecialVar_ItemId == ITEM_ENIGMA_BERRY)
         type = gTasks[taskId].tEnigmaBerryType - 1;
     else
@@ -686,7 +716,11 @@ void ItemUseOutOfBattle_PowderJar(u8 taskId)
 
 void ItemUseOutOfBattle_Berry(u8 taskId)
 {
-    if (IsPlayerFacingEmptyBerryTreePatch() == TRUE)
+    if (IsPlayerFacingEmptyBerryTreePatch() == TRUE && gTasks[taskId].tUsingRegisteredKeyItem == TRUE)
+    {
+        ItemUseOnFieldCB_Berry(taskId);
+    }
+    else if (IsPlayerFacingEmptyBerryTreePatch() == TRUE)
     {
         sItemUseOnFieldCB = ItemUseOnFieldCB_Berry;
         gFieldCallback = FieldCB_UseItemOnField;
@@ -797,7 +831,10 @@ void ItemUseOutOfBattle_TastyTreat(u8 taskId)
 
 void ItemUseOutOfBattle_TMHM(u8 taskId)
 {
-    if (gSpecialVar_ItemId >= ITEM_HM01)
+    // The boot-up messages need the bag's windows, so registered TMs go straight to the party menu
+    if (gTasks[taskId].tUsingRegisteredKeyItem == TRUE)
+        UseTMHM(taskId);
+    else if (gSpecialVar_ItemId >= ITEM_HM01)
         DisplayItemMessage(taskId, FONT_NORMAL, gText_BootedUpHM, BootUpSoundTMHM); // HM
     else
         DisplayItemMessage(taskId, FONT_NORMAL, gText_BootedUpTM, BootUpSoundTMHM); // TM
@@ -830,6 +867,15 @@ static void UseTMHM(u8 taskId)
     SetUpItemUseCallback(taskId);
 }
 
+// For items used on the field after the bag has closed (e.g. registered to Select).
+// Skips updating the bag's lists, since gBagMenu has been freed.
+static void RemoveUsedItemOnField(void)
+{
+    RemoveBagItem(gSpecialVar_ItemId, 1);
+    CopyItemName(gSpecialVar_ItemId, gStringVar2);
+    StringExpandPlaceholders(gStringVar4, gText_PlayerUsedVar2);
+}
+
 static void RemoveUsedItem(void)
 {
     RemoveBagItem(gSpecialVar_ItemId, 1);
@@ -851,6 +897,8 @@ void ItemUseOutOfBattle_Repel(u8 taskId)
 {
     if (VarGet(VAR_REPEL_STEP_COUNT) == 0)
         gTasks[taskId].func = Task_StartUseRepel;
+    else if (gTasks[taskId].tUsingRegisteredKeyItem == TRUE)
+        DisplayItemMessageOnField(taskId, gText_RepelEffectsLingered, Task_CloseCantUseKeyItemMessage);
     else if (CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
         DisplayItemMessage(taskId, FONT_NORMAL, gText_RepelEffectsLingered, CloseItemMessage);
     else
@@ -875,6 +923,12 @@ static void Task_UseRepel(u8 taskId)
     {
         VarSet(VAR_REPEL_STEP_COUNT, GetItemHoldEffectParam(gSpecialVar_ItemId));
 		VarSet(VAR_REPEL_LAST_USED, gSpecialVar_ItemId);
+        if (gTasks[taskId].tUsingRegisteredKeyItem == TRUE)
+        {
+            RemoveUsedItemOnField();
+            DisplayItemMessageOnField(taskId, gStringVar4, Task_CloseCantUseKeyItemMessage);
+            return;
+        }
         RemoveUsedItem();
         if (CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
             DisplayItemMessage(taskId, FONT_NORMAL, gStringVar4, CloseItemMessage);
@@ -907,7 +961,9 @@ static void Task_UsedBlackWhiteFlute(u8 taskId)
     if(++gTasks[taskId].data[8] > 7)
     {
         PlaySE(SE_GLASS_FLUTE);
-        if (CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
+        if (gTasks[taskId].tUsingRegisteredKeyItem == TRUE)
+            DisplayItemMessageOnField(taskId, gStringVar4, Task_CloseCantUseKeyItemMessage);
+        else if (CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
             DisplayItemMessage(taskId, FONT_NORMAL, gStringVar4, CloseItemMessage);
         else
             DisplayItemMessageInBattlePyramid(taskId, gStringVar4, Task_CloseBattlePyramidBagMessage);
@@ -943,7 +999,7 @@ void Task_UseDigEscapeRopeOnField(u8 taskId)
 static void ItemUseOnFieldCB_EscapeRope(u8 taskId)
 {
     Overworld_ResetStateAfterDigEscRope();
-    RemoveUsedItem();
+    RemoveUsedItemOnField();
     gTasks[taskId].data[0] = 0;
     DisplayItemMessageOnField(taskId, gStringVar4, Task_UseDigEscapeRopeOnField);
 }
