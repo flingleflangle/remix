@@ -1601,10 +1601,6 @@ static const u8 sScissorKickDescription[] = _(
     "Guaranteed critical-hits\n"
     "on foes with lower HP.");
 
-static const u8 sExploitDescription[] = _(
-    "Exploits the foe's types for\n"
-    "super effective damage.");
-
 static const u8 sPanicDescription[] = _(
     "Power increases sharply\n"
     "when under high stress.");
@@ -2107,7 +2103,6 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_TREMOR - 1] = sTremorDescription,
     [MOVE_MIND_CRUSH - 1] = sMindCrushDescription,
     [MOVE_SCISSOR_KICK - 1] = sScissorKickDescription,
-    [MOVE_EXPLOIT - 1] = sExploitDescription,
     [MOVE_PANIC - 1] = sPanicDescription,
     [MOVE_LAST_STAND - 1] = sLastStandDescription,
     [MOVE_FLUSH - 1] = sFlushDescription,

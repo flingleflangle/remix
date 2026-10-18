@@ -4493,7 +4493,7 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_TMHM,
     },
 
-    [ITEM_TM_EXPLOIT] =
+    [ITEM_TM_SUCKER_PUNCH] =
     {
         .name = _("TM85"),
         .itemId = ITEM_TM85,

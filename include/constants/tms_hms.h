@@ -86,7 +86,7 @@
     F(CHISEL) \
     F(LOW_KICK) \
     F(SCALD) \
-    F(EXPLOIT) \
+    F(SUCKER_PUNCH) \
     F(FLYING_KNEE) \
     F(SILVER_WIND) \
     F(SYNCHRO_BLAST) \

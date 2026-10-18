@@ -401,7 +401,7 @@
 #define MOVE_TREMOR 397
 #define MOVE_MIND_CRUSH 398
 #define MOVE_SCISSOR_KICK 399
-#define MOVE_EXPLOIT 400
+#define MOVE_SUCKER_PUNCH 400 // Replaced Exploit, so saved Pokemon that knew Exploit now know Sucker Punch
 #define MOVE_PANIC 401
 #define MOVE_LAST_STAND 402
 #define MOVE_FLUSH 403
@@ -422,15 +422,14 @@
 #define MOVE_NEBULA_CRASH 418
 #define MOVE_CHAKRA_SURGE 419
 #define MOVE_BLACK_HOLE 420
-#define MOVE_SUCKER_PUNCH 421
-#define MOVE_DODGE 422
-#define MOVE_TOXIC_SPIKES 423
-#define MOVE_WIRE_TRIP 424
-#define MOVE_STONE_WALL 425
-#define MOVE_ICE_WALL 426
+#define MOVE_DODGE 421
+#define MOVE_TOXIC_SPIKES 422
+#define MOVE_WIRE_TRIP 423
+#define MOVE_STONE_WALL 424
+#define MOVE_ICE_WALL 425
 
 
-#define MOVES_COUNT 427
+#define MOVES_COUNT 426
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

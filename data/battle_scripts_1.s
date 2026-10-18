@@ -128,7 +128,6 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectNightmare              @ EFFECT_NIGHTMARE
 	.4byte BattleScript_EffectMinimize               @ EFFECT_MINIMIZE
 	.4byte BattleScript_EffectCurse                  @ EFFECT_CURSE
-	.4byte BattleScript_EffectExploit                @ EFFECT_EXPLOIT
 	.4byte BattleScript_EffectProtect                @ EFFECT_PROTECT
 	.4byte BattleScript_EffectSpikes                 @ EFFECT_SPIKES
 	.4byte BattleScript_EffectForesight              @ EFFECT_FORESIGHT
@@ -819,6 +818,8 @@ BattleScript_MultiHitAnimFix::
 	decrementmultihit BattleScript_MultiHitLoop
 	goto BattleScript_MultiHitPrintStrings
 BattleScript_MultiHitPrintStrings::
+	jumpifmove MOVE_STAR_BARRAGE, StarBarrageLand
+StarBarrageLandReturn:
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	jumpifmovehadnoeffect BattleScript_MultiHitEnd
@@ -839,6 +840,28 @@ StarBarrageRecoil:
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 	goto StarBarrageReturn
+
+@ Fainted from recoil mid-barrage, while still up in the sky. Comes back down (animation
+@ turn 3), then shakes and burns out as its cry plays (turn 4), then faints as normal.
+@ See Move_STAR_BARRAGE.
+BattleScript_StarBarrageFaint:
+	setbyte sB_ANIM_TURN, 3
+	attackanimation
+	waitanimation
+	playfaintcry BS_ATTACKER
+	setbyte sB_ANIM_TURN, 4
+	attackanimation
+	waitanimation
+	goto BattleScript_FaintAttackerAnim
+
+@ After the last star, the user comes back down (animation turn 2, see Move_STAR_BARRAGE)
+StarBarrageLand:
+	@ If the recoil from the last hit knocked the user out, it lands in BattleScript_StarBarrageFaint instead
+	jumpifhasnohp BS_ATTACKER, StarBarrageLandReturn
+	setbyte sB_ANIM_TURN, 2
+	attackanimation
+	waitanimation
+	goto StarBarrageLandReturn
 
 StarBarrageDamageCalc:
 	setbyte sB_ANIM_TURN, 1
@@ -1382,18 +1405,6 @@ BattleScript_EffectShred::
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	goto BattleScript_HitFromAtkAnimation
 
-BattleScript_EffectExploit:
-	attackcanceler
-	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
-	attackstring
-	ppreduce
-	bicbyte gMoveResultFlags, MOVE_RESULT_NOT_VERY_EFFECTIVE
-	setbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE 
-	setbyte gCritMultiplier, 2
-	damagecalc
-	typecalc
-	goto BattleScript_HitFromAtkAnimation
-	
 BattleScript_EffectDragonFist::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
@@ -4635,8 +4646,10 @@ BattleScript_EffectCamouflage::
 	goto BattleScript_MoveEnd
 
 BattleScript_FaintAttacker::
+	jumpifmove MOVE_STAR_BARRAGE, BattleScript_StarBarrageFaint
 	playfaintcry BS_ATTACKER
 	pause B_WAIT_TIME_SHORT
+BattleScript_FaintAttackerAnim:
 	dofaintanimation BS_ATTACKER
 	cleareffectsonfaint BS_ATTACKER
 	printstring STRINGID_ATTACKERFAINTED
@@ -5925,9 +5938,13 @@ BattleScript_RecoilEnd::
 
 BattleScript_ItemSteal::
 	playanimation BS_TARGET, B_ANIM_ITEM_STEAL
-	setmoveeffect MOVE_EFFECT_FLINCH | MOVE_EFFECT_CERTAIN
 	printstring STRINGID_PKMNSTOLEITEM
 	waitmessage B_WAIT_TIME_LONG
+	@ Having its item stolen makes the target flinch, if it hasn't moved yet.
+	@ Applied as a secondary effect so Inner Focus quietly blocks it, rather than
+	@ jumping to BattleScript_FlinchPrevention and cutting this script short.
+	setmoveeffect MOVE_EFFECT_FLINCH
+	seteffectsecondary
 	return
 
 BattleScript_DrizzleActivates::

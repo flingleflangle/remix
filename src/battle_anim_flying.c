@@ -17,6 +17,9 @@ static void AnimFlyBallUp(struct Sprite *);
 static void AnimFlyBallUp_Step(struct Sprite *);
 static void AnimFlyBallAttack(struct Sprite *);
 static void AnimFlyBallAttack_Step(struct Sprite *);
+static void AnimFlyBallLand(struct Sprite *);
+static void AnimFlyBallLand_Step(struct Sprite *);
+static void AnimTask_ShakeAttackerEvenIfFainted_Step(u8 taskId);
 static void AnimFallingFeather(struct Sprite *);
 static void AnimFallingFeather_Step(struct Sprite *);
 static void AnimWhirlwindLine_Step(struct Sprite *);
@@ -137,6 +140,18 @@ const struct SpriteTemplate gFlyBallUpSpriteTemplate =
     .images = NULL,
     .affineAnims = sAffineAnims_FlyBallUp,
     .callback = AnimFlyBallUp,
+};
+
+// The reverse of gFlyBallUpSpriteTemplate, used by Star Barrage to come back down
+const struct SpriteTemplate gFlyBallLandSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROUND_SHADOW,
+    .paletteTag = ANIM_TAG_ROUND_SHADOW,
+    .oam = &gOamData_AffineOff_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimFlyBallLand,
 };
 
 const struct SpriteTemplate gFlyBallAttackSpriteTemplate =
@@ -490,6 +505,79 @@ static void AnimFlyBallUp_Step(struct Sprite *sprite)
 
     if (sprite->y + sprite->y2 < -32)
         DestroyAnimSprite(sprite);
+}
+
+// The ball drops from above the screen onto the attacker, which reappears once it lands.
+// The reverse of AnimFlyBallUp.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: duration of the fall
+static void AnimFlyBallLand(struct Sprite *sprite)
+{
+    InitSpritePosToAnimAttacker(sprite, TRUE);
+    sprite->data[0] = gBattleAnimArgs[2];
+    sprite->data[1] = gBattleAnimArgs[2];
+    sprite->data[2] = -(sprite->y + 32); // Start just above the top of the screen
+    sprite->y2 = sprite->data[2];
+    sprite->callback = AnimFlyBallLand_Step;
+}
+
+static void AnimFlyBallLand_Step(struct Sprite *sprite)
+{
+    if (--sprite->data[0] > 0)
+    {
+        sprite->y2 = sprite->data[2] * sprite->data[0] / sprite->data[1];
+    }
+    else
+    {
+        // Not GetAnimBattlerSpriteId, which finds no sprite once the attacker has fainted.
+        // Star Barrage's user still lands to faint after its recoil knocks it out.
+        gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].invisible = FALSE;
+        DestroyAnimSprite(sprite);
+    }
+}
+
+#define tTimer    data[0]
+#define tDuration data[1]
+#define tSpriteId data[2]
+
+// Shakes the attacker side to side, even if it has fainted (unlike AnimTask_ShakeMon and
+// AnimTask_HorizontalShake). For Star Barrage's user, which faints after landing.
+// arg 0: duration
+void AnimTask_ShakeAttackerEvenIfFainted(u8 taskId)
+{
+    gTasks[taskId].tTimer = 0;
+    gTasks[taskId].tDuration = gBattleAnimArgs[0];
+    gTasks[taskId].tSpriteId = gBattlerSpriteIds[gBattleAnimAttacker];
+    gTasks[taskId].func = AnimTask_ShakeAttackerEvenIfFainted_Step;
+}
+
+static void AnimTask_ShakeAttackerEvenIfFainted_Step(u8 taskId)
+{
+    struct Sprite *sprite = &gSprites[gTasks[taskId].tSpriteId];
+
+    if (++gTasks[taskId].tTimer < gTasks[taskId].tDuration)
+    {
+        // 2 pixels each way, switching every 2 frames
+        sprite->x2 = (gTasks[taskId].tTimer & 2) ? 2 : -2;
+    }
+    else
+    {
+        sprite->x2 = 0;
+        DestroyAnimVisualTask(taskId);
+    }
+}
+
+#undef tTimer
+#undef tDuration
+#undef tSpriteId
+
+// Returns which turn of a move's animation this is (sB_ANIM_TURN in battle scripts).
+// Lets an animation have more than the two variants choosetwoturnanim allows.
+void AnimTask_GetAnimMoveTurn(u8 taskId)
+{
+    gBattleAnimArgs[ARG_RET_ID] = gAnimMoveTurn;
+    DestroyAnimVisualTask(taskId);
 }
 
 static void AnimFlyBallAttack(struct Sprite *sprite)

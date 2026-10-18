@@ -1604,9 +1604,9 @@ static const u8 sTM84Desc[] = _(
     "May cause a burn.");
 
 static const u8 sTM85Desc[] = _(
-    "Exploits the foe's\n"
-    "types for super\n"
-    "effective damage.");
+    "Attacks first if the\n"
+    "foe is readying an\n"
+    "attack.");
 
 static const u8 sTM86Desc[] = _(
     "Power is greatly\n"

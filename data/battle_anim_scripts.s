@@ -416,7 +416,7 @@ gBattleAnims_Moves::
 	.4byte Move_TREMOR
 	.4byte Move_MIND_CRUSH
 	.4byte Move_SCISSOR_KICK
-	.4byte Move_EXPLOIT
+	.4byte Move_SUCKER_PUNCH
 	.4byte Move_PANIC
 	.4byte Move_LAST_STAND
 	.4byte Move_FLUSH
@@ -437,7 +437,6 @@ gBattleAnims_Moves::
 	.4byte Move_NEBULA_CRASH
 	.4byte Move_CHAKRA_SURGE
 	.4byte Move_BLACK_HOLE
-	.4byte Move_SUCKER_PUNCH
 	.4byte Move_DODGE
 	.4byte Move_TOXIC_SPIKES
 	.4byte Move_WIRE_TRIP
@@ -4067,33 +4066,6 @@ ScissorKick:
 	blendoff
 	end
 
-Move_EXPLOIT::
-	loadspritegfx ANIM_TAG_RAPID_SPIN
-	loadspritegfx ANIM_TAG_IMPACT
-	loadspritegfx ANIM_TAG_SLASH
-	monbg ANIM_ATTACKER
-	createvisualtask AnimTask_BlendNightSlash, 2, ANIM_TARGET, 2, 0, 8, 1
-	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 0, 12, RGB_BLACK
-	createsprite gRapidSpinSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 32, -32, 40, -2
-	createvisualtask AnimTask_RapinSpinMonElevation, 2, 0, 2, 0
-	waitforvisualfinish
-	createsprite gNightSlashLeftSpriteTemplate, ANIM_TARGET, 2, 1, -8, 0
-	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
-	delay 4
-	createsprite gNightSlashLeftSpriteTemplate, ANIM_TARGET, 2, 1, 8, 0
-	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 8, 1
-	delay 40
-	createsprite gNightSlashRightSpriteTemplate, ANIM_TARGET, 2, 1, -8, 0
-	createsprite gNightSlashRightSpriteTemplate, ANIM_TARGET, 2, 1, 8, 0
-	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 4, 0, 18, 1
-	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
-	waitforvisualfinish
-	createvisualtask AnimTask_RapinSpinMonElevation, 2, 0, 2, 1
-	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 12, 0, RGB_BLACK
-	waitforvisualfinish
-	clearmonbg ANIM_ATTACKER
-	end
-
 Move_CHARGE:
 	loadspritegfx ANIM_TAG_ELECTRIC_ORBS
 	loadspritegfx ANIM_TAG_CIRCLE_OF_LIGHT
@@ -7172,7 +7144,102 @@ FlyUnleash:
 	goto FlyEnd
 
 
+@ Star Barrage has four phases, picked by the animation turn (sB_ANIM_TURN):
+@ 0: charges up like Sky Attack, then rises into the air like Fly in a white ball
+@ 1: one star per hit, streaking down from the sky in an arc and bursting on the target
+@ 2: comes back down in the white ball, played by the battle script after the last hit
+@ 3: after fainting mid-barrage, the white ball comes back down and turns back into the user
+@ 4: then, as its cry plays, it shakes and burns out like Overheat before fainting
 Move_STAR_BARRAGE:
+	createvisualtask AnimTask_GetAnimMoveTurn, 2
+	jumpreteq 0, StarBarrageRise
+	jumpreteq 1, StarBarrageShot
+	jumpreteq 2, StarBarrageLand
+	jumpreteq 3, StarBarrageFaintLand
+	goto StarBarrageBurnOut
+
+StarBarrageRise:
+	loadspritegfx ANIM_TAG_ROUND_SHADOW
+	@ Charge up: the field darkens while the user shakes and turns white
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_BG, 1, 0, 12, RGB_BLACK
+	waitforvisualfinish
+	createvisualtask AnimTask_HorizontalShake, 5, ANIM_ATTACKER, 2, 16
+	loopsewithpan SE_M_STAT_INCREASE, SOUND_PAN_ATTACKER, 4, 8
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 0, 15, RGB_WHITE
+	waitforvisualfinish
+	@ Rise in a white ball
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_ROUND_SHADOW, 0, 14, 14, RGB_WHITE
+	playsewithpan SE_M_FLY, SOUND_PAN_ATTACKER
+	createsprite gFlyBallUpSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 13, 336
+	waitforvisualfinish
+	@ The user is hidden in the sky now, so its colors are quietly restored
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 0, 0, RGB_WHITE
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_BG, 1, 12, 0, RGB_BLACK
+	waitforvisualfinish
+	end
+
+StarBarrageShot:
+	loadspritegfx ANIM_TAG_YELLOW_STAR
+	loadspritegfx ANIM_TAG_SPARKLE_2
+	loadspritegfx ANIM_TAG_IMPACT
+	monbg ANIM_DEF_PARTNER
+	setalpha 12, 8
+	@ The sky brightens, and a star with a trail of light arcs down from above the user
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_BG, 1, 0, 6, RGB(31, 31, 20)
+	playsewithpan SE_M_SWIFT, SOUND_PAN_ATTACKER
+	createsprite gSwiftStarSpriteTemplate, ANIM_TARGET, 3, 0, -72, 0, 0, 18, 24, 1
+	delay 2
+	createsprite gSwiftStarSpriteTemplate, ANIM_TARGET, 3, 0, -72, 0, 0, 18, 24, 1
+	delay 2
+	createsprite gSwiftStarSpriteTemplate, ANIM_TARGET, 3, 0, -72, 0, 0, 18, 24, 1
+	delay 14
+	@ It bursts on the target
+	playsewithpan SE_M_MEGA_KICK2, SOUND_PAN_TARGET
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, ANIM_TARGET, 1
+	createsprite gSparklingStarsSpriteTemplate, ANIM_ATTACKER, 16, -6, -6, 1, -192, -160, 14, 1
+	createsprite gSparklingStarsSpriteTemplate, ANIM_ATTACKER, 16, 6, -6, 1, 192, -160, 14, 1
+	createsprite gSparklingStarsSpriteTemplate, ANIM_ATTACKER, 16, 0, 4, 1, 0, 192, 14, 1
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 10, 0, RGB_WHITE
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 4, 0, 6, 1
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_BG, 1, 6, 0, RGB(31, 31, 20)
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_PARTNER
+	blendoff
+	end
+
+@ Comes back down in the white ball, appears white, then eases back to its normal colors
+StarBarrageLand:
+	call StarBarrageDescend
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 2, 16, 0, RGB_WHITE
+	waitforvisualfinish
+	end
+
+@ Fainted mid-barrage: the white ball comes back down and turns back into the user
+StarBarrageFaintLand:
+	call StarBarrageDescend
+	end
+
+@ Played as the fainting cry starts: the landed user shakes for about a second while fading
+@ from white to Overheat's burnt-out gray instead of its normal colors, then it faints
+StarBarrageBurnOut:
+	createvisualtask AnimTask_ShakeAttackerEvenIfFainted, 5, 50
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 16, 6, RGB_WHITE
+	delay 22
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 6, 13, RGB(18, 18, 18)
+	waitforvisualfinish
+	end
+
+@ The user turns white while still hidden, then the white ball drops onto its spot
+@ and the user reappears
+StarBarrageDescend:
+	loadspritegfx ANIM_TAG_ROUND_SHADOW
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_ROUND_SHADOW, 0, 14, 14, RGB_WHITE
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 16, 16, RGB_WHITE
+	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
+	createsprite gFlyBallLandSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 16
+	waitforvisualfinish
+	return
+
 Move_BOUNCE:
 	loadspritegfx ANIM_TAG_ROUND_SHADOW
 	loadspritegfx ANIM_TAG_IMPACT
