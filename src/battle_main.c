@@ -3735,7 +3735,18 @@ static void BattleIntroQuickRun(void)
     {
         if (JOY_HELD(R_BUTTON)){
             if (!IsRunningFromBattleImpossible() && TryRunFromBattle(gBattlerAttacker)){
-                gBattleMainFunc = HandleEndTurn_RanFromBattle;
+                if (gProtectStructs[gBattlerAttacker].fleeType == FLEE_ITEM)
+                {
+                    // The trainer is still on screen, so use the trainer version of the Smoke Ball anim
+                    gCurrentActionFuncId = 0;
+                    gBattleCommunication[MULTISTRING_CHOOSER] = gSaveBlock2Ptr->playerGender;
+                    gBattlescriptCurrInstr = BattleScript_SmokeBallEscapeTrainer;
+                    gBattleMainFunc = HandleEndTurn_FinishBattle;
+                }
+                else
+                {
+                    gBattleMainFunc = HandleEndTurn_RanFromBattle;
+                }
                 return;
             }
             PrepareStringBattle(STRINGID_CANTESCAPE, 0);

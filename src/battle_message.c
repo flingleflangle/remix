@@ -328,6 +328,8 @@ static const u8 sText_NotVeryEffective[] = _("It's not very effective…");
 static const u8 sText_SuperEffective[] = _("It's super effective!");
 static const u8 sText_GotAwaySafely[] = _("{PLAY_SE SE_FLEE}Got away safely!\p");
 static const u8 sText_PkmnFledUsingIts[] = _("{PLAY_SE SE_FLEE}{B_ATK_NAME_WITH_PREFIX} fled\nusing its {B_LAST_ITEM}!\p");
+static const u8 sText_PlayerFledUsingHis[] = _("{PLAY_SE SE_FLEE}{B_PLAYER_NAME} fled\nusing his {B_LAST_ITEM}!\p");
+static const u8 sText_PlayerFledUsingHer[] = _("{PLAY_SE SE_FLEE}{B_PLAYER_NAME} fled\nusing her {B_LAST_ITEM}!\p");
 static const u8 sText_PkmnFledUsing[] = _("{PLAY_SE SE_FLEE}{B_ATK_NAME_WITH_PREFIX} fled\nusing {B_ATK_ABILITY}!\p");
 static const u8 sText_WildPkmnFled[] = _("{PLAY_SE SE_FLEE}Wild {B_BUFF1} fled!");
 static const u8 sText_PlayerDefeatedLinkTrainer[] = _("Player defeated\n{B_LINK_OPPONENT1_NAME}!");
@@ -837,6 +839,8 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNSXRESTOREDHPALITTLE2 - BATTLESTRINGS_TABLE_START] = sText_PkmnsXRestoredHPALittle2,
     [STRINGID_PKMNSXWHIPPEDUPSANDSTORM - BATTLESTRINGS_TABLE_START] = sText_PkmnsXWhippedUpSandstorm,
     [STRINGID_PKMNSXWHIPPEDUPHAILSTORM - BATTLESTRINGS_TABLE_START] = sText_PkmnsXWhippedUpHailstorm,
+    [STRINGID_PLAYERFLEDUSINGHIS - BATTLESTRINGS_TABLE_START] = sText_PlayerFledUsingHis,
+    [STRINGID_PLAYERFLEDUSINGHER - BATTLESTRINGS_TABLE_START] = sText_PlayerFledUsingHer,
     [STRINGID_PKMNSXPREVENTSYLOSS - BATTLESTRINGS_TABLE_START] = sText_PkmnsXPreventsYLoss,
     [STRINGID_PKMNSXINFATUATEDY - BATTLESTRINGS_TABLE_START] = sText_PkmnsXInfatuatedY,
     [STRINGID_PKMNSXMADEYINEFFECTIVE - BATTLESTRINGS_TABLE_START] = sText_PkmnsXMadeYIneffective,
@@ -1272,6 +1276,13 @@ const u16 gFlashFireStringIds[] =
 {
     [B_MSG_FLASH_FIRE_BOOST]    = STRINGID_PKMNRAISEDFIREPOWERWITH,
     [B_MSG_FLASH_FIRE_NO_BOOST] = STRINGID_PKMNSXMADEYINEFFECTIVE
+};
+
+// Indexed by player gender
+const u16 gPlayerFledUsingItemStringIds[] =
+{
+    [MALE]   = STRINGID_PLAYERFLEDUSINGHIS,
+    [FEMALE] = STRINGID_PLAYERFLEDUSINGHER,
 };
 
 const u16 gCaughtMonStringIds[] =

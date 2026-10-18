@@ -477,6 +477,7 @@ gBattleAnims_General::
 	.4byte General_FocusPunchSetUp          @ B_ANIM_FOCUS_PUNCH_SETUP
 	.4byte General_IngrainHeal              @ B_ANIM_INGRAIN_HEAL
 	.4byte General_WishHeal                 @ B_ANIM_WISH_HEAL
+	.4byte General_SmokeballEscapeTrainer   @ B_ANIM_SMOKEBALL_ESCAPE_TRAINER
 
 	.align 2
 gBattleAnims_Special::
@@ -12877,6 +12878,48 @@ General_SmokeballEscape:
 	createsprite gSmokeBallEscapeCloudSpriteTemplate, ANIM_ATTACKER, 119, 3, 14, 14, 46
 	delay 0
 	createsprite gSmokeBallEscapeCloudSpriteTemplate, ANIM_ATTACKER, 118, 3, 0, 0, 46
+	waitforvisualfinish
+	clearmonbg ANIM_ATTACKER
+	invisible ANIM_ATTACKER
+	delay 0
+	blendoff
+	end
+
+@ Same as General_SmokeballEscape, but the clouds are centered on the player's
+@ trainer sprite (used when fleeing before the first Pokemon is sent out)
+General_SmokeballEscapeTrainer:
+	loadspritegfx ANIM_TAG_PINK_CLOUD
+	createvisualtask AnimTask_LoadTrainerPicForMonBg, 2
+	waitforvisualfinish
+	monbg ANIM_ATTACKER
+	setalpha 12, 4
+	delay 0
+	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 0, 0, 32, 28, 30
+	delay 4
+	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 127, 2, 12, 20, 30
+	delay 12
+	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 126, 2, -28, 4, 30
+	delay 12
+	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 124, 2, 14, -20, 30
+	delay 4
+	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_AttackerFadeToInvisible, 2, 2
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 123, 3, 4, 4, 30
+	delay 14
+	playsewithpan SE_BALL_OPEN, SOUND_PAN_ATTACKER
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 122, 3, -14, 18, 46
+	delay 0
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 121, 3, 14, -14, 46
+	delay 0
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 120, 3, -12, -10, 46
+	delay 0
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 119, 3, 14, 14, 46
+	delay 0
+	createsprite gSmokeBallEscapeTrainerCloudSpriteTemplate, ANIM_ATTACKER, 118, 3, 0, 0, 46
 	waitforvisualfinish
 	clearmonbg ANIM_ATTACKER
 	invisible ANIM_ATTACKER

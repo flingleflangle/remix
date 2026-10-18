@@ -4831,6 +4831,12 @@ BattleScript_SmokeBallEscape::
 	waitmessage B_WAIT_TIME_LONG
 	end2
 
+BattleScript_SmokeBallEscapeTrainer::
+	playanimation BS_ATTACKER, B_ANIM_SMOKEBALL_ESCAPE_TRAINER
+	printfromtable gPlayerFledUsingItemStringIds
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
 BattleScript_RanAwayUsingMonAbility::
 	printstring STRINGID_PKMNFLEDUSING
 	waitmessage B_WAIT_TIME_LONG

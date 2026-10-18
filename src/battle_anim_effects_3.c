@@ -74,6 +74,7 @@ static void AnimReversalOrb_Step(struct Sprite *);
 static void AnimYawnCloud(struct Sprite *);
 static void AnimYawnCloud_Step(struct Sprite *);
 static void AnimSmokeBallEscapeCloud(struct Sprite *);
+static void AnimSmokeBallEscapeTrainerCloud(struct Sprite *);
 static void AnimFacadeSweatDrop(struct Sprite *);
 static void AnimRoarNoiseLine(struct Sprite *);
 static void AnimRoarNoiseLine_Step(struct Sprite *);
@@ -879,6 +880,17 @@ const struct SpriteTemplate gSmokeBallEscapeCloudSpriteTemplate =
     .images = NULL,
     .affineAnims = gSmokeBallEscapeCloudAffineAnimTable,
     .callback = AnimSmokeBallEscapeCloud,
+};
+
+const struct SpriteTemplate gSmokeBallEscapeTrainerCloudSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PINK_CLOUD,
+    .paletteTag = ANIM_TAG_PINK_CLOUD,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gSmokeBallEscapeCloudAffineAnimTable,
+    .callback = AnimSmokeBallEscapeTrainerCloud,
 };
 
 const union AffineAnimCmd gFacadeSquishAffineAnimCmds[] =
@@ -3578,6 +3590,33 @@ static void AnimSmokeBallEscapeCloud(struct Sprite *sprite)
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) + gBattleAnimArgs[1];
     sprite->y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[2];
     sprite->callback = DestroyAnimSpriteAfterTimer;
+}
+
+// Like AnimSmokeBallEscapeCloud, but positioned relative to the attacker's actual sprite,
+// since the trainer pic doesn't sit at the usual battler coords
+static void AnimSmokeBallEscapeTrainerCloud(struct Sprite *sprite)
+{
+    struct Sprite *trainerSprite = &gSprites[gBattlerSpriteIds[gBattleAnimAttacker]];
+
+    sprite->data[0] = gBattleAnimArgs[3];
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[0]);
+    sprite->x = trainerSprite->x + trainerSprite->x2 + gBattleAnimArgs[1];
+    sprite->y = trainerSprite->y + trainerSprite->y2 + gBattleAnimArgs[2];
+    sprite->callback = DestroyAnimSpriteAfterTimer;
+}
+
+// Copies the trainer's standing frame into the battler gfx buffer, since trainer pics
+// never get loaded there and monbg draws the battler from it
+void AnimTask_LoadTrainerPicForMonBg(u8 taskId)
+{
+    u8 battler = gBattleAnimAttacker;
+    struct Sprite *sprite = &gSprites[gBattlerSpriteIds[battler]];
+    u16 frame = sprite->anims[sprite->animNum][0].frame.imageValue;
+
+    CpuCopy32(sprite->images[frame].data,
+              gMonSpritesGfxPtr->sprites.byte[GetBattlerPosition(battler)] + MON_PIC_SIZE * gBattleMonForms[battler],
+              TRAINER_PIC_SIZE);
+    DestroyAnimVisualTask(taskId);
 }
 
 static void AnimTask_SlideMonForFocusBand_Step2(u8 taskId)
