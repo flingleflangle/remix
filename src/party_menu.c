@@ -1276,8 +1276,8 @@ void Task_HandleChooseMonInput(u8 taskId)
         case B_BUTTON: // Selected Cancel / pressed B
             HandleChooseMonCancel(taskId, slotPtr);
             break;
-		case SELECT_BUTTON: // Quick Swap
-            if (gPartyMenu.action != PARTY_ACTION_SWITCH)
+        case SELECT_BUTTON: // Quick Swap
+            if (gPartyMenu.action != PARTY_ACTION_SWITCH && !gMain.inBattle)
                 gTasks[taskId].func = CursorCb_Switch;
             break;
         case START_BUTTON:
