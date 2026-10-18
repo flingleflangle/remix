@@ -3384,10 +3384,14 @@ static void PrintRibbonCount(void)
     u8 *attackString = Alloc(20);
     u8 *defenseString = Alloc(20);
     const s8 *natureMod = gNatureStatTable[sMonSummaryScreen->summary.nature];
- 
+    // HP's modifier is the last column of gNatureStatTable (NATURE_STAT_HP), not STAT_HP - 1.
+    // Like natureMod, > 0 colors HP as boosted, < 0 as lowered, and 0 as neutral (see BufferStat).
+    // Colors both the current and max HP values.
+    s8 hpNatureMod = natureMod[NATURE_STAT_HP];
+
      DynamicPlaceholderTextUtil_Reset();
-     BufferStat(currentHPString, 0, sMonSummaryScreen->summary.currentHP, 0, 3);
-     BufferStat(maxHPString, 0, sMonSummaryScreen->summary.maxHP, 1, 3);
+     BufferStat(currentHPString, hpNatureMod, sMonSummaryScreen->summary.currentHP, 0, 3);
+     BufferStat(maxHPString, hpNatureMod, sMonSummaryScreen->summary.maxHP, 1, 3);
      BufferStat(attackString, natureMod[STAT_ATK - 1], sMonSummaryScreen->summary.atk, 2, 7);
      BufferStat(defenseString, natureMod[STAT_DEF - 1], sMonSummaryScreen->summary.def, 3, 7);
      DynamicPlaceholderTextUtil_ExpandPlaceholders(gStringVar4, sStatsLeftColumnLayout);

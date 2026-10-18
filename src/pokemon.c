@@ -1323,35 +1323,35 @@ const struct SpindaSpot gSpindaSpotGraphics[] =
 
 #include "data/pokemon/item_effects.h"
 
-const s8 gNatureStatTable[NUM_NATURES][NUM_NATURE_STATS] =
-{                      // Attack  Defense  Speed  Sp.Atk  Sp.Def
-    [NATURE_HARDY]   = {    0,      0,      0,      0,      0   },
-    [NATURE_LONELY]  = {   +1,     -1,      0,      0,      0   },
-    [NATURE_BRAVE]   = {   +1,      0,     -1,      0,      0   },
-    [NATURE_ADAMANT] = {   +1,      0,      0,     -1,      0   },
-    [NATURE_NAUGHTY] = {   +1,      0,      0,      0,     -1   },
-    [NATURE_BOLD]    = {   -1,     +1,      0,      0,      0   },
-    [NATURE_DOCILE]  = {    0,      0,      0,      0,      0   },
-    [NATURE_RELAXED] = {    0,     +1,     -1,      0,      0   },
-    [NATURE_IMPISH]  = {    0,     +1,      0,     -1,      0   },
-    [NATURE_LAX]     = {    0,     +1,      0,      0,     -1   },
-    [NATURE_TIMID]   = {   -1,      0,     +1,      0,      0   },
-    [NATURE_HASTY]   = {    0,     -1,     +1,      0,      0   },
-    [NATURE_SERIOUS] = {    0,      0,      0,      0,      0   },
-    [NATURE_JOLLY]   = {    0,      0,     +1,     -1,      0   },
-    [NATURE_NAIVE]   = {    0,      0,     +1,      0,     -1   },
-    [NATURE_MODEST]  = {   -1,      0,      0,     +1,      0   },
-    [NATURE_MILD]    = {    0,     -1,      0,     +1,      0   },
-    [NATURE_QUIET]   = {    0,      0,     -1,     +1,      0   },
-    [NATURE_BASHFUL] = {    0,      0,      0,      0,      0   },
-    [NATURE_RASH]    = {    0,      0,      0,     +1,     -1   },
-    [NATURE_CALM]    = {   -1,      0,      0,      0,     +1   },
-    [NATURE_GENTLE]  = {    0,     -1,      0,      0,     +1   },
-    [NATURE_SASSY]   = {    0,      0,     -1,      0,     +1   },
-    [NATURE_CAREFUL] = {    0,      0,      0,     -1,     +1   },
-    [NATURE_QUIRKY]  = {    0,      0,      0,      0,      0   },
-    [NATURE_FIERCE] =  {   +2,     -5,     +1,     +2,     -5   },
-    [NATURE_PATIENT] = {   -1,     +2,     -5,      0,     +2   },
+const s8 gNatureStatTable[NUM_NATURES][NUM_NATURE_STATS + 1] =
+{                      // Attack  Defense  Speed  Sp.Atk  Sp.Def   HP
+    [NATURE_HARDY]   = {    0,      0,      0,      0,      0,    0   },
+    [NATURE_LONELY]  = {   +1,     -1,      0,      0,      0,    0   },
+    [NATURE_BRAVE]   = {   +1,      0,     -1,      0,      0,    0   },
+    [NATURE_ADAMANT] = {   +1,      0,      0,     -1,      0,    0   },
+    [NATURE_NAUGHTY] = {   +1,      0,      0,      0,     -1,    0   },
+    [NATURE_BOLD]    = {   -1,     +1,      0,      0,      0,    0   },
+    [NATURE_DOCILE]  = {    0,      0,      0,      0,      0,    0   },
+    [NATURE_RELAXED] = {    0,     +1,     -1,      0,      0,    0   },
+    [NATURE_IMPISH]  = {    0,     +1,      0,     -1,      0,    0   },
+    [NATURE_LAX]     = {    0,     +1,      0,      0,     -1,    0   },
+    [NATURE_TIMID]   = {   -1,      0,     +1,      0,      0,    0   },
+    [NATURE_HASTY]   = {    0,     -1,     +1,      0,      0,    0   },
+    [NATURE_SERIOUS] = {    0,      0,      0,      0,      0,    0   },
+    [NATURE_JOLLY]   = {    0,      0,     +1,     -1,      0,    0   },
+    [NATURE_NAIVE]   = {    0,      0,     +1,      0,     -1,    0   },
+    [NATURE_MODEST]  = {   -1,      0,      0,     +1,      0,    0   },
+    [NATURE_MILD]    = {    0,     -1,      0,     +1,      0,    0   },
+    [NATURE_QUIET]   = {    0,      0,     -1,     +1,      0,    0   },
+    [NATURE_BASHFUL] = {    0,      0,      0,      0,      0,    0   },
+    [NATURE_RASH]    = {    0,      0,      0,     +1,     -1,    0   },
+    [NATURE_CALM]    = {   -1,      0,      0,      0,     +1,    0   },
+    [NATURE_GENTLE]  = {    0,     -1,      0,      0,     +1,    0   },
+    [NATURE_SASSY]   = {    0,      0,     -1,      0,     +1,    0   },
+    [NATURE_CAREFUL] = {    0,      0,      0,     -1,     +1,    0   },
+    [NATURE_QUIRKY]  = {    0,      0,      0,      0,      0,    0   },
+    [NATURE_FIERCE] =  {   +2,      0,     +1,     +2,      0,   -5   },
+    [NATURE_PATIENT] = {    0,     +2,     -5,      0,     +2,   +2   },
 };
 
 #include "data/pokemon/tmhm_learnsets.h"
@@ -2822,6 +2822,7 @@ void CalculateMonStats(struct Pokemon *mon)
     {
         s32 n = 2 * gSpeciesInfo[species].baseHP + hpIV;
         newMaxHP = (((n + hpEV / 4) * level) / 100) + level + 10;
+        newMaxHP = ModifyStatByNature(GetNature(mon), newMaxHP, STAT_HP);
     }
 
     gBattleScripting.levelUpHP = newMaxHP - oldMaxHP;
@@ -6177,23 +6178,26 @@ u8 GetTrainerEncounterMusicId(u16 trainerOpponentId)
 
 u16 ModifyStatByNature(u8 nature, u16 stat, u8 statIndex)
 {
-// Because this is a u16 it will be unable to store the
+// retVal used to be a u16, which was unable to store the
 // result of the multiplication for any stat > 595 for a
 // positive nature and > 728 for a negative nature.
-// Neither occur in the base game, but this can happen if
-// any Nature-affected base stat is increased to a value
-// above 248. The closest by default is Shuckle at 230.
-#ifdef BUGFIX
+// That never happened in the base game, but HP is commonly above 595
+// (e.g. Blissey) now that natures can modify it, so it is always a u32.
     u32 retVal;
-#else
-    u16 retVal;
-#endif
+    s8 natureMod;
 
-    // Don't modify HP, Accuracy, or Evasion by nature
-    if (statIndex <= STAT_HP || statIndex > NUM_NATURE_STATS)
+    // Don't modify Accuracy or Evasion by nature
+    if (statIndex > NUM_NATURE_STATS)
         return stat;
 
-    switch (gNatureStatTable[nature][statIndex - 1])
+    // HP's modifier is the last column of gNatureStatTable.
+    // The other stats are offset by 1, since HP is stat index 0.
+    if (statIndex == STAT_HP)
+        natureMod = gNatureStatTable[nature][NATURE_STAT_HP];
+    else
+        natureMod = gNatureStatTable[nature][statIndex - 1];
+
+    switch (natureMod)
     {
     case 1:
         retVal = stat * 110;

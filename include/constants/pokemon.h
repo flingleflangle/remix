@@ -89,6 +89,7 @@
 #define STAT_EVASION 7 // Only in battles.
 
 #define NUM_NATURE_STATS (NUM_STATS - 1) // excludes HP
+#define NATURE_STAT_HP   NUM_NATURE_STATS // HP's column in gNatureStatTable, after the other nature stats
 #define NUM_BATTLE_STATS (NUM_STATS + 2) // includes Accuracy and Evasion
 
 #define MIN_STAT_STAGE     0

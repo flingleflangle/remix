@@ -2540,6 +2540,7 @@ static void CalcDomeMonStats(u16 species, int level, int ivs, u8 evBits, u8 natu
     {
         int n = 2 * gSpeciesInfo[species].baseHP;
         stats[STAT_HP] = (((n + ivs + evs[STAT_HP] / 4) * level) / 100) + level + 10;
+        stats[STAT_HP] = ModifyStatByNature(nature, stats[STAT_HP], STAT_HP);
     }
 
     CALC_STAT(baseAttack, STAT_ATK);
