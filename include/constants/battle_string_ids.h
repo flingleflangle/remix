@@ -394,8 +394,17 @@
 #define STRINGID_PKMNSXWHIPPEDUPHAILSTORM   394
 #define STRINGID_PLAYERFLEDUSINGHIS         395
 #define STRINGID_PLAYERFLEDUSINGHER         396
+#define STRINGID_PKMNISWIDEOPEN             397
+#define STRINGID_POISONSPIKESSCATTERED      398
+#define STRINGID_TOXICSPIKESABSORBED        399
+#define STRINGID_PKMNBLEWAWAYTOXICSPIKES    400
+#define STRINGID_WIRETRIPSET                401
+#define STRINGID_WIRETRIPABSORBED           402
+#define STRINGID_PKMNBLEWAWAYWIRETRIP       403
+#define STRINGID_PKMNPUTUPWALL              404
+#define STRINGID_PKMNWALLSHATTERED          405
 
-#define BATTLESTRINGS_COUNT                 397
+#define BATTLESTRINGS_COUNT                 406
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,
@@ -523,6 +532,8 @@
 // gSubstituteUsedStringIds
 #define B_MSG_SET_SUBSTITUTE    0
 #define B_MSG_SUBSTITUTE_FAILED 1
+#define B_MSG_SET_WALL          2
+#define B_MSG_WALL_FAILED       3
 
 // gPartyStatusHealStringIds
 #define B_MSG_BELL                     0

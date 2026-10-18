@@ -1265,6 +1265,15 @@
 	.byte 0xfb
 	.endm
 
+	.macro jumpifsuckerpunchfails failInstr:req
+	.byte 0xfc
+	.4byte \failInstr
+	.endm
+
+	.macro trysetdetect failInstr:req
+	.byte 0xfd
+	.4byte \failInstr
+	.endm
 
 @ various command changed to more readable macros
 	.macro cancelmultiturnmoves battler:req

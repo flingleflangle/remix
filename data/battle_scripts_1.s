@@ -270,6 +270,8 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectTremor        	     @ EFFECT_TREMOR
 	.4byte BattleScript_EffectMindCrush       	     @ EFFECT_MIND_CRUSH
 	.4byte BattleScript_EffectLastStand       	     @ EFFECT_LAST_STAND
+	.4byte BattleScript_EffectSuckerPunch     	     @ EFFECT_SUCKER_PUNCH
+	.4byte BattleScript_EffectDetect          	     @ EFFECT_DETECT
 	
 
 BattleScript_EffectHit::
@@ -2107,9 +2109,8 @@ BattleScript_EffectSubstitute::
 	waitstate
 	jumpifstatus2 BS_ATTACKER, STATUS2_SUBSTITUTE, BattleScript_AlreadyHasSubstitute
 	setsubstitute
-	jumpifbyte CMP_NOT_EQUAL, cMULTISTRING_CHOOSER, B_MSG_SUBSTITUTE_FAILED, BattleScript_SubstituteAnim
-	pause B_WAIT_TIME_SHORT
-	goto BattleScript_SubstituteString
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_SUBSTITUTE_FAILED, BattleScript_SubstituteFailed
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_WALL_FAILED, BattleScript_SubstituteFailed
 BattleScript_SubstituteAnim::
 	attackanimation
 	waitanimation
@@ -2118,7 +2119,17 @@ BattleScript_SubstituteAnim::
 BattleScript_SubstituteString::
 	printfromtable gSubstituteUsedStringIds
 	waitmessage B_WAIT_TIME_LONG
+	@ Stone Wall and Ice Wall cost a stage of Attack or Sp. Atk instead of HP
+	jumpifbyte CMP_NOT_EQUAL, cMULTISTRING_CHOOSER, B_MSG_SET_WALL, BattleScript_MoveEnd
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_MoveEnd
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+BattleScript_SubstituteFailed::
+	pause B_WAIT_TIME_SHORT
+	goto BattleScript_SubstituteString
 BattleScript_AlreadyHasSubstitute::
 	setalreadystatusedmoveattempt BS_ATTACKER
 	pause B_WAIT_TIME_SHORT
@@ -2134,6 +2145,12 @@ BattleScript_EffectRecharge::
 
 BattleScript_MoveUsedMustRecharge::
 	printstring STRINGID_PKMNMUSTRECHARGE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ The recharge turn after a failed Detect
+BattleScript_MoveUsedWideOpen::
+	printstring STRINGID_PKMNISWIDEOPEN
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
@@ -2694,6 +2711,7 @@ ShieldBashDoubleDmg::
 	setbyte sDMG_MULTIPLIER, 2
 	goto ShieldBashContinue
 
+@ Also used by Toxic Spikes
 BattleScript_EffectSpikes::
 	attackcanceler
 	trysetspikes BattleScript_FailedFromAtkString
@@ -2701,7 +2719,19 @@ BattleScript_EffectSpikes::
 	ppreduce
 	attackanimation
 	waitanimation
+	jumpifmove MOVE_TOXIC_SPIKES, BattleScript_ToxicSpikesScattered
+	jumpifmove MOVE_WIRE_TRIP, BattleScript_WireTripSet
 	printstring STRINGID_SPIKESSCATTERED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+BattleScript_ToxicSpikesScattered::
+	printstring STRINGID_POISONSPIKESSCATTERED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+BattleScript_WireTripSet::
+	printstring STRINGID_WIRETRIPSET
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
@@ -3636,6 +3666,7 @@ BattleScript_BeatUpEnd::
 	end
 
 BattleScript_EffectSemiInvulnerable::
+	jumpifmove MOVE_DODGE, BattleScript_Dodge
 	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_SecondTurnSemiInvulnerable
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_NO_ATTACKSTRING, BattleScript_SecondTurnSemiInvulnerable
 	jumpifmove MOVE_FLY, BattleScript_FirstTurnFly
@@ -3678,6 +3709,25 @@ BattleScript_SemiInvulnerableMiss::
 	clearsemiinvulnerablebit
 	goto BattleScript_PrintMoveMissed
 
+@ Dodge has no second turn. It evades moves that check accuracy for the rest of this turn,
+@ at the cost of a stage of Speed. Fails if Speed is at its minimum or the user was already hit.
+BattleScript_Dodge::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MIN_STAT_STAGE, BattleScript_ButItFailed
+	setsemiinvulnerablebit
+	jumpifmovehadnoeffect BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	setstatchanger STAT_SPEED, 1, TRUE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_MoveEnd
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 BattleScript_EffectDefenseCurl::
 	attackcanceler
 	attackstring
@@ -3711,6 +3761,24 @@ BattleScript_AlreadyAtFullHp::
 	printstring STRINGID_PKMNHPFULL
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
+
+@ Blocks every attacking move, but only works if a foe is about to attack the user.
+@ If it fails, the user must recharge next turn (see BattleScript_MoveUsedWideOpen).
+BattleScript_EffectDetect::
+	attackcanceler
+	attackstring
+	ppreduce
+	trysetdetect BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	printfromtable gProtectLikeUsedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+BattleScript_EffectSuckerPunch::
+	attackcanceler
+	jumpifsuckerpunchfails BattleScript_FailedFromAtkString
+	goto BattleScript_HitFromAccCheck
 
 BattleScript_EffectFakeOut::
 	attackcanceler
@@ -5313,6 +5381,50 @@ BattleScript_SpikesFree::
 	waitmessage B_WAIT_TIME_LONG
 	return
 
+BattleScript_ToxicSpikesFree::
+	printstring STRINGID_PKMNBLEWAWAYTOXICSPIKES
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+@ A grounded Poison type switched in onto Toxic Spikes
+BattleScript_ToxicSpikesAbsorbed::
+	printstring STRINGID_TOXICSPIKESABSORBED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+@ Switched in onto Toxic Spikes. One layer poisons, two badly poison.
+BattleScript_ToxicSpikesPoisoned::
+	statusanimation BS_SCRIPTING
+	updatestatusicon BS_SCRIPTING
+	jumpifstatus BS_SCRIPTING, STATUS1_TOXIC_POISON, BattleScript_ToxicSpikesBadlyPoisoned
+	printstring STRINGID_PKMNWASPOISONED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_ToxicSpikesBadlyPoisoned::
+	printstring STRINGID_PKMNBADLYPOISONED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_WireTripFree::
+	printstring STRINGID_PKMNBLEWAWAYWIRETRIP
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+@ An Electric type switched in onto Wire Trip and was charged by it
+BattleScript_WireTripAbsorbed::
+	printstring STRINGID_WIRETRIPABSORBED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+@ Switched in onto Wire Trip, which is used up
+BattleScript_WireTripParalyzed::
+	statusanimation BS_SCRIPTING
+	updatestatusicon BS_SCRIPTING
+	printstring STRINGID_PKMNWASPARALYZED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_MonTookFutureAttack::
 	printstring STRINGID_PKMNTOOKATTACK
 	waitmessage B_WAIT_TIME_LONG
@@ -6129,6 +6241,12 @@ BattleScript_IgnoresAndHitsItself::
 BattleScript_SubstituteFade::
 	playanimation BS_TARGET, B_ANIM_SUBSTITUTE_FADE
 	printstring STRINGID_PKMNSUBSTITUTEFADED
+	return
+
+@ A Stone Wall or Ice Wall broke. The animation shatters it instead of fading it.
+BattleScript_SubstituteWallShatter::
+	playanimation BS_TARGET, B_ANIM_SUBSTITUTE_FADE
+	printstring STRINGID_PKMNWALLSHATTERED
 	return
 
 BattleScript_BerryCurePrlzEnd2::

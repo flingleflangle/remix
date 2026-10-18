@@ -459,7 +459,17 @@ AI_CBM_Curse:
 	end
 
 AI_CBM_Spikes:
+	if_move MOVE_TOXIC_SPIKES, AI_CBM_ToxicSpikes
+	if_move MOVE_WIRE_TRIP, AI_CBM_WireTrip
 	if_side_affecting AI_TARGET, SIDE_STATUS_SPIKES, Score_Minus10
+	end
+
+AI_CBM_ToxicSpikes:
+	if_side_affecting AI_TARGET, SIDE_STATUS_TOXIC_SPIKES, Score_Minus10
+	end
+
+AI_CBM_WireTrip:
+	if_side_affecting AI_TARGET, SIDE_STATUS_WIRE_TRIP, Score_Minus10
 	end
 
 AI_CBM_Foresight:

@@ -854,6 +854,15 @@ const u32 gSubstituteDollPal[] = INCBIN_U32("graphics/battle_anims/sprites/subst
 const u32 gSubstituteDollFrontGfx[] = INCBIN_U32("graphics/battle_anims/sprites/substitute.4bpp.lz");
 const u32 gSubstituteDollBackGfx[] = INCBIN_U32("graphics/battle_anims/sprites/substitute_back.4bpp.lz");
 
+// Stone Wall and Ice Wall replace the Substitute doll, front and back
+const u32 gStoneWallGfx[] = INCBIN_U32("graphics/battle_anims/sprites/stone_wall.4bpp.lz");
+const u32 gStoneWallPal[] = INCBIN_U32("graphics/battle_anims/sprites/stone_wall.gbapal.lz");
+const u32 gIceWallGfx[] = INCBIN_U32("graphics/battle_anims/sprites/ice_wall.4bpp.lz");
+const u32 gIceWallPal[] = INCBIN_U32("graphics/battle_anims/sprites/ice_wall.gbapal.lz");
+// The debris from a broken wall, 2 frames each. They use the wall's palette.
+const u32 gStoneWallChunksGfx[] = INCBIN_U32("graphics/battle_anims/sprites/stone_wall_chunks.4bpp.lz");
+const u32 gIceWallChunksGfx[] = INCBIN_U32("graphics/battle_anims/sprites/ice_wall_chunks.4bpp.lz");
+
 const u32 gBattleAnimSpriteGfx_GreenStar[] = INCBIN_U32("graphics/battle_anims/sprites/green_star.4bpp.lz");
 const u32 gBattleAnimSpritePal_GreenStar[] = INCBIN_U32("graphics/battle_anims/sprites/green_star.gbapal.lz");
 

@@ -176,7 +176,13 @@ enum BattlerId
 #define STATUS3_UNDERWATER              (1 << 18)
 #define STATUS3_INTIMIDATE_POKES        (1 << 19)
 #define STATUS3_TRACE                   (1 << 20)
+#define STATUS3_DODGING                 (1 << 21) // Dodge: evades moves that check accuracy until the end of the turn
 #define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
+
+// What a Substitute looks like and how it breaks. Stone Wall and Ice Wall are Substitutes.
+#define SUBSTITUTE_WALL_NONE  0
+#define SUBSTITUTE_WALL_STONE 1
+#define SUBSTITUTE_WALL_ICE   2
 
 // Not really sure what a "hitmarker" is.
 #define HITMARKER_WAKE_UP_CLEAR         (1 << 4) // Cleared when waking up. Never set or checked.
@@ -215,6 +221,10 @@ enum BattlerId
 #define SIDE_STATUS_FUTUREATTACK     (1 << 6)
 #define SIDE_STATUS_MIST             (1 << 8)
 #define SIDE_STATUS_SPIKES_DAMAGED   (1 << 9)
+#define SIDE_STATUS_TOXIC_SPIKES     (1 << 10)
+#define SIDE_STATUS_TOXIC_SPIKES_DAMAGED (1 << 11)
+#define SIDE_STATUS_WIRE_TRIP        (1 << 12)
+#define SIDE_STATUS_WIRE_TRIP_DAMAGED (1 << 13)
 
 // Flags describing move's result
 #define MOVE_RESULT_MISSED             (1 << 0)

@@ -4876,6 +4876,83 @@ void AnimTask_MonToSubstitute(u8 taskId)
     }
 }
 
+// Stone Wall and Ice Wall are Substitutes with their own graphic. Sets which one the
+// attacker is behind, before AnimTask_MonToSubstitute loads it.
+// arg 0: SUBSTITUTE_WALL_*
+void AnimTask_SetSubstituteWall(u8 taskId)
+{
+    if (!IsContest())
+        gBattleSpritesDataPtr->battlerData[gBattleAnimAttacker].substituteWall = gBattleAnimArgs[0];
+    DestroyAnimVisualTask(taskId);
+}
+
+// Returns the attacker's SUBSTITUTE_WALL_*, so a breaking wall can shatter instead of fading
+void AnimTask_GetSubstituteWall(u8 taskId)
+{
+    if (IsContest())
+        gBattleAnimArgs[ARG_RET_ID] = SUBSTITUTE_WALL_NONE;
+    else
+        gBattleAnimArgs[ARG_RET_ID] = gBattleSpritesDataPtr->battlerData[gBattleAnimAttacker].substituteWall;
+    DestroyAnimVisualTask(taskId);
+}
+
+// A chunk of a broken Stone Wall or Ice Wall. It pops out of the wall in a short arc,
+// lands on the Pokémon's side of the field, then flickers away like Spikes.
+// arg 0: initial x pixel offset from the wall
+// arg 1: initial y pixel offset from the wall
+// arg 2: landing x pixel offset (mirrored for the opponent's side)
+// arg 3: landing y pixel offset
+// arg 4: duration of the arc
+// arg 5: arc height (negative is up)
+// arg 6: which chunk (anim num)
+static void AnimWallDebris(struct Sprite *sprite)
+{
+    StartSpriteAnim(sprite, gBattleAnimArgs[6]);
+    InitSpritePosToAnimAttacker(sprite, TRUE);
+
+    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
+        gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+
+    sprite->data[0] = gBattleAnimArgs[4];
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
+    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+    sprite->data[5] = gBattleAnimArgs[5];
+
+    InitAnimArcTranslation(sprite);
+    sprite->callback = AnimSpikes_Step1; // Lands, waits, then flickers away
+}
+
+// Stone Wall chunks are 32x32 (16 tiles), Ice Wall chunks are 16x16 (4 tiles)
+static const union AnimCmd sAnim_StoneWallChunk1[] = {ANIMCMD_FRAME(0, 1), ANIMCMD_END};
+static const union AnimCmd sAnim_StoneWallChunk2[] = {ANIMCMD_FRAME(16, 1), ANIMCMD_END};
+static const union AnimCmd *const sAnims_StoneWallChunks[] = {sAnim_StoneWallChunk1, sAnim_StoneWallChunk2};
+
+static const union AnimCmd sAnim_IceWallChunk1[] = {ANIMCMD_FRAME(0, 1), ANIMCMD_END};
+static const union AnimCmd sAnim_IceWallChunk2[] = {ANIMCMD_FRAME(4, 1), ANIMCMD_END};
+static const union AnimCmd *const sAnims_IceWallChunks[] = {sAnim_IceWallChunk1, sAnim_IceWallChunk2};
+
+const struct SpriteTemplate gStoneWallDebrisSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_STONE_WALL_DEBRIS,
+    .paletteTag = ANIM_TAG_STONE_WALL_DEBRIS,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_StoneWallChunks,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimWallDebris,
+};
+
+const struct SpriteTemplate gIceWallDebrisSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ICE_WALL_DEBRIS,
+    .paletteTag = ANIM_TAG_ICE_WALL_DEBRIS,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sAnims_IceWallChunks,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimWallDebris,
+};
+
 static void AnimTask_MonToSubstituteDoll(u8 taskId)
 {
     u8 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);

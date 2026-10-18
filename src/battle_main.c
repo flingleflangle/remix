@@ -3359,6 +3359,7 @@ void SwitchInClearSetData(void)
     if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
     {
         gDisableStructs[gActiveBattler].substituteHP = disableStructCopy.substituteHP;
+        gDisableStructs[gActiveBattler].substituteWall = disableStructCopy.substituteWall;
         gDisableStructs[gActiveBattler].battlerWithSureHit = disableStructCopy.battlerWithSureHit;
         gDisableStructs[gActiveBattler].perishSongTimer = disableStructCopy.perishSongTimer;
         gDisableStructs[gActiveBattler].perishSongTimerStartValue = disableStructCopy.perishSongTimerStartValue;
@@ -3439,6 +3440,7 @@ void FaintClearSetData(void)
         ptr[i] = 0;
 
     gProtectStructs[gActiveBattler].protected = FALSE;
+    gProtectStructs[gActiveBattler].detected = FALSE;
     gProtectStructs[gActiveBattler].endured = FALSE;
     gProtectStructs[gActiveBattler].noValidMoves = FALSE;
     gProtectStructs[gActiveBattler].helpingHand = FALSE;
@@ -5118,6 +5120,7 @@ static void TurnValuesCleanUp(bool8 var0)
         if (var0)
         {
             gProtectStructs[gActiveBattler].protected = 0;
+            gProtectStructs[gActiveBattler].detected = 0;
             gProtectStructs[gActiveBattler].endured = 0;
         }
         else
@@ -5135,6 +5138,13 @@ static void TurnValuesCleanUp(bool8 var0)
                 if (gDisableStructs[gActiveBattler].rechargeTimer == 0)
                     gBattleMons[gActiveBattler].status2 &= ~STATUS2_RECHARGE;
             }
+
+            // Dodge only lasts for the turn it's used
+            gStatuses3[gActiveBattler] &= ~STATUS3_DODGING;
+
+            // A failed Detect leaves the user wide open until the end of its recharge turn
+            if (!(gBattleMons[gActiveBattler].status2 & STATUS2_RECHARGE))
+                gDisableStructs[gActiveBattler].wideOpen = FALSE;
         }
 
         if (gDisableStructs[gActiveBattler].substituteHP == 0)

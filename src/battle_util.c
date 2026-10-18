@@ -2111,7 +2111,10 @@ u8 AtkCanceller_UnableToUseMove(void)
                 gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_RECHARGE;
                 gDisableStructs[gBattlerAttacker].rechargeTimer = 0;
                 CancelMultiTurnMoves(gBattlerAttacker);
-                gBattlescriptCurrInstr = BattleScript_MoveUsedMustRecharge;
+                if (gBattleMoves[gLockedMoves[gBattlerAttacker]].effect == EFFECT_DETECT)
+                    gBattlescriptCurrInstr = BattleScript_MoveUsedWideOpen;
+                else
+                    gBattlescriptCurrInstr = BattleScript_MoveUsedMustRecharge;
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                 effect = 1;
             }

@@ -1036,7 +1036,12 @@ void BattleLoadSubstituteOrMonSpriteGfx(u8 battler, bool8 loadMonSprite)
         else
             position = GetBattlerPosition(battler);
 
-        if (IsContest())
+        // Stone Wall and Ice Wall use the same picture from both sides
+        if (!IsContest() && gBattleSpritesDataPtr->battlerData[battler].substituteWall == SUBSTITUTE_WALL_STONE)
+            LZDecompressVram(gStoneWallGfx, gMonSpritesGfxPtr->sprites.ptr[position]);
+        else if (!IsContest() && gBattleSpritesDataPtr->battlerData[battler].substituteWall == SUBSTITUTE_WALL_ICE)
+            LZDecompressVram(gIceWallGfx, gMonSpritesGfxPtr->sprites.ptr[position]);
+        else if (IsContest())
             LZDecompressVram(gSubstituteDollBackGfx, gMonSpritesGfxPtr->sprites.ptr[position]);
         else if (GetBattlerSide(battler) != B_SIDE_PLAYER)
             LZDecompressVram(gSubstituteDollFrontGfx, gMonSpritesGfxPtr->sprites.ptr[position]);
@@ -1049,7 +1054,12 @@ void BattleLoadSubstituteOrMonSpriteGfx(u8 battler, bool8 loadMonSprite)
         }
 
         palOffset = OBJ_PLTT_ID(battler);
-        LoadCompressedPalette(gSubstituteDollPal, palOffset, PLTT_SIZE_4BPP);
+        if (!IsContest() && gBattleSpritesDataPtr->battlerData[battler].substituteWall == SUBSTITUTE_WALL_STONE)
+            LoadCompressedPalette(gStoneWallPal, palOffset, PLTT_SIZE_4BPP);
+        else if (!IsContest() && gBattleSpritesDataPtr->battlerData[battler].substituteWall == SUBSTITUTE_WALL_ICE)
+            LoadCompressedPalette(gIceWallPal, palOffset, PLTT_SIZE_4BPP);
+        else
+            LoadCompressedPalette(gSubstituteDollPal, palOffset, PLTT_SIZE_4BPP);
     }
     else
     {
@@ -1076,7 +1086,9 @@ void LoadBattleMonGfxAndAnimate(u8 battler, bool8 loadMonSprite, u8 spriteId)
 
 void TrySetBehindSubstituteSpriteBit(u8 battler, u16 move)
 {
-    if (move == MOVE_SUBSTITUTE)
+    // Stone Wall and Ice Wall are Substitutes too. Their graphic is chosen by
+    // AnimTask_SetSubstituteWall in the move's animation.
+    if (move == MOVE_SUBSTITUTE || move == MOVE_STONE_WALL || move == MOVE_ICE_WALL)
         gBattleSpritesDataPtr->battlerData[battler].behindSubstitute = 1;
 }
 

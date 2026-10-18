@@ -786,8 +786,8 @@ static const u8 sIcyWindDescription[] = _(
     "lowers the foe's SPEED.");
 
 static const u8 sDetectDescription[] = _(
-    "Evades attack, but may fail\n"
-    "if used in succession.");
+    "Evades any attack, but the\n"
+    "user tires if none comes.");
 
 static const u8 sBoneRushDescription[] = _(
     "Strikes the foe with a bone\n"
@@ -1681,6 +1681,30 @@ static const u8 sBlackHoleDescription[] = _(
     "Star bullets hit 2-5 times.\n"
     "Recoil taken for every shot.");
 
+static const u8 sSuckerPunchDescription[] = _(
+    "Attacks first if the foe\n"
+    "is readying an attack.");
+
+static const u8 sDodgeDescription[] = _(
+    "Evades all moves if faster\n"
+    "than the foe. Lowers SPEED.");
+
+static const u8 sToxicSpikesDescription[] = _(
+    "Sets spikes that poison a\n"
+    "foe switching in.");
+
+static const u8 sWireTripDescription[] = _(
+    "Lays a wire that paralyzes\n"
+    "a foe switching in.");
+
+static const u8 sStoneWallDescription[] = _(
+    "Lowers ATTACK to raise a\n"
+    "wall that takes hits.");
+
+static const u8 sIceWallDescription[] = _(
+    "Lowers SP. ATK to raise a\n"
+    "wall that takes hits.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -2104,4 +2128,10 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_NEBULA_CRASH - 1] = sNebulaCrashDescription,
     [MOVE_CHAKRA_SURGE - 1] = sChakraSurgeDescription,
     [MOVE_BLACK_HOLE - 1] = sBlackHoleDescription,
+    [MOVE_SUCKER_PUNCH - 1] = sSuckerPunchDescription,
+    [MOVE_DODGE - 1] = sDodgeDescription,
+    [MOVE_TOXIC_SPIKES - 1] = sToxicSpikesDescription,
+    [MOVE_WIRE_TRIP - 1] = sWireTripDescription,
+    [MOVE_STONE_WALL - 1] = sStoneWallDescription,
+    [MOVE_ICE_WALL - 1] = sIceWallDescription,
 };

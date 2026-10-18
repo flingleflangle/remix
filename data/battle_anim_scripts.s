@@ -437,6 +437,12 @@ gBattleAnims_Moves::
 	.4byte Move_NEBULA_CRASH
 	.4byte Move_CHAKRA_SURGE
 	.4byte Move_BLACK_HOLE
+	.4byte Move_SUCKER_PUNCH
+	.4byte Move_DODGE
+	.4byte Move_TOXIC_SPIKES
+	.4byte Move_WIRE_TRIP
+	.4byte Move_STONE_WALL
+	.4byte Move_ICE_WALL
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -5918,6 +5924,7 @@ Move_BITE:
 	end
 
 Move_CRUNCH:
+	choosetwoturnanim Crunch, CrunchEX
 CrunchEnd:
 	end
 Crunch:
@@ -6745,6 +6752,30 @@ Move_BONE_RUSH:
 	blendoff
 	end
 
+@ Two spikes land on either side of the target's feet, then a wall of electricity
+@ (Thunder Wave's band, 64px wide) flickers between them.
+@ No monbg: the target's bg copy would be drawn over the band, hiding it.
+Move_WIRE_TRIP:
+	loadspritegfx ANIM_TAG_SPIKES
+	loadspritegfx ANIM_TAG_SPARK_H
+	playsewithpan SE_M_JUMP_KICK, SOUND_PAN_ATTACKER
+	createsprite gSpikesSpriteTemplate, ANIM_TARGET, 2, 20, 0, -24, 24, 30
+	delay 6
+	playsewithpan SE_M_JUMP_KICK, SOUND_PAN_ATTACKER
+	createsprite gSpikesSpriteTemplate, ANIM_TARGET, 2, 20, 0, 24, 24, 30
+	delay 24
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	delay 6
+	loopsewithpan SE_M_THUNDERBOLT2, SOUND_PAN_TARGET, 10, 4
+	createsprite gThunderWaveSpriteTemplate, ANIM_TARGET, 2, -16, 20
+	waitforvisualfinish
+	end
+
+@ The Spikes animation, with the spikes tinted purple
+Move_TOXIC_SPIKES:
+	loadspritegfx ANIM_TAG_SPIKES
+	createvisualtask AnimTask_BlendParticle, 5, ANIM_TAG_SPIKES, 0, 10, 10, RGB(20, 6, 24)
+	playsewithpan SE_M_TOXIC, SOUND_PAN_TARGET
 Move_SPIKES:
 	loadspritegfx ANIM_TAG_SPIKES
 	monbg ANIM_DEF_PARTNER
@@ -8501,6 +8532,37 @@ HealBellRing:
 	playsewithpan SE_M_HEAL_BELL, SOUND_PAN_ATTACKER
 	return
 
+Move_SUCKER_PUNCH:
+	loadspritegfx ANIM_TAG_HANDS_AND_FEET
+	loadspritegfx ANIM_TAG_IMPACT
+	@ The target starts to move in for its own attack...
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 16, 0, 0, 8
+	waitforvisualfinish
+	@ ...but the attacker gets there first
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 20, 0, 0, 4
+	delay 4
+	@ Offsets of -16 follow the target to where it moved
+	createsprite gFistFootSpriteTemplate, ANIM_ATTACKER, 3, -16, 0, 8, 1, 0
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, -16, 0, ANIM_TARGET, 2
+	playsewithpan SE_M_VITAL_THROW2, SOUND_PAN_TARGET
+	@ Trips the target up and knocks it back to where it started
+	createvisualtask AnimTask_RotateMonSpriteToSide, 2, 6, 384, ANIM_TARGET, 2
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_TARGET, 1, 8
+	waitforvisualfinish
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 1, 4
+	waitforvisualfinish
+	end
+
+@ A quick sidestep away from the foe and back
+Move_DODGE:
+	playsewithpan SE_M_DOUBLE_TEAM, SOUND_PAN_ATTACKER
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, -24, 0, 0, 3
+	waitforvisualfinish
+	delay 6
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 6
+	waitforvisualfinish
+	end
+
 Move_FAKE_OUT:
 	playsewithpan SE_M_FLATTER, 0
 	createvisualtask AnimTask_FakeOut, 5
@@ -9618,6 +9680,19 @@ Move_POISON_FANG:
 
 Move_SUBSTITUTE:
 	playsewithpan SE_M_ATTRACT, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_SetSubstituteWall, 2, SUBSTITUTE_WALL_NONE
+	createvisualtask AnimTask_MonToSubstitute, 2
+	end
+
+Move_STONE_WALL:
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_SetSubstituteWall, 2, SUBSTITUTE_WALL_STONE
+	createvisualtask AnimTask_MonToSubstitute, 2
+	end
+
+Move_ICE_WALL:
+	playsewithpan SE_M_ICY_WIND, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_SetSubstituteWall, 2, SUBSTITUTE_WALL_ICE
 	createvisualtask AnimTask_MonToSubstitute, 2
 	end
 
@@ -12719,9 +12794,13 @@ General_StatsChange:
 	end
 
 General_SubstituteFade:
+	createvisualtask AnimTask_GetSubstituteWall, 2
+	jumpreteq SUBSTITUTE_WALL_STONE, StoneWallShatter
+	jumpreteq SUBSTITUTE_WALL_ICE, IceWallShatter
 	monbg ANIM_ATTACKER
 	createvisualtask AnimTask_SubstituteFadeToInvisible, 5
 	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 0, 16, RGB_WHITE
+SubstituteFadeFinish:
 	waitforvisualfinish
 	delay 1
 	clearmonbg ANIM_ATTACKER
@@ -12730,6 +12809,28 @@ General_SubstituteFade:
 	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 0, 0, RGB_WHITE
 	createvisualtask AnimTask_SwapMonSpriteToFromSubstitute, 2, TRUE
 	end
+
+@ A broken Stone Wall or Ice Wall fades like a Substitute, while two large chunks
+@ pop out of it in short arcs, land beside it and flicker away
+StoneWallShatter:
+	loadspritegfx ANIM_TAG_STONE_WALL_DEBRIS
+	monbg ANIM_ATTACKER
+	playsewithpan SE_M_ROCK_THROW, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_SubstituteFadeToInvisible, 5
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 0, 16, RGB_WHITE
+	createsprite gStoneWallDebrisSpriteTemplate, ANIM_ATTACKER, 2, -8, -4, -28, 20, 18, -20, 0
+	createsprite gStoneWallDebrisSpriteTemplate, ANIM_ATTACKER, 2, 8, 0, 28, 24, 20, -16, 1
+	goto SubstituteFadeFinish
+
+IceWallShatter:
+	loadspritegfx ANIM_TAG_ICE_WALL_DEBRIS
+	monbg ANIM_ATTACKER
+	playsewithpan SE_M_HAIL, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_SubstituteFadeToInvisible, 5
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 0, 16, RGB_WHITE
+	createsprite gIceWallDebrisSpriteTemplate, ANIM_ATTACKER, 2, -8, -4, -28, 20, 18, -20, 0
+	createsprite gIceWallDebrisSpriteTemplate, ANIM_ATTACKER, 2, 8, 0, 28, 24, 20, -16, 1
+	goto SubstituteFadeFinish
 
 General_SubstituteAppear:
 	createvisualtask AnimTask_MonToSubstitute, 2

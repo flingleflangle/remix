@@ -192,6 +192,7 @@ static const u8 sText_PkmnHasSubstitute[] = _("{B_ATK_NAME_WITH_PREFIX} already\
 static const u8 sText_SubstituteDamaged[] = _("The SUBSTITUTE took damage\nfor {B_DEF_NAME_WITH_PREFIX}!\p");
 static const u8 sText_PkmnSubstituteFaded[] = _("{B_DEF_NAME_WITH_PREFIX}'s\nSUBSTITUTE faded!\p");
 static const u8 sText_PkmnMustRecharge[] = _("{B_ATK_NAME_WITH_PREFIX} must\nrecharge!");
+static const u8 sText_PkmnIsWideOpen[] = _("{B_ATK_NAME_WITH_PREFIX} is\nwide open!");
 static const u8 sText_PkmnRageBuilding[] = _("{B_DEF_NAME_WITH_PREFIX}'s RAGE\nis building!");
 static const u8 sText_PkmnMoveWasDisabled[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_BUFF1}\nwas disabled!");
 static const u8 sText_PkmnMoveDisabledNoMore[] = _("{B_ATK_NAME_WITH_PREFIX} is disabled\nno more!");
@@ -221,6 +222,14 @@ static const u8 sText_PkmnCopiedStatChanges[] = _("{B_ATK_NAME_WITH_PREFIX} copi
 static const u8 sText_PkmnGotFree[] = _("{B_ATK_NAME_WITH_PREFIX} got free of\n{B_DEF_NAME_WITH_PREFIX}'s {B_BUFF1}!");
 static const u8 sText_PkmnShedLeechSeed[] = _("{B_ATK_NAME_WITH_PREFIX} shed\nLEECH SEED!");
 static const u8 sText_PkmnBlewAwaySpikes[] = _("{B_ATK_NAME_WITH_PREFIX} blew away\nSPIKES!");
+static const u8 sText_PoisonSpikesScattered[] = _("Poison spikes were scattered all\naround the opponent's side!");
+static const u8 sText_ToxicSpikesAbsorbed[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} absorbed\nthe poison spikes!");
+static const u8 sText_PkmnBlewAwayToxicSpikes[] = _("{B_ATK_NAME_WITH_PREFIX} blew away\nTOXIC SPIKES!");
+static const u8 sText_WireTripSet[] = _("An electric wire was strung\nacross the opponent's side!");
+static const u8 sText_WireTripAbsorbed[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} absorbed\nthe WIRE TRIP's charge!");
+static const u8 sText_PkmnBlewAwayWireTrip[] = _("{B_ATK_NAME_WITH_PREFIX} blew away\nthe WIRE TRIP!");
+static const u8 sText_PkmnPutUpWall[] = _("{B_ATK_NAME_WITH_PREFIX} put up\na {B_CURRENT_MOVE}!");
+static const u8 sText_PkmnWallShattered[] = _("{B_DEF_NAME_WITH_PREFIX}'s\n{B_BUFF1} shattered!");
 static const u8 sText_PkmnFledFromBattle[] = _("{B_ATK_NAME_WITH_PREFIX} fled from\nbattle!");
 static const u8 sText_PkmnForesawAttack[] = _("{B_ATK_NAME_WITH_PREFIX} foresaw\nan attack!");
 static const u8 sText_PkmnTookAttack[] = _("{B_DEF_NAME_WITH_PREFIX} took the\n{B_BUFF1} attack!");
@@ -917,6 +926,15 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNDROPPEDITEM - BATTLESTRINGS_TABLE_START] = sText_PkmnDroppedItem,
     [STRINGID_ADDEDTOBAG - BATTLESTRINGS_TABLE_START] = sText_AddedToBag,
     [STRINGID_BAGISFULL - BATTLESTRINGS_TABLE_START] = sText_BagIsFull,
+    [STRINGID_PKMNISWIDEOPEN - BATTLESTRINGS_TABLE_START] = sText_PkmnIsWideOpen,
+    [STRINGID_POISONSPIKESSCATTERED - BATTLESTRINGS_TABLE_START] = sText_PoisonSpikesScattered,
+    [STRINGID_TOXICSPIKESABSORBED - BATTLESTRINGS_TABLE_START] = sText_ToxicSpikesAbsorbed,
+    [STRINGID_PKMNBLEWAWAYTOXICSPIKES - BATTLESTRINGS_TABLE_START] = sText_PkmnBlewAwayToxicSpikes,
+    [STRINGID_WIRETRIPSET - BATTLESTRINGS_TABLE_START] = sText_WireTripSet,
+    [STRINGID_WIRETRIPABSORBED - BATTLESTRINGS_TABLE_START] = sText_WireTripAbsorbed,
+    [STRINGID_PKMNBLEWAWAYWIRETRIP - BATTLESTRINGS_TABLE_START] = sText_PkmnBlewAwayWireTrip,
+    [STRINGID_PKMNPUTUPWALL - BATTLESTRINGS_TABLE_START] = sText_PkmnPutUpWall,
+    [STRINGID_PKMNWALLSHATTERED - BATTLESTRINGS_TABLE_START] = sText_PkmnWallShattered,
 };
 
 const u16 gMissStringIds[] =
@@ -1099,7 +1117,9 @@ const u16 gTransformUsedStringIds[] =
 const u16 gSubstituteUsedStringIds[] =
 {
     [B_MSG_SET_SUBSTITUTE]    = STRINGID_PKMNMADESUBSTITUTE,
-    [B_MSG_SUBSTITUTE_FAILED] = STRINGID_TOOWEAKFORSUBSTITUTE
+    [B_MSG_SUBSTITUTE_FAILED] = STRINGID_TOOWEAKFORSUBSTITUTE,
+    [B_MSG_SET_WALL]          = STRINGID_PKMNPUTUPWALL,
+    [B_MSG_WALL_FAILED]       = STRINGID_BUTITFAILED,
 };
 
 const u16 gGotPoisonedStringIds[] =

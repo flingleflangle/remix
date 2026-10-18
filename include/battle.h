@@ -75,7 +75,7 @@ struct DisableStruct
     u8 disableTimer:4;
     u8 disableTimerStartValue:4;
     u8 encoredMovePos;
-    u8 filler_D; // Unused field.
+    u8 substituteWall; // SUBSTITUTE_WALL_*
     u8 encoreTimer:4;
     u8 encoreTimerStartValue:4;
     u8 perishSongTimer:4;
@@ -93,7 +93,8 @@ struct DisableStruct
     u8 filler_17; // Unused field.
     u8 truantCounter:1;
     u8 truantSwitchInHack:1;
-    u8 filler_18_2:2; // Unused field.
+    u8 wideOpen:1; // Failed Detect, so the next hit from a foe is critical
+    u8 filler_18_3:1; // Unused field.
     u8 mimickedMoves:4;
     u8 rechargeTimer;
 };
@@ -120,6 +121,7 @@ struct ProtectStruct
     u32 flinchImmobility:1;
     u32 notFirstStrike:1;
     u32 palaceUnableToUseMove:1;
+    u32 detected:1; // Protected by Detect, which blocks all attacking moves
     u32 physicalDmg;
     u32 specialDmg;
     u8 physicalBattlerId;
@@ -156,6 +158,7 @@ struct SideTimer
     u8 followmeTimer;
     u8 followmeTarget;
     u8 spikesAmount;
+    u8 toxicSpikesAmount;
 };
 
 struct WishFutureKnock
@@ -521,6 +524,7 @@ struct BattleSpriteInfo
     u16 behindSubstitute:1; // 0x4
     u16 flag_x8:1; // 0x8
     u16 hpNumbersNoBars:1; // 0x10
+    u16 substituteWall:2; // SUBSTITUTE_WALL_*, which graphic to show when behindSubstitute
     u16 transformSpecies;
 };
 

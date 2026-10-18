@@ -422,9 +422,15 @@
 #define MOVE_NEBULA_CRASH 418
 #define MOVE_CHAKRA_SURGE 419
 #define MOVE_BLACK_HOLE 420
+#define MOVE_SUCKER_PUNCH 421
+#define MOVE_DODGE 422
+#define MOVE_TOXIC_SPIKES 423
+#define MOVE_WIRE_TRIP 424
+#define MOVE_STONE_WALL 425
+#define MOVE_ICE_WALL 426
 
 
-#define MOVES_COUNT 421
+#define MOVES_COUNT 427
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

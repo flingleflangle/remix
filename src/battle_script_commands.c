@@ -54,7 +54,9 @@
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 
-#define DEFENDER_IS_PROTECTED ((gProtectStructs[gBattlerTarget].protected) && (gBattleMoves[gCurrentMove].flags & FLAG_PROTECT_AFFECTED))
+// Detect blocks every attacking move, including ones that get past Protect
+#define DEFENDER_IS_PROTECTED (((gProtectStructs[gBattlerTarget].protected) && (gBattleMoves[gCurrentMove].flags & FLAG_PROTECT_AFFECTED)) \
+                            || ((gProtectStructs[gBattlerTarget].detected) && gBattleMoves[gCurrentMove].power != 0))
 
 #define LEVEL_UP_BANNER_START 416
 #define LEVEL_UP_BANNER_END   512
@@ -328,6 +330,8 @@ static void Cmd_finishaction(void);
 static void Cmd_finishturn(void);
 static void Cmd_trainerslideout(void);
 static void Cmd_ballthrowend(void);
+static void Cmd_jumpifsuckerpunchfails(void);
+static void Cmd_trysetdetect(void);
 
 void (*const gBattleScriptingCommandsTable[])(void) =
 {
@@ -583,6 +587,8 @@ void (*const gBattleScriptingCommandsTable[])(void) =
     Cmd_remaininghptopowerevil,					 //0xF9
     Cmd_settypewithmove,					 	 //0xFA
     Cmd_ballthrowend,					 		 //0xFB
+    Cmd_jumpifsuckerpunchfails,                  //0xFC
+    Cmd_trysetdetect,                            //0xFD
 };
 
 struct StatFractions
@@ -1133,6 +1139,16 @@ static void Cmd_accuracycheck(void)
         if (AccuracyCalcHelper(move))
             return;
 
+        // Dodge evades anything that rolls for accuracy. Moves that skip the roll
+        // (Aerial Ace, Swift, Lock-On, accuracy 0, ...) were let through above.
+        if (gStatuses3[gBattlerTarget] & STATUS3_DODGING && gBattleMoves[move].accuracy != 0)
+        {
+            gMoveResultFlags |= MOVE_RESULT_MISSED;
+            gBattleCommunication[MISS_TYPE] = B_MSG_MISSED;
+            JumpIfMoveFailed(7, move);
+            return;
+        }
+
         if (gBattleMons[gBattlerTarget].status2 & STATUS2_FORESIGHT)
         {
             u8 acc = gBattleMons[gBattlerAttacker].statStages[STAT_ACC];
@@ -1266,6 +1282,7 @@ static void Cmd_critcalc(void)
 {
     u8 holdEffect;
     u16 item, critChance;
+    bool32 guaranteedCrit = FALSE;
 
     item = gBattleMons[gBattlerAttacker].item;
 
@@ -1295,10 +1312,18 @@ static void Cmd_critcalc(void)
     if (critChance >= ARRAY_COUNT(sCriticalHitChance))
         critChance = ARRAY_COUNT(sCriticalHitChance) - 1;
 
+    // A foe's first hit on a battler left wide open by a failed Detect is always critical
+    if (gDisableStructs[gBattlerTarget].wideOpen
+     && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
+    {
+        gDisableStructs[gBattlerTarget].wideOpen = FALSE;
+        guaranteedCrit = TRUE;
+    }
+
     if ((gBattleMons[gBattlerTarget].ability != ABILITY_BATTLE_ARMOR && gBattleMons[gBattlerTarget].ability != ABILITY_SHELL_ARMOR)
      && !(gStatuses3[gBattlerAttacker] & STATUS3_CANT_SCORE_A_CRIT)
      && !(gBattleTypeFlags & (BATTLE_TYPE_WALLY_TUTORIAL | BATTLE_TYPE_FIRST_BATTLE))
-     && !(Random() % sCriticalHitChance[critChance]))
+     && (guaranteedCrit || !(Random() % sCriticalHitChance[critChance])))
         gCritMultiplier = 2;
     else
         gCritMultiplier = 1;
@@ -1993,6 +2018,35 @@ static void Cmd_healthbarupdate(void)
 }
 
 // Update the active battler's HP and various HP trackers (Substitute, Bide, etc.)
+static bool32 IsTypeSuperEffectiveAgainst(u8 atkType, u8 defType)
+{
+    s32 i;
+
+    for (i = 0; TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE; i += 3)
+    {
+        if (TYPE_EFFECT_ATK_TYPE(i) == atkType && TYPE_EFFECT_DEF_TYPE(i) == defType)
+            return TYPE_EFFECT_MULTIPLIER(i) == TYPE_MUL_SUPER_EFFECTIVE;
+    }
+    return FALSE;
+}
+
+// Brick Break always shatters a Stone Wall or Ice Wall. So does a move that's super effective
+// against Rock or Ice, unless Sandstorm or Hail is up to shore the wall up.
+static bool32 ShouldSubstituteWallShatter(u8 battler, u8 moveType)
+{
+    switch (gDisableStructs[battler].substituteWall)
+    {
+    case SUBSTITUTE_WALL_STONE:
+        return gBattleMoves[gCurrentMove].effect == EFFECT_BRICK_BREAK
+            || (IsTypeSuperEffectiveAgainst(moveType, TYPE_ROCK) && !(WEATHER_HAS_EFFECT && gBattleWeather & B_WEATHER_SANDSTORM));
+    case SUBSTITUTE_WALL_ICE:
+        return gBattleMoves[gCurrentMove].effect == EFFECT_BRICK_BREAK
+            || (IsTypeSuperEffectiveAgainst(moveType, TYPE_ICE) && !(WEATHER_HAS_EFFECT && gBattleWeather & B_WEATHER_HAIL));
+    default:
+        return FALSE;
+    }
+}
+
 static void Cmd_datahpupdate(void)
 {
     u32 moveType;
@@ -2017,6 +2071,9 @@ static void Cmd_datahpupdate(void)
         if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE && gDisableStructs[gActiveBattler].substituteHP && !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
         {
             // Target has an active Substitute, deal damage to that instead.
+            if (ShouldSubstituteWallShatter(gActiveBattler, moveType) && gBattleMoveDamage < gDisableStructs[gActiveBattler].substituteHP)
+                gBattleMoveDamage = gDisableStructs[gActiveBattler].substituteHP;
+
             if (gDisableStructs[gActiveBattler].substituteHP >= gBattleMoveDamage)
             {
                 if (gSpecialStatuses[gActiveBattler].shellBellDmg == 0)
@@ -2038,7 +2095,19 @@ static void Cmd_datahpupdate(void)
                 // Substitute fades
                 gBattlescriptCurrInstr += 2;
                 BattleScriptPushCursor();
-                gBattlescriptCurrInstr = BattleScript_SubstituteFade;
+                if (gDisableStructs[gActiveBattler].substituteWall != SUBSTITUTE_WALL_NONE)
+                {
+                    // "...'s STONE WALL shattered!"
+                    if (gDisableStructs[gActiveBattler].substituteWall == SUBSTITUTE_WALL_STONE)
+                        PREPARE_MOVE_BUFFER(gBattleTextBuff1, MOVE_STONE_WALL)
+                    else
+                        PREPARE_MOVE_BUFFER(gBattleTextBuff1, MOVE_ICE_WALL)
+                    gBattlescriptCurrInstr = BattleScript_SubstituteWallShatter;
+                }
+                else
+                {
+                    gBattlescriptCurrInstr = BattleScript_SubstituteFade;
+                }
                 return;
             }
         }
@@ -3168,7 +3237,7 @@ static void Cmd_tryfaintmon(void)
 
             BattleScriptPop();
             gBattlescriptCurrInstr = BS_ptr;
-            gSideStatuses[GetBattlerSide(gActiveBattler)] &= ~SIDE_STATUS_SPIKES_DAMAGED;
+            gSideStatuses[GetBattlerSide(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED | SIDE_STATUS_TOXIC_SPIKES_DAMAGED | SIDE_STATUS_WIRE_TRIP_DAMAGED);
         }
         else
         {
@@ -5461,6 +5530,78 @@ static void Cmd_switchineffects(void)
         else
             gBattlescriptCurrInstr = BattleScript_SpikesOnFaintedBattler;
     }
+    else if (!(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_TOXIC_SPIKES_DAMAGED)
+        && (gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_TOXIC_SPIKES)
+        && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
+        && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE)
+    {
+        // Toxic Spikes, as in pokeemerald-expansion. If nothing happens, this command
+        // simply runs again next frame and carries on with the other switch-in effects.
+        gSideStatuses[GetBattlerSide(gActiveBattler)] |= SIDE_STATUS_TOXIC_SPIKES_DAMAGED;
+
+        if (IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_POISON))
+        {
+            // Grounded Poison types absorb them
+            gSideStatuses[GetBattlerSide(gActiveBattler)] &= ~SIDE_STATUS_TOXIC_SPIKES;
+            gSideTimers[GetBattlerSide(gActiveBattler)].toxicSpikesAmount = 0;
+            gBattleScripting.battler = gActiveBattler;
+            BattleScriptPushCursor();
+            gBattlescriptCurrInstr = BattleScript_ToxicSpikesAbsorbed;
+        }
+        else if (!(gBattleMons[gActiveBattler].status1 & STATUS1_ANY)
+            && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_STEEL)
+            && gBattleMons[gActiveBattler].ability != ABILITY_IMMUNITY
+            && !(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SAFEGUARD))
+        {
+            if (gSideTimers[GetBattlerSide(gActiveBattler)].toxicSpikesAmount >= 2)
+            {
+                gBattleMons[gActiveBattler].status1 |= STATUS1_TOXIC_POISON;
+            }
+            else
+            {
+                gBattleMons[gActiveBattler].status1 |= STATUS1_POISON;
+            }
+            BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+            MarkBattlerForControllerExec(gActiveBattler);
+            gBattleScripting.battler = gEffectBattler = gActiveBattler;
+            BattleScriptPushCursor();
+            gBattlescriptCurrInstr = BattleScript_ToxicSpikesPoisoned;
+        }
+    }
+    else if (!(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_WIRE_TRIP_DAMAGED)
+        && (gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_WIRE_TRIP)
+        && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
+        && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE)
+    {
+        // Wire Trip paralyzes the first grounded Pokémon that can be paralyzed, then it's used up.
+        // As with Toxic Spikes, if nothing happens this command runs again next frame.
+        gSideStatuses[GetBattlerSide(gActiveBattler)] |= SIDE_STATUS_WIRE_TRIP_DAMAGED;
+
+        if (IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_ELECTRIC))
+        {
+            // Electric types absorb it and become charged, as if they'd used Charge
+            gSideStatuses[GetBattlerSide(gActiveBattler)] &= ~SIDE_STATUS_WIRE_TRIP;
+            gStatuses3[gActiveBattler] |= STATUS3_CHARGED_UP;
+            gDisableStructs[gActiveBattler].chargeTimer = 2;
+            gDisableStructs[gActiveBattler].chargeTimerStartValue = 2;
+            gBattleScripting.battler = gActiveBattler;
+            BattleScriptPushCursor();
+            gBattlescriptCurrInstr = BattleScript_WireTripAbsorbed;
+        }
+        else if (!IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_GROUND)
+            && !(gBattleMons[gActiveBattler].status1 & STATUS1_ANY)
+            && gBattleMons[gActiveBattler].ability != ABILITY_LIMBER
+            && !(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SAFEGUARD))
+        {
+            gSideStatuses[GetBattlerSide(gActiveBattler)] &= ~SIDE_STATUS_WIRE_TRIP;
+            gBattleMons[gActiveBattler].status1 |= STATUS1_PARALYSIS;
+            BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+            MarkBattlerForControllerExec(gActiveBattler);
+            gBattleScripting.battler = gEffectBattler = gActiveBattler;
+            BattleScriptPushCursor();
+            gBattlescriptCurrInstr = BattleScript_WireTripParalyzed;
+        }
+    }
     else
     {
         // There is a hack here to ensure the truant counter will be 0 when the battler's next turn starts.
@@ -5473,7 +5614,7 @@ static void Cmd_switchineffects(void)
         if (!AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0)
             && !ItemBattleEffects(ITEMEFFECT_ON_SWITCH_IN, gActiveBattler, FALSE))
         {
-            gSideStatuses[GetBattlerSide(gActiveBattler)] &= ~SIDE_STATUS_SPIKES_DAMAGED;
+            gSideStatuses[GetBattlerSide(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED | SIDE_STATUS_TOXIC_SPIKES_DAMAGED | SIDE_STATUS_WIRE_TRIP_DAMAGED);
 
             for (i = 0; i < gBattlersCount; i++)
             {
@@ -8054,13 +8195,52 @@ static void Cmd_transformdataexecution(void)
     }
 }
 
+// Stone Wall and Ice Wall: a Substitute that costs a stage of Attack or Sp. Atk instead of HP.
+// Its HP is a quarter of that stat, or half in Sandstorm or Hail respectively.
+static void SetSubstituteWall(void)
+{
+    bool32 isStone = (gCurrentMove == MOVE_STONE_WALL);
+    u8 stat = isStone ? STAT_ATK : STAT_SPATK;
+    u32 statValue = isStone ? gBattleMons[gBattlerAttacker].attack : gBattleMons[gBattlerAttacker].spAttack;
+    u32 hp;
+
+    if (gBattleMons[gBattlerAttacker].statStages[stat] == MIN_STAT_STAGE)
+    {
+        gBattleMoveDamage = 0;
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_WALL_FAILED;
+        return;
+    }
+
+    if (WEATHER_HAS_EFFECT && (gBattleWeather & (isStone ? B_WEATHER_SANDSTORM : B_WEATHER_HAIL)))
+        hp = statValue / 2;
+    else
+        hp = statValue / 4;
+    if (hp == 0)
+        hp = 1;
+    if (hp > 255) // substituteHP is a u8
+        hp = 255;
+
+    gBattleMoveDamage = 0; // Costs no HP
+    gBattleMons[gBattlerAttacker].status2 |= STATUS2_SUBSTITUTE;
+    gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_WRAPPED;
+    gDisableStructs[gBattlerAttacker].substituteHP = hp;
+    gDisableStructs[gBattlerAttacker].substituteWall = isStone ? SUBSTITUTE_WALL_STONE : SUBSTITUTE_WALL_ICE;
+    SET_STATCHANGER(stat, 1, TRUE); // Lowered by the script
+    gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SET_WALL;
+    gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
+}
+
 static void Cmd_setsubstitute(void)
 {
     u32 hp = gBattleMons[gBattlerAttacker].maxHP / 4;
     if (gBattleMons[gBattlerAttacker].maxHP / 4 == 0)
         hp = 1;
 
-    if (gBattleMons[gBattlerAttacker].hp <= hp)
+    if (gCurrentMove == MOVE_STONE_WALL || gCurrentMove == MOVE_ICE_WALL)
+    {
+        SetSubstituteWall();
+    }
+    else if (gBattleMons[gBattlerAttacker].hp <= hp)
     {
         gBattleMoveDamage = 0;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SUBSTITUTE_FAILED;
@@ -8074,6 +8254,7 @@ static void Cmd_setsubstitute(void)
         gBattleMons[gBattlerAttacker].status2 |= STATUS2_SUBSTITUTE;
         gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_WRAPPED;
         gDisableStructs[gBattlerAttacker].substituteHP = gBattleMoveDamage;
+        gDisableStructs[gBattlerAttacker].substituteWall = SUBSTITUTE_WALL_NONE;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SET_SUBSTITUTE;
         gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
     }
@@ -8767,11 +8948,39 @@ static void Cmd_cursetarget(void)
     }
 }
 
+// Also used by Toxic Spikes, which has up to 2 layers, and Wire Trip, which has 1
 static void Cmd_trysetspikes(void)
 {
     u8 targetSide = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
 
-    if (gSideTimers[targetSide].spikesAmount == 3)
+    if (gCurrentMove == MOVE_WIRE_TRIP)
+    {
+        if (gSideStatuses[targetSide] & SIDE_STATUS_WIRE_TRIP)
+        {
+            gSpecialStatuses[gBattlerAttacker].ppNotAffectedByPressure = 1;
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
+        else
+        {
+            gSideStatuses[targetSide] |= SIDE_STATUS_WIRE_TRIP;
+            gBattlescriptCurrInstr += 5;
+        }
+    }
+    else if (gCurrentMove == MOVE_TOXIC_SPIKES)
+    {
+        if (gSideTimers[targetSide].toxicSpikesAmount >= 2)
+        {
+            gSpecialStatuses[gBattlerAttacker].ppNotAffectedByPressure = 1;
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
+        else
+        {
+            gSideStatuses[targetSide] |= SIDE_STATUS_TOXIC_SPIKES;
+            gSideTimers[targetSide].toxicSpikesAmount++;
+            gBattlescriptCurrInstr += 5;
+        }
+    }
+    else if (gSideTimers[targetSide].spikesAmount == 3)
     {
         gSpecialStatuses[gBattlerAttacker].ppNotAffectedByPressure = 1;
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -9176,6 +9385,19 @@ static void Cmd_rapidspinfree(void)
         BattleScriptPushCursor();
         gBattlescriptCurrInstr = BattleScript_SpikesFree;
     }
+    else if (gSideStatuses[GetBattlerSide(gBattlerAttacker)] & SIDE_STATUS_TOXIC_SPIKES)
+    {
+        gSideStatuses[GetBattlerSide(gBattlerAttacker)] &= ~SIDE_STATUS_TOXIC_SPIKES;
+        gSideTimers[GetBattlerSide(gBattlerAttacker)].toxicSpikesAmount = 0;
+        BattleScriptPushCursor();
+        gBattlescriptCurrInstr = BattleScript_ToxicSpikesFree;
+    }
+    else if (gSideStatuses[GetBattlerSide(gBattlerAttacker)] & SIDE_STATUS_WIRE_TRIP)
+    {
+        gSideStatuses[GetBattlerSide(gBattlerAttacker)] &= ~SIDE_STATUS_WIRE_TRIP;
+        BattleScriptPushCursor();
+        gBattlescriptCurrInstr = BattleScript_WireTripFree;
+    }
     else if (gBattleMons[gBattlerAttacker].status1 & (STATUS1_BURN))
         {
             gBattleMons[gBattlerAttacker].status1 = 0;
@@ -9380,6 +9602,12 @@ static void Cmd_setsemiinvulnerablebit(void)
 {
     switch (gCurrentMove)
     {
+    case MOVE_DODGE: // Too late if a foe has already hit the user this turn
+        if (gProtectStructs[gBattlerAttacker].physicalDmg || gProtectStructs[gBattlerAttacker].specialDmg)
+            gMoveResultFlags |= MOVE_RESULT_FAILED;
+        else
+            gStatuses3[gBattlerAttacker] |= STATUS3_DODGING;
+        break;
     case MOVE_FLY:
     case MOVE_BOUNCE:
     case MOVE_STAR_BARRAGE:
@@ -10591,6 +10819,105 @@ static void Cmd_ballthrowend(void)
     gBallShakesBData.ballShakesArray = 0;
     gBallShakesBData.shakes = 0;
     gBallShakesBData.throwType = BALL_THROW_NORMAL;
+}
+
+// The move the battler will use when its turn comes
+static u16 GetBattlerUpcomingMove(u8 battler)
+{
+    if (gProtectStructs[battler].noValidMoves)
+        return MOVE_STRUGGLE;
+    if (gBattleMons[battler].status2 & STATUS2_MULTIPLETURNS)
+        return gLockedMoves[battler];
+    return gChosenMoveByBattler[battler];
+}
+
+// Whether the battler is about to use a damaging move later this turn.
+// Status moves are the ones Taunt blocks (power == 0).
+static bool32 IsBattlerAboutToAttack(u8 battler)
+{
+    u32 i;
+
+    if (gBattleMons[battler].hp == 0
+        || gChosenActionByBattler[battler] != B_ACTION_USE_MOVE
+        || gBattleMons[battler].status2 & STATUS2_RECHARGE)
+        return FALSE;
+
+    // Already moved this turn
+    for (i = 0; i < gCurrentTurnActionNumber; i++)
+    {
+        if (gBattlerByTurnOrder[i] == battler)
+            return FALSE;
+    }
+
+    return gBattleMoves[GetBattlerUpcomingMove(battler)].power != 0;
+}
+
+// Sucker Punch only works if the target is about to use a damaging move this turn.
+static void Cmd_jumpifsuckerpunchfails(void)
+{
+    if (!IsBattlerAboutToAttack(gBattlerTarget))
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    else
+        gBattlescriptCurrInstr += 5;
+}
+
+// Whether the attacker's move will be aimed at the target
+static bool32 WillMoveHitBattler(u8 attacker, u16 move, u8 target)
+{
+    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+        return TRUE;
+
+    switch (gBattleMoves[move].target)
+    {
+    case MOVE_TARGET_SELECTED:
+        return gBattleStruct->moveTarget[attacker] == target;
+    case MOVE_TARGET_USER:
+        return FALSE;
+    default: // Hits both foes, everyone, or a foe picked when the move is used
+        return TRUE;
+    }
+}
+
+// Detect only works if a foe is about to attack the user, and then blocks every attacking
+// move, even ones that get past Protect. Its own odds never drop when used repeatedly, but
+// it still counts as a use for Protect and Endure. If no attack was coming, the user is left
+// wide open: it must recharge next turn, and the next hit from a foe is critical.
+static void Cmd_trysetdetect(void)
+{
+    bool32 attackIncoming = FALSE;
+    u16 lastMove = gLastResultingMoves[gBattlerAttacker];
+    u8 battler;
+
+    if (lastMove != MOVE_PROTECT && lastMove != MOVE_DETECT && lastMove != MOVE_ENDURE)
+        gDisableStructs[gBattlerAttacker].protectUses = 0;
+
+    for (battler = 0; battler < gBattlersCount; battler++)
+    {
+        if (GetBattlerSide(battler) == GetBattlerSide(gBattlerAttacker))
+            continue;
+        if (IsBattlerAboutToAttack(battler)
+         && WillMoveHitBattler(battler, GetBattlerUpcomingMove(battler), gBattlerAttacker))
+            attackIncoming = TRUE;
+    }
+
+    if (attackIncoming)
+    {
+        gProtectStructs[gBattlerAttacker].detected = TRUE;
+        if (gDisableStructs[gBattlerAttacker].protectUses < ARRAY_COUNT(sProtectSuccessRates) - 1)
+            gDisableStructs[gBattlerAttacker].protectUses++;
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_PROTECTED_ITSELF;
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+    {
+        // Same as Hyper Beam's recharge, see CANCELLER_RECHARGE
+        gBattleMons[gBattlerAttacker].status2 |= STATUS2_RECHARGE;
+        gDisableStructs[gBattlerAttacker].rechargeTimer = 2;
+        gLockedMoves[gBattlerAttacker] = gCurrentMove;
+        gDisableStructs[gBattlerAttacker].wideOpen = TRUE;
+        gDisableStructs[gBattlerAttacker].protectUses = 0;
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
 }
 
 bool8 CalcNextShakeFromOdds(u32 odds)
