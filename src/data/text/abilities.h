@@ -79,6 +79,9 @@ static const u8 sAirLockDescription[] = _("Negates weather effects.");
 static const u8 sSnowWarningDescription[] = _("Summons hail in battle.");
 static const u8 sSnowCloakDescription[] = _("Ups evasion in hail.");
 static const u8 sPrismScaleDescription[] = _("Stats enhanced in weather.");
+static const u8 sFilterScaleDescription[] = _("Reduces move effectiveness.");
+static const u8 sChromaScaleDescription[] = _("Adds effects to attacks.");
+static const u8 sMirrorScaleDescription[] = _("Copies all stat changes.");
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
 {
@@ -163,6 +166,9 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_SNOW_WARNING] = _("SNOW WARNING"),
     [ABILITY_SNOW_CLOAK] = _("SNOW CLOAK"),
     [ABILITY_PRISM_SCALE] = _("PRISM SCALE"),
+    [ABILITY_FILTER_SCALE] = _("FILTER SCALE"),
+    [ABILITY_CHROMA_SCALE] = _("CHROMA SCALE"),
+    [ABILITY_MIRROR_SCALE] = _("MIRROR SCALE"),
 };
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
@@ -248,4 +254,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_SNOW_WARNING] = sSnowWarningDescription,
     [ABILITY_SNOW_CLOAK] = sSnowCloakDescription,
     [ABILITY_PRISM_SCALE] = sPrismScaleDescription,
+    [ABILITY_FILTER_SCALE] = sFilterScaleDescription,
+    [ABILITY_CHROMA_SCALE] = sChromaScaleDescription,
+    [ABILITY_MIRROR_SCALE] = sMirrorScaleDescription,
 };

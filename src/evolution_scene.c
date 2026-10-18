@@ -86,12 +86,19 @@ static const u8 sText_ShedinjaJapaneseName[] = _("ヌケニン");
 // before starting over. It will repeat this cycle x number of times, where x = the 3rd value,
 // delaying each increment by y, where y = the 4th value.
 // Once it has cycled x number of times, it will move to the next array in this table.
+// Each increment takes (y + 2) frames, after a 20 frame startup delay.
+// The last stage fades the bg to black, and must finish before the spray and flash starts
+// (~364 frames after StartBgAnimation), or Task_UpdateBgPalette's LoadPalette calls will
+// overwrite the white fade on BG palette 10 and make the bg flash rapidly.
+// Timings were shortened to match the faster sparkle/sprite cycling in evolution_graphics.c:
+// stage 0 and 3 delays 6 -> 2, stage 1 cycles 5 -> 2. The last palette now loads at frame ~348
+// (was ~726) and the task ends at ~352 (was ~734).
 static const u8 sBgAnim_PaletteControl[][4] =
 {
-    {  0, 12, 1, 6 },
-    { 13, 36, 5, 2 },
+    {  0, 12, 1, 2 },
+    { 13, 36, 2, 2 },
     { 13, 24, 1, 2 },
-    { 37, 49, 1, 6 },
+    { 37, 49, 1, 2 },
 };
 
 // Indexes into sBgAnim_Pal, 0 is black, transitioning to a bright light blue (172, 213, 255) at 13
@@ -692,6 +699,7 @@ static void Task_EvolutionScene(u8 taskId)
         {
             PlaySE(MUS_EVOLUTION_INTRO);
             gTasks[taskId].tState++;
+            BeginNormalPaletteFade(0x1C, 4, 0, 0x10, RGB_BLACK);
         }
         break;
     case EVOSTATE_START_MUSIC:
@@ -700,7 +708,6 @@ static void Task_EvolutionScene(u8 taskId)
             // Start music, fade background to black
             PlayNewMapMusic(MUS_EVOLUTION);
             gTasks[taskId].tState++;
-            BeginNormalPaletteFade(0x1C, 4, 0, 0x10, RGB_BLACK);
         }
         break;
     case EVOSTATE_START_BG_AND_SPARKLE_SPIRAL:

@@ -305,21 +305,27 @@ static void Task_Sparkles_SpiralUpward_Init(u8 taskId)
     PlaySE(SE_M_MEGA_KICK); // 'Charging up' sound for the sparkles as they spiral upwards
 }
 
+// Emits 8 bursts of 4 sparkles, one burst every 4 frames over 32 frames (was every 8 over 64).
+// Each sparkle lives ~81 frames (SpriteCB_Sparkle_SpiralUpward: y = 88 - t*t/80 reaches 8 at t = 80),
+// so the last burst (frame 28) is gone by frame ~110. The 80 frame wait (32 + 80 = 112) covers that,
+// which keeps the 32 sparkles from overlapping the 54 ArcDown sparkles and running out of sprites.
 static void Task_Sparkles_SpiralUpward(u8 taskId)
 {
-    if (gTasks[taskId].tTimer < 64)
+    if (gTasks[taskId].tTimer < 32)
     {
-        if (!(gTasks[taskId].tTimer & 7))
+        if (!(gTasks[taskId].tTimer & 3))
         {
             u8 i;
+            // tTimer is 0, 4, ..., 28 here, so tTimer * 8 offsets each burst by 32 (0-224),
+            // and i * 64 spreads the 4 sparkles in a burst evenly around the circle (256 = full turn)
             for (i = 0; i < 4; i++)
-                CreateSparkle_SpiralUpward((gTasks[taskId].tTimer & 120) * 2 + i * 64);
+                CreateSparkle_SpiralUpward(gTasks[taskId].tTimer * 8 + i * 64);
         }
         gTasks[taskId].tTimer++;
     }
     else
     {
-        gTasks[taskId].tTimer = 96;
+        gTasks[taskId].tTimer = 80;
         gTasks[taskId].func = Task_Sparkles_SpiralUpward_End;
     }
 }
@@ -345,9 +351,13 @@ static void Task_Sparkles_ArcDown_Init(u8 taskId)
     PlaySE(SE_M_BUBBLE_BEAM2);
 }
 
+// Emits 9 sparkles per frame for the first 6 frames. Each sparkle lives ~22 frames
+// (SpriteCB_Sparkle_ArcDown: y = 8 + t*t/5 reaches 88 at t = 20, then it's destroyed the next frame),
+// so the last ones (frame 5) are gone by frame ~27. Ending at 28 (was 96) starts the mon sprite
+// cycling as soon as the sparkles finish, with no pause.
 static void Task_Sparkles_ArcDown(u8 taskId)
 {
-    if (gTasks[taskId].tTimer < 96)
+    if (gTasks[taskId].tTimer < 28)
     {
         if (gTasks[taskId].tTimer < 6)
         {
@@ -381,9 +391,15 @@ static void Task_Sparkles_CircleInward_Init(u8 taskId)
     PlaySE(SE_SHINY);
 }
 
+// Two rings of 16 sparkles that shrink from a radius of 120 to 8 (SpriteCB_Sparkle_CircleInward).
+// Ring 1 shrinks by 4 per frame: (120 - 8) / 4 = 28 frames, so it is gone by frame ~29.
+// Ring 2 shrinks by 8 per frame: (120 - 8) / 8 = 14 frames. Starting it at frame 28 (was 32)
+// means it is gone by frame ~43, so the task ends at 44 (was 48).
+// These extra frames also give the bg palette animation (sBgAnim_PaletteControl in evolution_scene.c)
+// time to finish fading to black before the spray and flash starts.
 static void Task_Sparkles_CircleInward(u8 taskId)
 {
-    if (gTasks[taskId].tTimer < 48)
+    if (gTasks[taskId].tTimer < 44)
     {
         if (gTasks[taskId].tTimer == 0)
         {
@@ -391,7 +407,7 @@ static void Task_Sparkles_CircleInward(u8 taskId)
             for (i = 0; i < 16; i++)
                 CreateSparkle_CircleInward(i * 16, 4);
         }
-        if (gTasks[taskId].tTimer == 32)
+        if (gTasks[taskId].tTimer == 28)
         {
             u8 i;
             for (i = 0; i < 16; i++)
@@ -429,23 +445,34 @@ static void Task_Sparkles_SprayAndFlash_Init(u8 taskId)
     PlaySE(SE_M_PETAL_DANCE);
 }
 
+// Frame 0: burst of 8 sparkles, then 1 random sparkle per frame until frame 25 (was 50).
+// A normal fade steps by 2 (0, 2, ..., 16 = 9 levels). Each level takes (delay + 2) frames, since
+// UpdateNormalPaletteFade blends BG and OBJ palettes on alternating frames, and the fade stays
+// active for 5 more frames after the last level (IsSoftwarePaletteFadeFinishing).
+// So the Init fade to white (delay 0) is active for 9 * 2 + 5 = ~23 frames, ending around frame 21.
+// Frame 24 (was 32): start the fade back from white. This MUST be after the first fade finishes,
+// because BeginNormalPaletteFade ignores the call if a fade is active and the mon would stay white.
+// A delay of 8 (was 16) takes 9 * 10 + 5 = ~95 frames (was ~167), finishing around frame 119.
+// The task timer runs to 64 (was 128) and then Task_Sparkles_SprayAndFlash_End waits for the fade
+// to finish, so the fade sets the real end.
+// Note: each spray sparkle lives 128 frames (sTrigIdx 0-128), so the last ones outlast this task.
 static void Task_Sparkles_SprayAndFlash(u8 taskId)
 {
-    if (gTasks[taskId].tTimer < 128)
+    if (gTasks[taskId].tTimer < 64)
     {
         u8 i;
         switch (gTasks[taskId].tTimer)
         {
         default:
-            if (gTasks[taskId].tTimer < 50)
+            if (gTasks[taskId].tTimer < 25)
                 CreateSparkle_Spray(Random() & 7);
             break;
         case 0:
             for (i = 0; i < 8; i++)
                 CreateSparkle_Spray(i);
             break;
-        case 32:
-            BeginNormalPaletteFade(0xFFFF041C, 0x10, 0x10, 0, RGB_WHITE); // was 0xFFF9001C in R/S
+        case 24:
+            BeginNormalPaletteFade(0xFFFF041C, 8, 0x10, 0, RGB_WHITE); // was 0xFFF9001C in R/S
             break;
         }
         gTasks[taskId].tTimer++;
@@ -480,23 +507,24 @@ static void Task_Sparkles_SprayAndFlashTrade_Init(u8 taskId)
     PlaySE(SE_M_PETAL_DANCE);
 }
 
+// Same timing as Task_Sparkles_SprayAndFlash
 static void Task_Sparkles_SprayAndFlashTrade(u8 taskId)
 {
-    if (gTasks[taskId].tTimer < 128)
+    if (gTasks[taskId].tTimer < 64)
     {
         u8 i;
         switch (gTasks[taskId].tTimer)
         {
         default:
-            if (gTasks[taskId].tTimer < 50)
+            if (gTasks[taskId].tTimer < 25)
                 CreateSparkle_Spray(Random() & 7);
             break;
         case 0:
             for (i = 0; i < 8; i++)
                 CreateSparkle_Spray(i);
             break;
-        case 32:
-            BeginNormalPaletteFade(0xFFFF0400, 0x10, 0x10, 0, RGB_WHITE); // was 0xFFFF0001 in R/S
+        case 24:
+            BeginNormalPaletteFade(0xFFFF0400, 8, 0x10, 0, RGB_WHITE); // was 0xFFFF0001 in R/S
             break;
         }
         gTasks[taskId].tTimer++;
@@ -569,25 +597,31 @@ u8 CycleEvolutionMonSprite(u8 preEvoSpriteId, u8 postEvoSpriteId)
 static void Task_CycleEvolutionMonSprite_Init(u8 taskId)
 {
     gTasks[taskId].tShowingPostEvo = FALSE;
+    // Starting speed. TryEnd adds 4 before each cycle, so the first cycle runs at 12
     gTasks[taskId].tScaleSpeed = 8;
     gTasks[taskId].func = Task_CycleEvolutionMonSprite_TryEnd;
 }
 
 // Try to end sprite cycling
 // If evo hasn't stopped or growth/shrink speed hasn't been maxed out, start another cycle
+// Each cycle grows one sprite and shrinks the other across MON_MAX_SCALE - MON_MIN_SCALE = 240,
+// taking ceil(240 / tScaleSpeed) frames plus 1 frame here.
+// Speeds 12, 16, ..., 96 give (96 - 8) / 4 = 22 cycles = ~166 frames (vanilla 10, 12, ..., 128 = 60 cycles, ~406 frames).
+// Keep the cycle count even so the cycles alternate the same way vanilla does before EndOnPostEvoMon.
+// The check is >= rather than == so the task still ends if (max - start) isn't a multiple of the step.
 static void Task_CycleEvolutionMonSprite_TryEnd(u8 taskId)
 {
     if (gTasks[taskId].tEvoStopped)
     {
         EndOnPreEvoMon(taskId);
     }
-    else if (gTasks[taskId].tScaleSpeed == 128)
+    else if (gTasks[taskId].tScaleSpeed >= 96)
     {
         EndOnPostEvoMon(taskId);
     }
     else
     {
-        gTasks[taskId].tScaleSpeed += 2;
+        gTasks[taskId].tScaleSpeed += 4;
         gTasks[taskId].tShowingPostEvo ^= 1;
         gTasks[taskId].func = Task_CycleEvolutionMonSprite_UpdateSize;
     }
