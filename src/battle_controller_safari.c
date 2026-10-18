@@ -177,6 +177,7 @@ static void HandleInputChooseAction(void)
         {
         case 0:
             BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SAFARI_BALL, 0);
+            OpenBallThrowInputWindow();  // D-Pad throw input is read from here until the ball is tossed
             break;
         case 1:
             BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, B_ACTION_SAFARI_POKEBLOCK, 0);

@@ -728,5 +728,8 @@ extern u8 gMultiUsePlayerCursor;
 extern u8 gNumberOfMovesToChoose;
 extern u8 gBattleControllerData[MAX_BATTLERS_COUNT];
 bool8 CalcNextShakeFromOdds(u32 odds);
+void ApplyBallThrowTypeOdds(u8 throwType);
+void OpenBallThrowInputWindow(void);
+void UpdateBallThrowInputWindow(void);
 
 #endif // GUARD_BATTLE_H

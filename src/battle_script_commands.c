@@ -10361,6 +10361,7 @@ static void Cmd_handleballthrow(void)
 {
     u8 ballMultiplier = 0;
 	gBallShakesBData.ballShakesArray = 0;
+    gBallShakesBData.throwType = BALL_THROW_NORMAL;
 
     if (gBattleControllerExecFlags)
         return;
@@ -10589,6 +10590,7 @@ static void Cmd_ballthrowend(void)
     gBallShakesBData.odds = 0;
     gBallShakesBData.ballShakesArray = 0;
     gBallShakesBData.shakes = 0;
+    gBallShakesBData.throwType = BALL_THROW_NORMAL;
 }
 
 bool8 CalcNextShakeFromOdds(u32 odds)
@@ -10598,6 +10600,112 @@ bool8 CalcNextShakeFromOdds(u32 odds)
     odds = Sqrt(Sqrt(16711680 / odds));
     odds = 1048560 / odds;
     return Random() < odds;
+}
+
+// D-Pad throw catch odds multipliers, in percent (100 = no change).
+// Each throw scales linearly from THROW_ODDS_MIN for the worst-suited target to THROW_ODDS_MAX for the best.
+#define THROW_ODDS_NORMAL 100
+#define THROW_ODDS_MIN     50
+#define THROW_ODDS_MAX    150
+#define THROW_ODDS_RANGE  (THROW_ODDS_MAX - THROW_ODDS_NORMAL)
+
+// Base Speed where curve throws are neutral. Faster mons give a bonus, slower ones a penalty,
+// reaching the max/min at THROW_SPEED_NEUTRAL * 2 (140) and 0
+#define THROW_SPEED_NEUTRAL 70
+
+#define DEX_HEIGHT 0 // GetPokedexHeightWeight's data argument
+#define DEX_WEIGHT 1
+
+static EWRAM_DATA u16 sMedianPokedexSize[2] = {0};
+
+// Median Pokédex height (decimeters) or weight (hectograms) of every Pokémon with an entry, computed once.
+// Unlike the average, this isn't pulled up by a few extremely large Pokémon. Finds the smallest value that
+// at least half of all Pokémon are at or under, by binary searching the value range instead of sorting.
+static u16 GetMedianPokedexSize(u8 heightOrWeight)
+{
+    if (sMedianPokedexSize[heightOrWeight] == 0)
+    {
+        u32 low = 1, high = 0xFFFF, count = 0;
+        u16 dexNum;
+
+        for (dexNum = 1; dexNum <= NATIONAL_DEX_COUNT; dexNum++)
+        {
+            if (GetPokedexHeightWeight(dexNum, heightOrWeight) != 0)
+                count++;
+        }
+
+        while (low < high)
+        {
+            u32 mid = (low + high) / 2;
+            u32 atOrUnder = 0;
+
+            for (dexNum = 1; dexNum <= NATIONAL_DEX_COUNT; dexNum++)
+            {
+                u16 size = GetPokedexHeightWeight(dexNum, heightOrWeight);
+                if (size != 0 && size <= mid)
+                    atOrUnder++;
+            }
+            if (atOrUnder * 2 >= count)
+                high = mid;
+            else
+                low = mid + 1;
+        }
+        sMedianPokedexSize[heightOrWeight] = low;
+    }
+    return sMedianPokedexSize[heightOrWeight];
+}
+
+// Linearly maps value -> multiplier, where `neutral` gives THROW_ODDS_NORMAL and each `neutral`
+// above or below it moves by THROW_ODDS_RANGE, clamped to THROW_ODDS_MIN-THROW_ODDS_MAX
+static s32 GetThrowOddsFromValue(s32 value, s32 neutral)
+{
+    s32 multiplier = THROW_ODDS_NORMAL + (THROW_ODDS_RANGE * (value - neutral)) / neutral;
+    return min(max(multiplier, THROW_ODDS_MIN), THROW_ODDS_MAX);
+}
+
+static u16 GetBallThrowTypeOddsMultiplier(u8 throwType, u16 species)
+{
+    u16 dexNum = SpeciesToNationalPokedexNum(species);
+
+    switch (throwType)
+    {
+    case BALL_THROW_DROP:
+        // Better on heavy Pokémon, worse on light ones. Neutral at the median weight
+        return GetThrowOddsFromValue(GetPokedexHeightWeight(dexNum, DEX_WEIGHT), GetMedianPokedexSize(DEX_WEIGHT));
+    case BALL_THROW_UNDERHAND:
+        // Better on short Pokémon, worse on tall ones. Neutral at the median height
+        return THROW_ODDS_NORMAL * 2 - GetThrowOddsFromValue(GetPokedexHeightWeight(dexNum, DEX_HEIGHT), GetMedianPokedexSize(DEX_HEIGHT));
+    case BALL_THROW_CURVE_LEFT:
+    case BALL_THROW_CURVE_RIGHT:
+        // Better on fast Pokémon, worse on slow ones
+        return GetThrowOddsFromValue(gSpeciesInfo[species].baseSpeed, THROW_SPEED_NEUTRAL);
+    case BALL_THROW_NORMAL:
+    default:
+        return THROW_ODDS_NORMAL;
+    }
+}
+
+// Called by the throw animation once the throw type is known. The first shake was already
+// rolled in Cmd_handleballthrow, so it's re-rolled here with the modified odds.
+void ApplyBallThrowTypeOdds(u8 throwType)
+{
+    u16 multiplier;
+
+    if (throwType >= BALL_THROW_TYPES_COUNT)
+        throwType = BALL_THROW_NORMAL;
+    gBallShakesBData.throwType = throwType;
+
+    if (gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_WALLY_TUTORIAL))
+        return;
+    multiplier = GetBallThrowTypeOddsMultiplier(throwType, gBattleMons[gBattlerTarget].species);
+    if (multiplier == THROW_ODDS_NORMAL)
+        return;
+
+    gBallShakesBData.odds = gBallShakesBData.odds * multiplier / 100;
+    if (gBallShakesBData.odds == 0)  // CalcNextShakeFromOdds divides by the odds
+        gBallShakesBData.odds = 1;
+    gBallShakesBData.shakes = CalcNextShakeFromOdds(gBallShakesBData.odds);
+    gBattleSpritesDataPtr->animationData->ballThrowCaseId = gBallShakesBData.shakes;
 }
 
 void HandleBattleWindow(u8 xStart, u8 yStart, u8 xEnd, u8 yEnd, u8 flags)

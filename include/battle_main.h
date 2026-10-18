@@ -28,11 +28,23 @@ struct MultiPartnerMenuPokemon
     /*0x1D*/ u8 language;
 };
 
+// Ball throw types, chosen by the D-Pad direction held as the ball is thrown
+enum
+{
+    BALL_THROW_NORMAL,
+    BALL_THROW_CURVE_LEFT,
+    BALL_THROW_CURVE_RIGHT,
+    BALL_THROW_DROP,       // Down
+    BALL_THROW_UNDERHAND,  // Up
+    BALL_THROW_TYPES_COUNT
+};
+
 struct BattleOddsModifierButtonPress
 {
     u8 ballShakesArray;
     u32 odds;
     u8 shakes;
+    u8 throwType;
 };
 
 /*

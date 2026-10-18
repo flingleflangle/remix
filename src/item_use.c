@@ -980,6 +980,7 @@ void ItemUseInBattle_PokeBall(u8 taskId)
     if (IsPlayerPartyAndPokemonStorageFull() == FALSE) // have room for mon?
     {
         RemoveBagItem(gSpecialVar_ItemId, 1);
+        OpenBallThrowInputWindow();  // D-Pad throw input is read from here until the ball is tossed
         if (CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
             Task_FadeAndCloseBagMenu(taskId);
         else

@@ -4,6 +4,7 @@
 #include "battle_controllers.h"
 #include "battle_interface.h"
 #include "decompress.h"
+#include "event_data.h"
 #include "dma3.h"
 #include "gpu_regs.h"
 #include "graphics.h"
@@ -11,6 +12,7 @@
 #include "main.h"
 #include "palette.h"
 #include "pokeball.h"
+#include "random.h"
 #include "sound.h"
 #include "sprite.h"
 #include "task.h"
@@ -20,6 +22,7 @@
 #include "constants/items.h"
 #include "constants/moves.h"
 #include "constants/songs.h"
+#include "constants/flags.h"
 #include "constants/rgb.h"
 
 // iwram
@@ -67,7 +70,7 @@ static void SpriteCB_Ball_Wobble_Step(struct Sprite *);
 static void SpriteCB_Ball_Capture(struct Sprite *);
 static void SpriteCB_Ball_Release_Step(struct Sprite *);
 static void SpriteCB_Ball_Capture_Step(struct Sprite *);
-static void MakeCaptureStars(struct Sprite *);
+static void MakeCaptureStars(struct Sprite *, u8);
 static void SpriteCB_Ball_FadeOut(struct Sprite *);
 static void DestroySpriteAfterOneFrame(struct Sprite *);
 static void LoadBallParticleGfx(u8);
@@ -847,6 +850,160 @@ static void Task_PlayerThrow_Wait(u8 taskId)
     }
 }
 
+// Flight path for each D-Pad throw type. The ball always ends at the target; these shape how it gets there.
+struct BallThrowArc
+{
+    s8 startX;   // Offset from the normal release point
+    s8 startY;
+    u8 duration; // Frames from release to reaching the target
+    s8 height;   // Vertical arc amplitude (negative = up)
+    s8 curve;    // Sideways bow, perpendicular to the path so it doesn't change the ball's speed.
+                 // Positive bows to the thrower's right (below the path), negative to their left (above it)
+    s8 spin;     // Full turns the ball rolls during the flight. Positive = clockwise
+    s8 bounceSpin; // Full turns the ball rolls on each bounce after it hits the ground. Positive = clockwise
+};
+
+static const struct BallThrowArc sBallThrowArcs[BALL_THROW_TYPES_COUNT] =
+{
+    [BALL_THROW_NORMAL]      = { .startX = 0, .startY =   0, .duration = 34, .height = -40, .curve =   0, .spin =  0, .bounceSpin =  0 },
+    // Low arc that bends out to the thrower's left and back in, spinning counterclockwise
+    [BALL_THROW_CURVE_LEFT]  = { .startX = 0, .startY =   0, .duration = 38, .height = -12, .curve = -20, .spin = -1, .bounceSpin =  0 },
+    // Low arc that bends out to the thrower's right and back in, spinning clockwise
+    [BALL_THROW_CURVE_RIGHT] = { .startX = 0, .startY =   0, .duration = 38, .height = -12, .curve =  26, .spin =  1, .bounceSpin =  0 },
+    // Fast, flat line drive released high. Rolls forward on its one bounce
+    [BALL_THROW_DROP]        = { .startX = 0, .startY = -12, .duration = 20, .height =  -6, .curve =   0, .spin =  0, .bounceSpin =  1 },
+    // Released low, slow lob that goes up near the top of the screen. Backspins on each bounce
+    [BALL_THROW_UNDERHAND]   = { .startX = 0, .startY =  24, .duration = 46, .height = -72, .curve =   0, .spin =  0, .bounceSpin = -1 },
+};
+
+// Frames the ball rests before each shake, by throw type. Index 0 is the wait after the ball lands,
+// 1 and 2 are the gaps after the 1st and 2nd shakes. Uneven gaps make it harder to keep B timing in rhythm.
+#define SHAKE_DELAY_NORMAL   31
+#define SHAKE_DELAY_VARIANCE 6 // Underhand throws vary each delay randomly by up to this many frames
+
+static const u8 sBallShakeDelays[BALL_THROW_TYPES_COUNT][BALL_3_SHAKES_SUCCESS - 1] =
+{
+    [BALL_THROW_NORMAL]      = { 31, 31, 31 },
+    [BALL_THROW_CURVE_LEFT]  = { 31,  8, 23 }, // shake - shake - gap - shake
+    [BALL_THROW_CURVE_RIGHT] = { 31, 23,  8 }, // shake - gap - shake - shake
+    [BALL_THROW_DROP]        = { 12, 12, 12 }, // Quick shakes
+    [BALL_THROW_UNDERHAND]   = { 31, 31, 31 }, // Each delay randomly varied by SHAKE_DELAY_VARIANCE
+};
+
+// shakesDone is how many shakes have already happened (0-2)
+static u8 GetBallShakeDelay(u8 shakesDone)
+{
+    u8 throwType = gBallShakesBData.throwType;
+    s16 delay;
+
+    if (throwType >= BALL_THROW_TYPES_COUNT || shakesDone >= ARRAY_COUNT(sBallShakeDelays[0]))
+        return SHAKE_DELAY_NORMAL;
+
+    delay = sBallShakeDelays[throwType][shakesDone];
+    if (throwType == BALL_THROW_UNDERHAND)
+        delay += (Random() % (SHAKE_DELAY_VARIANCE * 2 + 1)) - SHAKE_DELAY_VARIANCE;
+    return max(delay, 1);
+}
+
+// Whether a shake (1-3) plays its motion at double speed: every Drop shake, and the close-together
+// pair on curve throws (Left: shakes 1 and 2, Right: shakes 2 and 3)
+static bool8 IsFastBallShake(u8 shakeNum)
+{
+    switch (gBallShakesBData.throwType)
+    {
+    case BALL_THROW_DROP:
+        return TRUE;
+    case BALL_THROW_CURVE_LEFT:
+        return shakeNum <= 2;
+    case BALL_THROW_CURVE_RIGHT:
+        return shakeNum >= 2;
+    default:
+        return FALSE;
+    }
+}
+
+// Fast shakes run their motion twice per frame, so they need double-speed rotation to tilt as far
+static u8 GetBallShakeRotateAnim(bool8 left, u8 shakeNum)
+{
+    if (IsFastBallShake(shakeNum))
+        return left ? BALL_ROTATE_LEFT_FAST : BALL_ROTATE_RIGHT_FAST;
+    return left ? BALL_ROTATE_LEFT : BALL_ROTATE_RIGHT;
+}
+
+// Unit vector perpendicular to the current throw's path (x 256), pointing to the thrower's right
+static EWRAM_DATA s16 sThrowCurveDirX = 0;
+static EWRAM_DATA s16 sThrowCurveDirY = 0;
+
+// D-Pad throw input window. It opens as soon as a ball is chosen (bag or Safari menu) and stays open
+// through the screen transitions and the "used a ball" message until the ball is tossed.
+// UpdateBallThrowInputWindow runs every frame from the main loop, so it works no matter which screen is up.
+static EWRAM_DATA bool8 sBallThrowInputOpen = FALSE;
+static EWRAM_DATA u8 sBallThrowInputType = BALL_THROW_NORMAL;
+
+// Badge needed to use each D-Pad throw (0 = always available)
+static const u16 sBallThrowBadgeFlags[BALL_THROW_TYPES_COUNT] =
+{
+    [BALL_THROW_NORMAL]      = 0,
+    [BALL_THROW_DROP]        = FLAG_BADGE02_GET,
+    [BALL_THROW_CURVE_LEFT]  = FLAG_BADGE04_GET,
+    [BALL_THROW_CURVE_RIGHT] = FLAG_BADGE04_GET,
+    [BALL_THROW_UNDERHAND]   = FLAG_BADGE06_GET,
+};
+
+static bool8 IsBallThrowUnlocked(u8 throwType)
+{
+    return sBallThrowBadgeFlags[throwType] == 0 || FlagGet(sBallThrowBadgeFlags[throwType]);
+}
+
+// Directions whose throw isn't unlocked yet are ignored, as if they weren't held
+static u8 GetHeldDpadThrowType(void)
+{
+    if (JOY_HELD(DPAD_UP) && IsBallThrowUnlocked(BALL_THROW_UNDERHAND))
+        return BALL_THROW_UNDERHAND;
+    if (JOY_HELD(DPAD_DOWN) && IsBallThrowUnlocked(BALL_THROW_DROP))
+        return BALL_THROW_DROP;
+    if (JOY_HELD(DPAD_LEFT) && IsBallThrowUnlocked(BALL_THROW_CURVE_LEFT))
+        return BALL_THROW_CURVE_LEFT;
+    if (JOY_HELD(DPAD_RIGHT) && IsBallThrowUnlocked(BALL_THROW_CURVE_RIGHT))
+        return BALL_THROW_CURVE_RIGHT;
+    return BALL_THROW_NORMAL;
+}
+
+void OpenBallThrowInputWindow(void)
+{
+    sBallThrowInputOpen = TRUE;
+    sBallThrowInputType = BALL_THROW_NORMAL;
+}
+
+// The most recent direction held while the window is open is the one used
+void UpdateBallThrowInputWindow(void)
+{
+    u8 throwType;
+
+    if (!sBallThrowInputOpen)
+        return;
+    throwType = GetHeldDpadThrowType();
+    if (throwType != BALL_THROW_NORMAL)
+        sBallThrowInputType = throwType;
+}
+
+// Closes the window at the moment of the toss and returns the throw type
+static u8 CloseBallThrowInputWindow(void)
+{
+    u8 throwType;
+
+    UpdateBallThrowInputWindow();
+    throwType = sBallThrowInputOpen ? sBallThrowInputType : BALL_THROW_NORMAL;
+    sBallThrowInputOpen = FALSE;
+    sBallThrowInputType = BALL_THROW_NORMAL;
+
+    // Trainers block the ball, and BallThrowTrainerBlock's impact effect is timed to the normal throw
+    if (gBattleTypeFlags & (BATTLE_TYPE_WALLY_TUTORIAL | BATTLE_TYPE_TRAINER))
+        return BALL_THROW_NORMAL;
+    return throwType;
+}
+
+#define sDuration   data[0]
 #define sTargetXArg data[1]
 #define sTargetYArg data[2]
 
@@ -860,16 +1017,35 @@ static void SpriteCB_Ball_Throw(struct Sprite *sprite)
 {
     u16 targetX = sprite->sTargetXArg;
     u16 targetY = sprite->sTargetYArg;
+    const struct BallThrowArc *arc;
+    s32 dx, dy, length;
 
+    ApplyBallThrowTypeOdds(CloseBallThrowInputWindow());
+    arc = &sBallThrowArcs[gBallShakesBData.throwType];
+
+    sprite->x += arc->startX;
+    sprite->y += arc->startY;
+
+    // Rotating the path direction (dx, dy) a quarter turn clockwise gives (-dy, dx), the thrower's right
+    dx = (s16)targetX - sprite->x;
+    dy = (s16)targetY - sprite->y;
+    length = Sqrt(dx * dx + dy * dy);
+    if (length == 0)
+        length = 1;
+    sThrowCurveDirX = (-dy * 256) / length;
+    sThrowCurveDirY = (dx * 256) / length;
+
+    sprite->sDuration = arc->duration;
     sprite->sOffsetX = sprite->x;
     sprite->sTargetX = targetX;
     sprite->sOffsetY = sprite->y;
     sprite->sTargetY = targetY;
-    sprite->sAmplitude = -40;
+    sprite->sAmplitude = arc->height;
     InitAnimArcTranslation(sprite);
     sprite->callback = SpriteCB_Ball_Arc;
 }
 
+#undef sDuration
 #undef sTargetXArg
 #undef sTargetYArg
 #undef sOffsetX
@@ -894,6 +1070,12 @@ static void SpriteCB_Ball_Arc(struct Sprite *sprite)
         }
         else
         {
+            // Finish any mid-air spin upright and hand rotation back to the affine anims
+            if (sBallThrowArcs[gBallShakesBData.throwType].spin != 0)
+            {
+                TrySetSpriteRotScale(sprite, FALSE, 0x100, 0x100, 0);
+                sprite->affineAnimPaused = FALSE;
+            }
             StartSpriteAnim(sprite, 1);
             sprite->x += sprite->x2;
             sprite->y += sprite->y2;
@@ -915,6 +1097,23 @@ static void SpriteCB_Ball_Arc(struct Sprite *sprite)
                 break;
             }
         }
+    }
+    else
+    {
+        // Add the throw type's sideways curve and spin. data[7] is the height arc's progress
+        // through the flight, 0 to 0x8000 (phase 0-128, half a sine wave).
+        const struct BallThrowArc *arc = &sBallThrowArcs[gBallShakesBData.throwType];
+        u16 progress = sprite->data[7];
+
+        if (arc->curve != 0)
+        {
+            s16 bow = Sin(progress >> 8, arc->curve);
+            sprite->x2 += (bow * sThrowCurveDirX) / 256;
+            sprite->y2 += (bow * sThrowCurveDirY) / 256;
+        }
+        // Same roll as the Drop throw's bounce: progress * 2 is one full turn (0x10000) over the flight
+        if (arc->spin != 0)
+            TrySetSpriteRotScale(sprite, FALSE, 0x100, 0x100, (u16)(-(s32)progress * 2 * arc->spin));
     }
 }
 
@@ -1025,6 +1224,18 @@ static void SpriteCB_Ball_Bounce(struct Sprite *sprite)
 #define sPhase     data[5]
 #define sTimer     data[5] // re-use
 
+// How far the bounce phase moves each frame. Normally each bounce is quicker than the last
+// (4 for the first drop, then 5, 6, 7 for the three bounces).
+// Underhand throws have two bounces instead (4, then 6). For their heights (26, 12), matching the
+// first drop's gravity would be about 5 and 7; they're kept a little slower so the backspin reads clearly.
+// That's about 54 frames from first touching the ground to resting (normal is 68).
+static s16 GetBouncePhaseStep(s16 state)
+{
+    if (gBallShakesBData.throwType == BALL_THROW_UNDERHAND && BOUNCES(state) != 0)
+        return (BOUNCES(state) == 1) ? 4 : 6;
+    return PHASE_DELTA(state) + 4;
+}
+
 // Animates the Poké Ball dropping to ground and bouncing.
 static void SpriteCB_Ball_Bounce_Step(struct Sprite *sprite)
 {
@@ -1037,7 +1248,7 @@ static void SpriteCB_Ball_Bounce_Step(struct Sprite *sprite)
     {
     case BALL_FALLING:
         sprite->y2 = -Cos(sprite->sPhase, sprite->sAmplitude);
-        sprite->sPhase += PHASE_DELTA(sprite->sState) + 4;
+        sprite->sPhase += GetBouncePhaseStep(sprite->sState);
         // Once the ball touches the ground
         if (sprite->sPhase >= 64)
         {
@@ -1045,8 +1256,25 @@ static void SpriteCB_Ball_Bounce_Step(struct Sprite *sprite)
             RISE_FASTER(sprite->sState);
 
             bounceCount = BOUNCES(sprite->sState);
-            if (bounceCount == 4)
+            // Drop throws lose bounce height twice as fast, so they only bounce once (heights 20, then done)
+            if (gBallShakesBData.throwType == BALL_THROW_DROP)
+            {
+                sprite->sAmplitude -= 10;
+                sprite->sState += 0x100;  // Count as an extra bounce
+            }
+            if (BOUNCES(sprite->sState) >= 4)
                 lastBounce = TRUE;
+
+            // Underhand throws bounce twice (heights 26, then 12) and rest on the third landing
+            if (gBallShakesBData.throwType == BALL_THROW_UNDERHAND)
+            {
+                sprite->sAmplitude -= 4;
+                if (bounceCount >= 3)
+                {
+                    lastBounce = TRUE;
+                    bounceCount = 4; // Use the final, quietest bounce sound
+                }
+            }
 
             switch (bounceCount)
             {
@@ -1067,7 +1295,7 @@ static void SpriteCB_Ball_Bounce_Step(struct Sprite *sprite)
         break;
     case BALL_RISING:
         sprite->y2 = -Cos(sprite->sPhase, sprite->sAmplitude);
-        sprite->sPhase -= PHASE_DELTA(sprite->sState) + 4;
+        sprite->sPhase -= GetBouncePhaseStep(sprite->sState);
         // Once ball reaches max height
         if (sprite->sPhase <= 0)
         {
@@ -1078,8 +1306,30 @@ static void SpriteCB_Ball_Bounce_Step(struct Sprite *sprite)
         break;
     }
 
+    // Throws with bounceSpin roll that many full turns over each bounce after first hitting the ground:
+    // rising (phase 64 -> 0) is the first half, falling (phase 0 -> 64) is the second, so the ball is
+    // upright again every time it lands
+    if (sBallThrowArcs[gBallShakesBData.throwType].bounceSpin != 0 && BOUNCES(sprite->sState) != 0 && !lastBounce)
+    {
+        s32 rollProgress; // 0-128 = one bounce
+
+        if (DIRECTION(sprite->sState) == BALL_RISING)
+            rollProgress = 64 - sprite->sPhase;
+        else
+            rollProgress = 64 + sprite->sPhase;
+        rollProgress = min(max(rollProgress, 0), 128);
+        TrySetSpriteRotScale(sprite, FALSE, 0x100, 0x100,
+                             (u16)(-(rollProgress << 9) * sBallThrowArcs[gBallShakesBData.throwType].bounceSpin));
+    }
+
     if (lastBounce)
     {
+        if (sBallThrowArcs[gBallShakesBData.throwType].bounceSpin != 0)
+        {
+            // Finish the roll upright and hand rotation back to the affine anims for the wobble
+            TrySetSpriteRotScale(sprite, FALSE, 0x100, 0x100, 0);
+            sprite->affineAnimPaused = FALSE;
+        }
         sprite->sState = 0;
         sprite->y += Cos(64, 40);
         sprite->y2 = 0;
@@ -1093,6 +1343,7 @@ static void SpriteCB_Ball_Bounce_Step(struct Sprite *sprite)
             sprite->callback = SpriteCB_Ball_Wobble;
             sprite->data[4] = 1;
             sprite->data[5] = 0;
+            sprite->data[6] = GetBallShakeDelay(0); // sShakeDelay in SpriteCB_Ball_Wobble
         }
     }
 }
@@ -1110,14 +1361,15 @@ static void SpriteCB_Ball_Bounce_Step(struct Sprite *sprite)
 
 #define sTimer data[3]
 #define sState data[3] // re-use
+#define sShakeDelay data[6]
 
 static void SpriteCB_Ball_Wobble(struct Sprite *sprite)
 {
-    if (++sprite->sTimer == 31)
+    if (++sprite->sTimer >= sprite->sShakeDelay)
     {
         sprite->sState = 0;
         sprite->affineAnimPaused = TRUE;
-        StartSpriteAffineAnim(sprite, BALL_ROTATE_RIGHT);
+        StartSpriteAffineAnim(sprite, GetBallShakeRotateAnim(FALSE, 1));
         gBattleSpritesDataPtr->animationData->ballSubpx = 0;
         sprite->callback = SpriteCB_Ball_Wobble_Step;
         PlaySE(SE_BALL);
@@ -1142,7 +1394,8 @@ static void SpriteCB_Ball_Wobble(struct Sprite *sprite)
 #define tBallId    data[3]
 
 // Smoothly fades the ball's palette to its ball type's open color (same as the mon release fade) and back to signal a well-timed B press.
-// Takes 16 frames, so it's done before the next shake or the release/capture palette effects.
+// Takes 16 frames, so it's done before the release/capture palette effects. It can overlap the start of
+// the next shake on throws with short shake delays (see sBallShakeDelays), which is only visual.
 static void Task_BallTimingFlash(u8 taskId)
 {
     if (gTasks[taskId].tFadingIn)
@@ -1175,11 +1428,38 @@ static void StartBallTimingFlash(struct Sprite *sprite)
 #undef tFadingIn
 #undef tBallId
 
+static void BallWobbleStep(struct Sprite *sprite);
+
+// How many of the first `shakes` shakes had B timed correctly (both bits of the shake's pair set)
+static u8 CountWellTimedBallShakes(u8 shakes)
+{
+    u8 i, count = 0;
+
+    for (i = 0; i < shakes; i++)
+    {
+        if (((gBallShakesBData.ballShakesArray >> (i * 2)) & 0x03) == 0x03)
+            count++;
+    }
+    return count;
+}
+
+// Fast shakes (see IsFastBallShake) run the shake motion twice per frame. The pause between shakes
+// (BALL_WAIT_NEXT_SHAKE) and the end-of-shake logic (BALL_NEXT_MOVE) only ever run once per frame.
 static void SpriteCB_Ball_Wobble_Step(struct Sprite *sprite)
+{
+    BallWobbleStep(sprite);
+    if (sprite->callback == SpriteCB_Ball_Wobble_Step
+     && STATE(sprite->sState) < BALL_NEXT_MOVE
+     && IsFastBallShake(SHAKES(sprite->sState) + 1))
+        BallWobbleStep(sprite);
+}
+
+static void BallWobbleStep(struct Sprite *sprite)
 {
     s8 shakes = SHAKES(sprite->sState) + 1;
     u16 frame;
-    bool8 checkTiming = !(gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL);  // B presses do nothing during Wally's catch tutorial
+    // B presses do nothing during Wally's catch tutorial, or with a Master Ball since its catch is guaranteed
+    bool8 checkTiming = !(gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL) && gLastUsedItem != ITEM_MASTER_BALL;
 	if(checkTiming && JOY_NEW(B_BUTTON) && (STATE(sprite->sState) != BALL_WAIT_NEXT_SHAKE)){  //  IF new B button pressed when the ball is shaking
         gBallShakesBData.ballShakesArray |= (1 << ((2 * shakes) - 1));
     }
@@ -1219,9 +1499,9 @@ static void SpriteCB_Ball_Wobble_Step(struct Sprite *sprite)
             sprite->sState++; // BALL_ROLL_2
             sprite->affineAnimPaused = FALSE;
             if (sprite->sDirection < 0)
-                ChangeSpriteAffineAnim(sprite, BALL_ROTATE_LEFT);
+                ChangeSpriteAffineAnim(sprite, GetBallShakeRotateAnim(TRUE, shakes));
             else
-                ChangeSpriteAffineAnim(sprite, BALL_ROTATE_RIGHT);
+                ChangeSpriteAffineAnim(sprite, GetBallShakeRotateAnim(FALSE, shakes));
         }
         else
         {
@@ -1261,9 +1541,9 @@ static void SpriteCB_Ball_Wobble_Step(struct Sprite *sprite)
         sprite->sState++; // BALL_ROLL_3
         sprite->affineAnimPaused = FALSE;
         if (sprite->sDirection < 0)
-            ChangeSpriteAffineAnim(sprite, BALL_ROTATE_LEFT);
+            ChangeSpriteAffineAnim(sprite, GetBallShakeRotateAnim(TRUE, shakes));
         else
-            ChangeSpriteAffineAnim(sprite, BALL_ROTATE_RIGHT);
+            ChangeSpriteAffineAnim(sprite, GetBallShakeRotateAnim(FALSE, shakes));
         // fall through
     case BALL_ROLL_3:
         if (gBattleSpritesDataPtr->animationData->ballSubpx > 0xFF)
@@ -1297,6 +1577,9 @@ static void SpriteCB_Ball_Wobble_Step(struct Sprite *sprite)
             gBallShakesBData.odds = (BALL_SHAKE_BUTTON_MULT * gBallShakesBData.odds) / 10;
 			PlaySE(SE_RG_BAG_CURSOR);
             StartBallTimingFlash(sprite);
+            // Stars build up toward the capture's three: none for the 1st well-timed shake, 1 for the 2nd, 2 for the 3rd
+            if (CountWellTimedBallShakes(shakes) >= 2)
+                MakeCaptureStars(sprite, CountWellTimedBallShakes(shakes) - 1);
         }
         gBallShakesBData.shakes += CalcNextShakeFromOdds(gBallShakesBData.odds);
         gBattleSpritesDataPtr->animationData->ballThrowCaseId = gBallShakesBData.shakes;
@@ -1316,20 +1599,21 @@ static void SpriteCB_Ball_Wobble_Step(struct Sprite *sprite)
             {
                 sprite->sState++; // BALL_WAIT_NEXT_SHAKE
                 sprite->affineAnimPaused = TRUE;
+                sprite->sShakeDelay = GetBallShakeDelay(shakes);
             }
         }
         break;
     case BALL_WAIT_NEXT_SHAKE:
     default:
-        if (++sprite->sTimer == 31)
+        if (++sprite->sTimer >= sprite->sShakeDelay)
         {
             sprite->sTimer = 0;
             RESET_STATE(sprite->sState);
             StartSpriteAffineAnim(sprite, 3);
             if (sprite->sDirection < 0)
-                StartSpriteAffineAnim(sprite, BALL_ROTATE_LEFT);
+                StartSpriteAffineAnim(sprite, GetBallShakeRotateAnim(TRUE, shakes));
             else
-                StartSpriteAffineAnim(sprite, BALL_ROTATE_RIGHT);
+                StartSpriteAffineAnim(sprite, GetBallShakeRotateAnim(FALSE, shakes));
 
             PlaySE(SE_BALL);
         }
@@ -1343,6 +1627,7 @@ static void SpriteCB_Ball_Wobble_Step(struct Sprite *sprite)
 #undef RESET_STATE
 
 #undef sState
+#undef sShakeDelay
 
 #define sTimer data[5]
 
@@ -1364,7 +1649,12 @@ static void SpriteCB_Ball_Capture(struct Sprite *sprite)
     sprite->animPaused = TRUE;
     sprite->callback = SpriteCB_Ball_Capture_Step;
     sprite->data[3] = 0;
-    sprite->sTimer = 0;
+    // The ball clicks shut at frame 40 of SpriteCB_Ball_Capture_Step. Down and Right throws start
+    // partway in, halving the pause between the last shake and the click
+    if (gBallShakesBData.throwType == BALL_THROW_DROP || gBallShakesBData.throwType == BALL_THROW_CURVE_RIGHT)
+        sprite->sTimer = 20;
+    else
+        sprite->sTimer = 0;
     sprite->data[5] = 0;
 }
 
@@ -1378,7 +1668,7 @@ static void SpriteCB_Ball_Capture_Step(struct Sprite *sprite)
     {
         PlaySE(SE_RG_BALL_CLICK);
         BlendPalettes(0x10000 << sprite->oam.paletteNum, 6, RGB_BLACK);
-        MakeCaptureStars(sprite);
+        MakeCaptureStars(sprite, ARRAY_COUNT(sCaptureStars));
     }
     else if (sprite->sTimer == 60)
     {
@@ -1474,7 +1764,9 @@ static void DestroySpriteAfterOneFrame(struct Sprite *sprite)
 #define sTargetY   data[4]
 #define sAmplitude data[5]
 
-static void MakeCaptureStars(struct Sprite *sprite)
+// Creates the first `count` stars of sCaptureStars around the ball. The capture uses all of them;
+// well-timed B presses use fewer, in the same positions, building up to it
+static void MakeCaptureStars(struct Sprite *sprite, u8 count)
 {
     u32 i;
     u8 subpriority;
@@ -1490,7 +1782,7 @@ static void MakeCaptureStars(struct Sprite *sprite)
     }
 
     LoadBallParticleGfx(BALL_MASTER);
-    for (i = 0; i < ARRAY_COUNT(sCaptureStars); i++)
+    for (i = 0; i < count && i < ARRAY_COUNT(sCaptureStars); i++)
     {
         u8 spriteId = CreateSprite(&sBallParticleSpriteTemplates[BALL_MASTER], sprite->x, sprite->y, subpriority);
         if (spriteId != MAX_SPRITES)

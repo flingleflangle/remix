@@ -23,7 +23,9 @@ enum {
     BALL_ROTATE_RIGHT,
     BALL_ROTATE_LEFT,
     BALL_AFFINE_ANIM_3,
-    BALL_AFFINE_ANIM_4
+    BALL_AFFINE_ANIM_4,
+    BALL_ROTATE_RIGHT_FAST, // Double speed, for fast catch shakes
+    BALL_ROTATE_LEFT_FAST
 };
 
 extern const struct CompressedSpriteSheet gBallSpriteSheets[];

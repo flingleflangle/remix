@@ -194,6 +194,18 @@ static const union AffineAnimCmd sAffineAnim_BallRotate_4[] =
     AFFINEANIMCMD_JUMP(0),
 };
 
+static const union AffineAnimCmd sAffineAnim_BallRotate_RightFast[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, -6, 1),
+    AFFINEANIMCMD_JUMP(0),
+};
+
+static const union AffineAnimCmd sAffineAnim_BallRotate_LeftFast[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 6, 1),
+    AFFINEANIMCMD_JUMP(0),
+};
+
 static const union AffineAnimCmd *const sAffineAnim_BallRotate[] =
 {
     [BALL_AFFINE_ANIM_0] = sAffineAnim_BallRotate_0,
@@ -201,6 +213,8 @@ static const union AffineAnimCmd *const sAffineAnim_BallRotate[] =
     [BALL_ROTATE_LEFT]   = sAffineAnim_BallRotate_Left,
     [BALL_AFFINE_ANIM_3] = sAffineAnim_BallRotate_3,
     [BALL_AFFINE_ANIM_4] = sAffineAnim_BallRotate_4,
+    [BALL_ROTATE_RIGHT_FAST] = sAffineAnim_BallRotate_RightFast,
+    [BALL_ROTATE_LEFT_FAST]  = sAffineAnim_BallRotate_LeftFast,
 };
 
 const struct SpriteTemplate gBallSpriteTemplates[POKEBALL_COUNT] =

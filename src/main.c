@@ -130,6 +130,7 @@ void AgbMain(void)
     for (;;)
     {
         ReadKeys();
+        UpdateBallThrowInputWindow();
 
         if (gSoftResetDisabled == FALSE
          && JOY_HELD_RAW(A_BUTTON)
