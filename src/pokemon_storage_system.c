@@ -6365,7 +6365,7 @@ static void SetMovingMonData(u8 boxId, u8 position)
     sMovingMonOrigBoxPos = position;
 }
 
-static u8 GetBoxHPFromHP(struct Pokemon *mon)
+u8 GetBoxHPFromHP(struct Pokemon *mon)
 {
     u8 hp_box;
     u16 hp_curr = GetMonData(mon, MON_DATA_HP);
@@ -6391,7 +6391,7 @@ u16 GetHPFromBoxHP(struct Pokemon *mon)
     return hp_curr; 
 }
 
-static u8 GetBoxStatusFromStatus(struct Pokemon *mon)
+u8 GetBoxStatusFromStatus(struct Pokemon *mon)
 {
     u32 status = GetMonData(mon, MON_DATA_STATUS);
     u8 ailment = GetAilmentFromStatus(status); 

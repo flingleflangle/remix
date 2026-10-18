@@ -4673,7 +4673,16 @@ static u8 CopyMonToPC(struct Pokemon *mon)
             struct BoxPokemon *checkingMon = GetBoxedMonPtr(boxNo, boxPos);
             if (GetBoxMonData(checkingMon, MON_DATA_SPECIES, NULL) == SPECIES_NONE)
             {
+                // Store current HP and status the same way the PC does (see SetPlacedMonData),
+                // so mons sent here directly (e.g. wild catches with a full party) aren't healed when withdrawn
+                u8 inPC = TRUE;
+                u8 boxHp = GetBoxHPFromHP(mon);
+                u8 boxStatus = GetBoxStatusFromStatus(mon);
+
                 MonRestorePP(mon);
+                SetBoxMonData(&mon->box, MON_DATA_IN_PC, &inPC);
+                SetBoxMonData(&mon->box, MON_DATA_BOX_HP, &boxHp);
+                SetBoxMonData(&mon->box, MON_DATA_BOX_AILMENT, &boxStatus);
                 CopyMon(checkingMon, &mon->box, sizeof(mon->box));
                 gSpecialVar_MonBoxId = boxNo;
                 gSpecialVar_MonBoxPos = boxPos;

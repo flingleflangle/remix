@@ -316,10 +316,13 @@ static void Task_Sparkles_SpiralUpward(u8 taskId)
         if (!(gTasks[taskId].tTimer & 3))
         {
             u8 i;
-            // tTimer is 0, 4, ..., 28 here, so tTimer * 8 offsets each burst by 32 (0-224),
-            // and i * 64 spreads the 4 sparkles in a burst evenly around the circle (256 = full turn)
+            // tTimer is 0, 4, ..., 28 here, and i * 64 spreads the 4 sparkles in a burst evenly
+            // around the circle (256 = full turn). Sparkles rotate 4 per frame, so a burst made
+            // 4 frames later has already fallen 16 behind; tTimer * 14 offsets each burst by 56,
+            // putting adjacent bursts 40 apart. That gives all 32 sparkles distinct angles
+            // (8 apart) and avoids the old tTimer * 8, which stacked pairs on the same angle.
             for (i = 0; i < 4; i++)
-                CreateSparkle_SpiralUpward(gTasks[taskId].tTimer * 8 + i * 64);
+                CreateSparkle_SpiralUpward(gTasks[taskId].tTimer * 14 + i * 64);
         }
         gTasks[taskId].tTimer++;
     }
@@ -355,15 +358,19 @@ static void Task_Sparkles_ArcDown_Init(u8 taskId)
 // (SpriteCB_Sparkle_ArcDown: y = 8 + t*t/5 reaches 88 at t = 20, then it's destroyed the next frame),
 // so the last ones (frame 5) are gone by frame ~27. Ending at 28 (was 96) starts the mon sprite
 // cycling as soon as the sparkles finish, with no pause.
+// Each frame's 9 sparkles are 16 apart; sArcDownFrameOffsets shifts each frame into the gaps
+// between them, so sparkles from consecutive frames don't stack on the same angle.
+static const u8 sArcDownFrameOffsets[] = {0, 8, 3, 11, 5, 13};
+
 static void Task_Sparkles_ArcDown(u8 taskId)
 {
     if (gTasks[taskId].tTimer < 28)
     {
-        if (gTasks[taskId].tTimer < 6)
+        if (gTasks[taskId].tTimer < ARRAY_COUNT(sArcDownFrameOffsets))
         {
             u8 i;
             for (i = 0; i < 9; i++)
-                CreateSparkle_ArcDown(i * 16);
+                CreateSparkle_ArcDown(i * 16 + sArcDownFrameOffsets[gTasks[taskId].tTimer]);
         }
         gTasks[taskId].tTimer++;
     }
