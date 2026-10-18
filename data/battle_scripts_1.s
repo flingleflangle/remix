@@ -233,7 +233,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectCamouflage             @ EFFECT_CAMOUFLAGE
 	.4byte BattleScript_EffectFinalSting             @ EFFECT_FINAL_STING
 	.4byte BattleScript_EffectFreeze            	 @ EFFECT_FREEZE
-	.4byte BattleScript_EffectEvil            	 	 @ EFFECT_EVIL
+	.4byte BattleScript_EffectHeartbreak       	 	 @ EFFECT_HEARTBREAK
 	.4byte BattleScript_EffectFireCrash            	 @ EFFECT_FIRE_CRASH
 	.4byte BattleScript_EffectThunderCrash           @ EFFECT_THUNDER_CRASH
 	.4byte BattleScript_EffectStagger                @ EFFECT_STAGGER
@@ -982,8 +982,26 @@ CosmicFlare:
 	moveendall
 	end
 
+@ Power is 40, plus 60 for each of the user's raised stats and minus 60 for each lowered one.
+@ All of its stat changes are reset when it's used, but only after they've counted for the
+@ hit, so a boosted Attack still boosts the damage. remaininghptopower handles both steps for
+@ Nebula Crash, see Cmd_remaininghptopower.
 NebulaCrash:
+	attackcanceler
+	remaininghptopower                  @ Sets the power from the stat changes
+	accuracycheck NebulaCrashMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	remaininghptopower                  @ Now resets the stat changes
+	typecalc
+	adjustnormaldamage
+	goto BattleScript_HitFromAtkAnimation
 
+NebulaCrashMissed:
+	remaininghptopower                  @ Resets the stat changes on a miss too
+	goto BattleScript_PrintMoveMissed
 
 BattleScript_EffectRest::
 	attackcanceler
@@ -2393,9 +2411,42 @@ BattleScript_EffectFlail::
 	remaininghptopower
 	goto BattleScript_EffectHit
 	
-BattleScript_EffectEvil::
-	remaininghptopowerevil
-	goto BattleScript_EffectHit
+@ Heartbreaker only works on a target that's infatuated (by Attract or Cute Charm).
+@ If it hits, the target's ability becomes Heartbroken until it switches out, which ends
+@ its infatuation, prevents it from being infatuated again, and halves its Sp. Atk.
+BattleScript_EffectHeartbreak::
+	attackcanceler
+	jumpifstatus2 BS_TARGET, STATUS2_INFATUATION, BattleScript_HeartbreakHit
+	goto BattleScript_FailedFromAtkString
+BattleScript_HeartbreakHit:
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	@ Not if it had no effect, knocked the target out, or only hit a Substitute
+	jumpifmovehadnoeffect BattleScript_HeartbreakEnd
+	jumpifhasnohp BS_TARGET, BattleScript_HeartbreakEnd
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_HeartbreakEnd
+	various BS_TARGET, VARIOUS_SET_HEARTBROKEN
+	printstring STRINGID_PKMNBECAMEHEARTBROKEN
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_HeartbreakEnd:
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
 
 BattleScript_EffectSpite::
 	attackcanceler
@@ -6048,6 +6099,52 @@ BattleScript_IntimidatePrevented:
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_IntimidateActivatesLoopIncrement
 
+@ First Sight works like Intimidate: on switch-in, each foe of the opposite gender falls in love
+@ with the ability's holder. Oblivious and Heartbroken prevent it.
+BattleScript_FirstSightActivatesEnd3::
+	call BattleScript_PauseFirstSightActivates
+	end3
+
+BattleScript_PauseFirstSightActivates:
+	pause B_WAIT_TIME_SHORT
+BattleScript_FirstSightActivates::
+	setbyte gBattlerTarget, 0
+BattleScript_FirstSightActivatesLoop:
+	trygetintimidatetarget BattleScript_FirstSightActivatesReturn
+	various BS_TARGET, VARIOUS_TRY_FIRST_SIGHT
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 1, BattleScript_FirstSightPrevented
+	jumpifbyte CMP_NOT_EQUAL, cMULTISTRING_CHOOSER, 0, BattleScript_FirstSightActivatesLoopIncrement
+	status2animation BS_TARGET, STATUS2_INFATUATION
+	printstring STRINGID_PKMNFELLFORFIRSTSIGHT
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_FirstSightActivatesLoopIncrement:
+	addbyte gBattlerTarget, 1
+	goto BattleScript_FirstSightActivatesLoop
+BattleScript_FirstSightActivatesReturn:
+	return
+BattleScript_FirstSightPrevented:
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_PKMNPREVENTSROMANCEWITH
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_FirstSightActivatesLoopIncrement
+
+@ Air Balloon: announced on switch-in, then pops when the holder is hit
+BattleScript_AirBalloonFloats::
+	printstring STRINGID_PKMNFLOATSWITHAIRBALLOON
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+BattleScript_AirBalloonPopped::
+	printstring STRINGID_PKMNSAIRBALLOONPOPPED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+@ Bubble Coat took the first hit of a multi-hit move (a normal move just misses instead)
+BattleScript_BubbleCoatTookHit::
+	printstring STRINGID_BUBBLECOATTOOKHIT
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_DroughtActivates::
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_PKMNSXINTENSIFIEDSUN
@@ -6275,6 +6372,7 @@ BattleScript_BerryCureParRet::
 	printstring STRINGID_PKMNSITEMCUREDPARALYSIS
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_SCRIPTING
+	call BattleScript_BerryCureHeal
 	removeitem BS_SCRIPTING
 	return
 
@@ -6287,6 +6385,7 @@ BattleScript_BerryCurePsnRet::
 	printstring STRINGID_PKMNSITEMCUREDPOISON
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_SCRIPTING
+	call BattleScript_BerryCureHeal
 	removeitem BS_SCRIPTING
 	return
 
@@ -6299,6 +6398,7 @@ BattleScript_BerryCureBrnRet::
 	printstring STRINGID_PKMNSITEMHEALEDBURN
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_SCRIPTING
+	call BattleScript_BerryCureHeal
 	removeitem BS_SCRIPTING
 	return
 
@@ -6311,6 +6411,7 @@ BattleScript_BerryCureFrzRet::
 	printstring STRINGID_PKMNSITEMDEFROSTEDIT
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_SCRIPTING
+	call BattleScript_BerryCureHeal
 	removeitem BS_SCRIPTING
 	return
 
@@ -6323,6 +6424,7 @@ BattleScript_BerryCureSlpRet::
 	printstring STRINGID_PKMNSITEMWOKEIT
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_SCRIPTING
+	call BattleScript_BerryCureHeal
 	removeitem BS_SCRIPTING
 	return
 
@@ -6334,6 +6436,7 @@ BattleScript_BerryCureConfusionRet::
 	playanimation BS_SCRIPTING, B_ANIM_HELD_ITEM_EFFECT
 	printstring STRINGID_PKMNSITEMSNAPPEDOUT
 	waitmessage B_WAIT_TIME_LONG
+	call BattleScript_BerryCureHeal
 	removeitem BS_SCRIPTING
 	return
 
@@ -6347,6 +6450,16 @@ BattleScript_BerryCureChosenStatusRet::
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_SCRIPTING
 	removeitem BS_SCRIPTING
+	return
+
+@ Status-curing berries also restore a little HP as they're eaten, as they do outside battle.
+@ gBattleMoveDamage is set by PrepareBerryCureHeal, and is 0 for no heal (Lum, or full HP).
+BattleScript_BerryCureHeal:
+	jumpifword CMP_EQUAL, gBattleMoveDamage, 0, BattleScript_BerryCureHealEnd
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	healthbarupdate BS_SCRIPTING
+	datahpupdate BS_SCRIPTING
+BattleScript_BerryCureHealEnd:
 	return
 
 BattleScript_WhiteHerbEnd2::

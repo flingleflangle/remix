@@ -31,6 +31,7 @@
 #include "constants/battle_string_ids.h"
 #include "constants/hold_effects.h"
 #include "constants/items.h"
+#include "constants/item_effects.h"
 #include "constants/moves.h"
 #include "constants/songs.h"
 #include "constants/species.h"
@@ -2579,6 +2580,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                 }
                 break;
             case ABILITY_INTIMIDATE:
+            case ABILITY_FIRST_SIGHT: // Infatuates foes on switch-in, in the same way
                 if (!(gSpecialStatuses[battler].intimidatedMon))
                 {
                     gStatuses3[battler] |= STATUS3_INTIMIDATE_POKES;
@@ -2879,6 +2881,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                  && gBattleMons[gBattlerTarget].hp != 0
                  && (Random() % 3) == 0
                  && gBattleMons[gBattlerAttacker].ability != ABILITY_OBLIVIOUS
+                 && gBattleMons[gBattlerAttacker].ability != ABILITY_HEARTBROKEN
                  && GetGenderFromSpeciesAndPersonality(speciesAtk, pidAtk) != GetGenderFromSpeciesAndPersonality(speciesDef, pidDef)
                  && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_INFATUATION)
                  && GetGenderFromSpeciesAndPersonality(speciesAtk, pidAtk) != MON_GENDERLESS
@@ -2942,6 +2945,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                     }
                     break;
                 case ABILITY_OBLIVIOUS:
+                case ABILITY_HEARTBROKEN:
                     if (gBattleMons[battler].status2 & STATUS2_INFATUATION)
                     {
                         StringCopy(gBattleTextBuff1, gStatusConditionString_LoveJpn);
@@ -3025,11 +3029,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
         case ABILITYEFFECT_INTIMIDATE1: // 9
             for (i = 0; i < gBattlersCount; i++)
             {
-                if (gBattleMons[i].ability == ABILITY_INTIMIDATE && gStatuses3[i] & STATUS3_INTIMIDATE_POKES)
+                if ((gBattleMons[i].ability == ABILITY_INTIMIDATE || gBattleMons[i].ability == ABILITY_FIRST_SIGHT)
+                 && gStatuses3[i] & STATUS3_INTIMIDATE_POKES)
                 {
-                    gLastUsedAbility = ABILITY_INTIMIDATE;
+                    gLastUsedAbility = gBattleMons[i].ability;
                     gStatuses3[i] &= ~STATUS3_INTIMIDATE_POKES;
-                    BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
+                    if (gLastUsedAbility == ABILITY_FIRST_SIGHT)
+                        BattleScriptPushCursorAndCallback(BattleScript_FirstSightActivatesEnd3);
+                    else
+                        BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
                     gBattleStruct->intimidateBattler = i;
                     effect++;
                     break;
@@ -3096,12 +3104,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
         case ABILITYEFFECT_INTIMIDATE2: // 10
             for (i = 0; i < gBattlersCount; i++)
             {
-                if (gBattleMons[i].ability == ABILITY_INTIMIDATE && (gStatuses3[i] & STATUS3_INTIMIDATE_POKES))
+                if ((gBattleMons[i].ability == ABILITY_INTIMIDATE || gBattleMons[i].ability == ABILITY_FIRST_SIGHT)
+                 && (gStatuses3[i] & STATUS3_INTIMIDATE_POKES))
                 {
-                    gLastUsedAbility = ABILITY_INTIMIDATE;
+                    gLastUsedAbility = gBattleMons[i].ability;
                     gStatuses3[i] &= ~STATUS3_INTIMIDATE_POKES;
                     BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_IntimidateActivates;
+                    if (gLastUsedAbility == ABILITY_FIRST_SIGHT)
+                        gBattlescriptCurrInstr = BattleScript_FirstSightActivates;
+                    else
+                        gBattlescriptCurrInstr = BattleScript_IntimidateActivates;
                     gBattleStruct->intimidateBattler = i;
                     effect++;
                     break;
@@ -3276,6 +3288,49 @@ enum
         effect = ITEM_STATS_CHANGE;                                                         \
     }
 
+// Air Balloon: its holder floats, like Levitate, until it's hit and the balloon pops
+bool32 IsBattlerFloatingOnAirBalloon(u8 battler)
+{
+    return GetItemHoldEffect(gBattleMons[battler].item) == HOLD_EFFECT_AIR_BALLOON;
+}
+
+static bool32 IsSingleStatusCureHoldEffect(u8 holdEffect)
+{
+    switch (holdEffect)
+    {
+    case HOLD_EFFECT_CURE_PAR:
+    case HOLD_EFFECT_CURE_PSN:
+    case HOLD_EFFECT_CURE_BRN:
+    case HOLD_EFFECT_CURE_FRZ:
+    case HOLD_EFFECT_CURE_SLP:
+    case HOLD_EFFECT_CURE_CONFUSION:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+// Most status-curing berries were buffed to also restore HP when used outside battle (see
+// gItemEffectTable). Held in battle, they restore the same amount as they're eaten, in
+// BattleScript_BerryCureHeal. Sets gBattleMoveDamage to the (negative) amount, or 0 for none.
+// Lum Berry doesn't heal.
+static void PrepareBerryCureHeal(u8 battler, u16 item)
+{
+    const u8 *itemEffect;
+    s32 heal = 0;
+
+    if (item >= FIRST_BERRY_INDEX && item < ITEM_ENIGMA_BERRY && item != ITEM_LUM_BERRY)
+    {
+        itemEffect = gItemEffectTable[item - ITEM_POTION];
+        if (itemEffect != NULL && (itemEffect[4] & ITEM4_HEAL_HP))
+            heal = itemEffect[6];
+    }
+
+    if (heal > gBattleMons[battler].maxHP - gBattleMons[battler].hp)
+        heal = gBattleMons[battler].maxHP - gBattleMons[battler].hp;
+    gBattleMoveDamage = -heal;
+}
+
 u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
 {
     int i = 0;
@@ -3330,6 +3385,17 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
         case HOLD_EFFECT_DOUBLE_PRIZE:
             if (GetBattlerSide(battler) == B_SIDE_PLAYER)
                 gBattleStruct->moneyMultiplier = 2;
+            break;
+        case HOLD_EFFECT_AIR_BALLOON:
+            // Once per switch-in, since the switch-in effects run again after this script
+            if (!gDisableStructs[battler].airBalloonAnnounced)
+            {
+                gDisableStructs[battler].airBalloonAnnounced = TRUE;
+                gBattleScripting.battler = battler;
+                gLastUsedItem = gBattleMons[battler].item;
+                BattleScriptExecute(BattleScript_AirBalloonFloats);
+                effect = ITEM_EFFECT_OTHER;
+            }
             break;
         case HOLD_EFFECT_RESTORE_STATS:
             for (i = 0; i < NUM_BATTLE_STATS; i++)
@@ -3669,6 +3735,8 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                 gBattleScripting.battler = battler;
                 gPotentialItemEffectBattler = battler;
                 gActiveBattler = gBattlerAttacker = battler;
+                if (IsSingleStatusCureHoldEffect(battlerHoldEffect))
+                    PrepareBerryCureHeal(battler, gBattleMons[battler].item);
                 switch (effect)
                 {
                 case ITEM_STATUS_CHANGE:
@@ -3820,12 +3888,31 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     return effect;
                 }
                 break;
+            case HOLD_EFFECT_AIR_BALLOON:
+            case HOLD_EFFECT_BUBBLE_COAT: // Only reaches here after an Electric move pierces it
+                // Pops when its holder is damaged by someone else's move. Like Knock Off, it's
+                // only gone for the rest of the battle, and Thief or Covet can't take it.
+                if (battler != gBattlerAttacker
+                 && gBattleMons[battler].hp != 0
+                 && (gSpecialStatuses[battler].physicalDmg || gSpecialStatuses[battler].specialDmg))
+                {
+                    gBattleMons[battler].item = ITEM_NONE;
+                    gWishFutureKnock.knockedOffMons[GetBattlerSide(battler)] |= gBitTable[gBattlerPartyIndexes[battler]];
+                    gBattleScripting.battler = battler;
+                    gPotentialItemEffectBattler = battler;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_AirBalloonPopped;
+                    return ITEM_EFFECT_OTHER;
+                }
+                break;
             }
             if (effect != 0)
             {
                 gBattleScripting.battler = battler;
                 gPotentialItemEffectBattler = battler;
                 gActiveBattler = battler;
+                if (IsSingleStatusCureHoldEffect(battlerHoldEffect))
+                    PrepareBerryCureHeal(battler, gBattleMons[battler].item);
                 BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
                 MarkBattlerForControllerExec(gActiveBattler);
                 break;

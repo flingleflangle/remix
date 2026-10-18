@@ -1253,25 +1253,21 @@
 	.byte \position
 	.endm
 	
-	.macro remaininghptopowerevil
+	.macro settypewithmove
 	.byte 0xf9
 	.endm
-	
-	.macro settypewithmove
-	.byte 0xfa
-	.endm
-	
+
 	.macro ballthrowend
-	.byte 0xfb
+	.byte 0xfa
 	.endm
 
 	.macro jumpifsuckerpunchfails failInstr:req
-	.byte 0xfc
+	.byte 0xfb
 	.4byte \failInstr
 	.endm
 
 	.macro trysetdetect failInstr:req
-	.byte 0xfd
+	.byte 0xfc
 	.4byte \failInstr
 	.endm
 

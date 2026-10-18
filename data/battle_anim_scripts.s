@@ -442,6 +442,7 @@ gBattleAnims_Moves::
 	.4byte Move_WIRE_TRIP
 	.4byte Move_STONE_WALL
 	.4byte Move_ICE_WALL
+	.4byte Move_HEARTBREAKER
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -2218,6 +2219,29 @@ Move_ATTRACT:
 	createsprite gRedHeartRisingSpriteTemplate, ANIM_ATTACKER, 40, 200, 272, 90
 	delay 75
 	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 4, 4, 0, 10, RGB(31, 25, 27)
+	end
+
+@ Attract's heart flies into the target, which is struck hard as the heart bursts into
+@ pieces, leaving it flashing a heartbroken blue
+Move_HEARTBREAKER:
+	loadspritegfx ANIM_TAG_RED_HEART
+	loadspritegfx ANIM_TAG_IMPACT
+	monbg ANIM_DEF_PARTNER
+	setalpha 12, 8
+	playsewithpan SE_M_CHARM, SOUND_PAN_ATTACKER
+	createsprite gRedHeartProjectileSpriteTemplate, ANIM_TARGET, 3, 20, -8
+	waitforvisualfinish
+	playsewithpan SE_M_MEGA_KICK2, SOUND_PAN_TARGET
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, ANIM_TARGET, 0
+	createsprite gRedHeartBurstSpriteTemplate, ANIM_TARGET, 3, 160, -32
+	createsprite gRedHeartBurstSpriteTemplate, ANIM_TARGET, 3, -256, -40
+	createsprite gRedHeartBurstSpriteTemplate, ANIM_TARGET, 3, 416, -38
+	createsprite gRedHeartBurstSpriteTemplate, ANIM_TARGET, 3, -384, -31
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 6, 0, 10, 1
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 2, 2, 0, 10, RGB(8, 10, 22)
+	waitforvisualfinish
+	clearmonbg ANIM_DEF_PARTNER
+	blendoff
 	end
 
 Move_GROWTH:
@@ -10810,7 +10834,53 @@ Move_VILE_CUTTER:
 	end
 	
 
+@ Against the cosmos (like Cosmic Power), the user shimmers between nebula purple and
+@ starlight blue as stars gather around it, then crashes into the target in a burst of
+@ starry light that cycles through the same colors
 Move_NEBULA_CRASH:
+	loadspritegfx ANIM_TAG_SPARKLE_2
+	loadspritegfx ANIM_TAG_IMPACT
+	createvisualtask AnimTask_BlendNonAttackerPalettes, 2, 0, 0, 15, RGB_BLACK
+	waitforvisualfinish
+	fadetobg BG_COSMIC
+	waitbgfadeout
+	createvisualtask AnimTask_StartSlidingBg, 2, 0, 128, 0, -1
+	waitbgfadein
+	createvisualtask AnimTask_BlendNonAttackerPalettes, 2, 0, 15, 0, RGB_BLACK
+	@ Gather starlight
+	playsewithpan SE_M_COSMIC_POWER, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 1, 2, 0, 12, RGB(20, 6, 31)
+	createsprite gGrantingStarsSpriteTemplate, ANIM_ATTACKER, 2, -15, 0, 0, 0, 32, 40
+	delay 8
+	createsprite gGrantingStarsSpriteTemplate, ANIM_ATTACKER, 2, 12, -5, 0, 0, 32, 40
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 1, 2, 0, 12, RGB(8, 24, 31)
+	createsprite gGrantingStarsSpriteTemplate, ANIM_ATTACKER, 2, 4, -10, 0, 0, 32, 40
+	waitforvisualfinish
+	@ Crash into the target
+	playsewithpan SE_M_TAKE_DOWN, SOUND_PAN_ATTACKER
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 24, 0, 0, 4
+	delay 4
+	playsewithpan SE_M_MEGA_KICK2, SOUND_PAN_TARGET
+	createvisualtask AnimTask_BlendColorCycleByTag, 2, ANIM_TAG_IMPACT, 0, 4, 0, 12, RGB(20, 6, 31)
+	createvisualtask AnimTask_BlendColorCycleByTag, 2, ANIM_TAG_SPARKLE_2, 0, 4, 0, 12, RGB(8, 24, 31)
+	createsprite gBasicHitSplatSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, ANIM_TARGET, 1
+	createsprite gSparklingStarsSpriteTemplate, ANIM_ATTACKER, 16, -8, -8, 1, -224, -192, 16, 1
+	createsprite gSparklingStarsSpriteTemplate, ANIM_ATTACKER, 16, 8, -8, 1, 224, -192, 16, 1
+	createsprite gSparklingStarsSpriteTemplate, ANIM_ATTACKER, 16, -8, 6, 1, -192, 160, 16, 1
+	createsprite gSparklingStarsSpriteTemplate, ANIM_ATTACKER, 16, 8, 6, 1, 192, 160, 16, 1
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 0, 4, 0, 10, RGB(20, 6, 31)
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 4, 0, 12, 1
+	waitforvisualfinish
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, ANIM_ATTACKER, 0, 6
+	waitforvisualfinish
+	restorebg
+	waitbgfadeout
+	setarg 7, 0xFFFF
+	waitbgfadein
+	waitforvisualfinish
+	end
+
 Move_FIRE_CRASH:
 	loadspritegfx ANIM_TAG_SMALL_EMBER
 	playsewithpan SE_M_FLAME_WHEEL, SOUND_PAN_ATTACKER

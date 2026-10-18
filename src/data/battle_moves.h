@@ -4643,7 +4643,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	
 	[MOVE_VILE_CUTTER] =
     {
-        .effect = EFFECT_EVIL,
+        .effect = EFFECT_FLAIL, // Uses the target's HP instead, see Cmd_remaininghptopower
         .power = 1,
         .type = TYPE_POISON,
         .accuracy = 100,
@@ -5424,11 +5424,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_NEBULA_CRASH] =
     {
         .effect = EFFECT_TRI_ATTACK,
-        .power = 30,
+        .power = 40,
         .type = TYPE_ASTRAL,
         .accuracy = 100,
         .pp = 10,
-        .secondaryEffectChance = 50,
+        .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
@@ -5510,5 +5510,18 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .target = MOVE_TARGET_USER,
         .priority = 0,
         .flags = FLAG_SNATCH_AFFECTED,
+    },
+
+    [MOVE_HEARTBREAKER] =
+    {
+        .effect = EFFECT_HEARTBREAK,
+        .power = 150,
+        .type = TYPE_NORMAL,
+        .accuracy = 100,
+        .pp = 5,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 };

@@ -125,12 +125,12 @@
 #define ITEM_STAR_PIECE 109
 #define ITEM_NUGGET 110
 #define ITEM_HEART_SCALE 111
-#define ITEM_070 112
+#define ITEM_AIR_BALLOON 112 // Was ITEM_070, unused
 #define ITEM_071 113
 #define ITEM_072 114
 #define ITEM_073 115
 #define ITEM_074 116
-#define ITEM_075 117
+#define ITEM_BUBBLE_COAT 117 // Was ITEM_075, unused
 #define ITEM_076 118
 #define ITEM_077 119
 #define ITEM_078 120

@@ -864,6 +864,16 @@ static const u8 sEverstoneDesc[] = _(
     "item that prevents\n"
     "evolution.");
 
+static const u8 sAirBalloonDesc[] = _(
+    "Makes the holder\n"
+    "float until it is\n"
+    "hit by an attack.");
+
+static const u8 sBubbleCoatDesc[] = _(
+    "A bubble that takes\n"
+    "one hit. Electric\n"
+    "moves pierce it.");
+
 static const u8 sFocusBandDesc[] = _(
     "A hold item that\n"
     "retains 1 HP to\n"

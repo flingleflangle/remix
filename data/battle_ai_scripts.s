@@ -166,6 +166,7 @@ AI_CheckBadMove_CheckEffect:
 	if_effect EFFECT_MINIMIZE, AI_CBM_EvasionUp
 	if_effect EFFECT_CURSE, AI_CBM_Curse
 	if_effect EFFECT_SPIKES, AI_CBM_Spikes
+	if_effect EFFECT_HEARTBREAK, AI_CBM_Heartbreak
 	if_effect EFFECT_FORESIGHT, AI_CBM_Foresight
 	if_effect EFFECT_PERISH_SONG, AI_CBM_PerishSong
 	if_effect EFFECT_SANDSTORM, AI_CBM_Sandstorm
@@ -458,6 +459,11 @@ AI_CBM_Curse:
 	if_stat_level_equal AI_USER, STAT_DEF, MAX_STAT_STAGE, Score_Minus8
 	end
 
+@ Heartbreaker fails on a target that isn't infatuated
+AI_CBM_Heartbreak:
+	if_not_status2 AI_TARGET, STATUS2_INFATUATION, Score_Minus10
+	end
+
 AI_CBM_Spikes:
 	if_move MOVE_TOXIC_SPIKES, AI_CBM_ToxicSpikes
 	if_move MOVE_WIRE_TRIP, AI_CBM_WireTrip
@@ -688,7 +694,7 @@ AI_CheckViability:
 	if_effect EFFECT_EXPLOSION, AI_CV_SelfKO
 	if_effect EFFECT_DREAM_EATER, AI_CV_DreamEater
 	if_effect EFFECT_SPROUT, AI_CV_Sprout
-	if_effect EFFECT_EVIL, AI_CV_VileCutter
+	if_move MOVE_VILE_CUTTER, AI_CV_VileCutter @ Before EFFECT_FLAIL, which it shares
 	if_effect EFFECT_ASCENSION, AI_CV_Ascension
 	if_effect EFFECT_ATTUNEMENT, AI_CV_Attunement
 	if_effect EFFECT_SPIRIT_PURGE, AI_CV_SpiritPurge
@@ -2751,7 +2757,12 @@ AI_TryToFaint_DoubleSuperEffective:
 
 AI_TryToFaint_TryToEncourageQuickAttack:
 	if_effect EFFECT_EXPLOSION, AI_TryToFaint_End
-	if_not_effect (EFFECT_QUICK_ATTACK | EFFECT_BOULDER_DASH | EFFECT_EVIL), AI_TryToFaint_ScoreUp4
+	@ Priority moves that can finish the target off get an extra +2
+	if_effect EFFECT_QUICK_ATTACK, AI_TryToFaint_ScoreUp6
+	if_effect EFFECT_BOULDER_DASH, AI_TryToFaint_ScoreUp6
+	if_move MOVE_VILE_CUTTER, AI_TryToFaint_ScoreUp6
+	goto AI_TryToFaint_ScoreUp4
+AI_TryToFaint_ScoreUp6:
 	score +2
 AI_TryToFaint_ScoreUp4:
 	score +4
@@ -3070,6 +3081,7 @@ AI_HPAware:
 	goto AI_HPAware_ConsiderTarget
 
 AI_HPAware_UserHasHighHP:
+	if_move MOVE_VILE_CUTTER, AI_HPAware_ConsiderTarget @ Shares EFFECT_FLAIL, but doesn't care about the user's HP
 	get_considered_move_effect
 	if_in_bytes AI_HPAware_DiscouragedEffectsWhenHighHP, AI_HPAware_TryToDiscourage
 	goto AI_HPAware_ConsiderTarget
@@ -3090,6 +3102,7 @@ AI_HPAware_ConsiderTarget:
 	goto AI_HPAware_End
 
 AI_HPAware_TargetHasHighHP:
+	if_move MOVE_VILE_CUTTER, AI_HPAware_TargetTryToDiscourage
 	get_considered_move_effect
 	if_in_bytes AI_HPAware_DiscouragedEffectsWhenTargetHighHP, AI_HPAware_TargetTryToDiscourage
 	goto AI_HPAware_End
@@ -3218,7 +3231,6 @@ AI_HPAware_DiscouragedEffectsWhenLowHP:
 
 AI_HPAware_DiscouragedEffectsWhenTargetHighHP:
 	.byte EFFECT_TOMBSTONER
-	.byte EFFECT_EVIL
 	.byte -1
 
 AI_HPAware_DiscouragedEffectsWhenTargetMediumHP:

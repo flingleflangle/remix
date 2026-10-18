@@ -1423,12 +1423,13 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
 
-    [ITEM_070] =
+    [ITEM_AIR_BALLOON] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("AIR BALLOON"),
+        .itemId = ITEM_AIR_BALLOON,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_AIR_BALLOON,
+        .description = sAirBalloonDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
@@ -1478,12 +1479,13 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
 
-    [ITEM_075] =
+    [ITEM_BUBBLE_COAT] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("BUBBLE COAT"),
+        .itemId = ITEM_BUBBLE_COAT,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_BUBBLE_COAT,
+        .description = sBubbleCoatDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,

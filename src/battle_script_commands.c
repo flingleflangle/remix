@@ -251,7 +251,6 @@ static void Cmd_trychoosesleeptalkmove(void);
 static void Cmd_setdestinybond(void);
 static void Cmd_trysetdestinybondtohappen(void);
 static void Cmd_remaininghptopower(void);
-static void Cmd_remaininghptopowerevil(void);
 static void Cmd_tryspiteppreduce(void);
 static void Cmd_healpartystatus(void);
 static void Cmd_cursetarget(void);
@@ -584,11 +583,10 @@ void (*const gBattleScriptingCommandsTable[])(void) =
     Cmd_finishaction,                            //0xF6
     Cmd_finishturn,                              //0xF7
     Cmd_trainerslideout,                         //0xF8
-    Cmd_remaininghptopowerevil,					 //0xF9
-    Cmd_settypewithmove,					 	 //0xFA
-    Cmd_ballthrowend,					 		 //0xFB
-    Cmd_jumpifsuckerpunchfails,                  //0xFC
-    Cmd_trysetdetect,                            //0xFD
+    Cmd_settypewithmove,                         //0xF9
+    Cmd_ballthrowend,                            //0xFA
+    Cmd_jumpifsuckerpunchfails,                  //0xFB
+    Cmd_trysetdetect,                            //0xFC
 };
 
 struct StatFractions
@@ -935,6 +933,21 @@ static void Cmd_attackcanceler(void)
         gCurrentActionFuncId = B_ACTION_FINISHED;
         return;
     }
+
+    // Using any move but Protect, Detect, or Endure ends the chain a Focus Band save started,
+    // see CountFocusBandAsProtectUse
+    switch (gBattleMoves[gCurrentMove].effect)
+    {
+    case EFFECT_PROTECT:
+    case EFFECT_DETECT:
+    case EFFECT_ENDURE:
+    case EFFECT_SHIELD_BASH:
+        break;
+    default:
+        gDisableStructs[gBattlerAttacker].focusBandProtectUse = FALSE;
+        break;
+    }
+
     if (gBattleMons[gBattlerAttacker].hp == 0 && !(gHitMarker & HITMARKER_NO_ATTACKSTRING))
     {
         gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -1052,6 +1065,67 @@ static void Cmd_jumpifaffectedbyprotect(void)
     }
 }
 
+// Moves that hit more than once in a single use
+static bool32 IsMultiHitMove(u16 move)
+{
+    switch (gBattleMoves[move].effect)
+    {
+    case EFFECT_MULTI_HIT:
+    case EFFECT_DOUBLE_HIT:
+    case EFFECT_TWINEEDLE:
+    case EFFECT_TRIPLE_KICK:
+    case EFFECT_BEAT_UP:
+        return TRUE;
+    default:
+        return move == MOVE_STAR_BARRAGE; // Its second turn is a multi-hit barrage
+    }
+}
+
+// Bubble Coat takes the first damaging hit for its holder, then pops. Status moves pass
+// through it, and Electric moves pierce it, hitting the holder and popping it afterwards
+// (see ItemBattleEffects). Like Knock Off, it's only gone for the rest of the battle.
+// A normal move is blocked entirely (see JumpIfMoveAffectedByProtect), but a multi-hit
+// move only has its first hit blocked, and the rest land (see TryBubbleCoatFirstHit).
+static bool32 TryPopBubbleCoat(void)
+{
+    u8 moveType;
+
+    if (GetItemHoldEffect(gBattleMons[gBattlerTarget].item) != HOLD_EFFECT_BUBBLE_COAT
+     || gBattleMoves[gCurrentMove].power == 0
+     || gBattlerTarget == gBattlerAttacker
+     || gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
+        return FALSE;
+
+    GET_MOVE_TYPE(gCurrentMove, moveType);
+    if (moveType == TYPE_ELECTRIC)
+        return FALSE;
+
+    gLastUsedItem = gBattleMons[gBattlerTarget].item;
+    gBattleMons[gBattlerTarget].item = ITEM_NONE;
+    gWishFutureKnock.knockedOffMons[GetBattlerSide(gBattlerTarget)] |= gBitTable[gBattlerPartyIndexes[gBattlerTarget]];
+    RecordItemEffectBattle(gBattlerTarget, HOLD_EFFECT_BUBBLE_COAT);
+    return TRUE;
+}
+
+static bool32 TryPopBubbleCoatToBlockHit(void)
+{
+    return !IsMultiHitMove(gCurrentMove) && TryPopBubbleCoat();
+}
+
+// The first hit of a multi-hit move does no damage as Bubble Coat pops. The message is
+// printed when the damage is applied, see Cmd_datahpupdate.
+static void TryBubbleCoatFirstHit(void)
+{
+    if (IsMultiHitMove(gCurrentMove)
+     && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+     && gBattleMoveDamage > 0
+     && TryPopBubbleCoat())
+    {
+        gBattleMoveDamage = 0;
+        gSpecialStatuses[gBattlerTarget].bubbleCoatPopped = TRUE;
+    }
+}
+
 static bool8 JumpIfMoveAffectedByProtect(u16 move)
 {
     bool8 affected = FALSE;
@@ -1060,6 +1134,14 @@ static bool8 JumpIfMoveAffectedByProtect(u16 move)
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         JumpIfMoveFailed(7, move);
         gBattleCommunication[MISS_TYPE] = B_MSG_PROTECTED;
+        affected = TRUE;
+    }
+    else if (TryPopBubbleCoatToBlockHit())
+    {
+        // "...'s BUBBLE COAT took the hit and popped!"
+        gMoveResultFlags |= MOVE_RESULT_MISSED;
+        JumpIfMoveFailed(7, move);
+        gBattleCommunication[MISS_TYPE] = B_MSG_BUBBLE_COAT;
         affected = TRUE;
     }
     return affected;
@@ -1432,6 +1514,15 @@ static void Cmd_typecalc(void)
         gBattleCommunication[MISS_TYPE] = B_MSG_GROUND_MISS;
         RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
     }
+    else if (IsBattlerFloatingOnAirBalloon(gBattlerTarget) && moveType == TYPE_GROUND)
+    {
+        // "It doesn't affect..."
+        gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+        gLastLandedMoves[gBattlerTarget] = 0;
+        gLastHitByType[gBattlerTarget] = 0;
+        gBattleCommunication[MISS_TYPE] = B_MSG_MISSED;
+        RecordItemEffectBattle(gBattlerTarget, HOLD_EFFECT_AIR_BALLOON);
+    }
     else
     {
         while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
@@ -1566,6 +1657,9 @@ static void CheckWonderGuardAndLevitate(void)
         return;
     }
 
+    if (IsBattlerFloatingOnAirBalloon(gBattlerTarget) && moveType == TYPE_GROUND)
+        return;
+
     if (gBattleMons[gBattlerTarget].ability == ABILITY_SOUNDPROOF && moveType == TYPE_SOUND)
     {
         gLastUsedAbility = ABILITY_SOUNDPROOF;
@@ -1683,7 +1777,8 @@ u8 TypeCalc(u16 move, u8 attacker, u8 defender)
         gBattleMoveDamage = gBattleMoveDamage / 10;
     }
 
-    if (gBattleMons[defender].ability == ABILITY_LEVITATE && moveType == TYPE_GROUND)
+    if ((gBattleMons[defender].ability == ABILITY_LEVITATE || IsBattlerFloatingOnAirBalloon(defender))
+     && moveType == TYPE_GROUND)
     {
         flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
     }
@@ -1803,11 +1898,38 @@ static void UNUSED Unused_ApplyRandomDmgMultiplier(void)
     ApplyRandomDmgMultiplier();
 }
 
+// Focus Band always lets its holder survive a hit with 1 HP, but not once it's already at
+// 1 HP. Checked for every hit, so the second hit of a multi-hit move (or a second attacker)
+// knocks out a holder that the first hit left on 1 HP.
+static void UpdateFocusBand(u8 holdEffect)
+{
+    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && gBattleMons[gBattlerTarget].hp != 1)
+    {
+        RecordItemEffectBattle(gBattlerTarget, holdEffect);
+        gSpecialStatuses[gBattlerTarget].focusBanded = 1;
+    }
+    else
+    {
+        gSpecialStatuses[gBattlerTarget].focusBanded = 0;
+    }
+}
+
+// Surviving with Focus Band counts as a use of Protect, lowering the odds of the holder's next
+// Protect, Detect, or Endure. It's remembered so that the next one doesn't reset the count
+// (see Cmd_setprotectlike), until the holder uses some other move (see Cmd_attackcanceler).
+static void CountFocusBandAsProtectUse(void)
+{
+    if (gDisableStructs[gBattlerTarget].protectUses < ARRAY_COUNT(sProtectSuccessRates) - 1)
+        gDisableStructs[gBattlerTarget].protectUses++;
+    gDisableStructs[gBattlerTarget].focusBandProtectUse = TRUE;
+}
+
 static void Cmd_adjustnormaldamage(void)
 {
     u8 holdEffect, param;
 
     ApplyRandomDmgMultiplier();
+    TryBubbleCoatFirstHit();
 
     if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
     {
@@ -1822,11 +1944,7 @@ static void Cmd_adjustnormaldamage(void)
 
     gPotentialItemEffectBattler = gBattlerTarget;
 
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && gBattleMons[gBattlerTarget].hp != 1)
-    {
-        RecordItemEffectBattle(gBattlerTarget, holdEffect);
-        gSpecialStatuses[gBattlerTarget].focusBanded = 1;
-    }
+    UpdateFocusBand(holdEffect);
     if (!(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
      && (gBattleMoves[gCurrentMove].effect == EFFECT_FALSE_SWIPE || gProtectStructs[gBattlerTarget].endured || gSpecialStatuses[gBattlerTarget].focusBanded)
      && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
@@ -1839,6 +1957,7 @@ static void Cmd_adjustnormaldamage(void)
         else if (gSpecialStatuses[gBattlerTarget].focusBanded)
         {
             gMoveResultFlags |= MOVE_RESULT_FOE_HUNG_ON;
+            CountFocusBandAsProtectUse();
             gLastUsedItem = gBattleMons[gBattlerTarget].item;
         }
     }
@@ -1851,6 +1970,7 @@ static void Cmd_adjustnormaldamage2(void)
     u8 holdEffect, param;
 
     ApplyRandomDmgMultiplier();
+    TryBubbleCoatFirstHit();
 
     if (gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY)
     {
@@ -1865,11 +1985,7 @@ static void Cmd_adjustnormaldamage2(void)
 
     gPotentialItemEffectBattler = gBattlerTarget;
 
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && gBattleMons[gBattlerTarget].hp != 1)
-    {
-        RecordItemEffectBattle(gBattlerTarget, holdEffect);
-        gSpecialStatuses[gBattlerTarget].focusBanded = 1;
-    }
+    UpdateFocusBand(holdEffect);
     if (!(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
      && (gProtectStructs[gBattlerTarget].endured || gSpecialStatuses[gBattlerTarget].focusBanded)
      && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
@@ -1882,6 +1998,7 @@ static void Cmd_adjustnormaldamage2(void)
         else if (gSpecialStatuses[gBattlerTarget].focusBanded)
         {
             gMoveResultFlags |= MOVE_RESULT_FOE_HUNG_ON;
+            CountFocusBandAsProtectUse();
             gLastUsedItem = gBattleMons[gBattlerTarget].item;
         }
     }
@@ -2165,6 +2282,16 @@ static void Cmd_datahpupdate(void)
             // Send updated HP
             BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_HP_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].hp), &gBattleMons[gActiveBattler].hp);
             MarkBattlerForControllerExec(gActiveBattler);
+
+            // "...'s BUBBLE COAT took the hit and popped!", for a multi-hit move's first hit
+            if (gSpecialStatuses[gActiveBattler].bubbleCoatPopped)
+            {
+                gSpecialStatuses[gActiveBattler].bubbleCoatPopped = FALSE;
+                gBattlescriptCurrInstr += 2;
+                BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_BubbleCoatTookHit;
+                return;
+            }
         }
     }
     else
@@ -4759,6 +4886,14 @@ static void Cmd_typecalc2(void)
         gBattleCommunication[MISS_TYPE] = B_MSG_GROUND_MISS;
         RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
     }
+    else if (IsBattlerFloatingOnAirBalloon(gBattlerTarget) && moveType == TYPE_GROUND)
+    {
+        // "It doesn't affect..."
+        gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+        gLastLandedMoves[gBattlerTarget] = 0;
+        gBattleCommunication[MISS_TYPE] = B_MSG_MISSED;
+        RecordItemEffectBattle(gBattlerTarget, HOLD_EFFECT_AIR_BALLOON);
+    }
     else
     {
         while (TYPE_EFFECT_ATK_TYPE(i) != TYPE_ENDTABLE)
@@ -5477,7 +5612,8 @@ static void Cmd_switchineffects(void)
     if (!(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SPIKES_DAMAGED)
         && (gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SPIKES)
         && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
-        && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE)
+        && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE
+        && !IsBattlerFloatingOnAirBalloon(gActiveBattler))
     {
         u8 spikesDmg;
 
@@ -5504,7 +5640,8 @@ static void Cmd_switchineffects(void)
     else if (!(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_TOXIC_SPIKES_DAMAGED)
         && (gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_TOXIC_SPIKES)
         && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
-        && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE)
+        && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE
+        && !IsBattlerFloatingOnAirBalloon(gActiveBattler))
     {
         // Toxic Spikes, as in pokeemerald-expansion. If nothing happens, this command
         // simply runs again next frame and carries on with the other switch-in effects.
@@ -5542,7 +5679,8 @@ static void Cmd_switchineffects(void)
     else if (!(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_WIRE_TRIP_DAMAGED)
         && (gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_WIRE_TRIP)
         && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
-        && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE)
+        && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE
+        && !IsBattlerFloatingOnAirBalloon(gActiveBattler))
     {
         // Wire Trip paralyzes the first grounded Pokémon that can be paralyzed, then it's used up.
         // As with Toxic Spikes, if nothing happens this command runs again next frame.
@@ -6190,11 +6328,7 @@ static void Cmd_adjustsetdamage(void)
 
     gPotentialItemEffectBattler = gBattlerTarget;
 
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && gBattleMons[gBattlerTarget].hp != 1)
-    {
-        RecordItemEffectBattle(gBattlerTarget, holdEffect);
-        gSpecialStatuses[gBattlerTarget].focusBanded = 1;
-    }
+    UpdateFocusBand(holdEffect);
     if (!(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
      && (gBattleMoves[gCurrentMove].effect == EFFECT_FALSE_SWIPE || gProtectStructs[gBattlerTarget].endured || gSpecialStatuses[gBattlerTarget].focusBanded)
      && gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
@@ -6207,6 +6341,7 @@ static void Cmd_adjustsetdamage(void)
         else if (gSpecialStatuses[gBattlerTarget].focusBanded)
         {
             gMoveResultFlags |= MOVE_RESULT_FOE_HUNG_ON;
+            CountFocusBandAsProtectUse();
             gLastUsedItem = gBattleMons[gBattlerTarget].item;
         }
     }
@@ -6630,6 +6765,11 @@ static void Cmd_useitemonopponent(void)
     gBattlescriptCurrInstr++;
 }
 
+static u8 GetBattlerGender(u8 battler)
+{
+    return GetGenderFromSpeciesAndPersonality(gBattleMons[battler].species, gBattleMons[battler].personality);
+}
+
 static void Cmd_various(void)
 {
     u8 side;
@@ -6809,6 +6949,42 @@ static void Cmd_various(void)
         BtlController_EmitPlayFanfareOrBGM(B_COMM_TO_CONTROLLER, MUS_VICTORY_TRAINER, TRUE);
         MarkBattlerForControllerExec(gActiveBattler);
         break;
+    case VARIOUS_TRY_FIRST_SIGHT:
+        // First Sight: infatuates a foe of the opposite gender with the ability's holder.
+        // Sets MULTISTRING_CHOOSER to 0 if it fell in love, 1 if its ability prevented it,
+        // or 2 if nothing happened. See BattleScript_FirstSightActivates.
+        {
+            u8 holder = gBattleScripting.battler;
+            u8 holderGender = GetBattlerGender(holder);
+            u8 targetGender = GetBattlerGender(gActiveBattler);
+
+            if (gBattleMons[gActiveBattler].hp == 0
+             || gBattleMons[gActiveBattler].status2 & STATUS2_INFATUATION
+             || holderGender == MON_GENDERLESS || targetGender == MON_GENDERLESS
+             || holderGender == targetGender)
+            {
+                gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+            }
+            else if (gBattleMons[gActiveBattler].ability == ABILITY_OBLIVIOUS
+                  || gBattleMons[gActiveBattler].ability == ABILITY_HEARTBROKEN)
+            {
+                gLastUsedAbility = gBattleMons[gActiveBattler].ability;
+                RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
+                gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+            }
+            else
+            {
+                gBattleMons[gActiveBattler].status2 |= STATUS2_INFATUATED_WITH(holder);
+                gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+            }
+        }
+        break;
+    case VARIOUS_SET_HEARTBROKEN:
+        // Heartbreaker replaces the ability until the battler switches out, like Skill Swap.
+        // Heartbroken ends infatuation, then prevents it.
+        gBattleMons[gActiveBattler].ability = ABILITY_HEARTBROKEN;
+        gBattleMons[gActiveBattler].status2 &= ~STATUS2_INFATUATION;
+        break;
     }
 
     gBattlescriptCurrInstr += 3;
@@ -6820,8 +6996,11 @@ static void Cmd_setprotectlike(void)
     bool8 notLastTurn = TRUE;
     u16 lastMove = gLastResultingMoves[gBattlerAttacker];
 
-    if (lastMove != MOVE_PROTECT && lastMove != MOVE_DETECT && lastMove != MOVE_ENDURE)
+    // A Focus Band save counts as a use too, see CountFocusBandAsProtectUse
+    if (lastMove != MOVE_PROTECT && lastMove != MOVE_DETECT && lastMove != MOVE_ENDURE
+     && !gDisableStructs[gBattlerAttacker].focusBandProtectUse)
         gDisableStructs[gBattlerAttacker].protectUses = 0;
+    gDisableStructs[gBattlerAttacker].focusBandProtectUse = FALSE;
 
     if (gCurrentTurnActionNumber == (gBattlersCount - 1))
         notLastTurn = FALSE;
@@ -7844,11 +8023,7 @@ static void Cmd_tryKO(void)
 
     gPotentialItemEffectBattler = gBattlerTarget;
 
-    if (holdEffect == HOLD_EFFECT_FOCUS_BAND && gBattleMons[gBattlerTarget].hp != 1)
-    {
-        RecordItemEffectBattle(gBattlerTarget, HOLD_EFFECT_FOCUS_BAND);
-        gSpecialStatuses[gBattlerTarget].focusBanded = 1;
-    }
+    UpdateFocusBand(holdEffect);
 
     if (gBattleMons[gBattlerTarget].ability == ABILITY_STURDY)
     {
@@ -7892,6 +8067,7 @@ static void Cmd_tryKO(void)
             {
                 gBattleMoveDamage = gBattleMons[gBattlerTarget].hp - 1;
                 gMoveResultFlags |= MOVE_RESULT_FOE_HUNG_ON;
+                CountFocusBandAsProtectUse();
                 gLastUsedItem = gBattleMons[gBattlerTarget].item;
             }
             else
@@ -8034,11 +8210,13 @@ static void Cmd_tryinfatuating(void)
     speciesTarget = GetMonData(monTarget, MON_DATA_SPECIES);
     personalityTarget = GetMonData(monTarget, MON_DATA_PERSONALITY);
 
-    if (gBattleMons[gBattlerTarget].ability == ABILITY_OBLIVIOUS)
+    if (gBattleMons[gBattlerTarget].ability == ABILITY_OBLIVIOUS
+     || gBattleMons[gBattlerTarget].ability == ABILITY_HEARTBROKEN)
     {
+        // "...'s OBLIVIOUS / HEARTBROKEN prevents romance!"
         gBattlescriptCurrInstr = BattleScript_ObliviousPreventsAttraction;
-        gLastUsedAbility = ABILITY_OBLIVIOUS;
-        RecordAbilityBattle(gBattlerTarget, ABILITY_OBLIVIOUS);
+        gLastUsedAbility = gBattleMons[gBattlerTarget].ability;
+        RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
     }
     else
     {
@@ -8723,33 +8901,78 @@ static void Cmd_trysetdestinybondtohappen(void)
     gBattlescriptCurrInstr++;
 }
 
-static void Cmd_remaininghptopower(void)
+// Nebula Crash: 40 power, plus 60 for each of the user's stats that's raised (up to 460 with
+// all 7) and minus 60 for each that's lowered. e.g. 3 raised and 2 lowered is
+// 40 + 180 - 120 = 100 power.
+static void SetNebulaCrashPower(void)
 {
-    s32 i;
-    s32 hpFraction = GetScaledHPFraction(gBattleMons[gBattlerAttacker].hp, gBattleMons[gBattlerAttacker].maxHP, 48);
+    s32 power = 40;
+    u32 i;
 
-    for (i = 0; i < (s32) sizeof(sFlailHpScaleToPowerTable); i += 2)
+    for (i = STAT_ATK; i < NUM_BATTLE_STATS; i++)
     {
-        if (hpFraction <= sFlailHpScaleToPowerTable[i])
-            break;
+        if (gBattleMons[gBattlerAttacker].statStages[i] > DEFAULT_STAT_STAGE)
+            power += 60;
+        else if (gBattleMons[gBattlerAttacker].statStages[i] < DEFAULT_STAT_STAGE)
+            power -= 60;
     }
 
-    gDynamicBasePower = sFlailHpScaleToPowerTable[i + 1];
-    gBattlescriptCurrInstr++;
+    // At least 1, since a dynamic power of 0 means the move's normal power would be used
+    gDynamicBasePower = (power < 1) ? 1 : power;
 }
 
-static void Cmd_remaininghptopowerevil(void)
+static void ResetAttackerStatStages(void)
 {
-    s32 i;
-    s32 hpFraction = GetScaledHPFraction(gBattleMons[gBattlerTarget].hp, gBattleMons[gBattlerTarget].maxHP, 48);
+    u32 i;
 
-    for (i = 0; i < (s32) sizeof(sVileCutterHpScaleToPowerTable); i += 2)
+    for (i = STAT_ATK; i < NUM_BATTLE_STATS; i++)
+        gBattleMons[gBattlerAttacker].statStages[i] = DEFAULT_STAT_STAGE;
+}
+
+// Sets the power of moves that depend on HP. Flail and Reversal get stronger the lower the
+// user's HP is, and Vile Cutter (which shares EFFECT_FLAIL) the lower the target's HP is, each with its own
+// table of HP (out of 48) to power.
+// Also used by Nebula Crash, whose power depends on the user's state too. It's used twice:
+// first to set the power from the user's stat changes, then (once its power is set) to reset
+// those stat changes, after they've counted towards the hit. See the NebulaCrash script.
+static void Cmd_remaininghptopower(void)
+{
+    const u8 *powerTable;
+    s32 tableSize;
+    u8 battler;
+    s32 i, hpFraction;
+
+    if (gCurrentMove == MOVE_NEBULA_CRASH)
     {
-        if (hpFraction <= sVileCutterHpScaleToPowerTable[i])
+        if (gDynamicBasePower == 0)
+            SetNebulaCrashPower();
+        else
+            ResetAttackerStatStages();
+        gBattlescriptCurrInstr++;
+        return;
+    }
+
+    if (gCurrentMove == MOVE_VILE_CUTTER)
+    {
+        battler = gBattlerTarget;
+        powerTable = sVileCutterHpScaleToPowerTable;
+        tableSize = sizeof(sVileCutterHpScaleToPowerTable);
+    }
+    else
+    {
+        battler = gBattlerAttacker;
+        powerTable = sFlailHpScaleToPowerTable;
+        tableSize = sizeof(sFlailHpScaleToPowerTable);
+    }
+
+    hpFraction = GetScaledHPFraction(gBattleMons[battler].hp, gBattleMons[battler].maxHP, 48);
+    for (i = 0; i < tableSize; i += 2)
+    {
+        if (hpFraction <= powerTable[i])
             break;
     }
 
-    gDynamicBasePower = sVileCutterHpScaleToPowerTable[i + 1] ;
+    gDynamicBasePower = powerTable[i + 1];
     gBattlescriptCurrInstr++;
 }
 static void Cmd_tryspiteppreduce(void)
@@ -10859,8 +11082,11 @@ static void Cmd_trysetdetect(void)
     u16 lastMove = gLastResultingMoves[gBattlerAttacker];
     u8 battler;
 
-    if (lastMove != MOVE_PROTECT && lastMove != MOVE_DETECT && lastMove != MOVE_ENDURE)
+    // A Focus Band save counts as a use too, see CountFocusBandAsProtectUse
+    if (lastMove != MOVE_PROTECT && lastMove != MOVE_DETECT && lastMove != MOVE_ENDURE
+     && !gDisableStructs[gBattlerAttacker].focusBandProtectUse)
         gDisableStructs[gBattlerAttacker].protectUses = 0;
+    gDisableStructs[gBattlerAttacker].focusBandProtectUse = FALSE;
 
     for (battler = 0; battler < gBattlersCount; battler++)
     {

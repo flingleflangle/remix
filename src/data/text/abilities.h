@@ -82,6 +82,8 @@ static const u8 sPrismScaleDescription[] = _("Stats enhanced in weather.");
 static const u8 sFilterScaleDescription[] = _("Reduces move effectiveness.");
 static const u8 sChromaScaleDescription[] = _("Adds effects to attacks.");
 static const u8 sMirrorScaleDescription[] = _("Copies all stat changes.");
+static const u8 sHeartbrokenDescription[] = _("Halves SP. ATK. No love.");
+static const u8 sFirstSightDescription[] = _("Infatuates foes on entry.");
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
 {
@@ -169,6 +171,8 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_FILTER_SCALE] = _("FILTER SCALE"),
     [ABILITY_CHROMA_SCALE] = _("CHROMA SCALE"),
     [ABILITY_MIRROR_SCALE] = _("MIRROR SCALE"),
+    [ABILITY_HEARTBROKEN] = _("HEARTBROKEN"),
+    [ABILITY_FIRST_SIGHT] = _("FIRST SIGHT"),
 };
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
@@ -257,4 +261,6 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_FILTER_SCALE] = sFilterScaleDescription,
     [ABILITY_CHROMA_SCALE] = sChromaScaleDescription,
     [ABILITY_MIRROR_SCALE] = sMirrorScaleDescription,
+    [ABILITY_HEARTBROKEN] = sHeartbrokenDescription,
+    [ABILITY_FIRST_SIGHT] = sFirstSightDescription,
 };

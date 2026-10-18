@@ -427,9 +427,10 @@
 #define MOVE_WIRE_TRIP 423
 #define MOVE_STONE_WALL 424
 #define MOVE_ICE_WALL 425
+#define MOVE_HEARTBREAKER 426
 
 
-#define MOVES_COUNT 426
+#define MOVES_COUNT 427
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

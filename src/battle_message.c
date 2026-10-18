@@ -230,6 +230,11 @@ static const u8 sText_WireTripAbsorbed[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} ab
 static const u8 sText_PkmnBlewAwayWireTrip[] = _("{B_ATK_NAME_WITH_PREFIX} blew away\nthe WIRE TRIP!");
 static const u8 sText_PkmnPutUpWall[] = _("{B_ATK_NAME_WITH_PREFIX} put up\na {B_CURRENT_MOVE}!");
 static const u8 sText_PkmnWallShattered[] = _("{B_DEF_NAME_WITH_PREFIX}'s\n{B_BUFF1} shattered!");
+static const u8 sText_PkmnBecameHeartbroken[] = _("{B_DEF_NAME_WITH_PREFIX} became\nheartbroken!");
+static const u8 sText_PkmnFloatsWithAirBalloon[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} floats\nwith its {B_LAST_ITEM}!");
+static const u8 sText_PkmnsAirBalloonPopped[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s\n{B_LAST_ITEM} popped!");
+static const u8 sText_BubbleCoatTookHit[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\ntook the hit and popped!");
+static const u8 sText_PkmnFellForFirstSight[] = _("{B_DEF_NAME_WITH_PREFIX} fell for\n{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}!");
 static const u8 sText_PkmnFledFromBattle[] = _("{B_ATK_NAME_WITH_PREFIX} fled from\nbattle!");
 static const u8 sText_PkmnForesawAttack[] = _("{B_ATK_NAME_WITH_PREFIX} foresaw\nan attack!");
 static const u8 sText_PkmnTookAttack[] = _("{B_DEF_NAME_WITH_PREFIX} took the\n{B_BUFF1} attack!");
@@ -935,6 +940,11 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNBLEWAWAYWIRETRIP - BATTLESTRINGS_TABLE_START] = sText_PkmnBlewAwayWireTrip,
     [STRINGID_PKMNPUTUPWALL - BATTLESTRINGS_TABLE_START] = sText_PkmnPutUpWall,
     [STRINGID_PKMNWALLSHATTERED - BATTLESTRINGS_TABLE_START] = sText_PkmnWallShattered,
+    [STRINGID_PKMNBECAMEHEARTBROKEN - BATTLESTRINGS_TABLE_START] = sText_PkmnBecameHeartbroken,
+    [STRINGID_PKMNFELLFORFIRSTSIGHT - BATTLESTRINGS_TABLE_START] = sText_PkmnFellForFirstSight,
+    [STRINGID_PKMNFLOATSWITHAIRBALLOON - BATTLESTRINGS_TABLE_START] = sText_PkmnFloatsWithAirBalloon,
+    [STRINGID_PKMNSAIRBALLOONPOPPED - BATTLESTRINGS_TABLE_START] = sText_PkmnsAirBalloonPopped,
+    [STRINGID_BUBBLECOATTOOKHIT - BATTLESTRINGS_TABLE_START] = sText_BubbleCoatTookHit,
 };
 
 const u16 gMissStringIds[] =
@@ -943,7 +953,8 @@ const u16 gMissStringIds[] =
     [B_MSG_PROTECTED]   = STRINGID_PKMNPROTECTEDITSELF,
     [B_MSG_AVOIDED_ATK] = STRINGID_PKMNAVOIDEDATTACK,
     [B_MSG_AVOIDED_DMG] = STRINGID_AVOIDEDDAMAGE,
-    [B_MSG_GROUND_MISS] = STRINGID_PKMNMAKESGROUNDMISS
+    [B_MSG_GROUND_MISS] = STRINGID_PKMNMAKESGROUNDMISS,
+    [B_MSG_BUBBLE_COAT] = STRINGID_BUBBLECOATTOOKHIT,
 };
 
 const u16 gNoEscapeStringIds[] =

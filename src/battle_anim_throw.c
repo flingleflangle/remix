@@ -944,10 +944,10 @@ static EWRAM_DATA u8 sBallThrowInputType = BALL_THROW_NORMAL;
 static const u16 sBallThrowBadgeFlags[BALL_THROW_TYPES_COUNT] =
 {
     [BALL_THROW_NORMAL]      = 0,
-    [BALL_THROW_DROP]        = FLAG_BADGE02_GET,
-    [BALL_THROW_CURVE_LEFT]  = FLAG_BADGE04_GET,
-    [BALL_THROW_CURVE_RIGHT] = FLAG_BADGE04_GET,
-    [BALL_THROW_UNDERHAND]   = FLAG_BADGE06_GET,
+    [BALL_THROW_DROP]        = 0,
+    [BALL_THROW_CURVE_LEFT]  = 0,
+    [BALL_THROW_CURVE_RIGHT] = 0,
+    [BALL_THROW_UNDERHAND]   = 0,
 };
 
 static bool8 IsBallThrowUnlocked(u8 throwType)

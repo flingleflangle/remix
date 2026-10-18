@@ -90,7 +90,9 @@ struct DisableStruct
     u8 battlerPreventingEscape;
     u8 battlerWithSureHit;
     u8 isFirstTurn;
-    u8 filler_17; // Unused field.
+    u8 focusBandProtectUse:1; // Focus Band saved it, which counts as a use of Protect
+    u8 airBalloonAnnounced:1; // Air Balloon was announced on switch-in
+    u8 filler_17:6; // Unused field.
     u8 truantCounter:1;
     u8 truantSwitchInHack:1;
     u8 wideOpen:1; // Failed Detect, so the next hit from a foe is critical
@@ -138,6 +140,7 @@ struct SpecialStatus
     u32 ppNotAffectedByPressure:1;
     u32 faintedHasReplacement:1;
     u32 focusBanded:1;
+    u32 bubbleCoatPopped:1; // Bubble Coat took a multi-hit move's first hit, message pending
     s32 shellBellDmg;
     s32 physicalDmg;
     s32 specialDmg;

@@ -125,12 +125,12 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_NUGGET] = {gItemIcon_Nugget, gItemIconPalette_Nugget},
     [ITEM_HEART_SCALE] = {gItemIcon_HeartScale, gItemIconPalette_HeartScale},
     // ????????
-    [ITEM_070] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_AIR_BALLOON] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
     [ITEM_071] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_072] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_073] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_074] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_075] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_BUBBLE_COAT] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
     [ITEM_076] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_077] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_078] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},

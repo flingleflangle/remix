@@ -1666,8 +1666,8 @@ static const u8 sCosmicFlareDescription[] = _(
     "a random status effect.");
 
 static const u8 sNebulaCrashDescription[] = _(
-    "Star bullets hit 2-5 times.\n"
-    "Recoil taken for every shot.");
+    "Resets user's stat changes.\n"
+    "Each is +60 or -60 power.");
 
 static const u8 sChakraSurgeDescription[] = _(
     "Star bullets hit 2-5 times.\n"
@@ -1700,6 +1700,10 @@ static const u8 sStoneWallDescription[] = _(
 static const u8 sIceWallDescription[] = _(
     "Lowers SP. ATK to raise a\n"
     "wall that takes hits.");
+
+static const u8 sHeartbreakerDescription[] = _(
+    "A brutal attack that only\n"
+    "hits an infatuated foe.");
 
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
@@ -2129,4 +2133,5 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_WIRE_TRIP - 1] = sWireTripDescription,
     [MOVE_STONE_WALL - 1] = sStoneWallDescription,
     [MOVE_ICE_WALL - 1] = sIceWallDescription,
+    [MOVE_HEARTBREAKER - 1] = sHeartbreakerDescription,
 };
