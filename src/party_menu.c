@@ -60,6 +60,7 @@
 #include "task.h"
 #include "text.h"
 #include "text_window.h"
+#include "tm_case.h"
 #include "trade.h"
 #include "union_room.h"
 #include "window.h"
@@ -4310,6 +4311,12 @@ static void CB2_ReturnToFieldFromRegisteredItemUse(void)
 void CB2_ShowPartyMenuForRegisteredItemUse(void)
 {
     ShowPartyMenuForItemUse(CB2_ReturnToFieldFromRegisteredItemUse);
+}
+
+// Teaching a TM chosen from the TM Case, which returns to the case afterwards
+void CB2_ShowPartyMenuForItemUseFromTMCase(void)
+{
+    ShowPartyMenuForItemUse(CB2_ReturnToTMCase);
 }
 
 static void ShowPartyMenuForItemUse(MainCallback callback)

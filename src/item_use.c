@@ -36,6 +36,7 @@
 #include "string_util.h"
 #include "task.h"
 #include "text.h"
+#include "tm_case.h"
 #include "vs_seeker.h" // vs_seeker branch
 #include "constants/event_bg.h"
 #include "constants/event_objects.h"
@@ -681,6 +682,45 @@ static void Task_OpenRegisteredPokeblockCase(u8 taskId)
         CleanupOverworldWindowsAndTilemaps();
         OpenPokeblockCase(PBLOCK_CASE_FIELD, CB2_ReturnToField);
         DestroyTask(taskId);
+    }
+}
+
+static void CB2_OpenTMCaseFromBag(void)
+{
+    OpenTMCase(TMCASE_FIELD, CB2_ReturnToBagMenuPocket, FALSE);
+}
+
+static void CB2_ReturnToFieldFromTMCase(void)
+{
+    gFieldCallback = FieldCB_ReturnToFieldNoScript;
+    SetMainCallback2(CB2_ReturnToField);
+}
+
+static void Task_OpenRegisteredTMCase(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        CleanupOverworldWindowsAndTilemaps();
+        OpenTMCase(TMCASE_FIELD, CB2_ReturnToFieldFromTMCase, TRUE);
+        DestroyTask(taskId);
+    }
+}
+
+void ItemUseOutOfBattle_TMCase(u8 taskId)
+{
+    if (MenuHelpers_IsLinkActive() == TRUE)
+    {
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+    }
+    else if (gTasks[taskId].tUsingRegisteredKeyItem != TRUE)
+    {
+        gBagMenu->newScreenCallback = CB2_OpenTMCaseFromBag;
+        Task_FadeAndCloseBagMenu(taskId);
+    }
+    else
+    {
+        FadeScreen(FADE_TO_BLACK, 0);
+        gTasks[taskId].func = Task_OpenRegisteredTMCase;
     }
 }
 

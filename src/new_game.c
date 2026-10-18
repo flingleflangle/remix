@@ -182,6 +182,7 @@ void NewGameInitData(void)
     gSaveBlock1Ptr->registeredItemCompat = ITEM_NONE;
     memset(gSaveBlock1Ptr->registeredItems, 0, sizeof(gSaveBlock1Ptr->registeredItems));
     ClearBag();
+    AddBagItem(ITEM_TM_CASE, 1); // TMs are kept in the TM Case, which replaces the bag's TM pocket
     NewGameInitPCItems();
     ClearPokeblocks();
     ClearDecorationInventories();

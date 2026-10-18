@@ -52,8 +52,20 @@ EventScript_BufferBerriesPocket::
 EventScript_ObtainedItem::
 	message gText_ObtainedTheItem
 	waitfanfare
-	msgbox gText_PutItemInPocket, MSGBOX_DEFAULT
+	checkitemtype ITEMID
+	call EventScript_PutItemAwayMessage
 	setvar VAR_RESULT, TRUE
+	return
+
+@ VAR_RESULT should be the item's pocket, from checkitemtype
+@ TMs and HMs have no pocket of their own, they go in the TM Case
+EventScript_PutItemAwayMessage::
+	goto_if_eq VAR_RESULT, POCKET_TM_HM, EventScript_PutItemInTMCaseMessage
+	msgbox gText_PutItemInPocket, MSGBOX_DEFAULT
+	return
+
+EventScript_PutItemInTMCaseMessage::
+	msgbox gText_PutItemInTMCase, MSGBOX_DEFAULT
 	return
 
 EventScript_NoRoomForItem::
@@ -120,7 +132,8 @@ EventScript_PickUpItem::
 	bufferitemnameplural STR_VAR_2, VAR_0x8004, VAR_0x8005
 	pyramid_getlocation
 	goto_if_eq VAR_RESULT, PYRAMID_LOCATION_FLOOR, EventScript_PutBattlePyramidItemInBag
-	msgbox gText_PutItemInPocket, MSGBOX_DEFAULT
+	checkitemtype VAR_0x8004
+	call EventScript_PutItemAwayMessage
 	return
 
 EventScript_PutBattlePyramidItemInBag::
@@ -178,7 +191,8 @@ EventScript_PutHiddenItemInPocket::
 	waitfanfare
 	bufferitemnameplural STR_VAR_2, VAR_0x8004, 1
 	copyvar VAR_0x8004, VAR_0x8008
-	msgbox gText_PutItemInPocket, MSGBOX_DEFAULT
+	checkitemtype VAR_0x8005
+	call EventScript_PutItemAwayMessage
 	special TryPutTreasureInvestigatorsOnAir
 	special SetHiddenItemFlag
 	releaseall

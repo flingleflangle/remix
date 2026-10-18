@@ -46,6 +46,7 @@
 #include "string_util.h"
 #include "task.h"
 #include "text_window.h"
+#include "tm_case.h"
 #include "menu_helpers.h"
 #include "window.h"
 #include "apprentice.h"
@@ -138,6 +139,7 @@ static void LoadBagItemListBuffers(u8);
 static void PrintPocketNames(const u8 *, const u8 *);
 static void CopyPocketNameToWindow(u32);
 static void DrawPocketIndicatorSquare(u8, bool8);
+static void DrawPocketIndicatorSquares(void);
 static void CreatePocketScrollArrowPair(void);
 static void CreatePocketSwitchArrowPair(void);
 static void DestroyPocketSwitchArrowPair(void);
@@ -837,6 +839,8 @@ void GoToBagMenu(u8 location, u8 pocket, void ( *exitCallback)())
             gBagPosition.exitCallback = exitCallback;
         if (pocket < POCKETS_COUNT)
             gBagPosition.pocket = pocket;
+        if (gBagPosition.pocket == TMHM_POCKET) // Hidden, TMs are in the TM Case
+            gBagPosition.pocket = ITEMS_POCKET;
         if (gBagPosition.location == ITEMMENULOCATION_BERRY_TREE ||
             gBagPosition.location == ITEMMENULOCATION_BERRY_BLENDER_CRUSH)
             gBagMenu->pocketSwitchDisabled = TRUE;
@@ -949,7 +953,7 @@ static bool8 SetupBagMenu(void)
     case 13:
         PrintPocketNames(gPocketNamesStringsTable[gBagPosition.pocket], 0);
         CopyPocketNameToWindow(0);
-        DrawPocketIndicatorSquare(gBagPosition.pocket, TRUE);
+        DrawPocketIndicatorSquares();
         gMain.state++;
         break;
     case 14:
@@ -1541,12 +1545,15 @@ static u8 GetSwitchBagPocketDirection(void)
 
 static void ChangeBagPocketId(u8 *bagPocketId, s8 deltaBagPocketId)
 {
-    if (deltaBagPocketId == MENU_CURSOR_DELTA_RIGHT && *bagPocketId == POCKETS_COUNT - 1)
-        *bagPocketId = 0;
-    else if (deltaBagPocketId == MENU_CURSOR_DELTA_LEFT && *bagPocketId == 0)
-        *bagPocketId = POCKETS_COUNT - 1;
-    else
-        *bagPocketId += deltaBagPocketId;
+    do
+    {
+        if (deltaBagPocketId == MENU_CURSOR_DELTA_RIGHT && *bagPocketId == POCKETS_COUNT - 1)
+            *bagPocketId = 0;
+        else if (deltaBagPocketId == MENU_CURSOR_DELTA_LEFT && *bagPocketId == 0)
+            *bagPocketId = POCKETS_COUNT - 1;
+        else
+            *bagPocketId += deltaBagPocketId;
+    } while (*bagPocketId == TMHM_POCKET); // TMs are only viewed through the TM Case
 }
 
 static void SwitchBagPocket(u8 taskId, s16 deltaBagPocketId, bool16 skipEraseList)
@@ -1643,12 +1650,32 @@ static void DrawItemListBgRow(u8 y)
     ScheduleBgCopyTilemapToVram(2);
 }
 
-static void DrawPocketIndicatorSquare(u8 x, bool8 isCurrentPocket)
+// The TM pocket is hidden, so the bag only has 4 squares. The tilemap draws 5 at x 5-9,
+// so the first is blanked and the other 4 are used, keeping them centered under the pocket name.
+#define POCKET_SQUARE_TILE_BLANK    0x0002
+#define POCKET_SQUARE_TILE_OTHER    0x1017
+#define POCKET_SQUARE_TILE_CURRENT  0x102B
+
+static void DrawPocketIndicatorSquares(void)
 {
+    u32 i;
+
+    FillBgTilemapBufferRect_Palette0(2, POCKET_SQUARE_TILE_BLANK, 5, 3, 1, 1);
+    for (i = 0; i < POCKETS_COUNT; i++)
+    {
+        if (i != TMHM_POCKET)
+            DrawPocketIndicatorSquare(i, i == gBagPosition.pocket);
+    }
+}
+
+static void DrawPocketIndicatorSquare(u8 pocket, bool8 isCurrentPocket)
+{
+    u8 x = (pocket > TMHM_POCKET) ? pocket - 1 : pocket;
+
     if (!isCurrentPocket)
-        FillBgTilemapBufferRect_Palette0(2, 0x1017, x + 5, 3, 1, 1);
+        FillBgTilemapBufferRect_Palette0(2, POCKET_SQUARE_TILE_OTHER, x + 6, 3, 1, 1);
     else
-        FillBgTilemapBufferRect_Palette0(2, 0x102B, x + 5, 3, 1, 1);
+        FillBgTilemapBufferRect_Palette0(2, POCKET_SQUARE_TILE_CURRENT, x + 6, 3, 1, 1);
     ScheduleBgCopyTilemapToVram(2);
 }
 
@@ -2596,11 +2623,22 @@ static void Task_KeyItemWheel(u8 taskId) {
 #undef tIconWindow
 #undef tUsingRegisteredKeyItem
 
+static void CB2_OpenTMCaseForSelling(void)
+{
+    OpenTMCase(TMCASE_SELL, CB2_ReturnToBagMenuPocket, FALSE);
+}
+
 static void Task_ItemContext_Sell(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
 
-    if (GetItemPrice(gSpecialVar_ItemId) == 0)
+    // TMs have no bag pocket, so they're sold from inside the TM Case
+    if (gSpecialVar_ItemId == ITEM_TM_CASE)
+    {
+        gBagMenu->newScreenCallback = CB2_OpenTMCaseForSelling;
+        Task_FadeAndCloseBagMenu(taskId);
+    }
+    else if (GetItemPrice(gSpecialVar_ItemId) == 0)
     {
         CopyItemName(gSpecialVar_ItemId, gStringVar2);
         StringExpandPlaceholders(gStringVar4, gText_CantBuyKeyItem);
