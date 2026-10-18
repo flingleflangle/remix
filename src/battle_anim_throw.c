@@ -80,6 +80,7 @@ static void DestroyBallOpenAnimationParticle(struct Sprite *);
 static void FanOutBallOpenParticles_Step1(struct Sprite *);
 static void RepeatBallOpenParticleAnimation_Step1(struct Sprite *);
 static void PremierBallOpenParticleAnimation_Step1(struct Sprite *);
+static void Task_BallTimingFlash(u8);
 static void Task_FadeMon_ToBallColor(u8);
 static void Task_FadeMon_ToNormal(u8);
 static void Task_FadeMon_ToNormal_Step(u8);
@@ -1135,18 +1136,58 @@ static void SpriteCB_Ball_Wobble(struct Sprite *sprite)
 #define SHAKE_INC(state)   (state += 0x100)
 #define RESET_STATE(state) (state &= -0x100)
 
+#define tPalOffset data[0]
+#define tCoeff     data[1]
+#define tFadingIn  data[2]
+#define tBallId    data[3]
+
+// Smoothly fades the ball's palette to its ball type's open color (same as the mon release fade) and back to signal a well-timed B press.
+// Takes 16 frames, so it's done before the next shake or the release/capture palette effects.
+static void Task_BallTimingFlash(u8 taskId)
+{
+    if (gTasks[taskId].tFadingIn)
+    {
+        gTasks[taskId].tCoeff += 2;
+        if (gTasks[taskId].tCoeff >= 16)
+            gTasks[taskId].tFadingIn = FALSE;
+    }
+    else
+    {
+        gTasks[taskId].tCoeff -= 2;
+    }
+
+    BlendPalette(gTasks[taskId].tPalOffset, 16, gTasks[taskId].tCoeff, gBallOpenFadeColors[gTasks[taskId].tBallId]);
+    if (gTasks[taskId].tCoeff <= 0)
+        DestroyTask(taskId);
+}
+
+static void StartBallTimingFlash(struct Sprite *sprite)
+{
+    u8 taskId = CreateTask(Task_BallTimingFlash, 10);
+    gTasks[taskId].tPalOffset = OBJ_PLTT_ID(sprite->oam.paletteNum);
+    gTasks[taskId].tCoeff = 0;
+    gTasks[taskId].tFadingIn = TRUE;
+    gTasks[taskId].tBallId = ItemIdToBallId(gLastUsedItem);
+}
+
+#undef tPalOffset
+#undef tCoeff
+#undef tFadingIn
+#undef tBallId
+
 static void SpriteCB_Ball_Wobble_Step(struct Sprite *sprite)
 {
     s8 shakes = SHAKES(sprite->sState) + 1;
     u16 frame;
-	if(JOY_NEW(B_BUTTON) && (STATE(sprite->sState) != BALL_WAIT_NEXT_SHAKE)){  //  IF new B button pressed when the ball is shaking
+    bool8 checkTiming = !(gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL);  // B presses do nothing during Wally's catch tutorial
+	if(checkTiming && JOY_NEW(B_BUTTON) && (STATE(sprite->sState) != BALL_WAIT_NEXT_SHAKE)){  //  IF new B button pressed when the ball is shaking
         gBallShakesBData.ballShakesArray |= (1 << ((2 * shakes) - 1));
     }
 
     switch (STATE(sprite->sState))
     {
     case BALL_ROLL_1:
-		if(gBallShakesBData.ballShakesArray >> 6 != shakes && !JOY_HELD(B_BUTTON)){  // At the beginning of the shake, check to make sure B isn't being held to discourage spamming B.
+		if(checkTiming && gBallShakesBData.ballShakesArray >> 6 != shakes && !JOY_HELD(B_BUTTON)){  // At the beginning of the shake, check to make sure B isn't being held to discourage spamming B.
             gBallShakesBData.ballShakesArray |= (1 << ((shakes - 1) * 2));
         }
         // Rolling effect: every frame in the rotation, the sprite shifts 176/256 of a pixel.
@@ -1255,6 +1296,7 @@ static void SpriteCB_Ball_Wobble_Step(struct Sprite *sprite)
         if (((gBallShakesBData.ballShakesArray >> ((shakes - 1) * 2)) & 0x03) == 0x03){
             gBallShakesBData.odds = (BALL_SHAKE_BUTTON_MULT * gBallShakesBData.odds) / 10;
 			PlaySE(SE_RG_BAG_CURSOR);
+            StartBallTimingFlash(sprite);
         }
         gBallShakesBData.shakes += CalcNextShakeFromOdds(gBallShakesBData.odds);
         gBattleSpritesDataPtr->animationData->ballThrowCaseId = gBallShakesBData.shakes;
