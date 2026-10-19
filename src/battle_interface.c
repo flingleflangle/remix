@@ -1102,13 +1102,42 @@ void InitBattlerHealthboxCoords(u8 battler)
     UpdateSpritePos(gHealthboxSpriteIds[battler], x, y);
 }
 
+// EX Pokémon show the EX logo in place of "Lv", so it shows whatever their status is.
+// The logo's fill is an unused healthbox palette color, set to the orange of the HP bar's "HP" label.
+// Its shadow is the healthbox text's usual shadow color. (11, the next color, is the EXP bar's blue)
+#define EX_LOGO_PAL_FILL   10
+#define EX_LOGO_PAL_SHADOW 3
+#define EX_LOGO_LEFT       4  // The logo's pixels in gHealthboxExLogoGfx (16x8)
+#define EX_LOGO_WIDTH      10
+#define EX_LOGO_HEIGHT     7
+#define EX_LOGO_Y          8  // In the level's text window, lined up with the digits
+
+static void DrawExLogoInLevelWindow(u32 windowId, s32 x, u8 healthboxSpriteId)
+{
+    static const u16 sExLogoFillColor = RGB(27, 13, 11);
+    u8 logo[2 * TILE_SIZE_4BPP];
+    u32 i;
+
+    // The logo's background (2) becomes transparent, and its fill (1) becomes orange
+    for (i = 0; i < sizeof(logo); i++)
+    {
+        static const u8 sColorMap[16] = { [1] = EX_LOGO_PAL_FILL, [3] = EX_LOGO_PAL_SHADOW };
+        u8 pixels = gHealthboxExLogoGfx[i];
+        logo[i] = sColorMap[pixels & 0xF] | (sColorMap[pixels >> 4] << 4);
+    }
+    LoadPalette(&sExLogoFillColor, OBJ_PLTT_ID(gSprites[healthboxSpriteId].oam.paletteNum) + EX_LOGO_PAL_FILL, PLTT_SIZEOF(1));
+    BlitBitmapRectToWindow(windowId, logo, EX_LOGO_LEFT, 0, 16, 8, max(x, 0), EX_LOGO_Y, EX_LOGO_WIDTH, EX_LOGO_HEIGHT);
+}
+
 static void UpdateLvlInHealthbox(u8 healthboxSpriteId, u8 lvl)
 {
+    static const u8 sText_Lv[] = { CHAR_EXTRA_SYMBOL, CHAR_LV_2, EOS };
     u32 windowId, spriteTileNum;
     u8 *windowTileData;
     u8 text[16];
     u32 xPos;
     u8 *objVram;
+    bool32 isEx = IsMonEx(GetBattlerPartyMon(gSprites[healthboxSpriteId].hMain_Battler));
 
     text[0] = CHAR_EXTRA_SYMBOL;
     text[1] = CHAR_LV_2;
@@ -1116,7 +1145,18 @@ static void UpdateLvlInHealthbox(u8 healthboxSpriteId, u8 lvl)
     objVram = ConvertIntToDecimalStringN(text + 2, lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
     xPos = 5 * (3 - (objVram - (text + 2)));
 
-    windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text, xPos, 3, 2, &windowId);
+    if (isEx)
+    {
+        // Just the digits, where they'd be after "Lv", with the EX logo just before them
+        u32 digitsX = xPos + GetStringWidth(FONT_SMALL, sText_Lv, 0);
+
+        windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text + 2, digitsX, 3, 2, &windowId);
+        DrawExLogoInLevelWindow(windowId, (s32)digitsX - EX_LOGO_WIDTH, healthboxSpriteId);
+    }
+    else
+    {
+        windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text, xPos, 3, 2, &windowId);
+    }
     spriteTileNum = gSprites[healthboxSpriteId].oam.tileNum * TILE_SIZE_4BPP;
 
     if (GetBattlerSide(gSprites[healthboxSpriteId].hMain_Battler) == B_SIDE_PLAYER)
@@ -2053,10 +2093,6 @@ static void UpdateStatusIconInHealthbox(u8 healthboxSpriteId)
 
         for (i = 0; i < 3; i++)
             CpuCopy32(statusGfxPtr, (void *)(OBJ_VRAM0 + (gSprites[healthboxSpriteId].oam.tileNum + tileNumAdder + i) * TILE_SIZE_4BPP), 32);
-
-        // With no status icon to show, EX Pokemon get the EX logo in its place
-        if (IsMonEx(mon))
-            CpuCopy32(gHealthboxExLogoGfx, (void *)(OBJ_VRAM0 + (gSprites[healthboxSpriteId].oam.tileNum + tileNumAdder) * TILE_SIZE_4BPP), 96);
 
         if (!gBattleSpritesDataPtr->battlerData[battler].hpNumbersNoBars)
             CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_1), (void *)(OBJ_VRAM0 + gSprites[healthBarSpriteId].oam.tileNum * TILE_SIZE_4BPP), 64);

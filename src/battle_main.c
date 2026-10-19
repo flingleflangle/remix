@@ -181,6 +181,15 @@ EWRAM_DATA s32 gBattleMoveDamage = 0;
 EWRAM_DATA s32 gHpDealt = 0;
 EWRAM_DATA s32 gBideDmg[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gLastUsedItem = 0;
+EWRAM_DATA u8 gBattleMoveIsEx = 0;      // The current move is being used as an EX move (see data/battle_scripts_ex.s)
+EWRAM_DATA u8 gBattleExAnimPending = 0; // Its next animation should start with the EX flash
+EWRAM_DATA u16 gBattleExUpgradedFrom = 0; // The chosen move, if it became a stronger move as an EX upgrade
+EWRAM_DATA u8 gBattleExBonusPending = 0; // The move gets an EX bonus at its attackstring
+EWRAM_DATA u8 gExHealReplacementSides = 0; // Sides whose next Pokémon to switch in gets its HP restored (EX_BONUS_HEAL_REPLACEMENT)
+EWRAM_DATA u8 gSureCritBattlers = 0; // Battlers whose next damaging move is a guaranteed critical hit (Foresight)
+EWRAM_DATA u8 gThisMoveSureCrit = 0; // The current move is that guaranteed critical hit
+EWRAM_DATA u8 gIgnoreResistances = 0;   // The next typecalc treats resisted hits as neutral
+EWRAM_DATA u8 gExMoveChosenBits = 0;    // Battlers that chose to use their move as an EX move this turn
 EWRAM_DATA struct BattleOddsModifierButtonPress gBallShakesBData = {0};
 EWRAM_DATA u8 gLastUsedAbility = 0;
 EWRAM_DATA u8 gBattlerAttacker = 0;
@@ -3185,6 +3194,8 @@ static void BattleStartClearSetData(void)
 
     TurnValuesCleanUp(FALSE);
     SpecialStatusesClear();
+    gExHealReplacementSides = 0;
+    gSureCritBattlers = 0;
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
     {
@@ -3303,6 +3314,8 @@ void SwitchInClearSetData(void)
     struct DisableStruct disableStructCopy = gDisableStructs[gActiveBattler];
     s32 i;
     u8 *ptr;
+
+    gSureCritBattlers &= ~gBitTable[gActiveBattler]; // Foresight's guaranteed critical hit doesn't carry over
 
     if (gBattleMoves[gCurrentMove].effect != EFFECT_BATON_PASS)
     {
@@ -4396,6 +4409,7 @@ static void HandleTurnActionSelectionState(void)
             break;
         case STATE_BEFORE_ACTION_CHOSEN: // Choose an action.
             *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+            gExMoveChosenBits &= ~gBitTable[gActiveBattler];
             if (gBattleTypeFlags & BATTLE_TYPE_MULTI
                 || (position & BIT_FLANK) == B_FLANK_LEFT
                 || gBattleStruct->absentBattlerFlags & gBitTable[GetBattlerAtPosition(BATTLE_PARTNER(position))]
@@ -4633,8 +4647,17 @@ static void HandleTurnActionSelectionState(void)
                         {
                             gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
                             RecordedBattle_ClearBattlerAction(gActiveBattler, 1);
+                            break;
                         }
-                        else if (TrySetCantSelectMoveBattleScript())
+
+                        // The player can choose to use their move as an EX move (see data/battle_scripts_ex.s)
+                        if (gBattleBufferB[gActiveBattler][2] & CHOSEN_MOVE_EX_FLAG)
+                        {
+                            gBattleBufferB[gActiveBattler][2] &= ~CHOSEN_MOVE_EX_FLAG;
+                            gExMoveChosenBits |= gBitTable[gActiveBattler];
+                        }
+
+                        if (TrySetCantSelectMoveBattleScript())
                         {
                             RecordedBattle_ClearBattlerAction(gActiveBattler, 1);
                             gBattleCommunication[gActiveBattler] = STATE_SELECTION_SCRIPT;

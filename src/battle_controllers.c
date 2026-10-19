@@ -1119,7 +1119,8 @@ void BtlController_EmitMoveAnimation(u8 bufferId, u16 move, u8 turnOfMove, u16 m
         sBattleBuffersTransferData[12] = 0;
         sBattleBuffersTransferData[13] = 0;
     }
-    sBattleBuffersTransferData[14] = 0;
+    sBattleBuffersTransferData[14] = gBattleExAnimPending; // Starts with the EX flash. See DoMoveAnim
+    gBattleExAnimPending = FALSE;
     sBattleBuffersTransferData[15] = 0;
     memcpy(&sBattleBuffersTransferData[16], disableStructPtr, sizeof(struct DisableStruct));
     PrepareBufferDataTransfer(bufferId, sBattleBuffersTransferData, 16 + sizeof(struct DisableStruct));
@@ -1136,7 +1137,7 @@ void BtlController_EmitPrintString(u8 bufferId, u16 stringId)
     sBattleBuffersTransferData[3] = (stringId & 0xFF00) >> 8;
 
     stringInfo = (struct BattleMsgData *)(&sBattleBuffersTransferData[4]);
-    stringInfo->currentMove = gCurrentMove;
+    stringInfo->currentMove = gBattleExUpgradedFrom ? gBattleExUpgradedFrom : gCurrentMove; // EX upgrades keep the chosen move's name
     stringInfo->originallyUsedMove = gChosenMove;
     stringInfo->lastItem = gLastUsedItem;
     stringInfo->lastAbility = gLastUsedAbility;
@@ -1168,7 +1169,7 @@ void BtlController_EmitPrintSelectionString(u8 bufferId, u16 stringId)
     sBattleBuffersTransferData[3] = (stringId & 0xFF00) >> 8;
 
     stringInfo = (struct BattleMsgData *)(&sBattleBuffersTransferData[4]);
-    stringInfo->currentMove = gCurrentMove;
+    stringInfo->currentMove = gBattleExUpgradedFrom ? gBattleExUpgradedFrom : gCurrentMove; // EX upgrades keep the chosen move's name
     stringInfo->originallyUsedMove = gChosenMove;
     stringInfo->lastItem = gLastUsedItem;
     stringInfo->lastAbility = gLastUsedAbility;

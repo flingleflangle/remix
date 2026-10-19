@@ -1310,6 +1310,9 @@ static void Cmd_attackstring(void)
     }
     gBattlescriptCurrInstr++;
     gBattleCommunication[MSG_DISPLAY] = 0;
+
+    // An EX move's bonus comes right after "X used Y!" (see gExMoveBonuses in data/battle_scripts_ex.s)
+    TryStartExMoveBonus();
 }
 
 static void Cmd_ppreduce(void)
@@ -1318,6 +1321,9 @@ static void Cmd_ppreduce(void)
 
     if (gBattleControllerExecFlags)
         return;
+
+    if (gBattleMoveIsEx) // EX moves cost 2 PP
+        ppToDeduct++;
 
     if (!gSpecialStatuses[gBattlerAttacker].ppNotAffectedByPressure)
     {
@@ -1394,6 +1400,10 @@ static void Cmd_critcalc(void)
     if (critChance >= ARRAY_COUNT(sCriticalHitChance))
         critChance = ARRAY_COUNT(sCriticalHitChance) - 1;
 
+    // Foresight makes the user's next damaging move a guaranteed critical hit (see gSureCritBattlers)
+    if (gThisMoveSureCrit)
+        guaranteedCrit = TRUE;
+
     // A foe's first hit on a battler left wide open by a failed Detect is always critical
     if (gDisableStructs[gBattlerTarget].wideOpen
      && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
@@ -1453,6 +1463,10 @@ void AI_CalcDmg(u8 attacker, u8 defender)
 
 static void ModulateDmgByType(u8 multiplier)
 {
+    // Some EX moves treat resisted hits as neutral (see VARIOUS_IGNORE_RESISTANCES)
+    if (multiplier == TYPE_MUL_NOT_EFFECTIVE && gIgnoreResistances)
+        return;
+
     gBattleMoveDamage = gBattleMoveDamage * multiplier / 10;
     if (gBattleMoveDamage == 0 && multiplier != 0)
         gBattleMoveDamage = 1;
@@ -5607,6 +5621,20 @@ static void Cmd_switchineffects(void)
     gHitMarker &= ~HITMARKER_FAINTED(gActiveBattler);
     gSpecialStatuses[gActiveBattler].faintedHasReplacement = FALSE;
 
+    // An EX Memento (EX_BONUS_HEAL_REPLACEMENT) restores the HP of the next Pokémon to switch in on that side
+    if (gExHealReplacementSides & gBitTable[GetBattlerSide(gActiveBattler)] && gBattleMons[gActiveBattler].hp != 0)
+    {
+        gExHealReplacementSides &= ~gBitTable[GetBattlerSide(gActiveBattler)];
+        if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP)
+        {
+            gBattleMoveDamage = gBattleMons[gActiveBattler].hp - gBattleMons[gActiveBattler].maxHP;
+            gBattleScripting.battler = gActiveBattler;
+            BattleScriptPushCursor();
+            gBattlescriptCurrInstr = BattleScript_ExHealReplacement;
+            return;
+        }
+    }
+
     if (!(gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SPIKES_DAMAGED)
         && (gSideStatuses[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SPIKES)
         && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
@@ -7030,6 +7058,59 @@ static void Cmd_various(void)
         break;
     case VARIOUS_CANCEL_SWITCH:
         *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+        break;
+    case VARIOUS_IGNORE_RESISTANCES:
+        // The next typecalc of this move treats resisted hits as neutral
+        gIgnoreResistances = TRUE;
+        break;
+    // EX move bonuses (see gExMoveBonuses in data/battle_scripts_ex.s)
+    case VARIOUS_EX_BONUS_END:
+        RestoreExMoveBonusState();
+        break;
+    case VARIOUS_EX_RESET_LOWERED_STATS:
+        // Sets gBattleCommunication[0] to whether any were lowered
+        {
+            u32 i;
+
+            gBattleCommunication[0] = FALSE;
+            for (i = 0; i < NUM_BATTLE_STATS; i++)
+            {
+                if (gBattleMons[gActiveBattler].statStages[i] < DEFAULT_STAT_STAGE)
+                {
+                    gBattleMons[gActiveBattler].statStages[i] = DEFAULT_STAT_STAGE;
+                    gBattleCommunication[0] = TRUE;
+                }
+            }
+        }
+        break;
+    case VARIOUS_EX_BOOST_CRITS:
+        // Like Focus Energy, without failing the move. Sets gBattleCommunication[0] to whether it worked
+        gBattleCommunication[0] = !(gBattleMons[gActiveBattler].status2 & STATUS2_FOCUS_ENERGY);
+        gBattleMons[gActiveBattler].status2 |= STATUS2_FOCUS_ENERGY;
+        break;
+    case VARIOUS_EX_FOLLOW_ME:
+        gSideTimers[GetBattlerSide(gActiveBattler)].followmeTimer = 1;
+        gSideTimers[GetBattlerSide(gActiveBattler)].followmeTarget = gActiveBattler;
+        break;
+    case VARIOUS_EX_SET_HEAL:
+        // Sets the damage to heal the battler like Recover, and gBattleCommunication[0] to whether it needs healing
+        gBattleCommunication[0] = SetExBonusHealDamage(gActiveBattler);
+        break;
+    case VARIOUS_EX_STATS_UP_ANIM:
+        // Sets gBattleCommunication[0] to whether any of the bonus's stats can rise
+        gBattleCommunication[0] = SetExBonusStatsUpAnim(gActiveBattler);
+        break;
+    case VARIOUS_EX_NEXT_BONUS_STAT:
+        // Sets gBattleCommunication[0] to whether there's another stat to raise
+        gBattleCommunication[0] = SetNextExBonusStat();
+        break;
+    case VARIOUS_SET_SURE_CRIT:
+        // Foresight: the battler's next damaging move is a guaranteed critical hit
+        gSureCritBattlers |= gBitTable[gActiveBattler];
+        break;
+    case VARIOUS_EX_HEAL_REPLACEMENT:
+        // The next Pokémon to switch in on this side gets its HP restored (see Cmd_switchineffects)
+        gExHealReplacementSides |= gBitTable[GetBattlerSide(gActiveBattler)];
         break;
     }
 

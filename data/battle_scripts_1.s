@@ -2808,6 +2808,11 @@ BattleScript_EffectForesight::
 	waitanimation
 	printstring STRINGID_PKMNIDENTIFIED
 	waitmessage B_WAIT_TIME_LONG
+	@ Foresight (not Odor Sleuth) also makes the user's next damaging move a guaranteed critical hit
+	jumpifnotmove MOVE_FORESIGHT, BattleScript_MoveEnd
+	various BS_ATTACKER, VARIOUS_SET_SURE_CRIT
+	printstring STRINGID_PKMNAIMEDNEXTATTACK
+	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectPerishSong::

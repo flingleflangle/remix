@@ -660,6 +660,20 @@ extern s32 gBattleMoveDamage;
 extern s32 gHpDealt;
 extern s32 gBideDmg[MAX_BATTLERS_COUNT];
 extern u16 gLastUsedItem;
+extern u8 gBattleMoveIsEx;
+extern u8 gBattleExAnimPending;
+extern u16 gBattleExUpgradedFrom;
+extern u8 gBattleExBonusPending;
+extern u8 gExHealReplacementSides;
+extern u8 gSureCritBattlers;
+extern u8 gThisMoveSureCrit;
+
+// gBattleExAnimPending values. Sent with the move animation, see DoMoveAnim
+#define EX_ANIM_NONE       0
+#define EX_ANIM_EX_MOVE    1 // EXMove flash, or the animation's own EX version (chooseEXanimation)
+#define EX_ANIM_FLASH_ONLY 2 // EXMove flash before the regular animation, for EX upgrades
+extern u8 gIgnoreResistances;
+extern u8 gExMoveChosenBits;
 extern struct BattleOddsModifierButtonPress gBallShakesBData;
 extern u8 gLastUsedAbility;
 extern u8 gBattlerAttacker;

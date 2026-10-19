@@ -246,4 +246,16 @@ extern const u8 BattleScript_MoveEffectIgnite[];
 extern const u8 BattleScript_IgniteTurnDmg[];
 extern const u8 BattleScript_SnowWarningActivates[];
 
+// EX moves (data/battle_scripts_ex.s)
+extern const u8 BattleScript_ExBonusStatUp[];
+extern const u8 BattleScript_ExBonusAllStatsUp[];
+extern const u8 BattleScript_ExBonusResetStats[];
+extern const u8 BattleScript_ExBonusBoostCrits[];
+extern const u8 BattleScript_ExBonusFollowMe[];
+extern const u8 BattleScript_ExBonusCurse[];
+extern const u8 BattleScript_ExBonusRecoverHp[];
+extern const u8 BattleScript_ExBonusHealReplacement[];
+extern const u8 BattleScript_ExBonusStatsUp[];
+extern const u8 BattleScript_ExHealReplacement[];
+
 #endif // GUARD_BATTLE_SCRIPTS_H

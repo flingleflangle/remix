@@ -8,6 +8,7 @@
 #include "battle_message.h"
 #include "battle_setup.h"
 #include "battle_tv.h"
+#include "battle_util.h"
 #include "bg.h"
 #include "data.h"
 #include "item.h"
@@ -98,12 +99,20 @@ static void PlayerCmdEnd(void);
 static void PlayerBufferRunCommand(void);
 static void HandleInputChooseTarget(void);
 static void HandleInputChooseMove(void);
+static void HandleChooseMoveAfterDma3(void);
 static void MoveSelectionCreateCursorAt(u8, u8);
 static void MoveSelectionDestroyCursorAt(u8);
 static void MoveSelectionDisplayPpNumber(void);
 static void MoveSelectionDisplayPpString(void);
 static void MoveSelectionDisplayMoveType(void);
 static void MoveSelectionDisplayMoveDescription(void);
+static void MoveSelectionPrintMoveName(u8 slot, bool32 asExMove);
+static void StopExMoveFlash(void);
+static void StartExMoveFlash(void);
+static bool32 IsCursorOnExMove(u8 cursorPosition);
+static void MoveSelectionUnhighlightExMove(void);
+static bool32 IsMoveExReady(u8 slot);
+static u8 GetChosenMoveSlot(void);
 static void MoveSelectionDisplayMoveNames(void);
 static void HandleMoveSwitching(void);
 static void SwitchIn_HandleSoundAndEnd(void);
@@ -185,6 +194,7 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(void) =
 };
 
 static EWRAM_DATA bool8 sDescriptionSubmenu = 0;
+static EWRAM_DATA bool8 sExModeOn = FALSE; // L was pressed, so highlighted moves will be used as EX moves (see data/battle_scripts_ex.s)
 
 static const u8 sTargetIdentities[MAX_BATTLERS_COUNT] = {B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, B_POSITION_OPPONENT_LEFT};
 
@@ -380,7 +390,7 @@ static void HandleInputChooseTarget(void)
     {
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCB_HideAsMoveTarget;
-        BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, 10, gMoveSelectionCursor[gActiveBattler] | (gMultiUsePlayerCursor << 8));
+        BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, 10, GetChosenMoveSlot() | (gMultiUsePlayerCursor << 8));
         EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
         PlayerBufferExecCompleted();
     }
@@ -483,6 +493,14 @@ static void HandleInputChooseTarget(void)
     }
 }
 
+// The button that turns EX mode on or off in the move menu: L, or START with the L=A option, where L acts as A
+static u16 GetExModeButton(void)
+{
+    if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_L_EQUALS_A)
+        return START_BUTTON;
+    return L_BUTTON;
+}
+
 static void HandleInputChooseMove(void)
 {
     bool32 canSelectTarget = FALSE;
@@ -492,6 +510,21 @@ static void HandleInputChooseMove(void)
         gPlayerDpadHoldFrames++;
     else
         gPlayerDpadHoldFrames = 0;
+
+    // L turns EX mode on or off (see data/battle_scripts_ex.s). While it's on, every highlighted move that can
+    // be used as an EX move is readied, with its name pulsing yellow.
+    // With the L=A option, L chooses the move like A, so START turns EX mode on or off instead (in place of the move description)
+    if (JOY_NEW(GetExModeButton()) && !sDescriptionSubmenu
+     && (sExModeOn || IsCursorOnExMove(gMoveSelectionCursor[gActiveBattler])))
+    {
+        u8 slot = gMoveSelectionCursor[gActiveBattler];
+
+        MoveSelectionUnhighlightExMove();
+        sExModeOn = !sExModeOn;
+        PlaySE(sExModeOn ? SE_EXP_MAX : SE_SELECT); // Same sound as turning on an EX form
+        MoveSelectionCreateCursorAt(slot, 0); // Moves the pulse between the cursor and the move's name
+        return;
+    }
 
     if (JOY_NEW(A_BUTTON))
     {
@@ -538,7 +571,7 @@ static void HandleInputChooseMove(void)
 
         if (!canSelectTarget)
         {
-            BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, 10, gMoveSelectionCursor[gActiveBattler] | (gMultiUsePlayerCursor << 8));
+            BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, 10, GetChosenMoveSlot() | (gMultiUsePlayerCursor << 8));
             PlayerBufferExecCompleted();
         }
         else
@@ -565,6 +598,7 @@ static void HandleInputChooseMove(void)
     {
         if (gMoveSelectionCursor[gActiveBattler] & 1)
         {
+            MoveSelectionUnhighlightExMove();
             MoveSelectionDestroyCursorAt(gMoveSelectionCursor[gActiveBattler]);
             gMoveSelectionCursor[gActiveBattler] ^= 1;
             PlaySE(SE_SELECT);
@@ -580,6 +614,7 @@ static void HandleInputChooseMove(void)
         if (!(gMoveSelectionCursor[gActiveBattler] & 1)
          && (gMoveSelectionCursor[gActiveBattler] ^ 1) < gNumberOfMovesToChoose)
         {
+            MoveSelectionUnhighlightExMove();
             MoveSelectionDestroyCursorAt(gMoveSelectionCursor[gActiveBattler]);
             gMoveSelectionCursor[gActiveBattler] ^= 1;
             PlaySE(SE_SELECT);
@@ -594,6 +629,7 @@ static void HandleInputChooseMove(void)
     {
         if (gMoveSelectionCursor[gActiveBattler] & 2)
         {
+            MoveSelectionUnhighlightExMove();
             MoveSelectionDestroyCursorAt(gMoveSelectionCursor[gActiveBattler]);
             gMoveSelectionCursor[gActiveBattler] ^= 2;
             PlaySE(SE_SELECT);
@@ -609,6 +645,7 @@ static void HandleInputChooseMove(void)
         if (!(gMoveSelectionCursor[gActiveBattler] & 2)
          && (gMoveSelectionCursor[gActiveBattler] ^ 2) < gNumberOfMovesToChoose)
         {
+            MoveSelectionUnhighlightExMove();
             MoveSelectionDestroyCursorAt(gMoveSelectionCursor[gActiveBattler]);
             gMoveSelectionCursor[gActiveBattler] ^= 2;
             PlaySE(SE_SELECT);
@@ -648,7 +685,7 @@ static void HandleInputChooseMove(void)
             MoveSelectionDisplayMoveType();
         }
     }
-    else if (JOY_NEW(START_BUTTON)) //AdditionalBattleInfo
+    else if (JOY_NEW(START_BUTTON) && GetExModeButton() != START_BUTTON) //AdditionalBattleInfo
     {
         sDescriptionSubmenu = TRUE;
         MoveSelectionDisplayMoveDescription();
@@ -1499,16 +1536,157 @@ static void MoveSelectionDisplayMoveNames(void)
     s32 i;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
     gNumberOfMovesToChoose = 0;
+    sExModeOn = FALSE;
+    StopExMoveFlash();
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
         MoveSelectionDestroyCursorAt(i);
-        StringCopy(gDisplayedStringBattle, gMoveNames[moveInfo->moves[i]]);
-        // Prints on windows B_WIN_MOVE_NAME_1, B_WIN_MOVE_NAME_2, B_WIN_MOVE_NAME_3, B_WIN_MOVE_NAME_4
-        BattlePutTextOnWindow(gDisplayedStringBattle, i + B_WIN_MOVE_NAME_1);
+        MoveSelectionPrintMoveName(i, FALSE);
         if (moveInfo->moves[i] != MOVE_NONE)
             gNumberOfMovesToChoose++;
     }
+}
+
+// EX moves (see data/battle_scripts_ex.s)
+
+// Unused colors of the battle text palette (BG palette 5), for an EX move's yellow name
+#define EX_MOVE_NAME_COLOR        9
+#define EX_MOVE_NAME_SHADOW_COLOR 10
+
+// The cursor pulses yellow while it highlights a move that can be used as an EX move. It's drawn with a
+// copy of the textbox palette (BG palette 0) in this otherwise unused palette, so only its colors change
+#define EX_MOVE_CURSOR_PALETTE      15
+#define EX_MOVE_CURSOR_COLOR        9 // The cursor arrow's fill and shadow in the textbox palette
+#define EX_MOVE_CURSOR_SHADOW_COLOR 7
+
+// The cursor, and the name of a readied EX move, flash from their usual colors to these yellows and back,
+// taking EX_MOVE_FLASH_FRAMES each way
+#define EX_MOVE_FLASH_FRAMES 16
+static const u16 sExMoveFlashColors_Yellow[] = { RGB(26, 20, 0), RGB(31, 28, 16) }; // Fill, shadow
+
+// The usual colors they flash from: the move names' text and shadow (in BG palette 5), and the cursor's (in BG palette 0)
+#define MOVE_NAME_TEXT_COLOR   13
+#define MOVE_NAME_SHADOW_COLOR 15
+
+// Mixes from toward to by amount, out of EX_MOVE_FLASH_FRAMES
+static u16 MixExMoveFlashColor(u16 from, u16 to, u32 amount)
+{
+    s32 r = GET_R(from) + (GET_R(to) - GET_R(from)) * (s32)amount / EX_MOVE_FLASH_FRAMES;
+    s32 g = GET_G(from) + (GET_G(to) - GET_G(from)) * (s32)amount / EX_MOVE_FLASH_FRAMES;
+    s32 b = GET_B(from) + (GET_B(to) - GET_B(from)) * (s32)amount / EX_MOVE_FLASH_FRAMES;
+
+    return RGB(r, g, b);
+}
+
+#define tFrame   data[0]
+#define tBattler data[1]
+
+// Sets the pulsing colors for this frame of the flash
+static void UpdateExMoveFlashColors(u32 frame)
+{
+    u16 nameColors[2], cursorColor, cursorShadowColor;
+    u32 amount;
+
+    frame %= EX_MOVE_FLASH_FRAMES * 2;
+    amount = (frame < EX_MOVE_FLASH_FRAMES) ? frame : EX_MOVE_FLASH_FRAMES * 2 - frame; // Out of EX_MOVE_FLASH_FRAMES
+    nameColors[0] = MixExMoveFlashColor(gPlttBufferUnfaded[BG_PLTT_ID(5) + MOVE_NAME_TEXT_COLOR], sExMoveFlashColors_Yellow[0], amount);
+    nameColors[1] = MixExMoveFlashColor(gPlttBufferUnfaded[BG_PLTT_ID(5) + MOVE_NAME_SHADOW_COLOR], sExMoveFlashColors_Yellow[1], amount);
+    cursorColor = MixExMoveFlashColor(gPlttBufferUnfaded[BG_PLTT_ID(0) + EX_MOVE_CURSOR_COLOR], sExMoveFlashColors_Yellow[0], amount);
+    cursorShadowColor = MixExMoveFlashColor(gPlttBufferUnfaded[BG_PLTT_ID(0) + EX_MOVE_CURSOR_SHADOW_COLOR], sExMoveFlashColors_Yellow[1], amount);
+
+    LoadPalette(nameColors, BG_PLTT_ID(5) + EX_MOVE_NAME_COLOR, sizeof(nameColors));
+    LoadPalette(&cursorColor, BG_PLTT_ID(EX_MOVE_CURSOR_PALETTE) + EX_MOVE_CURSOR_COLOR, PLTT_SIZEOF(1));
+    LoadPalette(&cursorShadowColor, BG_PLTT_ID(EX_MOVE_CURSOR_PALETTE) + EX_MOVE_CURSOR_SHADOW_COLOR, PLTT_SIZEOF(1));
+}
+
+static void Task_FlashExMove(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+
+    // Stops once the move menu closes
+    if (gBattlerControllerFuncs[tBattler] != HandleChooseMoveAfterDma3
+     && gBattlerControllerFuncs[tBattler] != HandleInputChooseMove
+     && gBattlerControllerFuncs[tBattler] != HandleInputChooseTarget
+     && gBattlerControllerFuncs[tBattler] != HandleMoveSwitching)
+    {
+        DestroyTask(taskId);
+        return;
+    }
+    UpdateExMoveFlashColors(tFrame++);
+}
+
+static void StopExMoveFlash(void)
+{
+    u8 taskId = FindTaskIdByFunc(Task_FlashExMove);
+
+    if (taskId != TASK_NONE)
+        DestroyTask(taskId);
+}
+
+// Starts (or restarts) the flash from its dark colors
+static void StartExMoveFlash(void)
+{
+    u8 taskId;
+
+    StopExMoveFlash();
+    LoadPalette(&gPlttBufferUnfaded[BG_PLTT_ID(0)], BG_PLTT_ID(EX_MOVE_CURSOR_PALETTE), PLTT_SIZE_4BPP);
+    // Sets its first colors here, not by running the task, which would stop itself if the menu is still opening
+    UpdateExMoveFlashColors(0);
+    taskId = CreateTask(Task_FlashExMove, 1);
+    gTasks[taskId].tFrame = 1;
+    gTasks[taskId].tBattler = gActiveBattler;
+}
+
+#undef tFrame
+#undef tBattler
+
+// Whether this Pokémon can use the move in this slot as an EX move right now, with the 2 PP one costs
+static bool32 IsCursorOnExMove(u8 cursorPosition)
+{
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
+
+    return CanBattlerUseExMove(gActiveBattler, moveInfo->moves[cursorPosition])
+        && moveInfo->currentPp[cursorPosition] >= 2;
+}
+
+// Whether the move in this slot will be used as an EX move: EX mode is on (L), and it can be one
+static bool32 IsMoveExReady(u8 slot)
+{
+    return sExModeOn && IsCursorOnExMove(slot);
+}
+
+static void MoveSelectionPrintMoveName(u8 slot, bool32 asExMove)
+{
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
+    u8 *str = gDisplayedStringBattle;
+
+    if (asExMove)
+    {
+        *str++ = EXT_CTRL_CODE_BEGIN;
+        *str++ = EXT_CTRL_CODE_COLOR_HIGHLIGHT_SHADOW;
+        *str++ = EX_MOVE_NAME_COLOR;
+        *str++ = 14; // The move name windows' background color
+        *str++ = EX_MOVE_NAME_SHADOW_COLOR;
+    }
+    StringCopy(str, gMoveNames[moveInfo->moves[slot]]);
+    // Prints on windows B_WIN_MOVE_NAME_1, B_WIN_MOVE_NAME_2, B_WIN_MOVE_NAME_3, B_WIN_MOVE_NAME_4
+    BattlePutTextOnWindow(gDisplayedStringBattle, slot + B_WIN_MOVE_NAME_1);
+}
+
+// When the cursor leaves a readied EX move, its name goes back to normal
+static void MoveSelectionUnhighlightExMove(void)
+{
+    if (IsMoveExReady(gMoveSelectionCursor[gActiveBattler]))
+        MoveSelectionPrintMoveName(gMoveSelectionCursor[gActiveBattler], FALSE);
+}
+
+// The chosen move's slot, flagged if it will be used as an EX move
+static u8 GetChosenMoveSlot(void)
+{
+    u8 slot = gMoveSelectionCursor[gActiveBattler];
+
+    return slot | (IsMoveExReady(slot) ? CHOSEN_MOVE_EX_FLAG : 0);
 }
 
 static void MoveSelectionDisplayPpString(void)
@@ -1586,6 +1764,29 @@ static void MoveSelectionCreateCursorAt(u8 cursorPosition, u8 baseTileNum)
     u16 src[2];
     src[0] = baseTileNum + 1;
     src[1] = baseTileNum + 2;
+
+    // On moves that can be used as EX moves (see data/battle_scripts_ex.s), the cursor pulses yellow.
+    // Once EX mode is on, the pulse moves to the readied move's name instead
+    if (baseTileNum == 0)
+    {
+        if (IsCursorOnExMove(cursorPosition))
+        {
+            if (IsMoveExReady(cursorPosition))
+            {
+                MoveSelectionPrintMoveName(cursorPosition, TRUE);
+            }
+            else
+            {
+                src[0] |= EX_MOVE_CURSOR_PALETTE << 12;
+                src[1] |= EX_MOVE_CURSOR_PALETTE << 12;
+            }
+            StartExMoveFlash();
+        }
+        else
+        {
+            StopExMoveFlash();
+        }
+    }
 
     CopyToBgTilemapBufferRect_ChangePalette(0, src, 9 * (cursorPosition & 1) + 1, 55 + (cursorPosition & 2), 1, 2, 0x11);
     CopyBgTilemapBufferToVram(0);

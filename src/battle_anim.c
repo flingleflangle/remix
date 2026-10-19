@@ -76,6 +76,7 @@ static void Cmd_visible(void);
 static void Cmd_teamattack_moveback(void);
 static void Cmd_teamattack_movefwd(void);
 static void Cmd_stopsound(void);
+static void Cmd_chooseEXanimation(void);
 
 static void RunAnimScriptCommand(void);
 static void Task_UpdateMonBg(u8 taskId);
@@ -91,6 +92,12 @@ static void LoadMoveBg(u16 bgId);
 
 EWRAM_DATA static const u8 *sBattleAnimScriptPtr = NULL;
 EWRAM_DATA static const u8 *sBattleAnimScriptRetAddr = NULL;
+EWRAM_DATA static bool8 sAnimMoveIsEx = FALSE; // The move animation is for an EX move (see data/battle_scripts_ex.s)
+
+// The chooseEXanimation command, which an EX move's animation can start with to pick its own EX version
+#define ANIM_CMD_CHOOSE_EX_ANIMATION 0x30
+
+extern const u8 EXMove[];
 EWRAM_DATA void (*gAnimScriptCallback)(void) = NULL;
 EWRAM_DATA static s8 sAnimFramesToWait = 0;
 EWRAM_DATA bool8 gAnimScriptActive = FALSE;
@@ -165,6 +172,7 @@ static void (*const sScriptCmdTable[])(void) =
     Cmd_teamattack_moveback,  // 0x2D
     Cmd_teamattack_movefwd,   // 0x2E
     Cmd_stopsound,            // 0x2F
+    Cmd_chooseEXanimation,    // 0x30
 };
 
 void ClearBattleAnimationVars(void)
@@ -200,9 +208,25 @@ void ClearBattleAnimationVars(void)
 
 void DoMoveAnim(u16 move)
 {
+    u8 exAnim = EX_ANIM_NONE;
+
     gBattleAnimAttacker = gBattlerAttacker;
     gBattleAnimTarget = gBattlerTarget;
+
+    // EX moves (see data/battle_scripts_ex.s) are flagged in the controller's move animation command
+    if (!IsContest() && gBattleBufferA[gActiveBattler][0] == CONTROLLER_MOVEANIMATION)
+        exAnim = gBattleBufferA[gActiveBattler][14];
+    sAnimMoveIsEx = (exAnim == EX_ANIM_EX_MOVE);
+
     LaunchBattleAnimation(gBattleAnims_Moves, move, TRUE);
+
+    // An EX move flashes with EXMove first, unless its animation picks its own EX version with chooseEXanimation.
+    // An EX upgrade always flashes, then plays its regular animation
+    if (exAnim != EX_ANIM_NONE && !(sAnimMoveIsEx && sBattleAnimScriptPtr[0] == ANIM_CMD_CHOOSE_EX_ANIMATION))
+    {
+        sBattleAnimScriptRetAddr = sBattleAnimScriptPtr;
+        sBattleAnimScriptPtr = EXMove;
+    }
 }
 
 void LaunchBattleAnimation(const u8 *const animsTable[], u16 tableId, bool8 isMoveAnim)
@@ -1074,6 +1098,15 @@ static void Cmd_choosetwoturnanim(void)
 {
     sBattleAnimScriptPtr++;
     if (gAnimMoveTurn & 1)
+        sBattleAnimScriptPtr += 4;
+    sBattleAnimScriptPtr = T2_READ_PTR(sBattleAnimScriptPtr);
+}
+
+// Goes to the first label for a regular move, or the second for an EX move (see data/battle_scripts_ex.s)
+static void Cmd_chooseEXanimation(void)
+{
+    sBattleAnimScriptPtr++;
+    if (sAnimMoveIsEx)
         sBattleAnimScriptPtr += 4;
     sBattleAnimScriptPtr = T2_READ_PTR(sBattleAnimScriptPtr);
 }

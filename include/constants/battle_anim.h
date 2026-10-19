@@ -380,6 +380,7 @@
 #define B_ANIM_INGRAIN_HEAL             21
 #define B_ANIM_WISH_HEAL                22
 #define B_ANIM_SMOKEBALL_ESCAPE_TRAINER 23
+#define B_ANIM_EX_FLASH                 24 // The EXMove flash, for EX move bonuses (see data/battle_scripts_ex.s)
 
 // special animations table (gBattleAnims_Special)
 #define B_ANIM_LVL_UP                   0

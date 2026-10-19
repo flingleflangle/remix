@@ -1456,3 +1456,8 @@
 	.macro jumpifnotbattletype flags:req, jumpptr:req
 	jumpifword CMP_NO_COMMON_BITS, gBattleTypeFlags, \flags, \jumpptr
 	.endm
+
+@ EX moves (see data/battle_scripts_ex.s)
+	.macro jumpifexmove ptr:req
+	jumpifbyte CMP_NOT_EQUAL, gBattleMoveIsEx, FALSE, \ptr
+	.endm

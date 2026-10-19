@@ -110,6 +110,27 @@
 #define VARIOUS_TRY_BLOCK_SWITCH                29
 #define VARIOUS_SET_TARGET_TO_PARTNER           30
 #define VARIOUS_CANCEL_SWITCH                   31
+#define VARIOUS_IGNORE_RESISTANCES              32
+#define VARIOUS_EX_BONUS_END                    33
+#define VARIOUS_EX_RESET_LOWERED_STATS          34
+#define VARIOUS_EX_BOOST_CRITS                  35
+#define VARIOUS_EX_FOLLOW_ME                    36
+#define VARIOUS_EX_SET_HEAL                     37
+#define VARIOUS_EX_HEAL_REPLACEMENT             38
+#define VARIOUS_EX_STATS_UP_ANIM                39
+#define VARIOUS_EX_NEXT_BONUS_STAT              40
+#define VARIOUS_SET_SURE_CRIT                   41
+
+// EX move bonuses, which status moves get before their effect when used as EX moves (see gExMoveBonuses in data/battle_scripts_ex.s)
+#define EX_BONUS_STAT_UP          0 // Raises one of the user's stats
+#define EX_BONUS_ALL_STATS_UP     1 // Raises all of the user's stats by 1
+#define EX_BONUS_RESET_STATS      2 // Returns the user's lowered stats to normal
+#define EX_BONUS_BOOST_CRITS      3 // Raises the user's critical hit ratio, like Focus Energy
+#define EX_BONUS_FOLLOW_ME        4 // Makes the user the center of attention, like Follow Me
+#define EX_BONUS_CURSE            5 // Ghost types recover their HP. Others raise their Attack by 1
+#define EX_BONUS_RECOVER_HP       6 // Restores some of the user's HP: 1/stages of its max HP (half if 0)
+#define EX_BONUS_HEAL_REPLACEMENT 7 // Fully restores the HP of the next Pokemon to switch in on the user's side
+#define EX_BONUS_STATS_UP         8 // Raises several of the user's stats (stat is a mask of BIT_*), each by stages
 
 // Cmd_manipulatedmg
 #define DMG_CHANGE_SIGN            0

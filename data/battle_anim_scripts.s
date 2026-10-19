@@ -484,6 +484,7 @@ gBattleAnims_General::
 	.4byte General_IngrainHeal              @ B_ANIM_INGRAIN_HEAL
 	.4byte General_WishHeal                 @ B_ANIM_WISH_HEAL
 	.4byte General_SmokeballEscapeTrainer   @ B_ANIM_SMOKEBALL_ESCAPE_TRAINER
+	.4byte General_ExFlash                  @ B_ANIM_EX_FLASH
 
 	.align 2
 gBattleAnims_Special::
@@ -4697,7 +4698,7 @@ Move_AROMATHERAPY:
 	end
 
 Move_FAKE_TEARS:
-	choosetwoturnanim FakeTears, FakeTearsEX
+	chooseEXanimation FakeTears, FakeTearsEX
 FakeTearsEX:
 	call EXMove
 FakeTears:
@@ -5108,7 +5109,7 @@ Move_CALM_MIND:
 	end
 
 Move_LEAF_BLADE:
-	choosetwoturnanim LeafBlade, LeafBladeEX
+	chooseEXanimation LeafBlade, LeafBladeEX
 LeafBladeEX:
 	call EXMove
 LeafBlade:
@@ -5920,7 +5921,7 @@ Move_BITE:
 	end
 
 Move_CRUNCH:
-	choosetwoturnanim Crunch, CrunchEX
+	chooseEXanimation Crunch, CrunchEX
 CrunchEnd:
 	end
 Crunch:
@@ -9259,7 +9260,11 @@ SweetScentEffect:
 	delay 2
 	return
 
-EXMove:
+General_ExFlash:
+	call EXMove
+	end
+
+EXMove::
 	createvisualtask AnimTask_ScaleMonAndRestore, 5, -5, -5, 10, ANIM_ATTACKER, 1
 	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 0, 16, RGB_YELLOW
 	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER

@@ -172,6 +172,9 @@ struct MovePpInfo
     u8 ppBonuses;
 };
 
+// Set in the move slot the player returns when choosing a move, if they chose to use it as an EX move
+#define CHOSEN_MOVE_EX_FLAG 0x80
+
 struct ChooseMoveStruct
 {
     u16 moves[MAX_MON_MOVES];

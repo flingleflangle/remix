@@ -271,6 +271,14 @@
 	.byte 0x2f
 	.endm
 
+@ Goes to ptr1 for a regular move, or ptr2 for an EX move (see data/battle_scripts_ex.s).
+@ An EX move's animation must start with this to replace the automatic EXMove flash with its own EX version
+	.macro chooseEXanimation ptr1:req, ptr2:req
+	.byte 0x30
+	.4byte \ptr1
+	.4byte \ptr2
+	.endm
+
 @ useful macros
 	.macro jumpreteq value:req, ptr:req
 	jumpargeq ARG_RET_ID, \value, \ptr

@@ -95,6 +95,12 @@ void HandleAction_UseMove(void)
     gMoveResultFlags = 0;
     gMultiHitCounter = 0;
     gBattleCommunication[MISS_TYPE] = 0;
+    gBattleMoveIsEx = FALSE;
+    gBattleExAnimPending = FALSE;
+    gIgnoreResistances = FALSE;
+    gBattleExUpgradedFrom = MOVE_NONE;
+    gThisMoveSureCrit = FALSE;
+    gBattleExBonusPending = FALSE;
     gCurrMovePos = gChosenMovePos = *(gBattleStruct->chosenMovePositions + gBattlerAttacker);
 
     // choose move
@@ -283,7 +289,47 @@ void HandleAction_UseMove(void)
     }
     else
     {
-        gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+        // A move the player chose to use as an EX move runs its EX script instead (see data/battle_scripts_ex.s)
+        if (gExMoveChosenBits & gBitTable[gBattlerAttacker]
+         && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker]
+         && gCurrentMove == gBattleMons[gBattlerAttacker].moves[gCurrMovePos]
+         && gBattleMons[gBattlerAttacker].pp[gCurrMovePos] >= 2
+         && CanBattlerUseExMove(gBattlerAttacker, gCurrentMove))
+        {
+            u16 upgrade = GetExMoveUpgrade(gCurrentMove);
+
+            gBattleMoveIsEx = TRUE;
+            if (upgrade != MOVE_NONE)
+            {
+                // Becomes a stronger move, but its messages still name the chosen move. gChosenMove stays the chosen move too
+                gBattleExUpgradedFrom = gCurrentMove;
+                gCurrentMove = upgrade;
+                gBattleExAnimPending = EX_ANIM_FLASH_ONLY;
+                gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+            }
+            else if (IsExMove(gCurrentMove))
+            {
+                gBattleExAnimPending = EX_ANIM_EX_MOVE;
+                gBattlescriptCurrInstr = GetExMoveBattleScript(gCurrentMove);
+            }
+            else
+            {
+                // An EX bonus runs from the move's attackstring, along with the EX flash (see TryStartExMoveBonus)
+                gBattleExBonusPending = TRUE;
+                gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+            }
+        }
+        else
+        {
+            gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+        }
+    }
+
+    // After Foresight, the user's next damaging move is a guaranteed critical hit, even if it misses or fails
+    if (gSureCritBattlers & gBitTable[gBattlerAttacker] && gBattleMoves[gCurrentMove].power != 0)
+    {
+        gSureCritBattlers &= ~gBitTable[gBattlerAttacker];
+        gThisMoveSureCrit = TRUE;
     }
 
     if (gBattleTypeFlags & BATTLE_TYPE_ARENA)
@@ -659,6 +705,12 @@ void HandleAction_NothingIsFainted(void)
 void HandleAction_ActionFinished(void)
 {
     *(gBattleStruct->monToSwitchIntoId + gBattlerByTurnOrder[gCurrentTurnActionNumber]) = PARTY_SIZE;
+    gBattleMoveIsEx = FALSE;
+    gBattleExAnimPending = FALSE;
+    gIgnoreResistances = FALSE;
+    gBattleExUpgradedFrom = MOVE_NONE;
+    gThisMoveSureCrit = FALSE;
+    gBattleExBonusPending = FALSE;
     gCurrentTurnActionNumber++;
     gCurrentActionFuncId = gActionsByTurnOrder[gCurrentTurnActionNumber];
     SpecialStatusesClear();
@@ -3292,6 +3344,299 @@ enum
 bool32 IsBattlerFloatingOnAirBalloon(u8 battler)
 {
     return GetItemHoldEffect(gBattleMons[battler].item) == HOLD_EFFECT_AIR_BALLOON;
+}
+
+// EX moves (see data/battle_scripts_ex.s)
+
+struct ExMove
+{
+    u16 move;
+    u16 padding;
+    const u8 *script;
+};
+
+struct ExMoveUpgrade
+{
+    u16 move;
+    u16 upgrade;
+};
+
+extern const struct ExMove gExMoves[];
+extern const struct ExMoveUpgrade gExMoveUpgrades[];
+
+// Besides Pokémon in their EX form, Pokémon with these abilities can use EX moves
+static const u8 sExMoveAbilities[] =
+{
+    ABILITY_NONE, // End of list, keep this last
+};
+
+static const struct ExMove *GetExMove(u16 move)
+{
+    u32 i;
+
+    for (i = 0; gExMoves[i].move != MOVE_NONE; i++)
+    {
+        if (gExMoves[i].move == move)
+            return &gExMoves[i];
+    }
+    return NULL;
+}
+
+bool32 IsExMove(u16 move)
+{
+    return GetExMove(move) != NULL;
+}
+
+const u8 *GetExMoveBattleScript(u16 move)
+{
+    const struct ExMove *exMove = GetExMove(move);
+
+    return exMove != NULL ? exMove->script : NULL;
+}
+
+// The stronger move this one becomes when used as an EX move, or MOVE_NONE.
+// A move with its own EX script uses that instead
+u16 GetExMoveUpgrade(u16 move)
+{
+    u32 i;
+
+    if (IsExMove(move))
+        return MOVE_NONE;
+    for (i = 0; gExMoveUpgrades[i].move != MOVE_NONE; i++)
+    {
+        if (gExMoveUpgrades[i].move == move)
+            return gExMoveUpgrades[i].upgrade;
+    }
+    return MOVE_NONE;
+}
+
+// EX bonuses, which mostly status moves get before their regular effect (see gExMoveBonuses in data/battle_scripts_ex.s)
+
+struct ExMoveBonus
+{
+    u16 move;
+    u8 bonus;  // EX_BONUS_*
+    u8 stat;   // For EX_BONUS_STAT_UP
+    u8 stages;
+    u8 padding;
+};
+
+extern const struct ExMoveBonus gExMoveBonuses[];
+
+static const u8 *const sExBonusScripts[] =
+{
+    [EX_BONUS_STAT_UP]          = BattleScript_ExBonusStatUp,
+    [EX_BONUS_ALL_STATS_UP]     = BattleScript_ExBonusAllStatsUp,
+    [EX_BONUS_RESET_STATS]      = BattleScript_ExBonusResetStats,
+    [EX_BONUS_BOOST_CRITS]      = BattleScript_ExBonusBoostCrits,
+    [EX_BONUS_FOLLOW_ME]        = BattleScript_ExBonusFollowMe,
+    [EX_BONUS_CURSE]            = BattleScript_ExBonusCurse,
+    [EX_BONUS_RECOVER_HP]       = BattleScript_ExBonusRecoverHp,
+    [EX_BONUS_HEAL_REPLACEMENT] = BattleScript_ExBonusHealReplacement,
+    [EX_BONUS_STATS_UP]         = BattleScript_ExBonusStatsUp,
+};
+
+// The current bonus's details, for its script
+static EWRAM_DATA u8 sExBonusStatsLeft = 0;   // EX_BONUS_STATS_UP: BIT_* of the stats still to raise
+static EWRAM_DATA u8 sExBonusStages = 0;      // EX_BONUS_STATS_UP: stages to raise each by
+static EWRAM_DATA u8 sExBonusHealDivisor = 0; // EX_BONUS_RECOVER_HP: heals 1/this of max HP
+
+// The move's EX bonus, or NULL. A move with an EX script or an EX upgrade uses that instead
+static const struct ExMoveBonus *GetExMoveBonus(u16 move)
+{
+    u32 i;
+
+    if (IsExMove(move) || GetExMoveUpgrade(move) != MOVE_NONE)
+        return NULL;
+    for (i = 0; gExMoveBonuses[i].move != MOVE_NONE; i++)
+    {
+        if (gExMoveBonuses[i].move == move)
+            return &gExMoveBonuses[i];
+    }
+    return NULL;
+}
+
+// What the move's own script may have set before its attackstring, which a bonus would overwrite
+static EWRAM_DATA struct
+{
+    s32 moveDamage;
+    u8 statChanger;
+    u8 animArg1;
+    u8 animArg2;
+    bool8 statAnimPlayed;
+    u8 multistringChooser;
+    u8 effectBattler;
+    bool8 ignoreSubstitute;
+    u8 textBuff1[TEXT_BUFF_ARRAY_COUNT];
+    u8 textBuff2[TEXT_BUFF_ARRAY_COUNT];
+} sExBonusSavedState = {0};
+
+// Called by attackstring. If the move is getting an EX bonus, runs its bonus script and returns TRUE.
+// The bonus script then returns to the move's script after its attackstring
+bool32 TryStartExMoveBonus(void)
+{
+    const struct ExMoveBonus *bonus;
+
+    if (!gBattleExBonusPending)
+        return FALSE;
+    gBattleExBonusPending = FALSE;
+    bonus = GetExMoveBonus(gChosenMove);
+    if (bonus == NULL || bonus->bonus >= ARRAY_COUNT(sExBonusScripts))
+        return FALSE;
+
+    sExBonusSavedState.moveDamage = gBattleMoveDamage;
+    sExBonusSavedState.statChanger = gBattleScripting.statChanger;
+    sExBonusSavedState.animArg1 = gBattleScripting.animArg1;
+    sExBonusSavedState.animArg2 = gBattleScripting.animArg2;
+    sExBonusSavedState.statAnimPlayed = gBattleScripting.statAnimPlayed;
+    sExBonusSavedState.multistringChooser = gBattleCommunication[MULTISTRING_CHOOSER];
+    sExBonusSavedState.effectBattler = gEffectBattler;
+    sExBonusSavedState.ignoreSubstitute = (gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) != 0;
+    memcpy(sExBonusSavedState.textBuff1, gBattleTextBuff1, TEXT_BUFF_ARRAY_COUNT);
+    memcpy(sExBonusSavedState.textBuff2, gBattleTextBuff2, TEXT_BUFF_ARRAY_COUNT);
+
+    if (bonus->bonus == EX_BONUS_STAT_UP)
+        SET_STATCHANGER(bonus->stat, bonus->stages, FALSE);
+    sExBonusStatsLeft = bonus->stat;
+    sExBonusStages = bonus->stages;
+    sExBonusHealDivisor = (bonus->bonus == EX_BONUS_RECOVER_HP && bonus->stages != 0) ? bonus->stages : 2;
+    BattleScriptPushCursor();
+    gBattlescriptCurrInstr = sExBonusScripts[bonus->bonus];
+    return TRUE;
+}
+
+// EX_BONUS_STATS_UP: sets the stat raise animation for the stats that can still rise, like playstatchangeanimation
+// (more than one uses the same animation as raising all stats). Returns FALSE if none can rise
+bool32 SetExBonusStatsUpAnim(u8 battler)
+{
+    u32 stat, count = 0;
+    u16 animId = 0;
+
+    for (stat = STAT_ATK; stat < NUM_BATTLE_STATS; stat++)
+    {
+        if (sExBonusStatsLeft & (1 << stat) && gBattleMons[battler].statStages[stat] < MAX_STAT_STAGE)
+        {
+            animId = (sExBonusStages >= 2 ? STAT_ANIM_PLUS2 : STAT_ANIM_PLUS1) + stat;
+            count++;
+        }
+    }
+    if (count > 1)
+        animId = (sExBonusStages >= 2) ? STAT_ANIM_MULTIPLE_PLUS2 : STAT_ANIM_MULTIPLE_PLUS1;
+    gBattleScripting.animArg1 = animId;
+    gBattleScripting.animArg2 = 0;
+    return count != 0;
+}
+
+// EX_BONUS_STATS_UP: sets the stat change for the next stat to raise. Returns FALSE once they're all done
+bool32 SetNextExBonusStat(void)
+{
+    u32 stat;
+
+    for (stat = STAT_ATK; stat < NUM_BATTLE_STATS; stat++)
+    {
+        if (sExBonusStatsLeft & (1 << stat))
+        {
+            sExBonusStatsLeft &= ~(1 << stat);
+            SET_STATCHANGER(stat, sExBonusStages, FALSE);
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+// EX_BONUS_RECOVER_HP: sets the damage to heal the battler by its share of max HP. Returns FALSE if it's already at full HP
+bool32 SetExBonusHealDamage(u8 battler)
+{
+    s32 heal = gBattleMons[battler].maxHP / sExBonusHealDivisor;
+
+    if (heal == 0)
+        heal = 1;
+    if (heal > gBattleMons[battler].maxHP - gBattleMons[battler].hp)
+        heal = gBattleMons[battler].maxHP - gBattleMons[battler].hp;
+    gBattleMoveDamage = -heal;
+    return heal > 0;
+}
+
+// Called at the end of a bonus script, before going back to the move's own script
+void RestoreExMoveBonusState(void)
+{
+    gBattleMoveDamage = sExBonusSavedState.moveDamage;
+    gBattleScripting.statChanger = sExBonusSavedState.statChanger;
+    gBattleScripting.animArg1 = sExBonusSavedState.animArg1;
+    gBattleScripting.animArg2 = sExBonusSavedState.animArg2;
+    gBattleScripting.statAnimPlayed = sExBonusSavedState.statAnimPlayed;
+    gBattleCommunication[MULTISTRING_CHOOSER] = sExBonusSavedState.multistringChooser;
+    gEffectBattler = sExBonusSavedState.effectBattler;
+    if (sExBonusSavedState.ignoreSubstitute)
+        gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
+    else
+        gHitMarker &= ~HITMARKER_IGNORE_SUBSTITUTE;
+    memcpy(gBattleTextBuff1, sExBonusSavedState.textBuff1, TEXT_BUFF_ARRAY_COUNT);
+    memcpy(gBattleTextBuff2, sExBonusSavedState.textBuff2, TEXT_BUFF_ARRAY_COUNT);
+}
+
+// Whether the move has an EX version: its own EX script, an upgrade, or a bonus
+bool32 CanMoveBeUsedAsEx(u16 move)
+{
+    return IsExMove(move) || GetExMoveUpgrade(move) != MOVE_NONE || GetExMoveBonus(move) != NULL;
+}
+
+// Holding a crystal gives access to the EX moves of its types
+#define MAX_CRYSTAL_TYPES 3
+
+static const struct
+{
+    u16 item;
+    u8 numTypes;
+    u8 types[MAX_CRYSTAL_TYPES];
+} sExMoveCrystals[] =
+{
+    { ITEM_STAR_CRYSTAL,  3, { TYPE_NORMAL, TYPE_FLYING, TYPE_SOUND } },
+    { ITEM_AQUA_CRYSTAL,  3, { TYPE_WATER, TYPE_ICE, TYPE_DRAGON } },
+    { ITEM_LAND_CRYSTAL,  3, { TYPE_BUG, TYPE_GRASS, TYPE_DRAGON } },
+    { ITEM_FLARE_CRYSTAL, 2, { TYPE_FIRE, TYPE_DRAGON } },
+    { ITEM_VOLT_CRYSTAL,  2, { TYPE_ELECTRIC, TYPE_DRAGON } },
+    { ITEM_POWER_CRYSTAL, 3, { TYPE_ROCK, TYPE_GROUND, TYPE_FIGHTING } },
+    { ITEM_MIND_CRYSTAL,  3, { TYPE_PSYCHIC, TYPE_GHOST, TYPE_ASTRAL } },
+    { ITEM_SHADE_CRYSTAL, 2, { TYPE_DARK, TYPE_POISON } },
+    { ITEM_METAL_CRYSTAL, 2, { TYPE_STEEL, TYPE_BLADE } },
+};
+
+// Whether the battler's held crystal covers the move's type
+static bool32 DoesHeldCrystalAllowExMove(u8 battler, u16 move)
+{
+    u32 i, j;
+
+    for (i = 0; i < ARRAY_COUNT(sExMoveCrystals); i++)
+    {
+        if (sExMoveCrystals[i].item != gBattleMons[battler].item)
+            continue;
+        for (j = 0; j < sExMoveCrystals[i].numTypes; j++)
+        {
+            if (sExMoveCrystals[i].types[j] == gBattleMoves[move].type)
+                return TRUE;
+        }
+        return FALSE;
+    }
+    return FALSE;
+}
+
+// Whether the battler can use this move as an EX move. Pokémon in their EX form, or with an ability
+// in sExMoveAbilities, can use every EX move. Others can use the EX moves of their held crystal's types
+bool32 CanBattlerUseExMove(u8 battler, u16 move)
+{
+    u32 i;
+
+    if (!CanMoveBeUsedAsEx(move))
+        return FALSE;
+    if (IsMonEx(GetBattlerPartyMon(battler)))
+        return TRUE;
+    for (i = 0; sExMoveAbilities[i] != ABILITY_NONE; i++)
+    {
+        if (gBattleMons[battler].ability == sExMoveAbilities[i])
+            return TRUE;
+    }
+    return DoesHeldCrystalAllowExMove(battler, move);
 }
 
 // A popped Air Balloon or Bubble Coat is gone for good, like a consumed berry, so the
