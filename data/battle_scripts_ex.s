@@ -14,8 +14,10 @@
 
 @ EX moves.
 @
-@ A Pokémon in its EX form, or with an ability in sExMoveAbilities in battle_util.c, can use every
-@ EX move. Other Pokémon can use the EX moves matching their held crystal's types (sExMoveCrystals).
+@ A Pokémon in its EX form can use the EX moves in its .exMoves list (data/pokemon/ex_forms.h).
+@ A Pokémon with an ability in sExMoveAbilities in battle_util.c can use the EX moves in that
+@ ability's list, or every EX move with .allExMoves (Wishmaker). Any Pokémon can also use the EX
+@ moves matching its held crystal's types (sExMoveCrystals). These all stack.
 @ They can highlight one of these moves in battle and press L to use its EX version.
 @ The move's name turns yellow, and using it costs 2 PP instead of 1.
 @
@@ -103,7 +105,7 @@ gExMoveUpgrades::
 
 	.macro exbonus move:req, bonus:req, stat=0, stages=0
 	.2byte \move
-	.byte \bonus, \stat, \stages, 0
+	.byte \bonus, \stat, \stages, 0, 0, 0 @ 8 bytes, the size of struct ExMoveBonus
 	.endm
 
 	.macro exstatup move:req, stat:req, stages:req

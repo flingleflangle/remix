@@ -206,6 +206,7 @@ struct
         .gfx = {
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_Condition,
+            sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_SwitchOff
         }
     },
@@ -217,27 +218,29 @@ struct
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_Condition,
             sOptionsLabelGfx_MatchCall,
+            sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_SwitchOff
         }
     },
     [POKENAV_MENU_TYPE_UNLOCK_MC_RIBBONS] =
     {
-        .yStart = 42,
-        .deltaY = 20,
+        // 6 options; tighter spacing (like the Condition search menu) so Switch Off clears the description bar
+        .yStart = 40,
+        .deltaY = 16,
         .gfx = {
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_Condition,
             sOptionsLabelGfx_MatchCall,
             sOptionsLabelGfx_Ribbons,
+            sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_SwitchOff
         }
     },
     [POKENAV_MENU_TYPE_CONDITION] =
     {
-        .yStart = 49,
+        .yStart = 56,
         .deltaY = 20,
         .gfx = {
-            sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_Party,
             sOptionsLabelGfx_Search,
             sOptionsLabelGfx_Cancel
@@ -275,8 +278,8 @@ static const u8 *const sPageDescriptions[] =
     [POKENAV_MENUITEM_CONDITION]               = gText_CheckPokemonInDetail,
     [POKENAV_MENUITEM_MATCH_CALL]              = gText_CallRegisteredTrainer,
     [POKENAV_MENUITEM_RIBBONS]                 = gText_CheckObtainedRibbons,
+    [POKENAV_MENUITEM_ACCESS_PC]               = gText_Pokenav_Access_PC,
     [POKENAV_MENUITEM_SWITCH_OFF]              = gText_PutAwayPokenav,
-	[POKENAV_MENUITEM_CONDITION_ACCESS_PC]     = gText_Pokenav_Access_PC,
     [POKENAV_MENUITEM_CONDITION_PARTY]         = gText_CheckPartyPokemonInDetail,
     [POKENAV_MENUITEM_CONDITION_SEARCH]        = gText_CheckAllPokemonInDetail,
     [POKENAV_MENUITEM_CONDITION_CANCEL]        = gText_ReturnToPokenavMenu,

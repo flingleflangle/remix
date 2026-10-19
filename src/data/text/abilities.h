@@ -84,6 +84,7 @@ static const u8 sChromaScaleDescription[] = _("Adds effects to attacks.");
 static const u8 sMirrorScaleDescription[] = _("Copies all stat changes.");
 static const u8 sHeartbrokenDescription[] = _("Halves SP. ATK. No love.");
 static const u8 sFirstSightDescription[] = _("Infatuates foes on entry.");
+static const u8 sWishmakerDescription[] = _("Grants every EX move."); // Also works like Serene Grace, unmentioned
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
 {
@@ -173,6 +174,7 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_MIRROR_SCALE] = _("MIRROR SCALE"),
     [ABILITY_HEARTBROKEN] = _("HEARTBROKEN"),
     [ABILITY_FIRST_SIGHT] = _("FIRST SIGHT"),
+    [ABILITY_WISHMAKER] = _("WISHMAKER"),
 };
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
@@ -263,4 +265,5 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_MIRROR_SCALE] = sMirrorScaleDescription,
     [ABILITY_HEARTBROKEN] = sHeartbrokenDescription,
     [ABILITY_FIRST_SIGHT] = sFirstSightDescription,
+    [ABILITY_WISHMAKER] = sWishmakerDescription,
 };

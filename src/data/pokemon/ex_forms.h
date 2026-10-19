@@ -20,6 +20,19 @@
 //   the regular one.
 // - .unlockItem unlocks the EX form when used on the Pokémon from the bag. Leave it out if
 //   nothing should unlock it that way.
+// - .exMoves lists the moves the EX form can always use as EX moves, with no crystal or
+//   ability needed. End the list with MOVE_NONE. A move only counts if it has an EX version
+//   (see data/battle_scripts_ex.s). A held crystal still adds the EX moves of its types,
+//   and an ability in sExMoveAbilities (battle_util.c) adds the EX moves in its list
+//   (Wishmaker adds every EX move).
+
+static const u16 sMawileExMoves[] =
+{
+    MOVE_CRUNCH,
+    MOVE_FAKE_TEARS,
+    MOVE_SWORDS_DANCE,
+    MOVE_NONE,
+};
 
 const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
 {
@@ -31,6 +44,7 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
         .noFlip = TRUE,
         .backAnim = BACK_ANIM_SHAKE_FLASH_YELLOW,
         .unlockItem = ITEM_MOON_STONE,
+        .exMoves = sMawileExMoves,
         .frontPic = gMonFrontPic_MawileEX,
     },
 

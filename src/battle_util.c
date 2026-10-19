@@ -3364,10 +3364,21 @@ struct ExMoveUpgrade
 extern const struct ExMove gExMoves[];
 extern const struct ExMoveUpgrade gExMoveUpgrades[];
 
-// Besides Pokémon in their EX form, Pokémon with these abilities can use EX moves
-static const u8 sExMoveAbilities[] =
+// Pokémon with these abilities can always use the EX moves in the ability's list, like an EX form's
+// .exMoves (see data/pokemon/ex_forms.h). Each list ends with MOVE_NONE. For example:
+//     static const u16 sSwiftSwimExMoves[] = { MOVE_WATERFALL, MOVE_SURF, MOVE_NONE };
+//     ...
+//     { ABILITY_SWIFT_SWIM, .exMoves = sSwiftSwimExMoves },
+// An ability with .allExMoves = TRUE can use every EX move instead, so it needs no list
+static const struct
 {
-    ABILITY_NONE, // End of list, keep this last
+    u8 ability;
+    bool8 allExMoves;
+    const u16 *exMoves;
+} sExMoveAbilities[] =
+{
+    { ABILITY_WISHMAKER, .allExMoves = TRUE },
+    { ABILITY_NONE }, // End of list, keep this last
 };
 
 static const struct ExMove *GetExMove(u16 move)
@@ -3418,8 +3429,10 @@ struct ExMoveBonus
     u8 bonus;  // EX_BONUS_*
     u8 stat;   // For EX_BONUS_STAT_UP
     u8 stages;
-    u8 padding;
+    u8 padding[3]; // agbcc pads structs to 4 bytes, so the exbonus macro emits 8 bytes per entry
 };
+
+STATIC_ASSERT(sizeof(struct ExMoveBonus) == 8, ExMoveBonusSize);
 
 extern const struct ExMoveBonus gExMoveBonuses[];
 
@@ -3621,22 +3634,55 @@ static bool32 DoesHeldCrystalAllowExMove(u8 battler, u16 move)
     return FALSE;
 }
 
-// Whether the battler can use this move as an EX move. Pokémon in their EX form, or with an ability
-// in sExMoveAbilities, can use every EX move. Others can use the EX moves of their held crystal's types
-bool32 CanBattlerUseExMove(u8 battler, u16 move)
+// Whether the move is in a list of EX moves ending with MOVE_NONE. A NULL list has none
+static bool32 IsMoveInExMoveList(const u16 *exMoves, u16 move)
 {
     u32 i;
 
-    if (!CanMoveBeUsedAsEx(move))
+    if (exMoves == NULL)
         return FALSE;
-    if (IsMonEx(GetBattlerPartyMon(battler)))
-        return TRUE;
-    for (i = 0; sExMoveAbilities[i] != ABILITY_NONE; i++)
+    for (i = 0; exMoves[i] != MOVE_NONE; i++)
     {
-        if (gBattleMons[battler].ability == sExMoveAbilities[i])
+        if (exMoves[i] == move)
             return TRUE;
     }
-    return DoesHeldCrystalAllowExMove(battler, move);
+    return FALSE;
+}
+
+// Whether the battler is in an EX form with the move in its .exMoves list (see data/pokemon/ex_forms.h)
+static bool32 DoesExFormAllowExMove(u8 battler, u16 move)
+{
+    struct Pokemon *mon = GetBattlerPartyMon(battler);
+
+    // Not while transformed into something else
+    if (!IsMonEx(mon) || GetMonData(mon, MON_DATA_SPECIES, NULL) != gBattleMons[battler].species)
+        return FALSE;
+    return IsMoveInExMoveList(GetSpeciesExFormInfo(gBattleMons[battler].species)->exMoves, move);
+}
+
+// Whether the battler's ability is in sExMoveAbilities with .allExMoves, or with the move in its list
+static bool32 DoesAbilityAllowExMove(u8 battler, u16 move)
+{
+    u32 i;
+
+    for (i = 0; sExMoveAbilities[i].ability != ABILITY_NONE; i++)
+    {
+        if (sExMoveAbilities[i].ability == gBattleMons[battler].ability)
+            return sExMoveAbilities[i].allExMoves || IsMoveInExMoveList(sExMoveAbilities[i].exMoves, move);
+    }
+    return FALSE;
+}
+
+// Whether the battler can use this move as an EX move. Each of these gives access to some EX moves,
+// and they stack: its EX form (.exMoves), its ability (sExMoveAbilities, where Wishmaker gives every
+// EX move), and its held crystal's types (sExMoveCrystals)
+bool32 CanBattlerUseExMove(u8 battler, u16 move)
+{
+    if (!CanMoveBeUsedAsEx(move))
+        return FALSE;
+    return DoesExFormAllowExMove(battler, move)
+        || DoesAbilityAllowExMove(battler, move)
+        || DoesHeldCrystalAllowExMove(battler, move);
 }
 
 // A popped Air Balloon or Bubble Coat is gone for good, like a consumed berry, so the

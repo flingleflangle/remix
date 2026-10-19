@@ -351,6 +351,7 @@ struct ExFormInfo
     u8 backAnim;     // BACK_ANIM_*, or BACK_ANIM_NONE to keep the regular one
     bool8 noFlip;    // Same as SpeciesInfo's noFlip, for the EX front sprite
     u16 unlockItem;  // Using this item on the Pokémon unlocks its EX form. ITEM_NONE for none
+    const u16 *exMoves; // EX moves the EX form can always use, ending with MOVE_NONE. NULL for none
     // NULL to keep the regular graphics
     const u32 *frontPic;
     const u32 *backPic;
