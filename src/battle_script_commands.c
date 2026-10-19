@@ -6985,6 +6985,54 @@ static void Cmd_various(void)
         gBattleMons[gActiveBattler].ability = ABILITY_HEARTBROKEN;
         gBattleMons[gActiveBattler].status2 &= ~STATUS2_INFATUATION;
         break;
+    case VARIOUS_TRY_BLOCK_SWITCH:
+        // Like Pursuit, a foe that chose Block acts before gActiveBattler can switch out.
+        // Sets gBattlerTarget to the Block user and uses up its turn. See BattleScript_ActionSwitch.
+        {
+            u32 i, battler;
+
+            gBattleCommunication[0] = FALSE;
+            for (i = 0; i < gBattlersCount; i++)
+            {
+                battler = gBattlerByTurnOrder[i];
+                if (GetBattlerSide(battler) != GetBattlerSide(gActiveBattler)
+                    && gActionsByTurnOrder[i] == B_ACTION_USE_MOVE
+                    && gBattleMoves[gChosenMoveByBattler[battler]].effect == EFFECT_BLOCK
+                    && gBattleMons[battler].hp
+                    && !(gAbsentBattlerFlags & gBitTable[battler])
+                    && !(gBattleMons[battler].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
+                    && !gDisableStructs[battler].truantCounter)
+                {
+                    gActionsByTurnOrder[i] = B_ACTION_TRY_FINISH;
+                    gBattlerTarget = battler;
+                    gCurrentMove = gChosenMoveByBattler[battler];
+                    gCurrMovePos = gChosenMovePos = *(gBattleStruct->chosenMovePositions + battler);
+                    gBattleScripting.animTurn = 0;
+                    gBattleScripting.animTargetsHit = 0;
+                    gMoveResultFlags = 0;
+                    gHitMarker &= ~HITMARKER_ATTACKSTRING_PRINTED;
+                    gBattleCommunication[0] = TRUE;
+                    break;
+                }
+            }
+        }
+        break;
+    case VARIOUS_SET_TARGET_TO_PARTNER:
+        // Sets gBattleCommunication[0] to whether gActiveBattler's partner is in battle to become the target
+        gBattleCommunication[0] = FALSE;
+        if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+        {
+            u8 partner = BATTLE_PARTNER(gActiveBattler);
+            if (gBattleMons[partner].hp && !(gAbsentBattlerFlags & gBitTable[partner]))
+            {
+                gBattlerTarget = partner;
+                gBattleCommunication[0] = TRUE;
+            }
+        }
+        break;
+    case VARIOUS_CANCEL_SWITCH:
+        *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+        break;
     }
 
     gBattlescriptCurrInstr += 3;
@@ -10809,7 +10857,8 @@ static void Cmd_handleballthrow(void)
         u32 odds;
         u8 catchRate;
 
-        if (gLastUsedItem == ITEM_SAFARI_BALL)
+        // Outside the Safari Zone a Safari Ball uses the normal catch rate, not the Safari Zone's catch factor
+        if (gLastUsedItem == ITEM_SAFARI_BALL && gBattleTypeFlags & BATTLE_TYPE_SAFARI)
             catchRate = gBattleStruct->safariCatchFactor * 1275 / 100;
         else
             catchRate = gSpeciesInfo[gBattleMons[gBattlerTarget].species].catchRate;
@@ -10827,6 +10876,8 @@ static void Cmd_handleballthrow(void)
             case ITEM_DIVE_BALL:
                 if (GetCurrentMapType() == MAP_TYPE_UNDERWATER)
                     ballMultiplier = 35;
+                else if (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_DRAGON) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_SOUND))
+                    ballMultiplier = 30;
                 else
                     ballMultiplier = 10;
                 break;
@@ -10841,6 +10892,9 @@ static void Cmd_handleballthrow(void)
                 {
                     ballMultiplier = 10;
                 }
+                if ((IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_FLYING) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_GROUND))
+                    && ballMultiplier < 30)
+                    ballMultiplier = 30;
                 break;
             case ITEM_REPEAT_BALL:
                 if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(gBattleMons[gBattlerTarget].species), FLAG_GET_CAUGHT))
@@ -10858,6 +10912,11 @@ static void Cmd_handleballthrow(void)
                 ballMultiplier = 10;
                 break;
             }
+        }
+        else if (gLastUsedItem == ITEM_SAFARI_BALL
+              && (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_GRASS) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_NORMAL)))
+        {
+            ballMultiplier = 30;
         }
         else
         {
@@ -11187,26 +11246,67 @@ static s32 GetThrowOddsFromValue(s32 value, s32 neutral)
     return min(max(multiplier, THROW_ODDS_MIN), THROW_ODDS_MAX);
 }
 
-static u16 GetBallThrowTypeOddsMultiplier(u8 throwType, u16 species)
+// Bonus added to a throw's multiplier by balls that are well suited to it
+#define THROW_ODDS_BALL_BONUS_LARGE 20
+#define THROW_ODDS_BALL_BONUS_SMALL 10
+
+static u16 GetBallThrowTypeOddsMultiplier(u8 throwType, u16 species, u16 ball)
 {
     u16 dexNum = SpeciesToNationalPokedexNum(species);
+    s32 multiplier;
 
     switch (throwType)
     {
     case BALL_THROW_DROP:
         // Better on heavy Pokémon, worse on light ones. Neutral at the median weight
-        return GetThrowOddsFromValue(GetPokedexHeightWeight(dexNum, DEX_WEIGHT), GetMedianPokedexSize(DEX_WEIGHT));
+        multiplier = GetThrowOddsFromValue(GetPokedexHeightWeight(dexNum, DEX_WEIGHT), GetMedianPokedexSize(DEX_WEIGHT));
+        break;
     case BALL_THROW_UNDERHAND:
         // Better on short Pokémon, worse on tall ones. Neutral at the median height
-        return THROW_ODDS_NORMAL * 2 - GetThrowOddsFromValue(GetPokedexHeightWeight(dexNum, DEX_HEIGHT), GetMedianPokedexSize(DEX_HEIGHT));
+        multiplier = THROW_ODDS_NORMAL * 2 - GetThrowOddsFromValue(GetPokedexHeightWeight(dexNum, DEX_HEIGHT), GetMedianPokedexSize(DEX_HEIGHT));
+        break;
     case BALL_THROW_CURVE_LEFT:
     case BALL_THROW_CURVE_RIGHT:
         // Better on fast Pokémon, worse on slow ones
-        return GetThrowOddsFromValue(gSpeciesInfo[species].baseSpeed, THROW_SPEED_NEUTRAL);
+        multiplier = GetThrowOddsFromValue(gSpeciesInfo[species].baseSpeed, THROW_SPEED_NEUTRAL);
+        break;
     case BALL_THROW_NORMAL:
     default:
         return THROW_ODDS_NORMAL;
     }
+
+    // Some balls' "ergonomics" suit certain throws
+    switch (ball)
+    {
+    case ITEM_POKE_BALL:
+    case ITEM_LUXURY_BALL:
+        // Curve throws never make these worse
+        if ((throwType == BALL_THROW_CURVE_LEFT || throwType == BALL_THROW_CURVE_RIGHT) && multiplier < THROW_ODDS_NORMAL)
+            multiplier = THROW_ODDS_NORMAL;
+        break;
+    case ITEM_GREAT_BALL:
+        if (throwType == BALL_THROW_DROP)
+            multiplier += THROW_ODDS_BALL_BONUS_LARGE;
+        break;
+    case ITEM_NET_BALL:
+    case ITEM_NEST_BALL:
+        if (throwType == BALL_THROW_UNDERHAND)
+            multiplier += THROW_ODDS_BALL_BONUS_LARGE;
+        break;
+    case ITEM_PREMIER_BALL:
+        multiplier += THROW_ODDS_BALL_BONUS_SMALL;
+        break;
+    }
+    return multiplier;
+}
+
+// The Timer Ball's multiplier from Cmd_handleballthrow: 1x on the first turn, rising to 4x.
+// A fast throw flips this, making it 4x on the first turn and falling to 1x.
+static u32 GetTimerBallMultiplier(bool32 flipped)
+{
+    u32 turns = min(gBattleResults.battleTurnCounter, 30);
+
+    return flipped ? 40 - turns : 10 + turns;
 }
 
 // Called by the throw animation once the throw type is known. The first shake was already
@@ -11214,6 +11314,7 @@ static u16 GetBallThrowTypeOddsMultiplier(u8 throwType, u16 species)
 void ApplyBallThrowTypeOdds(u8 throwType)
 {
     u16 multiplier;
+    bool32 flipTimerBall;
 
     if (throwType >= BALL_THROW_TYPES_COUNT)
         throwType = BALL_THROW_NORMAL;
@@ -11221,10 +11322,13 @@ void ApplyBallThrowTypeOdds(u8 throwType)
 
     if (gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_WALLY_TUTORIAL))
         return;
-    multiplier = GetBallThrowTypeOddsMultiplier(throwType, gBattleMons[gBattlerTarget].species);
-    if (multiplier == THROW_ODDS_NORMAL)
+    multiplier = GetBallThrowTypeOddsMultiplier(throwType, gBattleMons[gBattlerTarget].species, gLastUsedItem);
+    flipTimerBall = (gLastUsedItem == ITEM_TIMER_BALL && throwType == BALL_THROW_DROP);
+    if (multiplier == THROW_ODDS_NORMAL && !flipTimerBall)
         return;
 
+    if (flipTimerBall)
+        gBallShakesBData.odds = gBallShakesBData.odds * GetTimerBallMultiplier(TRUE) / GetTimerBallMultiplier(FALSE);
     gBallShakesBData.odds = gBallShakesBData.odds * multiplier / 100;
     if (gBallShakesBData.odds == 0)  // CalcNextShakeFromOdds divides by the odds
         gBallShakesBData.odds = 1;

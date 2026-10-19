@@ -107,6 +107,9 @@
 #define VARIOUS_PLAY_TRAINER_DEFEATED_MUSIC     26
 #define VARIOUS_SET_HEARTBROKEN                 27
 #define VARIOUS_TRY_FIRST_SIGHT                 28
+#define VARIOUS_TRY_BLOCK_SWITCH                29
+#define VARIOUS_SET_TARGET_TO_PARTNER           30
+#define VARIOUS_CANCEL_SWITCH                   31
 
 // Cmd_manipulatedmg
 #define DMG_CHANGE_SIGN            0

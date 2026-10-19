@@ -5369,6 +5369,28 @@ static void HandleEndTurn_MonFled(void)
     gBattleMainFunc = HandleEndTurn_FinishBattle;
 }
 
+// Nest Ball Pokémon that haven't fainted recover 1/16 of their max HP after every battle
+static void HealNestBallMonsAfterBattle(void)
+{
+    s32 i;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gPlayerParty[i];
+        u16 hp = GetMonData(mon, MON_DATA_HP);
+        u16 maxHP = GetMonData(mon, MON_DATA_MAX_HP);
+
+        if (GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE || GetMonData(mon, MON_DATA_IS_EGG)
+            || GetMonData(mon, MON_DATA_POKEBALL) != ITEM_NEST_BALL || hp == 0 || hp >= maxHP)
+            continue;
+
+        hp += max(maxHP / 16, 1);
+        if (hp > maxHP)
+            hp = maxHP;
+        SetMonData(mon, MON_DATA_HP, &hp);
+    }
+}
+
 static void HandleEndTurn_FinishBattle(void)
 {
     if (gCurrentActionFuncId == B_ACTION_TRY_FINISH || gCurrentActionFuncId == B_ACTION_FINISHED)
@@ -5412,6 +5434,13 @@ static void HandleEndTurn_FinishBattle(void)
         {
             TryPutBreakingNewsOnAir();
         }
+
+        if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
+                                  | BATTLE_TYPE_RECORDED_LINK
+                                  | BATTLE_TYPE_FRONTIER
+                                  | BATTLE_TYPE_EREADER_TRAINER
+                                  | BATTLE_TYPE_WALLY_TUTORIAL)))
+            HealNestBallMonsAfterBattle();
 
         RecordedBattle_SetPlaybackFinished();
         BeginFastPaletteFade(3);

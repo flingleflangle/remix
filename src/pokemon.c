@@ -4958,6 +4958,8 @@ bool8 ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, 
     if ((retVal == 0 || friendshipOnly) && !ShouldSkipFriendshipChange() && friendshipChange == 0)      \
     {                                                                                                   \
         friendshipChange = itemEffect[itemEffectParam];                                                 \
+        if (friendshipChange > 1 && GetMonData(mon, MON_DATA_POKEBALL, NULL) == ITEM_ULTRA_BALL)        \
+            friendshipChange--;                                                                         \
         friendship = GetMonData(mon, MON_DATA_FRIENDSHIP, NULL);                                        \
         if (friendshipChange > 0 && holdEffect == HOLD_EFFECT_FRIENDSHIP_UP)                            \
             friendship += 150 * friendshipChange / 100;                                                 \
@@ -6297,6 +6299,10 @@ void AdjustFriendship(struct Pokemon *mon, u8 event)
             // 50% increase, rounding down
             mod = (150 * mod) / 100;
 
+        // Ultra Ball Pokémon gain a little less friendship, but always at least 1
+        if (mod > 1 && GetMonData(mon, MON_DATA_POKEBALL, NULL) == ITEM_ULTRA_BALL)
+            mod--;
+
         friendship += mod;
         if (mod > 0)
         {
@@ -6374,6 +6380,10 @@ void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
         {
             holdEffect = GetItemHoldEffect(heldItem);
         }
+
+        // Ultra Ball Pokémon gain 1 extra EV in each stat the defeated Pokémon yields
+        if (evIncrease != 0 && GetMonData(mon, MON_DATA_POKEBALL, NULL) == ITEM_ULTRA_BALL)
+            evIncrease++;
 
         if (holdEffect == HOLD_EFFECT_MACHO_BRACE)
             evIncrease *= 2;

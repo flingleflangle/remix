@@ -193,6 +193,7 @@ static const u16 sPoints_MoveEffect[NUM_BATTLE_MOVE_EFFECTS] =
     [EFFECT_TRIPLE_KICK] = 1,
     [EFFECT_THIEF] = 4,
     [EFFECT_MEAN_LOOK] = 5,
+    [EFFECT_BLOCK] = 5,
     [EFFECT_NIGHTMARE] = 3,
     [EFFECT_MINIMIZE] = 1,
     [EFFECT_CURSE] = 2,

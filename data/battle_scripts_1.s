@@ -271,6 +271,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectLastStand       	     @ EFFECT_LAST_STAND
 	.4byte BattleScript_EffectSuckerPunch     	     @ EFFECT_SUCKER_PUNCH
 	.4byte BattleScript_EffectDetect          	     @ EFFECT_DETECT
+	.4byte BattleScript_EffectMeanLook               @ EFFECT_BLOCK
 	
 
 BattleScript_EffectHit::
@@ -5002,6 +5003,15 @@ BattleScript_PrintFullBox::
 	endselectionscript
 
 BattleScript_ActionSwitch::
+	@ A foe that chose Block stops the switch before it happens (see VARIOUS_TRY_BLOCK_SWITCH)
+	jumpifstatus2 BS_ATTACKER, STATUS2_ESCAPE_PREVENTION, BattleScript_SwitchBlockedCantEscape
+	various BS_ATTACKER, VARIOUS_TRY_BLOCK_SWITCH
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_ActionSwitchNotBlocked
+	swapattackerwithtarget
+	call BattleScript_BlockOnSwitchOut
+	swapattackerwithtarget
+	jumpifstatus2 BS_ATTACKER, STATUS2_ESCAPE_PREVENTION, BattleScript_SwitchBlocked
+BattleScript_ActionSwitchNotBlocked:
 	hpthresholds2 BS_ATTACKER
 	printstring STRINGID_RETURNMON
 	setbyte sDMG_MULTIPLIER, 2
@@ -5035,6 +5045,41 @@ BattleScript_DoSwitchOut::
 	moveendcase MOVEEND_IMMUNITY_ABILITIES
 	moveendcase MOVEEND_MIRROR_MOVE
 	end2
+
+BattleScript_SwitchBlockedCantEscape:
+	printstring STRINGID_ATTACKERCANTESCAPE
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_SwitchBlocked:
+	various BS_ATTACKER, VARIOUS_CANCEL_SWITCH
+	end2
+
+@ Attacker is the Block user, target is the Pokémon trying to switch out.
+@ Traps it and its partner, then leaves the target as it was.
+BattleScript_BlockOnSwitchOut:
+	pause B_WAIT_TIME_SHORT
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	call BattleScript_BlockTrapTarget
+	various BS_TARGET, VARIOUS_SET_TARGET_TO_PARTNER
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_BlockOnSwitchOutRet
+	call BattleScript_BlockTrapTarget
+	various BS_TARGET, VARIOUS_SET_TARGET_TO_PARTNER
+BattleScript_BlockOnSwitchOutRet:
+	return
+
+BattleScript_BlockTrapTarget:
+	jumpifstatus2 BS_TARGET, STATUS2_ESCAPE_PREVENTION | STATUS2_SUBSTITUTE, BattleScript_BlockTrapTargetFailed
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffectprimary
+	printstring STRINGID_TARGETCANTESCAPENOW
+	waitmessage B_WAIT_TIME_LONG
+	return
+BattleScript_BlockTrapTargetFailed:
+	printstring STRINGID_BUTITFAILED
+	waitmessage B_WAIT_TIME_LONG
+	return
 
 BattleScript_PursuitDmgOnSwitchOut::
 	pause B_WAIT_TIME_SHORT

@@ -5023,7 +5023,11 @@ static void AnimBlockX(struct Sprite *sprite)
         y = -96;
     }
 
-    sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    // Block traps both foes, so in doubles the X goes between them
+    if (IsDoubleBattle() && IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimTarget)))
+        SetAverageBattlerPositions(gBattleAnimTarget, TRUE, &sprite->x, &sprite->y);
+    else
+        sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
     sprite->y2 = y;
     sprite->callback = AnimBlockX_Step;
 }

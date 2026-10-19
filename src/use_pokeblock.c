@@ -1046,6 +1046,13 @@ static void CalculatePokeblockEffectiveness(struct Pokeblock *pokeblock, struct 
     sInfo->pokeblockStatBoosts[CONDITION_CUTE] = pokeblock->sweet;
     sInfo->pokeblockStatBoosts[CONDITION_BEAUTY] = pokeblock->dry;
 
+    // Premier Ball Pokémon get 20% more from each condition (rounded to the nearest), on top of their nature
+    if (GetMonData(mon, MON_DATA_POKEBALL) == ITEM_PREMIER_BALL)
+    {
+        for (i = 0; i < CONDITION_COUNT; i++)
+            sInfo->pokeblockStatBoosts[i] += (sInfo->pokeblockStatBoosts[i] * 2 + 5) / 10;
+    }
+
     if (gPokeblockGain > 0)
         direction = 1;
     else if (gPokeblockGain < 0)
