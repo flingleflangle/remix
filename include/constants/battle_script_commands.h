@@ -120,6 +120,13 @@
 #define VARIOUS_EX_STATS_UP_ANIM                39
 #define VARIOUS_EX_NEXT_BONUS_STAT              40
 #define VARIOUS_SET_SURE_CRIT                   41
+#define VARIOUS_EX_TRAINING_ANIM                42
+#define VARIOUS_EX_TRAINING_UPDATE_FORM         43
+#define VARIOUS_WAIT_FANFARE                    44
+#define VARIOUS_EX_TRAINING_MUSIC               45
+#define VARIOUS_WAIT_EX_LOGO                    46
+#define VARIOUS_EX_TRAINING_JINGLE              47
+#define VARIOUS_EX_TRAINING_LOGO                48
 
 // EX move bonuses, which status moves get before their effect when used as EX moves (see gExMoveBonuses in data/battle_scripts_ex.s)
 #define EX_BONUS_STAT_UP          0 // Raises one of the user's stats

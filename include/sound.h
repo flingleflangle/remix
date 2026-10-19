@@ -17,6 +17,8 @@ void PlayFanfareByFanfareNum(u8 fanfareNum);
 bool8 WaitFanfare(bool8 stop);
 void StopFanfareByFanfareNum(u8 fanfareNum);
 void PlayFanfare(u16 songNum);
+void PlayFanfareThenSilence(u16 songNum);
+void ResumeBGMAfterFanfare(void);
 bool8 IsFanfareTaskInactive(void);
 void FadeInNewBGM(u16 songNum, u8 speed);
 void FadeOutBGMTemporarily(u8 speed);
@@ -43,6 +45,7 @@ void PlaySE1WithPanning(u16 songNum, s8 pan);
 void PlaySE2WithPanning(u16 songNum, s8 pan);
 void SE12PanpotControl(s8 pan);
 bool8 IsSEPlaying(void);
+bool32 IsSongPlaying(u16 songNum);
 bool8 IsBGMPlaying(void);
 bool8 IsSpecialSEPlaying(void);
 

@@ -259,6 +259,7 @@ static void DisplayPartyPokemonDataForMultiBattle(u8);
 static void LoadPartyBoxPalette(struct PartyMenuBox *, u8);
 static void DrawEmptySlot(u8 windowId);
 static void DisplayPartyPokemonDataForRelearner(u8);
+static void DisplayPartyPokemonDataForExTutor(u8);
 static void DisplayPartyPokemonDataForContest(u8);
 static void DisplayPartyPokemonDataForChooseHalf(u8);
 static void DisplayPartyPokemonDataForWirelessMinigame(u8);
@@ -458,6 +459,8 @@ static void Task_ChooseContestMon(u8 taskId);
 static void CB2_ChooseContestMon(void);
 static void Task_ChoosePartyMon(u8 taskId);
 static void Task_ChooseMonForMoveRelearner(u8);
+static void Task_ChooseMonForExTutor(u8);
+static void CB2_ChooseMonForExTutor(void);
 static void CB2_ChooseMonForMoveRelearner(void);
 static void Task_BattlePyramidChooseMonHeldItems(u8);
 static void ShiftMoveSlot(struct Pokemon *, u8, u8);
@@ -854,6 +857,8 @@ static void RenderPartyMenuBox(u8 slot)
         {
             if (gPartyMenu.menuType == PARTY_MENU_TYPE_MOVE_RELEARNER)
                 DisplayPartyPokemonDataForRelearner(slot);
+            else if (gPartyMenu.menuType == PARTY_MENU_TYPE_EX_TUTOR)
+                DisplayPartyPokemonDataForExTutor(slot);
             else if (gPartyMenu.menuType == PARTY_MENU_TYPE_CONTEST)
                 DisplayPartyPokemonDataForContest(slot);
             else if (gPartyMenu.menuType == PARTY_MENU_TYPE_CHOOSE_HALF)
@@ -957,6 +962,21 @@ static void DisplayPartyPokemonDataForRelearner(u8 slot)
         DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_NOT_ABLE_2);
     else
         DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_ABLE_2);
+}
+
+// Whether the EX tutor can unlock this Pokémon's EX form. If VAR_0x8005 is a species, it only takes that species
+static bool32 CanExTutorUnlockMon(struct Pokemon *mon)
+{
+    return CanMonUnlockExForm(mon)
+        && (gSpecialVar_0x8005 == SPECIES_NONE || gSpecialVar_0x8005 == GetMonData(mon, MON_DATA_SPECIES));
+}
+
+static void DisplayPartyPokemonDataForExTutor(u8 slot)
+{
+    if (CanExTutorUnlockMon(&gPlayerParty[slot]))
+        DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_ABLE_2);
+    else
+        DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_NOT_ABLE_2);
 }
 
 static void DisplayPartyPokemonDataForWirelessMinigame(u8 slot)
@@ -2724,6 +2744,7 @@ static u8 GetPartyMenuActionsType(struct Pokemon *mon)
     // PARTY_MENU_TYPE_CHOOSE_MON
     // PARTY_MENU_TYPE_MULTI_SHOWCASE
     // PARTY_MENU_TYPE_MOVE_RELEARNER
+    // PARTY_MENU_TYPE_EX_TUTOR
     // PARTY_MENU_TYPE_MINIGAME
     default:
         actionType = ACTIONS_NONE;
@@ -5445,7 +5466,7 @@ static void Task_SacredAshDisplayHPRestored(u8 taskId)
 
 void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc task)
 {
-    static const u8 sText_ExFormUnlocked[] = _("{STR_VAR_1} can now change\ninto its EX form!{PAUSE_UNTIL_PRESS}");
+    static const u8 sText_ExFormUnlocked[] = _("{STR_VAR_1} has become\n{STR_VAR_2}{EX}!{PAUSE_UNTIL_PRESS}");
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
 
     // A stone that unlocks the Pokémon's EX form does that instead of evolving it (see data/pokemon/ex_forms.h)
@@ -5455,6 +5476,7 @@ void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc task)
         RemoveBagItem(gSpecialVar_ItemId, 1);
         gPartyMenuUseExitCallback = TRUE;
         GetMonNickname(mon, gStringVar1);
+        StringCopy(gStringVar2, gSpeciesNames[GetMonData(mon, MON_DATA_SPECIES, NULL)]);
         StringExpandPlaceholders(gStringVar4, sText_ExFormUnlocked);
         DisplayPartyMenuMessage(gStringVar4, TRUE);
         ScheduleBgCopyTilemapToVram(2);
@@ -6531,6 +6553,38 @@ static void CB2_ChooseMonForMoveRelearner(void)
         gSpecialVar_0x8004 = PARTY_NOTHING_CHOSEN;
     else
         gSpecialVar_0x8005 = GetNumberOfRelearnableMoves(&gPlayerParty[gSpecialVar_0x8004]);
+    gFieldCallback2 = CB2_FadeFromPartyMenu;
+    SetMainCallback2(CB2_ReturnToField);
+}
+
+// For an NPC that unlocks a Pokémon's EX form (see EventScript_ExTutor). Shows which party Pokémon it
+// can unlock, only taking species VAR_0x8005 unless that's SPECIES_NONE. Sets VAR_0x8004 to the chosen
+// Pokémon (or PARTY_NOTHING_CHOSEN), and VAR_RESULT to whether its EX form can be unlocked
+void ChooseMonForExTutor(void)
+{
+    LockPlayerFieldControls();
+    FadeScreen(FADE_TO_BLACK, 0);
+    CreateTask(Task_ChooseMonForExTutor, 10);
+}
+
+static void Task_ChooseMonForExTutor(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        CleanupOverworldWindowsAndTilemaps();
+        InitPartyMenu(PARTY_MENU_TYPE_EX_TUTOR, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_AND_CLOSE, FALSE, PARTY_MSG_CHOOSE_MON, Task_HandleChooseMonInput, CB2_ChooseMonForExTutor);
+        DestroyTask(taskId);
+    }
+}
+
+static void CB2_ChooseMonForExTutor(void)
+{
+    gSpecialVar_0x8004 = GetCursorSelectionMonId();
+    gSpecialVar_Result = FALSE;
+    if (gSpecialVar_0x8004 >= PARTY_SIZE)
+        gSpecialVar_0x8004 = PARTY_NOTHING_CHOSEN;
+    else
+        gSpecialVar_Result = CanExTutorUnlockMon(&gPlayerParty[gSpecialVar_0x8004]);
     gFieldCallback2 = CB2_FadeFromPartyMenu;
     SetMainCallback2(CB2_ReturnToField);
 }

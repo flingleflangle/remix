@@ -485,6 +485,7 @@ gBattleAnims_General::
 	.4byte General_WishHeal                 @ B_ANIM_WISH_HEAL
 	.4byte General_SmokeballEscapeTrainer   @ B_ANIM_SMOKEBALL_ESCAPE_TRAINER
 	.4byte General_ExFlash                  @ B_ANIM_EX_FLASH
+	.4byte General_ExMastery                @ B_ANIM_EX_MASTERY
 
 	.align 2
 gBattleAnims_Special::
@@ -9259,6 +9260,21 @@ SweetScentEffect:
 	createsprite gSweetScentPetalSpriteTemplate, ANIM_ATTACKER, 2, 85, 0, 120
 	delay 2
 	return
+
+@ A Pokémon mastered a stat and turns into its EX form (see BattleScript_ExTrainingUnlock).
+@ It glows cyan in shiny sparkles, then thins out and back like the summary screen's EX form change.
+General_ExMastery:
+	loadspritegfx ANIM_TAG_GOLD_STARS
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 0, 12, RGB_CYAN
+	createvisualtask AnimTask_ExSparkles, 5
+	waitforvisualfinish
+	playsewithpan SE_EXP_MAX, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ExFormTurn, 5, 12, RGB_CYAN
+	createvisualtask AnimTask_ExSparkles, 5
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 2, 12, 0, RGB_CYAN
+	waitforvisualfinish
+	end
 
 General_ExFlash:
 	call EXMove

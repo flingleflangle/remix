@@ -350,7 +350,9 @@ struct ExFormInfo
     u8 ability;      // The only ability an EX form can have
     u8 backAnim;     // BACK_ANIM_*, or BACK_ANIM_NONE to keep the regular one
     bool8 noFlip;    // Same as SpeciesInfo's noFlip, for the EX front sprite
+    u8 unlockStat;   // MON_DATA_*_EV that unlocks the EX form at EX_UNLOCK_EV_THRESHOLD. 0 for none
     u16 unlockItem;  // Using this item on the Pokémon unlocks its EX form. ITEM_NONE for none
+    bool8 exFixed;   // Once in its EX form, the Pokémon can't switch back
     const u16 *exMoves; // EX moves the EX form can always use, ending with MOVE_NONE. NULL for none
     // NULL to keep the regular graphics
     const u32 *frontPic;
@@ -548,6 +550,10 @@ bool32 IsMonEx(struct Pokemon *mon);
 bool32 CanBoxMonChangeExForm(struct BoxPokemon *boxMon);
 bool32 CanMonChangeExForm(struct Pokemon *mon);
 bool32 TryUnlockMonExFormWithItem(struct Pokemon *mon, u16 item);
+bool32 TryUnlockMonExFormWithTraining(struct Pokemon *mon);
+bool32 CanMonUnlockExForm(struct Pokemon *mon);
+bool32 UnlockMonExForm(struct Pokemon *mon);
+void SetMonExForm(struct Pokemon *mon);
 void ToggleMonExForm(struct Pokemon *mon);
 void ToggleBoxMonExForm(struct BoxPokemon *boxMon);
 struct Pokemon *GetBattlerPartyMon(u8 battler);

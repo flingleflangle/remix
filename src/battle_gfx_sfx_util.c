@@ -692,6 +692,21 @@ void BattleLoadPlayerMonSpriteGfx(struct Pokemon *mon, u8 battler)
     }
 }
 
+// Reloads a battler's sprite and palette from its party Pokémon, like after it changes into
+// its EX form. The battler can't be transformed or behind a substitute.
+void ReloadBattlerSpriteGfx(u8 battler)
+{
+    struct Pokemon *mon = GetBattlerPartyMon(battler);
+
+    if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+        BattleLoadPlayerMonSpriteGfx(mon, battler);
+    else
+        BattleLoadOpponentMonSpriteGfx(mon, battler);
+    DmaCopy32(3, gMonSpritesGfxPtr->sprites.ptr[GetBattlerPosition(battler)],
+              (void *)(OBJ_VRAM0 + gSprites[gBattlerSpriteIds[battler]].oam.tileNum * TILE_SIZE_4BPP),
+              MON_PIC_SIZE);
+}
+
 static void UNUSED BattleGfxSfxDummy1(void)
 {
 }

@@ -257,5 +257,6 @@ extern const u8 BattleScript_ExBonusRecoverHp[];
 extern const u8 BattleScript_ExBonusHealReplacement[];
 extern const u8 BattleScript_ExBonusStatsUp[];
 extern const u8 BattleScript_ExHealReplacement[];
+extern const u8 BattleScript_ExTrainingUnlock[];
 
 #endif // GUARD_BATTLE_SCRIPTS_H

@@ -3627,6 +3627,68 @@ static void Cmd_jumpiftype(void)
         gBattlescriptCurrInstr += 7;
 }
 
+// The player's battler that the Pokémon getting EXP is, or MAX_BATTLERS_COUNT if it isn't on the field
+static u32 GetExpGetterBattlerOnField(void)
+{
+    u32 battler;
+
+    for (battler = 0; battler < gBattlersCount; battler++)
+    {
+        if (GetBattlerSide(battler) == B_SIDE_PLAYER
+         && gBattlerPartyIndexes[battler] == gBattleStruct->expGetterMonId
+         && !(gAbsentBattlerFlags & gBitTable[battler])
+         && gBattleMons[battler].hp != 0
+         && gBattleSpritesDataPtr->battlerData[battler].transformSpecies == SPECIES_NONE)
+            return battler;
+    }
+    return MAX_BATTLERS_COUNT;
+}
+
+// Whether the opponent still has a Pokémon that can battle, so the battle goes on after the EXP
+static bool32 DoesOpponentHaveMonsLeft(void)
+{
+    u32 i;
+
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+    {
+        for (i = 0; i < PARTY_SIZE; i++)
+        {
+            if (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES) != SPECIES_NONE
+             && !GetMonData(&gEnemyParty[i], MON_DATA_IS_EGG)
+             && GetMonData(&gEnemyParty[i], MON_DATA_HP) != 0)
+                return TRUE;
+        }
+        return FALSE;
+    }
+
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (GetBattlerSide(i) == B_SIDE_OPPONENT && !(gAbsentBattlerFlags & gBitTable[i]) && gBattleMons[i].hp != 0)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+// Unlocks the EX form of the Pokémon getting EXP if it has trained enough, and buffers
+// BattleScript_ExTrainingUnlock's text. Returns TRUE if it was unlocked.
+static bool32 TryUnlockExpGetterExFormWithTraining(void)
+{
+    u8 monId = gBattleStruct->expGetterMonId;
+    struct Pokemon *mon = &gPlayerParty[monId];
+    u16 species = GetMonData(mon, MON_DATA_SPECIES);
+    const struct ExFormInfo *exForm = GetSpeciesExFormInfo(species);
+
+    if (exForm == NULL || GetMonData(mon, MON_DATA_HP) == 0
+     || ((gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) && monId >= 3)
+     || !TryUnlockMonExFormWithTraining(mon))
+        return FALSE;
+
+    PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, 0, monId);
+    PREPARE_STAT_BUFFER(gBattleTextBuff2, exForm->unlockStat - MON_DATA_HP_EV);
+    PREPARE_SPECIES_BUFFER(gBattleTextBuff3, species);
+    return TRUE;
+}
+
 static void Cmd_getexp(void)
 {
     u16 item;
@@ -3881,6 +3943,12 @@ static void Cmd_getexp(void)
         if (gBattleMoveDamage) // there is exp to give, goto case 3 that gives exp
         {
             gBattleScripting.getexpState = 3;
+        }
+        else if (TryUnlockExpGetterExFormWithTraining())
+        {
+            // Stays in this case, to move on to the next Pokémon after the message
+            BattleScriptPushCursor();
+            gBattlescriptCurrInstr = BattleScript_ExTrainingUnlock;
         }
         else
         {
@@ -7112,6 +7180,66 @@ static void Cmd_various(void)
     case VARIOUS_EX_HEAL_REPLACEMENT:
         // The next Pokémon to switch in on this side gets its HP restored (see Cmd_switchineffects)
         gExHealReplacementSides |= gBitTable[GetBattlerSide(gActiveBattler)];
+        break;
+    case VARIOUS_EX_TRAINING_ANIM:
+        // The Pokémon that unlocked its EX form glows and turns into it, if it's on the field (see Cmd_getexp)
+        gActiveBattler = GetExpGetterBattlerOnField();
+        if (gActiveBattler < MAX_BATTLERS_COUNT)
+        {
+            BtlController_EmitBattleAnimation(B_COMM_TO_CONTROLLER, B_ANIM_EX_MASTERY, 0);
+            MarkBattlerForControllerExec(gActiveBattler);
+        }
+        break;
+    case VARIOUS_EX_TRAINING_UPDATE_FORM:
+        // Once B_ANIM_EX_MASTERY and its turning sound are done, updates the battle data and HP of the Pokémon
+        // that unlocked its EX form, if it's on the field. The animation already changed its sprite (or it will
+        // change when its substitute fades). Its level still shows "Lv" until VARIOUS_EX_TRAINING_LOGO
+        if (IsSongPlaying(SE_EXP_MAX))
+            return;
+        gActiveBattler = GetExpGetterBattlerOnField();
+        if (gActiveBattler < MAX_BATTLERS_COUNT)
+        {
+            struct Pokemon *mon = &gPlayerParty[gBattlerPartyIndexes[gActiveBattler]];
+
+            gBattleMons[gActiveBattler].hp = GetMonData(mon, MON_DATA_HP);
+            gBattleMons[gActiveBattler].maxHP = GetMonData(mon, MON_DATA_MAX_HP);
+            gBattleMons[gActiveBattler].attack = GetMonData(mon, MON_DATA_ATK);
+            gBattleMons[gActiveBattler].defense = GetMonData(mon, MON_DATA_DEF);
+            gBattleMons[gActiveBattler].speed = GetMonData(mon, MON_DATA_SPEED);
+            gBattleMons[gActiveBattler].spAttack = GetMonData(mon, MON_DATA_SPATK);
+            gBattleMons[gActiveBattler].spDefense = GetMonData(mon, MON_DATA_SPDEF);
+            SetBattlerTypesAndAbilityFromForm(gActiveBattler);
+            UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], mon, HEALTHBOX_CURRENT_HP);
+            UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], mon, HEALTHBOX_MAX_HP);
+            UpdateHealthboxAttribute(gHealthboxSpriteIds[gActiveBattler], mon, HEALTHBOX_HEALTH_BAR);
+        }
+        break;
+    case VARIOUS_WAIT_FANFARE:
+        if (!IsFanfareTaskInactive())
+            return;
+        break;
+    case VARIOUS_WAIT_EX_LOGO:
+        // Waits for the EX logo to slam into the healthbox, and its sound (see StartHealthboxExLogoAnim)
+        if (IsHealthboxExLogoAnimating())
+            return;
+        break;
+    case VARIOUS_EX_TRAINING_JINGLE:
+        // The music stays paused after it, for the EX logo (see VARIOUS_EX_TRAINING_MUSIC)
+        PlayFanfareThenSilence(MUS_OBTAIN_B_POINTS);
+        break;
+    case VARIOUS_EX_TRAINING_LOGO:
+        // The EX logo slams into the healthbox of the Pokémon that unlocked its EX form, if it's on the field
+        gActiveBattler = GetExpGetterBattlerOnField();
+        if (gActiveBattler < MAX_BATTLERS_COUNT)
+            StartHealthboxExLogoAnim(gActiveBattler);
+        break;
+    case VARIOUS_EX_TRAINING_MUSIC:
+        // If the battle goes on after a Pokémon unlocked its EX form, the title theme replaces the battle music.
+        // Otherwise the music that VARIOUS_EX_TRAINING_JINGLE paused carries on
+        if (DoesOpponentHaveMonsLeft())
+            PlayBGM(MUS_TITLE);
+        else
+            ResumeBGMAfterFanfare();
         break;
     }
 
@@ -10956,7 +11084,7 @@ static void Cmd_handleballthrow(void)
             case ITEM_DIVE_BALL:
                 if (GetCurrentMapType() == MAP_TYPE_UNDERWATER)
                     ballMultiplier = 35;
-                else if (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_DRAGON) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_SOUND))
+                else if (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_DARK) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_ASTRAL))
                     ballMultiplier = 30;
                 else
                     ballMultiplier = 10;

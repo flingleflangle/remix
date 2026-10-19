@@ -2091,20 +2091,22 @@ u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, u8 id, s16
     u8 spriteId;
     u16 sheet = LoadSpriteSheet(&sSpriteSheets_MoveEffectMons[id]);
     u16 palette = AllocSpritePalette(sSpriteTemplates_MoveEffectMons[id].paletteTag);
+    struct Pokemon *mon = IsContest() ? NULL : GetBattlerPartyMon(battler);
+    bool32 isEx = (mon != NULL && GetMonData(mon, MON_DATA_SPECIES, NULL) == species && IsMonEx(mon));
 
     if (gMonSpritesGfxPtr != NULL && gMonSpritesGfxPtr->buffer == NULL)
         gMonSpritesGfxPtr->buffer = AllocZeroed(MON_PIC_SIZE * MAX_MON_PIC_FRAMES);
     if (!isBackpic)
     {
-        LoadCompressedPalette(GetMonSpritePalFromSpeciesAndPersonality(species, trainerId, personality), OBJ_PLTT_ID(palette), PLTT_SIZE_4BPP);
+        LoadCompressedPalette(GetSpeciesFormSpritePal(species, isEx, trainerId, personality), OBJ_PLTT_ID(palette), PLTT_SIZE_4BPP);
         if (ignoreDeoxysForm == TRUE || ShouldIgnoreDeoxysForm(5, battler) == TRUE || gBattleSpritesDataPtr->battlerData[battler].transformSpecies != 0)
-            LoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[species],
+            LoadSpecialPokePic_DontHandleDeoxys(GetSpeciesFormPicSheet(species, isEx, TRUE),
                                                 gMonSpritesGfxPtr->buffer,
                                                 species,
                                                 personality,
                                                 TRUE);
         else
-            LoadSpecialPokePic_2(&gMonFrontPicTable[species],
+            LoadSpecialPokePic_2(GetSpeciesFormPicSheet(species, isEx, TRUE),
                                  gMonSpritesGfxPtr->buffer,
                                  species,
                                  personality,
@@ -2112,15 +2114,15 @@ u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, u8 id, s16
     }
     else
     {
-        LoadCompressedPalette(GetMonSpritePalFromSpeciesAndPersonality(species, trainerId, personality), OBJ_PLTT_ID(palette), PLTT_SIZE_4BPP);
+        LoadCompressedPalette(GetSpeciesFormSpritePal(species, isEx, trainerId, personality), OBJ_PLTT_ID(palette), PLTT_SIZE_4BPP);
         if (ignoreDeoxysForm == TRUE || ShouldIgnoreDeoxysForm(5, battler) == TRUE || gBattleSpritesDataPtr->battlerData[battler].transformSpecies != 0)
-            LoadSpecialPokePic_DontHandleDeoxys(&gMonBackPicTable[species],
+            LoadSpecialPokePic_DontHandleDeoxys(GetSpeciesFormPicSheet(species, isEx, FALSE),
                                                 gMonSpritesGfxPtr->buffer,
                                                 species,
                                                 personality,
                                                 FALSE);
         else
-            LoadSpecialPokePic_2(&gMonBackPicTable[species],
+            LoadSpecialPokePic_2(GetSpeciesFormPicSheet(species, isEx, FALSE),
                                  gMonSpritesGfxPtr->buffer,
                                  species,
                                  personality,

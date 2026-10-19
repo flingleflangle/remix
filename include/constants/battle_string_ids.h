@@ -411,8 +411,9 @@
 #define STRINGID_EXSTATSRESTORED            411
 #define STRINGID_EXREPLACEMENTHEALED        412
 #define STRINGID_PKMNAIMEDNEXTATTACK        413
+#define STRINGID_PKMNMASTEREDSTAT           414
 
-#define BATTLESTRINGS_COUNT                 414
+#define BATTLESTRINGS_COUNT                 415
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,

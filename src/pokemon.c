@@ -6793,12 +6793,16 @@ bool32 IsMonEx(struct Pokemon *mon)
     return IsBoxMonEx(&mon->box);
 }
 
-// Whether the player can switch the Pokémon in and out of its EX form
+// Whether the player can switch the Pokémon in and out of its EX form.
+// An exFixed EX form can't be switched out of.
 bool32 CanBoxMonChangeExForm(struct BoxPokemon *boxMon)
 {
-    return GetBoxMonData(boxMon, MON_DATA_EX_UNLOCKED, NULL)
+    const struct ExFormInfo *exForm = GetSpeciesExFormInfo(GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL));
+
+    return exForm != NULL
+        && GetBoxMonData(boxMon, MON_DATA_EX_UNLOCKED, NULL)
         && !GetBoxMonData(boxMon, MON_DATA_IS_EGG, NULL)
-        && GetSpeciesExFormInfo(GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL)) != NULL;
+        && !(exForm->exFixed && GetBoxMonData(boxMon, MON_DATA_IS_EX, NULL));
 }
 
 bool32 CanMonChangeExForm(struct Pokemon *mon)
@@ -6806,19 +6810,57 @@ bool32 CanMonChangeExForm(struct Pokemon *mon)
     return CanBoxMonChangeExForm(&mon->box);
 }
 
-// Unlocks the Pokémon's EX form if its species has one and this item unlocks it.
-// Returns TRUE if it was unlocked.
+// Whether the Pokémon has an EX form that isn't unlocked yet
+bool32 CanMonUnlockExForm(struct Pokemon *mon)
+{
+    return GetSpeciesExFormInfo(GetMonData(mon, MON_DATA_SPECIES, NULL)) != NULL
+        && !GetMonData(mon, MON_DATA_IS_EGG, NULL)
+        && !GetMonData(mon, MON_DATA_EX_UNLOCKED, NULL);
+}
+
+// Unlocks the Pokémon's EX form if its species has one and it isn't unlocked yet, and puts
+// the Pokémon in it. Returns TRUE if it was unlocked.
+bool32 UnlockMonExForm(struct Pokemon *mon)
+{
+    if (!CanMonUnlockExForm(mon))
+        return FALSE;
+
+    SetMonExForm(mon);
+    return TRUE;
+}
+
+// Unlocks the Pokémon's EX form if this item unlocks it. Returns TRUE if it was unlocked.
 bool32 TryUnlockMonExFormWithItem(struct Pokemon *mon, u16 item)
 {
     const struct ExFormInfo *exForm = GetSpeciesExFormInfo(GetMonData(mon, MON_DATA_SPECIES, NULL));
-    bool8 unlocked = TRUE;
 
-    if (exForm == NULL || exForm->unlockItem == ITEM_NONE || exForm->unlockItem != item
-        || GetMonData(mon, MON_DATA_IS_EGG, NULL) || GetMonData(mon, MON_DATA_EX_UNLOCKED, NULL))
+    if (exForm == NULL || exForm->unlockItem == ITEM_NONE || exForm->unlockItem != item)
         return FALSE;
+    return UnlockMonExForm(mon);
+}
 
-    SetMonData(mon, MON_DATA_EX_UNLOCKED, &unlocked);
-    return TRUE;
+// Unlocks the Pokémon's EX form if its unlockStat has reached EX_UNLOCK_EV_THRESHOLD EVs.
+// Returns TRUE if it was unlocked.
+bool32 TryUnlockMonExFormWithTraining(struct Pokemon *mon)
+{
+    const struct ExFormInfo *exForm = GetSpeciesExFormInfo(GetMonData(mon, MON_DATA_SPECIES, NULL));
+
+    if (exForm == NULL || exForm->unlockStat < MON_DATA_HP_EV || exForm->unlockStat > MON_DATA_SPDEF_EV
+        || GetMonData(mon, exForm->unlockStat, NULL) < EX_UNLOCK_EV_THRESHOLD)
+        return FALSE;
+    return UnlockMonExForm(mon);
+}
+
+// Puts the Pokémon in its EX form and unlocks it
+void SetMonExForm(struct Pokemon *mon)
+{
+    bool8 isEx = TRUE;
+
+    if (GetSpeciesExFormInfo(GetMonData(mon, MON_DATA_SPECIES, NULL)) == NULL || GetMonData(mon, MON_DATA_IS_EGG, NULL))
+        return;
+    SetMonData(mon, MON_DATA_EX_UNLOCKED, &isEx);
+    SetMonData(mon, MON_DATA_IS_EX, &isEx);
+    CalculateMonStats(mon);
 }
 
 // Switches the Pokémon between its regular and EX forms, recalculating its stats

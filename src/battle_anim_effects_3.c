@@ -2,6 +2,8 @@
 #include "malloc.h"
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_gfx_sfx_util.h"
+#include "battle_interface.h"
 #include "bg.h"
 #include "contest.h"
 #include "data.h"
@@ -2259,6 +2261,68 @@ void AnimTask_SwallowDeformMon(u8 taskId)
             DestroyAnimVisualTask(taskId);
     }
 }
+
+// The attacker "turns" into its current form, the way the summary screen changes EX forms:
+// it thins to a line, its graphics and palette are reloaded, then it widens back.
+// For the EX mastery animation (B_ANIM_EX_MASTERY).
+// arg 0: how far the new palette is blended toward the color, to keep a glow going (0-16)
+// arg 1: color
+#define tState    data[0]
+#define tStep     data[1]
+#define tSpriteId data[2]
+#define tBlendY   data[3]
+#define tColor    data[4]
+
+// Inverse x scales, for widths of 192, 128, 64 and 4 out of 256 (see sExFormSquishScales)
+static const u16 sExFormTurnXScales[] = { 0x155, 0x200, 0x400, 0x4000 };
+
+void AnimTask_ExFormTurn(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    switch (task->tState)
+    {
+    case 0:
+        task->tSpriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+        if (task->tSpriteId == SPRITE_NONE)
+        {
+            DestroyAnimVisualTask(taskId);
+            return;
+        }
+        task->tBlendY = gBattleAnimArgs[0];
+        task->tColor = gBattleAnimArgs[1];
+        PrepareBattlerSpriteForRotScale(task->tSpriteId, ST_OAM_OBJ_NORMAL);
+        task->tState++;
+        // fall through
+    case 1: // Thin out
+        SetSpriteRotScale(task->tSpriteId, sExFormTurnXScales[task->tStep], 0x100, 0);
+        if (++task->tStep == ARRAY_COUNT(sExFormTurnXScales))
+            task->tState++;
+        break;
+    case 2: // Change form while it's a line
+        ReloadBattlerSpriteGfx(gBattleAnimAttacker);
+        BlendPalette(OBJ_PLTT_ID(gBattleAnimAttacker), 16, task->tBlendY, task->tColor);
+        task->tStep = ARRAY_COUNT(sExFormTurnXScales) - 1;
+        task->tState++;
+        break;
+    case 3: // Widen back
+        if (task->tStep == 0)
+        {
+            ResetSpriteRotScale(task->tSpriteId);
+            DestroyAnimVisualTask(taskId);
+            return;
+        }
+        task->tStep--;
+        SetSpriteRotScale(task->tSpriteId, sExFormTurnXScales[task->tStep], 0x100, 0);
+        break;
+    }
+}
+
+#undef tState
+#undef tStep
+#undef tSpriteId
+#undef tBlendY
+#undef tColor
 
 void AnimTask_TransformMon(u8 taskId)
 {

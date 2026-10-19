@@ -6,6 +6,7 @@
 #include "constants/battle_string_ids.h"
 #include "constants/abilities.h"
 #include "constants/moves.h"
+#include "constants/songs.h"
 	.include "asm/macros.inc"
 	.include "asm/macros/battle_script.inc"
 	.include "constants/constants.inc"
@@ -90,6 +91,7 @@ gExMoveUpgrades::
 	exupgrade MOVE_ROCK_THROW, MOVE_ROCK_SLIDE
 	exupgrade MOVE_DIZZY_PUNCH, MOVE_DYNAMIC_PUNCH
 	exupgrade MOVE_COMET_PUNCH, MOVE_METEOR_MASH
+	exupgrade MOVE_ROCK_TOMB, MOVE_TOMBSTONER
 	exupgrade MOVE_SELF_DESTRUCT, MOVE_EXPLOSION
 	exupgrade MOVE_NONE, MOVE_NONE @ End of list, keep this last
 
@@ -503,3 +505,20 @@ BattleScript_ExBulletSeedMoveEnd:
 	moveendcase MOVEEND_SYNCHRONIZE_TARGET
 	moveendfrom MOVEEND_IMMUNITY_ABILITIES
 	end
+
+@ A Pokémon unlocked its EX form through training, after gaining EXP (see Cmd_getexp).
+@ If it's on the field it glows and turns into its EX form (B_ANIM_EX_MASTERY), then its message shows.
+@ Then the jingle plays, and in the silence after it the EX logo slams into its healthbox. Then the
+@ music comes back, or if the battle goes on, the title theme takes over, like after an evolution mid-battle.
+BattleScript_ExTrainingUnlock::
+	various BS_ATTACKER, VARIOUS_EX_TRAINING_ANIM
+	waitanimation
+	various BS_ATTACKER, VARIOUS_EX_TRAINING_UPDATE_FORM
+	printstring STRINGID_PKMNMASTEREDSTAT
+	waitmessage B_WAIT_TIME_SHORT
+	various BS_ATTACKER, VARIOUS_EX_TRAINING_JINGLE
+	various BS_ATTACKER, VARIOUS_WAIT_FANFARE
+	various BS_ATTACKER, VARIOUS_EX_TRAINING_LOGO
+	various BS_ATTACKER, VARIOUS_WAIT_EX_LOGO
+	various BS_ATTACKER, VARIOUS_EX_TRAINING_MUSIC
+	return

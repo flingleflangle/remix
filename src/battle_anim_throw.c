@@ -2571,6 +2571,8 @@ void AnimTask_SetTargetToEffectBattler(u8 taskId)
 #define tStarTimer data[10]
 #define tStarIdx   data[11]
 #define tNumStars  data[12]
+#define tFromAnim  data[2] // Created by AnimTask_ExSparkles, not a shiny Pokémon's switch-in
+#define tAnimTask  data[3]
 #define tTimer     data[13]
 
 #define sTaskId data[0]
@@ -2614,6 +2616,35 @@ void TryShinyAnimation(u8 battler, struct Pokemon *mon)
     }
 
     gBattleSpritesDataPtr->healthBoxesData[battler].finishedShinyMonAnim = TRUE;
+}
+
+// The shiny sparkles around the attacker, for the EX mastery animation (B_ANIM_EX_MASTERY).
+// Needs ANIM_TAG_GOLD_STARS loaded. Ends once all the stars are gone.
+#define tStarTasksLeft data[0]
+
+static void AnimTask_ExSparkles_Wait(u8 taskId)
+{
+    if (gTasks[taskId].tStarTasksLeft == 0)
+        DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_ExSparkles(u8 taskId)
+{
+    u8 starTasks[2];
+    u32 i;
+
+    starTasks[0] = CreateTask(Task_ShinyStars, 10);
+    starTasks[1] = CreateTask(Task_ShinyStars, 10);
+    for (i = 0; i < ARRAY_COUNT(starTasks); i++)
+    {
+        gTasks[starTasks[i]].tBattler = gBattleAnimAttacker;
+        gTasks[starTasks[i]].tStarMove = (i == 0) ? SHINY_STAR_ENCIRCLE : SHINY_STAR_DIAGONAL;
+        gTasks[starTasks[i]].tTimer = 60; // Starts right away
+        gTasks[starTasks[i]].tFromAnim = TRUE;
+        gTasks[starTasks[i]].tAnimTask = taskId;
+    }
+    gTasks[taskId].tStarTasksLeft = ARRAY_COUNT(starTasks);
+    gTasks[taskId].func = AnimTask_ExSparkles_Wait;
 }
 
 static void Task_ShinyStars(u8 taskId)
@@ -2695,7 +2726,9 @@ static void Task_ShinyStars_Wait(u8 taskId)
 
     if (gTasks[taskId].tNumStars == 0)
     {
-        if (gTasks[taskId].tStarMove == SHINY_STAR_DIAGONAL)
+        if (gTasks[taskId].tFromAnim)
+            gTasks[gTasks[taskId].tAnimTask].tStarTasksLeft--;
+        else if (gTasks[taskId].tStarMove == SHINY_STAR_DIAGONAL)
         {
             battler = gTasks[taskId].tBattler;
             gBattleSpritesDataPtr->healthBoxesData[battler].finishedShinyMonAnim = TRUE;
@@ -2743,6 +2776,9 @@ static void SpriteCB_ShinyStars_Diagonal(struct Sprite *sprite)
 #undef tStarMove
 #undef tStarTimer
 #undef tStarIdx
+#undef tStarTasksLeft
+#undef tFromAnim
+#undef tAnimTask
 #undef tNumStars
 #undef tTimer
 

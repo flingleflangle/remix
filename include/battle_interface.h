@@ -44,6 +44,8 @@ enum
 
 #define TAG_STATUS_SUMMARY_BALLS_TILE   0xD714
 
+#define TAG_EX_LOGO_SLAM                0xD716 // Tiles and palette of the EX logo while it slams in (see StartHealthboxExLogoAnim)
+
 #define TAG_HEALTHBAR_PAL               TAG_HEALTHBAR_PLAYER1_TILE
 #define TAG_HEALTHBOX_PAL               TAG_HEALTHBOX_PLAYER1_TILE
 
@@ -77,6 +79,8 @@ void SwapHpBarsWithHpText(void);
 u8 CreatePartyStatusSummarySprites(u8 battler, struct HpAndStatus *partyInfo, bool8 skipPlayer, bool8 isBattleStart);
 void Task_HidePartyStatusSummary(u8 taskId);
 void UpdateHealthboxAttribute(u8 healthboxSpriteId, struct Pokemon *mon, u8 elementId);
+void StartHealthboxExLogoAnim(u8 battler);
+bool32 IsHealthboxExLogoAnimating(void);
 s32 MoveBattleBar(u8 battler, u8 healthboxSpriteId, u8 whichBar, u8 unused);
 u8 GetScaledHPFraction(s16 hp, s16 maxhp, u8 scale);
 u8 GetHPBarLevel(s16 hp, s16 maxhp);

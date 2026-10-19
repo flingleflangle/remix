@@ -1112,9 +1112,10 @@ void InitBattlerHealthboxCoords(u8 battler)
 #define EX_LOGO_HEIGHT     7
 #define EX_LOGO_Y          8  // In the level's text window, lined up with the digits
 
+static const u16 sExLogoFillColor = RGB(27, 13, 11);
+
 static void DrawExLogoInLevelWindow(u32 windowId, s32 x, u8 healthboxSpriteId)
 {
-    static const u16 sExLogoFillColor = RGB(27, 13, 11);
     u8 logo[2 * TILE_SIZE_4BPP];
     u32 i;
 
@@ -1129,15 +1130,36 @@ static void DrawExLogoInLevelWindow(u32 windowId, s32 x, u8 healthboxSpriteId)
     BlitBitmapRectToWindow(windowId, logo, EX_LOGO_LEFT, 0, 16, 8, max(x, 0), EX_LOGO_Y, EX_LOGO_WIDTH, EX_LOGO_HEIGHT);
 }
 
-static void UpdateLvlInHealthbox(u8 healthboxSpriteId, u8 lvl)
+// Battlers whose EX logo is slamming in, so the level is drawn without it (see StartHealthboxExLogoAnim)
+static EWRAM_DATA u8 sExLogoHiddenBattlers = 0;
+
+// Where the level's text window is copied into the healthbox's tiles, from its first tile
+static u32 GetLevelTileOffset(u8 healthboxSpriteId)
+{
+    if (GetBattlerSide(gSprites[healthboxSpriteId].hMain_Battler) == B_SIDE_PLAYER)
+        return IsDoubleBattle() ? 0x420 : 0x820;
+    return 0x400;
+}
+
+// Where an EX Pokémon's level digits start in the level's text window, where they'd be after "Lv"
+static u32 GetExLevelDigitsX(u8 lvl)
 {
     static const u8 sText_Lv[] = { CHAR_EXTRA_SYMBOL, CHAR_LV_2, EOS };
-    u32 windowId, spriteTileNum;
+    u8 digits[4];
+    u8 *end = ConvertIntToDecimalStringN(digits, lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
+
+    return 5 * (3 - (end - digits)) + GetStringWidth(FONT_SMALL, sText_Lv, 0);
+}
+
+static void UpdateLvlInHealthbox(u8 healthboxSpriteId, u8 lvl)
+{
+    u32 windowId;
     u8 *windowTileData;
     u8 text[16];
     u32 xPos;
     u8 *objVram;
-    bool32 isEx = IsMonEx(GetBattlerPartyMon(gSprites[healthboxSpriteId].hMain_Battler));
+    u8 battler = gSprites[healthboxSpriteId].hMain_Battler;
+    bool32 isEx = IsMonEx(GetBattlerPartyMon(battler));
 
     text[0] = CHAR_EXTRA_SYMBOL;
     text[1] = CHAR_LV_2;
@@ -1147,34 +1169,224 @@ static void UpdateLvlInHealthbox(u8 healthboxSpriteId, u8 lvl)
 
     if (isEx)
     {
-        // Just the digits, where they'd be after "Lv", with the EX logo just before them
-        u32 digitsX = xPos + GetStringWidth(FONT_SMALL, sText_Lv, 0);
+        // Just the digits, with the EX logo just before them
+        u32 digitsX = GetExLevelDigitsX(lvl);
 
         windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text + 2, digitsX, 3, 2, &windowId);
-        DrawExLogoInLevelWindow(windowId, (s32)digitsX - EX_LOGO_WIDTH, healthboxSpriteId);
+        if (!(sExLogoHiddenBattlers & gBitTable[battler]))
+            DrawExLogoInLevelWindow(windowId, (s32)digitsX - EX_LOGO_WIDTH, healthboxSpriteId);
     }
     else
     {
         windowTileData = AddTextPrinterAndCreateWindowOnHealthbox(text, xPos, 3, 2, &windowId);
     }
-    spriteTileNum = gSprites[healthboxSpriteId].oam.tileNum * TILE_SIZE_4BPP;
 
-    if (GetBattlerSide(gSprites[healthboxSpriteId].hMain_Battler) == B_SIDE_PLAYER)
-    {
-        objVram = (void *)(OBJ_VRAM0);
-        if (!IsDoubleBattle())
-            objVram += spriteTileNum + 0x820;
-        else
-            objVram += spriteTileNum + 0x420;
-    }
-    else
-    {
-        objVram = (void *)(OBJ_VRAM0);
-        objVram += spriteTileNum + 0x400;
-    }
+    objVram = (void *)(OBJ_VRAM0 + gSprites[healthboxSpriteId].oam.tileNum * TILE_SIZE_4BPP + GetLevelTileOffset(healthboxSpriteId));
     TextIntoHealthboxObject(objVram, windowTileData, 3);
     RemoveWindowOnHealthbox(windowId);
 }
+
+// When a Pokémon turns EX in battle, after its animation its EX logo slams into the healthbox:
+// it appears big and white over the HP bar, then shrinks into its spot by the level while its
+// colors come in, and locks into place with a sound and a flash. Until it locks in, the level
+// is drawn without the logo, and the shrinking logo is a separate sprite with its own colors.
+#define EX_LOGO_SLAM_FRAMES     20 // Shrinking into place
+#define EX_LOGO_LOCK_FRAMES     10 // The flash once it's in place
+#define EX_LOGO_SLAM_SCALE      5  // How many times bigger it starts
+#define EX_LOGO_SLAM_SE         SE_M_DETECT
+#define EX_LOGO_SLAM_PAL_FILL   1
+#define EX_LOGO_SLAM_PAL_SHADOW 2
+// The logo's top left in its 32x32 sprite. Its double-size affine box is 64x64, room for it to start big
+#define EX_LOGO_SLAM_LOGO_X     11
+#define EX_LOGO_SLAM_LOGO_Y     12
+
+static void Task_SlamHealthboxExLogo(u8 taskId);
+
+static const struct OamData sOamData_ExLogoSlam =
+{
+    .affineMode = ST_OAM_AFFINE_DOUBLE,
+    .shape = SPRITE_SHAPE(32x32),
+    .size = SPRITE_SIZE(32x32),
+    .priority = 0, // In front of the healthbox
+};
+
+static const struct SpriteTemplate sSpriteTemplate_ExLogoSlam =
+{
+    .tileTag = TAG_EX_LOGO_SLAM,
+    .paletteTag = TAG_EX_LOGO_SLAM,
+    .oam = &sOamData_ExLogoSlam,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static u16 MixHealthboxColors(u16 color1, u16 color2, u8 amount)
+{
+    s32 r = GET_R(color1) + ((GET_R(color2) - GET_R(color1)) * amount) / 16;
+    s32 g = GET_G(color1) + ((GET_G(color2) - GET_G(color1)) * amount) / 16;
+    s32 b = GET_B(color1) + ((GET_B(color2) - GET_B(color1)) * amount) / 16;
+
+    return RGB(r, g, b);
+}
+
+#define tBattler  data[0]
+#define tSpriteId data[1]
+#define tFrame    data[2]
+#define tStartX   data[3]
+#define tStartY   data[4]
+#define tEndX     data[5]
+#define tEndY     data[6]
+#define tShadow   data[7]
+
+static void SetExLogoSlamFrame(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    struct Sprite *sprite = &gSprites[tSpriteId];
+    // Out of 256. It eases in, speeding up as it shrinks into place
+    s32 progress = tFrame * tFrame * 256 / (EX_LOGO_SLAM_FRAMES * EX_LOGO_SLAM_FRAMES);
+    s32 scale = EX_LOGO_SLAM_SCALE * 256 - (EX_LOGO_SLAM_SCALE - 1) * progress; // 256 is its usual size
+    u8 whiteness = 16 - tFrame * 16 / EX_LOGO_SLAM_FRAMES;
+    u16 colors[2];
+
+    sprite->x = tStartX + (tEndX - tStartX) * progress / 256;
+    sprite->y = tStartY + (tEndY - tStartY) * progress / 256;
+    SetOamMatrix(sprite->oam.matrixNum, 0x10000 / scale, 0, 0, 0x10000 / scale);
+    colors[0] = MixHealthboxColors(sExLogoFillColor, RGB_WHITE, whiteness);
+    colors[1] = MixHealthboxColors(tShadow, RGB_WHITE, whiteness);
+    LoadPalette(colors, OBJ_PLTT_ID(sprite->oam.paletteNum) + EX_LOGO_SLAM_PAL_FILL, PLTT_SIZEOF(2));
+}
+
+static void Task_SlamHealthboxExLogo(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    u8 battler = tBattler;
+    u16 healthboxPal = OBJ_PLTT_ID(gSprites[gHealthboxSpriteIds[battler]].oam.paletteNum);
+    u16 fill;
+
+    tFrame++;
+    if (tFrame <= EX_LOGO_SLAM_FRAMES)
+    {
+        SetExLogoSlamFrame(taskId);
+    }
+    else if (tFrame == EX_LOGO_SLAM_FRAMES + 1)
+    {
+        // Locked into place, where it's drawn in the healthbox from now on
+        PlaySE(EX_LOGO_SLAM_SE);
+        sExLogoHiddenBattlers &= ~gBitTable[battler];
+        UpdateHealthboxAttribute(gHealthboxSpriteIds[battler], GetBattlerPartyMon(battler), HEALTHBOX_LEVEL);
+        DestroySpriteAndFreeResources(&gSprites[tSpriteId]);
+        fill = RGB_WHITE;
+        LoadPalette(&fill, healthboxPal + EX_LOGO_PAL_FILL, PLTT_SIZEOF(1));
+    }
+    else if (tFrame <= EX_LOGO_SLAM_FRAMES + 1 + EX_LOGO_LOCK_FRAMES)
+    {
+        // Flashes white, then back to its color
+        fill = MixHealthboxColors(sExLogoFillColor, RGB_WHITE, 16 - (tFrame - EX_LOGO_SLAM_FRAMES - 1) * 16 / EX_LOGO_LOCK_FRAMES);
+        LoadPalette(&fill, healthboxPal + EX_LOGO_PAL_FILL, PLTT_SIZEOF(1));
+    }
+    else
+    {
+        DestroyTask(taskId);
+    }
+}
+
+// Redraws the battler's level, with the EX logo slamming in if it's EX
+void StartHealthboxExLogoAnim(u8 battler)
+{
+    u8 healthboxSpriteId = gHealthboxSpriteIds[battler];
+    struct Sprite *healthboxRight = &gSprites[gSprites[healthboxSpriteId].oam.affineParam];
+    struct Sprite *healthBar = &gSprites[gSprites[healthboxSpriteId].hMain_HealthBarSpriteId];
+    struct Pokemon *mon = GetBattlerPartyMon(battler);
+    u16 healthboxPal = OBJ_PLTT_ID(gSprites[healthboxSpriteId].oam.paletteNum);
+    u8 tiles[16 * TILE_SIZE_4BPP];
+    u16 colors[16];
+    struct SpriteSheet sheet;
+    struct SpritePalette palette;
+    u32 x, y, rightTileOffset, levelTile;
+    s32 logoLeft, logoTop;
+    u8 spriteId, taskId;
+
+    if (!IsMonEx(mon) || FuncIsActiveTask(Task_SlamHealthboxExLogo))
+    {
+        UpdateHealthboxAttribute(healthboxSpriteId, mon, HEALTHBOX_LEVEL);
+        return;
+    }
+
+    // The logo's pixels from its 16x8 graphics, in the middle of the 32x32 sprite in its own colors.
+    // Its background (2) becomes transparent
+    memset(tiles, 0, sizeof(tiles));
+    for (y = 0; y < EX_LOGO_HEIGHT; y++)
+    {
+        for (x = EX_LOGO_LEFT; x < EX_LOGO_LEFT + EX_LOGO_WIDTH; x++)
+        {
+            static const u8 sColorMap[16] = { [1] = EX_LOGO_SLAM_PAL_FILL, [3] = EX_LOGO_SLAM_PAL_SHADOW };
+            u8 pixels = gHealthboxExLogoGfx[(x / 8) * TILE_SIZE_4BPP + y * 4 + (x % 8) / 2];
+            u8 color = sColorMap[(x & 1) ? (pixels >> 4) : (pixels & 0xF)];
+            u32 spriteX = x - EX_LOGO_LEFT + EX_LOGO_SLAM_LOGO_X;
+            u32 spriteY = y + EX_LOGO_SLAM_LOGO_Y;
+            u8 *dest = &tiles[((spriteY / 8) * 4 + spriteX / 8) * TILE_SIZE_4BPP + (spriteY % 8) * 4 + (spriteX % 8) / 2];
+
+            *dest |= (spriteX & 1) ? (color << 4) : color;
+        }
+    }
+    memset(colors, 0, sizeof(colors));
+
+    sheet.data = tiles;
+    sheet.size = sizeof(tiles);
+    sheet.tag = TAG_EX_LOGO_SLAM;
+    palette.data = colors;
+    palette.tag = TAG_EX_LOGO_SLAM;
+    if (LoadSpriteSheet(&sheet) == 0 || LoadSpritePalette(&palette) == 0xFF
+     || (spriteId = CreateSprite(&sSpriteTemplate_ExLogoSlam, 0, 0, 0)) == MAX_SPRITES)
+    {
+        // No room for the sprite, so the logo just appears
+        FreeSpriteTilesByTag(TAG_EX_LOGO_SLAM);
+        FreeSpritePaletteByTag(TAG_EX_LOGO_SLAM);
+        UpdateHealthboxAttribute(healthboxSpriteId, mon, HEALTHBOX_LEVEL);
+        return;
+    }
+    gSprites[spriteId].affineAnimPaused = TRUE;
+
+    // Where the logo is drawn on screen. The level's tiles are in the healthbox's right half,
+    // which starts this many tiles in
+    rightTileOffset = (GetBattlerSide(battler) == B_SIDE_PLAYER && !IsDoubleBattle()) ? 64 : 32;
+    levelTile = GetLevelTileOffset(healthboxSpriteId) / TILE_SIZE_4BPP - rightTileOffset;
+    logoLeft = healthboxRight->x + healthboxRight->x2 + healthboxRight->centerToCornerVecX
+             + (levelTile % 8) * 8 + max((s32)GetExLevelDigitsX(GetMonData(mon, MON_DATA_LEVEL)) - EX_LOGO_WIDTH, 0);
+    logoTop = healthboxRight->y + healthboxRight->y2 + healthboxRight->centerToCornerVecY
+            + (levelTile / 8) * 8 + EX_LOGO_Y;
+
+    taskId = CreateTask(Task_SlamHealthboxExLogo, 2);
+    gTasks[taskId].tBattler = battler;
+    gTasks[taskId].tSpriteId = spriteId;
+    gTasks[taskId].tStartX = healthBar->x + healthBar->x2;
+    gTasks[taskId].tStartY = healthBar->y + healthBar->y2;
+    // At its usual size, the sprite's center is 16 pixels right of and below its top left
+    gTasks[taskId].tEndX = logoLeft - EX_LOGO_SLAM_LOGO_X + 16;
+    gTasks[taskId].tEndY = logoTop - EX_LOGO_SLAM_LOGO_Y + 16;
+    gTasks[taskId].tShadow = gPlttBufferUnfaded[healthboxPal + EX_LOGO_PAL_SHADOW];
+    SetExLogoSlamFrame(taskId);
+
+    // The level without the logo, until it's in place
+    sExLogoHiddenBattlers |= gBitTable[battler];
+    UpdateHealthboxAttribute(healthboxSpriteId, mon, HEALTHBOX_LEVEL);
+}
+
+// Whether an EX logo is still slamming in, or its sound is still playing
+bool32 IsHealthboxExLogoAnimating(void)
+{
+    return FuncIsActiveTask(Task_SlamHealthboxExLogo) || IsSongPlaying(EX_LOGO_SLAM_SE);
+}
+
+#undef tBattler
+#undef tSpriteId
+#undef tFrame
+#undef tStartX
+#undef tStartY
+#undef tEndX
+#undef tEndY
+#undef tShadow
 
 void UpdateHpTextInHealthbox(u8 healthboxSpriteId, s16 value, u8 maxOrCurrent)
 {

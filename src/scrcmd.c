@@ -1685,9 +1685,9 @@ bool8 ScrCmd_givemon(struct ScriptContext *ctx)
     u16 item = VarGet(ScriptReadHalfword(ctx));
     u32 unkParam1 = ScriptReadWord(ctx);
     u32 unkParam2 = ScriptReadWord(ctx);
-    u8 unkParam3 = ScriptReadByte(ctx);
+    u8 isEx = ScriptReadByte(ctx);
 
-    gSpecialVar_Result = ScriptGiveMon(species, level, item, unkParam1, unkParam2, unkParam3);
+    gSpecialVar_Result = ScriptGiveMon(species, level, item, unkParam1, unkParam2, isEx);
     return FALSE;
 }
 
@@ -1886,8 +1886,9 @@ bool8 ScrCmd_setwildbattle(struct ScriptContext *ctx)
     u16 species = ScriptReadHalfword(ctx);
     u8 level = ScriptReadByte(ctx);
     u16 item = ScriptReadHalfword(ctx);
+    bool8 isEx = ScriptReadByte(ctx);
 
-    CreateScriptedWildMon(species, level, item);
+    CreateScriptedWildMon(species, level, item, isEx);
     return FALSE;
 }
 

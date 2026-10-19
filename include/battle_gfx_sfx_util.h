@@ -13,6 +13,7 @@ bool8 IsMoveWithoutAnimation(u16 move, u8 animationTurn);
 bool8 IsBattleSEPlaying(u8 battler);
 void BattleLoadOpponentMonSpriteGfx(struct Pokemon *mon, u8 battler);
 void BattleLoadPlayerMonSpriteGfx(struct Pokemon *mon, u8 battler);
+void ReloadBattlerSpriteGfx(u8 battler);
 void BattleGfxSfxDummy2(u16 species);
 void DecompressTrainerFrontPic(u16 frontPicId, u8 battler);
 void DecompressTrainerBackPic(u16 backPicId, u8 battler);

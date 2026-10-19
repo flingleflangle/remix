@@ -58,7 +58,7 @@ void HealPlayerParty(void)
     }
 }
 
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, u32 unused1, u32 unused2, u8 unused3)
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, u32 unused1, u32 unused2, u8 isEx)
 {
     u16 nationalDexNum;
     int sentToPc;
@@ -69,6 +69,8 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u32 unused1, u32 unused2, u8 u
     heldItem[0] = item;
     heldItem[1] = item >> 8;
     SetMonData(&mon, MON_DATA_HELD_ITEM, heldItem);
+    if (isEx)
+        SetMonExForm(&mon);
     sentToPc = GiveMonToPlayer(&mon);
     nationalDexNum = SpeciesToNationalPokedexNum(species);
 
@@ -134,7 +136,7 @@ bool8 DoesPartyHaveEnigmaBerry(void)
     return hasItem;
 }
 
-void CreateScriptedWildMon(u16 species, u8 level, u16 item)
+void CreateScriptedWildMon(u16 species, u8 level, u16 item, bool8 isEx)
 {
     u8 heldItem[2];
 
@@ -146,6 +148,42 @@ void CreateScriptedWildMon(u16 species, u8 level, u16 item)
         heldItem[1] = item >> 8;
         SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, heldItem);
     }
+    if (isEx)
+        SetMonExForm(&gEnemyParty[0]);
+}
+
+// Unlocks the EX form of every Pokémon of species VAR_0x8004 in the party. See grantex in asm/macros/event.inc
+void GrantExForm(void)
+{
+    int i;
+
+    gSpecialVar_Result = FALSE;
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) == gSpecialVar_0x8004
+         && UnlockMonExForm(&gPlayerParty[i]) && !gSpecialVar_Result)
+        {
+            GetMonNickname(&gPlayerParty[i], gStringVar1);
+            gSpecialVar_Result = TRUE;
+        }
+    }
+}
+
+// Unlocks the EX form of party Pokémon VAR_0x8004, which turns it EX, for the EX tutor (see
+// EventScript_ExTutor). VAR_RESULT is set to whether it was unlocked. STR_VAR_1 is set to its
+// nickname and STR_VAR_2 to its species name
+void GrantExFormToPartyMon(void)
+{
+    struct Pokemon *mon;
+
+    gSpecialVar_Result = FALSE;
+    if (gSpecialVar_0x8004 >= PARTY_SIZE)
+        return;
+
+    mon = &gPlayerParty[gSpecialVar_0x8004];
+    GetMonNickname(mon, gStringVar1);
+    StringCopy(gStringVar2, gSpeciesNames[GetMonData(mon, MON_DATA_SPECIES, NULL)]);
+    gSpecialVar_Result = UnlockMonExForm(mon);
 }
 
 void ScriptSetMonMoveSlot(u8 monIndex, u16 move, u8 slot)

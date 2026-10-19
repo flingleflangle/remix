@@ -237,6 +237,7 @@ static const u8 sText_BubbleCoatTookHit[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_LAS
 static const u8 sText_ExStatsRestored[] = _("{B_ATK_NAME_WITH_PREFIX} returned its\nlowered stats to normal!");
 static const u8 sText_ExReplacementHealed[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s HP\nwas restored!");
 static const u8 sText_PkmnAimedNextAttack[] = _("{B_ATK_NAME_WITH_PREFIX} took aim\nat its next attack!");
+static const u8 sText_PkmnMasteredStat[] = _("{B_BUFF1} honed its {B_BUFF2}\nto mastery and became {B_BUFF3}{EX}!");
 static const u8 sText_PkmnFellForFirstSight[] = _("{B_DEF_NAME_WITH_PREFIX} fell for\n{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}!");
 static const u8 sText_PkmnFledFromBattle[] = _("{B_ATK_NAME_WITH_PREFIX} fled from\nbattle!");
 static const u8 sText_PkmnForesawAttack[] = _("{B_ATK_NAME_WITH_PREFIX} foresaw\nan attack!");
@@ -951,6 +952,7 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_EXSTATSRESTORED - BATTLESTRINGS_TABLE_START] = sText_ExStatsRestored,
     [STRINGID_EXREPLACEMENTHEALED - BATTLESTRINGS_TABLE_START] = sText_ExReplacementHealed,
     [STRINGID_PKMNAIMEDNEXTATTACK - BATTLESTRINGS_TABLE_START] = sText_PkmnAimedNextAttack,
+    [STRINGID_PKMNMASTEREDSTAT - BATTLESTRINGS_TABLE_START] = sText_PkmnMasteredStat,
 };
 
 const u16 gMissStringIds[] =

@@ -540,3 +540,6 @@ gSpecials::
 	def_special VsSeekerFreezeObjectsAfterChargeComplete
 @ End vs_seeker branch
 	def_special SwitchMonAbility
+	def_special GrantExForm
+	def_special ChooseMonForExTutor
+	def_special GrantExFormToPartyMon

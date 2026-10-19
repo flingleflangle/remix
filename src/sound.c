@@ -29,6 +29,7 @@ extern struct ToneData gCryTable[];
 extern struct ToneData gCryTable_Reverse[];
 
 static void Task_Fanfare(u8 taskId);
+static EWRAM_DATA bool8 sFanfareKeepsBGMPaused = FALSE; // For PlayFanfareThenSilence
 static void CreateFanfareTask(void);
 static void Task_DuckBGMForPokemonCry(u8 taskId);
 static void RestoreBGMVolumeAfterPokemonCry(void);
@@ -212,6 +213,7 @@ void StopFanfareByFanfareNum(u8 fanfareNum)
 void PlayFanfare(u16 songNum)
 {
     s32 i;
+    sFanfareKeepsBGMPaused = FALSE;
     for (i = 0; (u32)i < ARRAY_COUNT(sFanfares); i++)
     {
         if (sFanfares[i].songNum == songNum)
@@ -226,6 +228,18 @@ void PlayFanfare(u16 songNum)
     // Play first fanfare in table instead
     PlayFanfareByFanfareNum(0);
     CreateFanfareTask();
+}
+
+// Like PlayFanfare, but the BGM stays paused once the fanfare is over, until ResumeBGMAfterFanfare
+void PlayFanfareThenSilence(u16 songNum)
+{
+    PlayFanfare(songNum);
+    sFanfareKeepsBGMPaused = TRUE;
+}
+
+void ResumeBGMAfterFanfare(void)
+{
+    m4aMPlayContinue(&gMPlayInfo_BGM);
 }
 
 bool8 IsFanfareTaskInactive(void)
@@ -243,7 +257,8 @@ static void Task_Fanfare(u8 taskId)
     }
     else
     {
-        m4aMPlayContinue(&gMPlayInfo_BGM);
+        if (!sFanfareKeepsBGMPaused)
+            m4aMPlayContinue(&gMPlayInfo_BGM);
         DestroyTask(taskId);
     }
 }
@@ -609,6 +624,17 @@ bool8 IsSEPlaying(void)
     if (!(gMPlayInfo_SE1.status & MUSICPLAYER_STATUS_TRACK) && !(gMPlayInfo_SE2.status & MUSICPLAYER_STATUS_TRACK))
         return FALSE;
     return TRUE;
+}
+
+// Whether this song or sound effect is still playing. Unlike IsSEPlaying, other sounds don't count
+bool32 IsSongPlaying(u16 songNum)
+{
+    const struct Song *song = &gSongTable[songNum];
+    struct MusicPlayerInfo *mplayInfo = gMPlayTable[song->ms].info;
+
+    return mplayInfo->songHeader == song->header
+        && (mplayInfo->status & MUSICPLAYER_STATUS_TRACK)
+        && !(mplayInfo->status & MUSICPLAYER_STATUS_PAUSE);
 }
 
 bool8 IsBGMPlaying(void)
