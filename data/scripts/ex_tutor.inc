@@ -3,6 +3,8 @@
 @ Any NPC can use it with "goto EventScript_ExTutor". To only take one species, use:
 @	setvar VAR_0x8005, SPECIES_MAWILE
 @	goto EventScript_ExTutorForSpecies
+@ To only offer it when the player has a Pokémon it can awaken, check with DoesPartyHaveExTutorMon
+@ first (it uses VAR_0x8005 the same way). See SlateportCity_EventScript_Man3
 EventScript_ExTutor::
 	setvar VAR_0x8005, SPECIES_NONE
 EventScript_ExTutorForSpecies::

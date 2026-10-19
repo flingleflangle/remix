@@ -58,6 +58,16 @@ static const u16 sMawileExMoves[] =
     MOVE_NONE,
 };
 
+static const u16 sSceptileExMoves[] =
+{
+    MOVE_OLD_FURY_CUTTER,
+    MOVE_FURY_CUTTER,
+    MOVE_LEAF_BLADE,
+    MOVE_BULLET_SEED,
+    MOVE_AGILITY,
+    MOVE_NONE,
+};
+
 const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
 {
     [SPECIES_MAWILE] =
@@ -68,9 +78,19 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
         .noFlip = TRUE,
         .backAnim = BACK_ANIM_SHAKE_FLASH_YELLOW,
         .unlockStat = MON_DATA_ATK_EV,
-        .unlockItem = ITEM_MOON_STONE,
         .exMoves = sMawileExMoves,
         .frontPic = gMonFrontPic_MawileEX,
+    },
+
+    [SPECIES_SCEPTILE] =
+    {
+        .baseAttack = +10,
+        .baseSpAttack = +20,
+        .types = { TYPE_GRASS, TYPE_DRAGON },
+        .ability = ABILITY_LIGHTNING_ROD,
+        .noFlip = TRUE,
+        .unlockStat = MON_DATA_SPATK_EV,
+        .exMoves = sSceptileExMoves,
     },
 
     // Planned EX forms, not made yet:

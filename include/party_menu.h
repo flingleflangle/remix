@@ -86,6 +86,7 @@ void ChooseContestMon(void);
 void ChoosePartyMon(void);
 void ChooseMonForMoveRelearner(void);
 void ChooseMonForExTutor(void);
+void DoesPartyHaveExTutorMon(void);
 void BattlePyramidChooseMonHeldItems(void);
 void DoBattlePyramidMonsHaveHeldItem(void);
 void IsSelectedMonEgg(void);

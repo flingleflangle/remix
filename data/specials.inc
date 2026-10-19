@@ -543,3 +543,4 @@ gSpecials::
 	def_special GrantExForm
 	def_special ChooseMonForExTutor
 	def_special GrantExFormToPartyMon
+	def_special DoesPartyHaveExTutorMon

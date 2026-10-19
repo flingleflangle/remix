@@ -6577,6 +6577,20 @@ static void Task_ChooseMonForExTutor(u8 taskId)
     }
 }
 
+// Sets VAR_RESULT to whether the EX tutor can unlock any party Pokémon. VAR_0x8005 is the species
+// it takes, like in ChooseMonForExTutor
+void DoesPartyHaveExTutorMon(void)
+{
+    u32 i;
+
+    gSpecialVar_Result = FALSE;
+    for (i = 0; i < gPlayerPartyCount; i++)
+    {
+        if (CanExTutorUnlockMon(&gPlayerParty[i]))
+            gSpecialVar_Result = TRUE;
+    }
+}
+
 static void CB2_ChooseMonForExTutor(void)
 {
     gSpecialVar_0x8004 = GetCursorSelectionMonId();

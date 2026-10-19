@@ -705,8 +705,43 @@ SlateportCity_EventScript_Gabby::
 	msgbox SlateportCity_Text_MostInvaluableExperience, MSGBOX_SIGN
 	end
 
+@ An EX tutor with his own lines about the lighthouse (see data/scripts/ex_tutor.inc), if the
+@ player has a Pokémon he can awaken. Otherwise he just talks about the lighthouse
 SlateportCity_EventScript_Man3::
+	setvar VAR_0x8005, SPECIES_NONE
+	special DoesPartyHaveExTutorMon
+	goto_if_eq VAR_RESULT, TRUE, SlateportCity_EventScript_LighthouseExTutor
 	msgbox SlateportCity_Text_WonderIfLighthouseStartlesPokemon, MSGBOX_NPC
+	end
+
+SlateportCity_EventScript_LighthouseExTutor::
+	lock
+	faceplayer
+	msgbox SlateportCity_Text_LightSleepingInYourPokemon, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, SlateportCity_EventScript_LighthouseExTutorDeclined
+SlateportCity_EventScript_LighthouseExTutorChooseMon:
+	msgbox SlateportCity_Text_WhoseLightShouldIWake, MSGBOX_DEFAULT
+	special ChooseMonForExTutor
+	waitstate
+	goto_if_eq VAR_0x8004, PARTY_NOTHING_CHOSEN, SlateportCity_EventScript_LighthouseExTutorDeclined
+	goto_if_eq VAR_RESULT, FALSE, SlateportCity_EventScript_LighthouseExTutorNoLight
+	special GrantExFormToPartyMon
+	playfanfare MUS_OBTAIN_B_POINTS
+	message SlateportCity_Text_LighthouseExTutorBecameEx
+	waitmessage
+	waitfanfare
+	msgbox SlateportCity_Text_BrighterThanTheLighthouse, MSGBOX_DEFAULT
+	release
+	end
+
+SlateportCity_EventScript_LighthouseExTutorNoLight:
+	msgbox SlateportCity_Text_NoLightLeftToWake, MSGBOX_DEFAULT
+	goto SlateportCity_EventScript_LighthouseExTutorChooseMon
+	end
+
+SlateportCity_EventScript_LighthouseExTutorDeclined:
+	msgbox SlateportCity_Text_LightWillKeep, MSGBOX_DEFAULT
+	release
 	end
 
 SlateportCity_EventScript_BerryPowderClerk::
@@ -959,6 +994,35 @@ SlateportCity_Text_WonderIfLighthouseStartlesPokemon:
 	.string "dozens of miles away.\p"
 	.string "I wonder if it doesn't startle POKéMON\n"
 	.string "in the sea.$"
+
+SlateportCity_Text_LightSleepingInYourPokemon:
+	.string "The light of the lighthouse reaches\n"
+	.string "dozens of miles away.\p"
+	.string "Hm? That POKéMON of yours…\n"
+	.string "There's a fierce light in its eyes.\l"
+	.string "I see it, bright as day.\p"
+	.string "Would you like me to help you\n"
+	.string "see what I see?$"
+
+SlateportCity_Text_WhoseLightShouldIWake:
+	.string "Let me get a closer look.$"
+
+SlateportCity_Text_NoLightLeftToWake:
+	.string "Hmm... Must've been seeing\n"
+	.string "things. Not this one...$"
+
+SlateportCity_Text_LighthouseExTutorBecameEx:
+	.string "{STR_VAR_1} became\n"
+	.string "{STR_VAR_2}{EX}!$"
+
+SlateportCity_Text_BrighterThanTheLighthouse:
+	.string "Brighter than the lighthouse itself!\p"
+	.string "Take your POKéMON with you and\n"
+	.string "shine on, kid.$"
+
+SlateportCity_Text_LightWillKeep:
+	.string "Suit yourself. I'll be here if\n"
+	.string "you ever change your mind.$"
 
 SlateportCity_Text_SeaweedFullOfLife:
 	.string "Ooh, look at this!\p"

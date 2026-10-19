@@ -43,6 +43,8 @@ gExMoves::
 	exmove MOVE_LEAF_BLADE, BattleScript_ExLeafBlade
 	exmove MOVE_AGILITY, BattleScript_ExAgility
 	exmove MOVE_BULLET_SEED, BattleScript_ExBulletSeed
+	exmove MOVE_FURY_CUTTER, BattleScript_ExFuryCutter
+	exmove MOVE_OLD_FURY_CUTTER, BattleScript_ExFuryCutter
 	exmove MOVE_NONE, 0 @ End of list, keep this last
 
 @ EX upgrades. Instead of an EX script, these moves become a stronger, closely related move when
@@ -505,6 +507,11 @@ BattleScript_ExBulletSeedMoveEnd:
 	moveendcase MOVEEND_SYNCHRONIZE_TARGET
 	moveendfrom MOVEEND_IMMUNITY_ABILITIES
 	end
+
+
+BattleScript_ExFuryCutter::
+	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
+	goto BattleScript_EffectHit
 
 @ A Pokémon unlocked its EX form through training, after gaining EXP (see Cmd_getexp).
 @ If it's on the field it glows and turns into its EX form (B_ANIM_EX_MASTERY), then its message shows.
