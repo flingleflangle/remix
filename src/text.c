@@ -114,7 +114,7 @@ struct
     [CHAR_DPAD_NONE]      = { 0x22,  8, 12 }
 };
 
-static const u8 sKeypadIconTiles[] = INCBIN_U8("graphics/fonts/keypad_icons.4bpp");
+const u8 gKeypadIconTiles[] = INCBIN_U8("graphics/fonts/keypad_icons.4bpp");
 
 static const struct FontInfo sFontInfos[] =
 {
@@ -1631,7 +1631,7 @@ u8 DrawKeypadIcon(u8 windowId, u8 keypadIconId, u16 x, u16 y)
 {
     BlitBitmapRectToWindow(
         windowId,
-        sKeypadIconTiles + (sKeypadIcons[keypadIconId].tileOffset * 0x20),
+        gKeypadIconTiles + (sKeypadIcons[keypadIconId].tileOffset * 0x20),
         0,
         0,
         0x80,

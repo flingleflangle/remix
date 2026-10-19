@@ -13,6 +13,7 @@
 #include "event_data.h"
 #include "evolution_scene.h"
 #include "field_specials.h"
+#include "graphics.h"
 #include "item.h"
 #include "link.h"
 #include "main.h"
@@ -1362,7 +1363,7 @@ const s8 gNatureStatTable[NUM_NATURES][NUM_NATURE_STATS + 1] =
 #include "data/pokemon/level_up_learnsets.h"
 #include "data/pokemon/evolution.h"
 #include "data/pokemon/level_up_learnset_pointers.h"
-#include "data/pokemon/ex_species.h"
+#include "data/pokemon/ex_forms.h"
 
 // SPECIES_NONE are ignored in the following two tables, so decrement before accessing these arrays to get the right result
 
@@ -2786,7 +2787,7 @@ static u16 CalculateBoxMonChecksum(struct BoxPokemon *boxMon)
 
 #define CALC_STAT(base, iv, ev, statIndex, field)               \
 {                                                               \
-    u8 baseStat = gSpeciesInfo[species].base;                   \
+    u8 baseStat = GetSpeciesFormBaseStat(species, isEx, statIndex); \
     s32 n = (((2 * baseStat + iv + ev / 4) * level) / 100) + 5; \
     u8 nature = GetNature(mon);                                 \
     n = ModifyStatByNature(nature, n, statIndex);               \
@@ -2810,6 +2811,7 @@ void CalculateMonStats(struct Pokemon *mon)
     s32 spDefenseIV = GetMonData(mon, MON_DATA_SPDEF_IV, NULL);
     s32 spDefenseEV = GetMonData(mon, MON_DATA_SPDEF_EV, NULL);
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+    bool32 isEx = IsMonEx(mon);
     s32 level = GetLevelFromMonExp(mon);
     s32 newMaxHP;
 
@@ -2821,7 +2823,7 @@ void CalculateMonStats(struct Pokemon *mon)
     }
     else
     {
-        s32 n = 2 * gSpeciesInfo[species].baseHP + hpIV;
+        s32 n = 2 * GetSpeciesFormBaseStat(species, isEx, STAT_HP) + hpIV;
         newMaxHP = (((n + hpEV / 4) * level) / 100) + level + 10;
         newMaxHP = ModifyStatByNature(GetNature(mon), newMaxHP, STAT_HP);
     }
@@ -3299,7 +3301,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     defender->species == SPECIES_DUSKULL || defender->species == SPECIES_ROSELIA || defender->species == SPECIES_SLAKOTH || defender->species == SPECIES_VIGOROTH || defender->species == SPECIES_GULPIN || defender->species == SPECIES_WHISMUR || defender->species == SPECIES_LOUDRED ||
     defender->species == SPECIES_CLAMPERL || defender->species == SPECIES_SHUPPET || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_LILEEP || defender->species == SPECIES_ANORITH ||
     defender->species == SPECIES_RALTS || defender->species == SPECIES_KIRLIA || defender->species == SPECIES_BAGON || defender->species == SPECIES_SHELGON || defender->species == SPECIES_BELDUM || defender->species == SPECIES_METANG ||
-    defender->species == SPECIES_MUNCHLAX || defender->species == SPECIES_BONSLY || defender->species == SPECIES_MAGNEMITE_EX || defender->species == SPECIES_SNEASEL_EX))
+    defender->species == SPECIES_MUNCHLAX || defender->species == SPECIES_BONSLY))
             defense = (150 * defense) / 100;
     //and it NEEDS to be there twice to do both defense stats. garbage.
     if (defenderHoldEffect == HOLD_EFFECT_EVIOLITE && 
@@ -3334,7 +3336,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     defender->species == SPECIES_DUSKULL || defender->species == SPECIES_ROSELIA || defender->species == SPECIES_SLAKOTH || defender->species == SPECIES_VIGOROTH || defender->species == SPECIES_GULPIN || defender->species == SPECIES_WHISMUR || defender->species == SPECIES_LOUDRED ||
     defender->species == SPECIES_CLAMPERL || defender->species == SPECIES_SHUPPET || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_LILEEP || defender->species == SPECIES_ANORITH ||
     defender->species == SPECIES_RALTS || defender->species == SPECIES_KIRLIA || defender->species == SPECIES_BAGON || defender->species == SPECIES_SHELGON || defender->species == SPECIES_BELDUM || defender->species == SPECIES_METANG ||
-    defender->species == SPECIES_MUNCHLAX || defender->species == SPECIES_BONSLY || defender->species == SPECIES_MAGNEMITE_EX || defender->species == SPECIES_SNEASEL_EX))
+    defender->species == SPECIES_MUNCHLAX || defender->species == SPECIES_BONSLY))
         spDefense = (150 * spDefense) / 100;
 
     // Apply abilities / field sports
@@ -3373,7 +3375,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         // Boost Defense for Ice-types in Hail
         if ((gBattleWeather & B_WEATHER_HAIL) && (
             defender->species == SPECIES_BLASTOISE || defender->species == SPECIES_DEWGONG || defender->species == SPECIES_CLOYSTER || defender->species == SPECIES_SMOOCHUM || defender->species == SPECIES_JYNX ||
-            defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL || defender->species == SPECIES_SNEASEL_EX ||
+            defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL ||
             defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
             defender->species == SPECIES_CASTFORM || defender->species == SPECIES_SNORUNT || defender->species == SPECIES_GLALIE || defender->species == SPECIES_FROSLASS ||
             defender->species == SPECIES_SPHEAL || defender->species == SPECIES_SEALEO || defender->species == SPECIES_WALREIN || defender->species == SPECIES_MILOTIC ||
@@ -3384,7 +3386,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         }
         if ((gBattleWeather & B_WEATHER_HAIL_TEMPORARY) && (
             defender->species == SPECIES_BLASTOISE || defender->species == SPECIES_DEWGONG || defender->species == SPECIES_CLOYSTER || defender->species == SPECIES_SMOOCHUM || defender->species == SPECIES_JYNX ||
-            defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL || defender->species == SPECIES_SNEASEL_EX ||
+            defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL ||
             defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
             defender->species == SPECIES_CASTFORM || defender->species == SPECIES_SNORUNT || defender->species == SPECIES_GLALIE || defender->species == SPECIES_FROSLASS ||
             defender->species == SPECIES_SPHEAL || defender->species == SPECIES_SEALEO || defender->species == SPECIES_WALREIN || defender->species == SPECIES_MILOTIC ||
@@ -3398,12 +3400,12 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         //hate that i have to add so many blocks of code. don't know how to do it better, oh well
         if ((gBattleWeather & B_WEATHER_SANDSTORM) && (
             defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
-            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_NIDOQUEEN_EX || defender->species == SPECIES_NIDOKING_EX || defender->species == SPECIES_MAROWAK ||
+            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_MAROWAK ||
             defender->species == SPECIES_RHYHORN || defender->species == SPECIES_RHYDON || defender->species == SPECIES_OMANYTE || defender->species == SPECIES_OMASTAR || defender->species == SPECIES_KABUTO || defender->species == SPECIES_KABUTOPS || 
             defender->species == SPECIES_AERODACTYL || defender->species == SPECIES_BONSLY || defender->species == SPECIES_SUDOWOODO || defender->species == SPECIES_SHUCKLE || defender->species == SPECIES_MAGCARGO || 
             defender->species == SPECIES_CORSOLA || defender->species == SPECIES_LARVITAR || defender->species == SPECIES_PUPITAR || defender->species == SPECIES_TYRANITAR ||
             defender->species == SPECIES_NOSEPASS || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_AGGRON ||
-            defender->species == SPECIES_GLALIE_EX || defender->species == SPECIES_SABLEYE_EX || defender->species == SPECIES_FLYGON_EX || defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
+            defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
             defender->species == SPECIES_LILEEP || defender->species == SPECIES_CRADILY || defender->species == SPECIES_ANORITH || defender->species == SPECIES_ARMALDO || defender->species == SPECIES_RELICANTH ||
             defender->species == SPECIES_REGIROCK ||
             defender->ability == ABILITY_SAND_VEIL))
@@ -3412,12 +3414,12 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         }
         if ((gBattleWeather & B_WEATHER_SANDSTORM_TEMPORARY) && (
             defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
-            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_NIDOQUEEN_EX || defender->species == SPECIES_NIDOKING_EX || defender->species == SPECIES_MAROWAK ||
+            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_MAROWAK ||
             defender->species == SPECIES_RHYHORN || defender->species == SPECIES_RHYDON || defender->species == SPECIES_OMANYTE || defender->species == SPECIES_OMASTAR || defender->species == SPECIES_KABUTO || defender->species == SPECIES_KABUTOPS || 
             defender->species == SPECIES_AERODACTYL || defender->species == SPECIES_BONSLY || defender->species == SPECIES_SUDOWOODO || defender->species == SPECIES_SHUCKLE || defender->species == SPECIES_MAGCARGO || 
             defender->species == SPECIES_CORSOLA || defender->species == SPECIES_LARVITAR || defender->species == SPECIES_PUPITAR || defender->species == SPECIES_TYRANITAR ||
             defender->species == SPECIES_NOSEPASS || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_AGGRON ||
-            defender->species == SPECIES_GLALIE_EX || defender->species == SPECIES_SABLEYE_EX || defender->species == SPECIES_FLYGON_EX || defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
+            defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
             defender->species == SPECIES_LILEEP || defender->species == SPECIES_CRADILY || defender->species == SPECIES_ANORITH || defender->species == SPECIES_ARMALDO || defender->species == SPECIES_RELICANTH ||
             defender->species == SPECIES_REGIROCK ||
             defender->ability == ABILITY_SAND_VEIL))
@@ -3426,12 +3428,12 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         }
         if ((gBattleWeather & B_WEATHER_SANDSTORM_PERMANENT) && (
             defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
-            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_NIDOQUEEN_EX || defender->species == SPECIES_NIDOKING_EX || defender->species == SPECIES_MAROWAK ||
+            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_MAROWAK ||
             defender->species == SPECIES_RHYHORN || defender->species == SPECIES_RHYDON || defender->species == SPECIES_OMANYTE || defender->species == SPECIES_OMASTAR || defender->species == SPECIES_KABUTO || defender->species == SPECIES_KABUTOPS || 
             defender->species == SPECIES_AERODACTYL || defender->species == SPECIES_BONSLY || defender->species == SPECIES_SUDOWOODO || defender->species == SPECIES_SHUCKLE || defender->species == SPECIES_MAGCARGO || 
             defender->species == SPECIES_CORSOLA || defender->species == SPECIES_LARVITAR || defender->species == SPECIES_PUPITAR || defender->species == SPECIES_TYRANITAR ||
             defender->species == SPECIES_NOSEPASS || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_AGGRON ||
-            defender->species == SPECIES_GLALIE_EX || defender->species == SPECIES_SABLEYE_EX || defender->species == SPECIES_FLYGON_EX || defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
+            defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
             defender->species == SPECIES_LILEEP || defender->species == SPECIES_CRADILY || defender->species == SPECIES_ANORITH || defender->species == SPECIES_ARMALDO || defender->species == SPECIES_RELICANTH ||
             defender->species == SPECIES_REGIROCK ||
             defender->ability == ABILITY_SAND_VEIL))
@@ -4064,6 +4066,12 @@ u32 GetBoxMonData3(struct BoxPokemon *boxMon, s32 field, u8 *data)
     case MON_DATA_BOX_AILMENT:
         retVal = substruct0->box_ailment;
         break;
+    case MON_DATA_EX_UNLOCKED:
+        retVal = boxMon->exUnlocked;
+        break;
+    case MON_DATA_IS_EX:
+        retVal = boxMon->isEx;
+        break;
     case MON_DATA_PP_BONUSES:
         retVal = substruct0->ppBonuses;
         break;
@@ -4485,6 +4493,12 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
     case MON_DATA_BOX_AILMENT:
         SET8(substruct0->box_ailment);
         break;
+    case MON_DATA_EX_UNLOCKED:
+        SET8(boxMon->exUnlocked);
+        break;
+    case MON_DATA_IS_EX:
+        SET8(boxMon->isEx);
+        break;
     case MON_DATA_COOL:
         SET8(substruct2->cool);
         break;
@@ -4783,7 +4797,7 @@ u8 GetMonAbility(struct Pokemon *mon)
 {
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
     u8 abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM, NULL);
-    return GetAbilityBySpecies(species, abilityNum);
+    return GetSpeciesFormAbility(species, abilityNum, IsMonEx(mon));
 }
 
 void CreateSecretBaseEnemyParty(struct SecretBase *secretBaseRecord)
@@ -4928,9 +4942,9 @@ void CopyPlayerPartyMonToBattleData(u8 battler, u8 partyIndex, bool8 resetStats)
     gBattleMons[battler].isEgg = GetMonData(&gPlayerParty[partyIndex], MON_DATA_IS_EGG, NULL);
     gBattleMons[battler].abilityNum = GetMonData(&gPlayerParty[partyIndex], MON_DATA_ABILITY_NUM, NULL);
     gBattleMons[battler].otId = GetMonData(&gPlayerParty[partyIndex], MON_DATA_OT_ID, NULL);
-    gBattleMons[battler].types[0] = gSpeciesInfo[gBattleMons[battler].species].types[0];
-    gBattleMons[battler].types[1] = gSpeciesInfo[gBattleMons[battler].species].types[1];
-    gBattleMons[battler].ability = GetAbilityBySpecies(gBattleMons[battler].species, gBattleMons[battler].abilityNum);
+    gBattleMons[battler].types[0] = GetMonType(&gPlayerParty[partyIndex], 0);
+    gBattleMons[battler].types[1] = GetMonType(&gPlayerParty[partyIndex], 1);
+    gBattleMons[battler].ability = GetMonAbility(&gPlayerParty[partyIndex]);
     GetMonData(&gPlayerParty[partyIndex], MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gBattleMons[battler].nickname, nickname);
     GetMonData(&gPlayerParty[partyIndex], MON_DATA_OT_NAME, gBattleMons[battler].otName);
@@ -6756,17 +6770,216 @@ bool32 IsSpeciesInHoennDex(u16 species)
         return TRUE;
 }
 
-// Whether the species is in the EX list (see data/pokemon/ex_species.h)
-bool32 IsSpeciesEx(u16 species)
-{
-    u32 i;
+// EX forms (see data/pokemon/ex_forms.h)
 
-    for (i = 0; sExSpecies[i] != SPECIES_NONE; i++)
+// The species' EX form, or NULL if it doesn't have one enabled
+const struct ExFormInfo *GetSpeciesExFormInfo(u16 species)
+{
+    if (species == SPECIES_NONE || species >= NUM_SPECIES || !gSpeciesInfo[species].exEnabled)
+        return NULL;
+    return &gExFormInfo[species];
+}
+
+// Whether the Pokémon is currently in its EX form
+bool32 IsBoxMonEx(struct BoxPokemon *boxMon)
+{
+    return GetBoxMonData(boxMon, MON_DATA_IS_EX, NULL)
+        && !GetBoxMonData(boxMon, MON_DATA_IS_EGG, NULL)
+        && GetSpeciesExFormInfo(GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL)) != NULL;
+}
+
+bool32 IsMonEx(struct Pokemon *mon)
+{
+    return IsBoxMonEx(&mon->box);
+}
+
+// Whether the player can switch the Pokémon in and out of its EX form
+bool32 CanBoxMonChangeExForm(struct BoxPokemon *boxMon)
+{
+    return GetBoxMonData(boxMon, MON_DATA_EX_UNLOCKED, NULL)
+        && !GetBoxMonData(boxMon, MON_DATA_IS_EGG, NULL)
+        && GetSpeciesExFormInfo(GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL)) != NULL;
+}
+
+bool32 CanMonChangeExForm(struct Pokemon *mon)
+{
+    return CanBoxMonChangeExForm(&mon->box);
+}
+
+// Unlocks the Pokémon's EX form if its species has one and this item unlocks it.
+// Returns TRUE if it was unlocked.
+bool32 TryUnlockMonExFormWithItem(struct Pokemon *mon, u16 item)
+{
+    const struct ExFormInfo *exForm = GetSpeciesExFormInfo(GetMonData(mon, MON_DATA_SPECIES, NULL));
+    bool8 unlocked = TRUE;
+
+    if (exForm == NULL || exForm->unlockItem == ITEM_NONE || exForm->unlockItem != item
+        || GetMonData(mon, MON_DATA_IS_EGG, NULL) || GetMonData(mon, MON_DATA_EX_UNLOCKED, NULL))
+        return FALSE;
+
+    SetMonData(mon, MON_DATA_EX_UNLOCKED, &unlocked);
+    return TRUE;
+}
+
+// Switches the Pokémon between its regular and EX forms, recalculating its stats
+void ToggleMonExForm(struct Pokemon *mon)
+{
+    bool8 isEx = !GetMonData(mon, MON_DATA_IS_EX, NULL);
+
+    SetMonData(mon, MON_DATA_IS_EX, &isEx);
+    CalculateMonStats(mon);
+}
+
+void ToggleBoxMonExForm(struct BoxPokemon *boxMon)
+{
+    bool8 isEx = !GetBoxMonData(boxMon, MON_DATA_IS_EX, NULL);
+
+    SetBoxMonData(boxMon, MON_DATA_IS_EX, &isEx);
+}
+
+u8 GetSpeciesFormType(u16 species, bool32 isEx, u8 typeIndex)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL)
+        return exForm->types[typeIndex];
+    return gSpeciesInfo[species].types[typeIndex];
+}
+
+// The party Pokémon a battler is
+struct Pokemon *GetBattlerPartyMon(u8 battler)
+{
+    if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+        return &gPlayerParty[gBattlerPartyIndexes[battler]];
+    return &gEnemyParty[gBattlerPartyIndexes[battler]];
+}
+
+// Sets a battler's types and ability from its species, or its EX form
+void SetBattlerTypesAndAbilityFromForm(u8 battler)
+{
+    struct Pokemon *mon = GetBattlerPartyMon(battler);
+    u16 species = gBattleMons[battler].species;
+    bool32 isEx = (GetMonData(mon, MON_DATA_SPECIES, NULL) == species && IsMonEx(mon));
+
+    gBattleMons[battler].types[0] = GetSpeciesFormType(species, isEx, 0);
+    gBattleMons[battler].types[1] = GetSpeciesFormType(species, isEx, 1);
+    gBattleMons[battler].ability = GetSpeciesFormAbility(species, gBattleMons[battler].abilityNum, isEx);
+}
+
+u8 GetMonType(struct Pokemon *mon, u8 typeIndex)
+{
+    return GetSpeciesFormType(GetMonData(mon, MON_DATA_SPECIES, NULL), IsMonEx(mon), typeIndex);
+}
+
+// Like GetAbilityBySpecies, but an EX form always has its one ability
+u8 GetSpeciesFormAbility(u16 species, u8 abilityNum, bool32 isEx)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL)
     {
-        if (sExSpecies[i] == species)
-            return TRUE;
+        gLastUsedAbility = exForm->ability;
+        return gLastUsedAbility;
     }
-    return FALSE;
+    return GetAbilityBySpecies(species, abilityNum);
+}
+
+// Base stat (STAT_HP to STAT_SPDEF) including an EX form's changes, kept within 1-255
+u8 GetSpeciesFormBaseStat(u16 species, bool32 isEx, u8 stat)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+    const struct SpeciesInfo *info = &gSpeciesInfo[species];
+    s32 base;
+
+    switch (stat)
+    {
+    case STAT_HP:
+        base = info->baseHP + (exForm ? exForm->baseHP : 0);
+        break;
+    case STAT_ATK:
+        base = info->baseAttack + (exForm ? exForm->baseAttack : 0);
+        break;
+    case STAT_DEF:
+        base = info->baseDefense + (exForm ? exForm->baseDefense : 0);
+        break;
+    case STAT_SPEED:
+        base = info->baseSpeed + (exForm ? exForm->baseSpeed : 0);
+        break;
+    case STAT_SPATK:
+        base = info->baseSpAttack + (exForm ? exForm->baseSpAttack : 0);
+        break;
+    case STAT_SPDEF:
+    default:
+        base = info->baseSpDefense + (exForm ? exForm->baseSpDefense : 0);
+        break;
+    }
+    return min(max(base, 1), 255);
+}
+
+bool8 IsSpeciesFormSpriteNotFlipped(u16 species, bool32 isEx)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL)
+        return exForm->noFlip;
+    return IsMonSpriteNotFlipped(species);
+}
+
+static EWRAM_DATA struct CompressedSpriteSheet sExFrontPic = {0};
+static EWRAM_DATA struct CompressedSpriteSheet sExBackPic = {0};
+
+// Whether src is a front sprite sheet, regular or EX. See HandleLoadSpecialPokePic
+bool32 IsSpeciesFrontPicSheet(const struct CompressedSpriteSheet *src, s32 species)
+{
+    return src == &gMonFrontPicTable[species] || src == &sExFrontPic;
+}
+
+// The front or back sprite sheet for the species' regular or EX form
+const struct CompressedSpriteSheet *GetSpeciesFormPicSheet(u16 species, bool32 isEx, bool32 isFrontPic)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+    struct CompressedSpriteSheet *sheet = isFrontPic ? &sExFrontPic : &sExBackPic;
+    const u32 *pic = NULL;
+
+    if (exForm != NULL)
+        pic = isFrontPic ? exForm->frontPic : exForm->backPic;
+    if (pic == NULL)
+        return isFrontPic ? &gMonFrontPicTable[species] : &gMonBackPicTable[species];
+
+    sheet->data = pic;
+    sheet->size = MON_PIC_SIZE;
+    sheet->tag = species;
+    return sheet;
+}
+
+// Like GetMonSpritePalFromSpeciesAndPersonality, for the species' regular or EX form
+const u32 *GetSpeciesFormSpritePal(u16 species, bool32 isEx, u32 otId, u32 personality)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL)
+    {
+        if (GET_SHINY_VALUE(otId, personality) < SHINY_ODDS)
+        {
+            if (exForm->shinyPalette != NULL)
+                return exForm->shinyPalette;
+        }
+        else if (exForm->palette != NULL)
+        {
+            return exForm->palette;
+        }
+    }
+    return GetMonSpritePalFromSpeciesAndPersonality(species, otId, personality);
+}
+
+// The battle back sprite animation for the species' regular or EX form
+u8 GetSpeciesFormBackAnimSet(u16 species, bool32 isEx)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL && exForm->backAnim != BACK_ANIM_NONE)
+        return exForm->backAnim - 1;
+    return GetSpeciesBackAnimSet(species);
 }
 
 void ClearBattleMonForms(void)
@@ -6904,7 +7117,7 @@ const u32 *GetMonFrontSpritePal(struct Pokemon *mon)
     u16 species = GetMonData(mon, MON_DATA_SPECIES_OR_EGG, 0);
     u32 otId = GetMonData(mon, MON_DATA_OT_ID, 0);
     u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, 0);
-    return GetMonSpritePalFromSpeciesAndPersonality(species, otId, personality);
+    return GetSpeciesFormSpritePal(species, IsMonEx(mon), otId, personality);
 }
 
 const u32 *GetMonSpritePalFromSpeciesAndPersonality(u16 species, u32 otId, u32 personality)
@@ -7260,7 +7473,10 @@ void BattleAnimateBackSprite(struct Sprite *sprite, u16 species)
     }
     else
     {
-        LaunchAnimationTaskForBackSprite(sprite, GetSpeciesBackAnimSet(species));
+        struct Pokemon *mon = &gPlayerParty[gBattlerPartyIndexes[sprite->data[0]]]; // data[0] is the battler
+        bool32 isEx = (GetMonData(mon, MON_DATA_SPECIES, NULL) == species && IsMonEx(mon));
+
+        LaunchAnimationTaskForBackSprite(sprite, GetSpeciesFormBackAnimSet(species, isEx));
         sprite->callback = SpriteCallbackDummy_2;
     }
 }

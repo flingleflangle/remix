@@ -5445,6 +5445,23 @@ static void Task_SacredAshDisplayHPRestored(u8 taskId)
 
 void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc task)
 {
+    static const u8 sText_ExFormUnlocked[] = _("{STR_VAR_1} can now change\ninto its EX form!{PAUSE_UNTIL_PRESS}");
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+
+    // A stone that unlocks the Pokémon's EX form does that instead of evolving it (see data/pokemon/ex_forms.h)
+    if (TryUnlockMonExFormWithItem(mon, gSpecialVar_ItemId))
+    {
+        PlaySE(SE_USE_ITEM);
+        RemoveBagItem(gSpecialVar_ItemId, 1);
+        gPartyMenuUseExitCallback = TRUE;
+        GetMonNickname(mon, gStringVar1);
+        StringExpandPlaceholders(gStringVar4, sText_ExFormUnlocked);
+        DisplayPartyMenuMessage(gStringVar4, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = task;
+        return;
+    }
+
     PlaySE(SE_SELECT);
     gCB2_AfterEvolution = gPartyMenu.exitCallback;
     if (ExecuteTableBasedItemEffect_(gPartyMenu.slotId, gSpecialVar_ItemId, 0))

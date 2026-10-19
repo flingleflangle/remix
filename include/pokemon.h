@@ -97,6 +97,8 @@ enum {
     MON_DATA_SPDEF2,
 	MON_DATA_BOX_HP,
     MON_DATA_BOX_AILMENT,
+    MON_DATA_EX_UNLOCKED,
+    MON_DATA_IS_EX,
 };
 
 struct PokemonSubstruct0
@@ -208,7 +210,9 @@ struct BoxPokemon
     u8 hasSpecies:1;
     u8 isEgg:1;
     u8 blockBoxRS:1; // Unused, but Pokémon Box Ruby & Sapphire will refuse to deposit a Pokémon with this flag set
-    u8 unused:3;
+    u8 exUnlocked:1; // Can switch to its EX form on the summary screen (see data/pokemon/ex_forms.h)
+    u8 isEx:1;       // Currently in its EX form
+    u8 unused:1;
 	u8 inPC:1;  //Used to retain save compatibility for Pokemon that existed in the PC before adding the "Make Pokemon Not Heal When Going into PC" hack
     u8 otName[PLAYER_NAME_LENGTH];
     u8 markings;
@@ -328,6 +332,30 @@ struct SpeciesInfo
  /* 0x18 */ u8 safariZoneFleeRate;
  /* 0x19 */ u8 bodyColor : 7;
             u8 noFlip : 1;
+ /* 0x1A */ u8 exEnabled : 1; // Has an EX form, defined in data/pokemon/ex_forms.h
+            u8 padding : 7;
+};
+
+// An EX form's differences from its regular species. See data/pokemon/ex_forms.h
+struct ExFormInfo
+{
+    // Added to the regular base stats. Negative numbers subtract
+    s8 baseHP;
+    s8 baseAttack;
+    s8 baseDefense;
+    s8 baseSpeed;
+    s8 baseSpAttack;
+    s8 baseSpDefense;
+    u8 types[2];
+    u8 ability;      // The only ability an EX form can have
+    u8 backAnim;     // BACK_ANIM_*, or BACK_ANIM_NONE to keep the regular one
+    bool8 noFlip;    // Same as SpeciesInfo's noFlip, for the EX front sprite
+    u16 unlockItem;  // Using this item on the Pokémon unlocks its EX form. ITEM_NONE for none
+    // NULL to keep the regular graphics
+    const u32 *frontPic;
+    const u32 *backPic;
+    const u32 *palette;
+    const u32 *shinyPalette;
 };
 
 struct BattleMove
@@ -513,7 +541,25 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves);
 u8 GetNumberOfRelearnableMoves(struct Pokemon *mon);
 u16 SpeciesToPokedexNum(u16 species);
 bool32 IsSpeciesInHoennDex(u16 species);
-bool32 IsSpeciesEx(u16 species);
+const struct ExFormInfo *GetSpeciesExFormInfo(u16 species);
+bool32 IsBoxMonEx(struct BoxPokemon *boxMon);
+bool32 IsMonEx(struct Pokemon *mon);
+bool32 CanBoxMonChangeExForm(struct BoxPokemon *boxMon);
+bool32 CanMonChangeExForm(struct Pokemon *mon);
+bool32 TryUnlockMonExFormWithItem(struct Pokemon *mon, u16 item);
+void ToggleMonExForm(struct Pokemon *mon);
+void ToggleBoxMonExForm(struct BoxPokemon *boxMon);
+struct Pokemon *GetBattlerPartyMon(u8 battler);
+void SetBattlerTypesAndAbilityFromForm(u8 battler);
+u8 GetSpeciesFormType(u16 species, bool32 isEx, u8 typeIndex);
+u8 GetMonType(struct Pokemon *mon, u8 typeIndex);
+u8 GetSpeciesFormAbility(u16 species, u8 abilityNum, bool32 isEx);
+u8 GetSpeciesFormBaseStat(u16 species, bool32 isEx, u8 stat);
+bool8 IsSpeciesFormSpriteNotFlipped(u16 species, bool32 isEx);
+bool32 IsSpeciesFrontPicSheet(const struct CompressedSpriteSheet *src, s32 species);
+const struct CompressedSpriteSheet *GetSpeciesFormPicSheet(u16 species, bool32 isEx, bool32 isFrontPic);
+const u32 *GetSpeciesFormSpritePal(u16 species, bool32 isEx, u32 otId, u32 personality);
+u8 GetSpeciesFormBackAnimSet(u16 species, bool32 isEx);
 void ClearBattleMonForms(void);
 u16 GetBattleBGM(void);
 void PlayBattleBGM(void);

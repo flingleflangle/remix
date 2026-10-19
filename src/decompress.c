@@ -74,7 +74,7 @@ void HandleLoadSpecialPokePic(const struct CompressedSpriteSheet *src, void *des
 {
     bool8 isFrontPic;
 
-    if (src == &gMonFrontPicTable[species])
+    if (IsSpeciesFrontPicSheet(src, species))
         isFrontPic = TRUE; // frontPic
     else
         isFrontPic = FALSE; // backPic
@@ -347,7 +347,7 @@ void HandleLoadSpecialPokePic_2(const struct CompressedSpriteSheet *src, void *d
 {
     bool8 isFrontPic;
 
-    if (src == &gMonFrontPicTable[species])
+    if (IsSpeciesFrontPicSheet(src, species))
         isFrontPic = TRUE; // frontPic
     else
         isFrontPic = FALSE; // backPic
@@ -367,7 +367,7 @@ void HandleLoadSpecialPokePic_DontHandleDeoxys(const struct CompressedSpriteShee
 {
     bool8 isFrontPic;
 
-    if (src == &gMonFrontPicTable[species])
+    if (IsSpeciesFrontPicSheet(src, species))
         isFrontPic = TRUE; // frontPic
     else
         isFrontPic = FALSE; // backPic

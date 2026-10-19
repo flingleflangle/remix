@@ -184,6 +184,8 @@ static EWRAM_DATA struct PokemonSummaryScreenData
     u8 filler40CA;
     u8 windowIds[8];
     u8 spriteIds[SPRITE_ARR_ID_COUNT];
+    u8 exHintSpriteId; // SELECT button icon shown when the Pokémon can change its EX form
+    u8 exLogoSpriteId; // EX logo, gray in the regular form and blue in the EX form
     bool8 handleDeoxys;
     s16 switchCounter; // Used for various switch statement cases that decompress/load graphics or Pokémon data
     u8 unk_filler4[6];
@@ -301,6 +303,14 @@ static void SwapMovesTypeSprites(u8, u8);
 static u8 LoadMonGfxAndSprite(struct Pokemon *, s16 *);
 static u8 CreateMonSprite(struct Pokemon *);
 static void SpriteCB_Pokemon(struct Sprite *);
+static void LoadSummaryMonPic(void);
+static void LoadSummaryMonPalette(struct Sprite *sprite);
+static void CreateExFormSprites(void);
+static void UpdateExFormIndicators(void);
+static void HideExFormIndicators(void);
+static void StopExLogoAnimation(void);
+static bool32 CanChangeExFormHere(void);
+static void Task_ChangeExForm(u8 taskId);
 static void StopPokemonAnimations(void);
 static void CreateMonMarkingsSprite(struct Pokemon *);
 static void RemoveAndCreateMonMarkingsSprite(struct Pokemon *);
@@ -735,6 +745,75 @@ static const u8 sMovesPPLayout[] = _("{PP}{DYNAMIC 0}/{DYNAMIC 1}");
 #define TAG_MON_STATUS 30001
 #define TAG_MOVE_TYPES 30002
 #define TAG_MON_MARKINGS 30003
+#define TAG_EX_HINT 30004
+#define TAG_EX_LOGO 30005
+
+// Both EX sprites are on the Info page's "ABILITY" bar: the EX logo just left of the word, and the
+// SELECT hint to its right. The bar is 8 pixels tall, from y 64 to 72
+#define EX_LOGO_X 92  // Center of the 16x16 EX logo. The logo is its left 12 pixels, rows 7-13
+#define EX_LOGO_Y 67
+#define EX_HINT_X 162 // Center of the 32x16 SELECT sprite. The icon is its left 24x12 pixels, from 4 pixels down
+#define EX_HINT_Y 68
+
+// The "ABILITY" bar's color, in the Info page background's palette 0
+#define ABILITY_BAR_COLOR_ID 7
+
+// The SELECT hint is mixed this much with the bar's color, out of 16, so it looks see-through
+#define EX_HINT_BLEND 10
+
+#define EX_HINT_PAL_BUTTON 1
+#define EX_HINT_PAL_TEXT   2
+#define EX_LOGO_PAL_FILL   1
+#define EX_LOGO_PAL_SHADOW 2
+
+static const u16 sExHintColors[] = { [EX_HINT_PAL_BUTTON] = RGB(12, 12, 12), [EX_HINT_PAL_TEXT] = RGB_WHITE };
+static const u16 sExLogoColors[] = { [EX_LOGO_PAL_FILL] = RGB(14, 29, 31), [EX_LOGO_PAL_SHADOW] = RGB(6, 14, 22) };
+
+// The EX logo flashes in like Cosmic Power: it fades in over the first frames while
+// shimmering from white to blue. Turning EX off fades it back out
+#define EX_LOGO_FADE_IN_FRAMES  6
+#define EX_LOGO_FLASH_FRAMES    16
+#define EX_LOGO_FADE_OUT_FRAMES 8
+
+static const struct OamData sOamData_ExHint =
+{
+    .shape = SPRITE_SHAPE(32x16),
+    .size = SPRITE_SIZE(32x16),
+    .priority = 0,
+};
+
+static const struct OamData sOamData_ExLogo =
+{
+    .shape = SPRITE_SHAPE(16x16),
+    .size = SPRITE_SIZE(16x16),
+    .priority = 0,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_ExHint =
+{
+    .tileTag = TAG_EX_HINT,
+    .paletteTag = TAG_EX_HINT,
+    .oam = &sOamData_ExHint,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_ExLogo =
+{
+    .tileTag = TAG_EX_LOGO,
+    .paletteTag = TAG_EX_LOGO,
+    .oam = &sOamData_ExLogo,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+// Widths of the Pokémon's picture while it "spins" between forms, out of 256.
+// It shrinks to a 1 pixel line (4/256 of 64 pixels), swaps forms, then grows back.
+static const u16 sExFormSquishScales[] = { 192, 128, 64, 4 };
 
 static const struct OamData sOamData_MoveTypes =
 {
@@ -1261,6 +1340,7 @@ static bool8 LoadGraphics(void)
         break;
     case 18:
         CreateMonMarkingsSprite(&sMonSummaryScreen->currentMon);
+        CreateExFormSprites();
         gMain.state++;
         break;
     case 19:
@@ -1527,6 +1607,7 @@ static void CloseSummaryScreen(u8 taskId)
         SetMainCallback2(sMonSummaryScreen->callback);
         gLastViewedMonIndex = sMonSummaryScreen->curMonIndex;
         SummaryScreen_DestroyAnimDelayTask();
+        StopExLogoAnimation();
         ResetSpriteData();
         FreeAllSpritePalettes();
         StopCryAndClearCrySongs();
@@ -1580,6 +1661,14 @@ static void Task_HandleInput(u8 taskId)
             StopPokemonAnimations();
             PlaySE(SE_SELECT);
             BeginCloseSummaryScreen(taskId);
+        }
+        else if (JOY_NEW(SELECT_BUTTON))
+        {
+            if (CanMonChangeExForm(&sMonSummaryScreen->currentMon) && CanChangeExFormHere())
+            {
+                gTasks[taskId].data[0] = 0;
+                gTasks[taskId].func = Task_ChangeExForm;
+            }
         }
     }
 }
@@ -1660,6 +1749,7 @@ static void Task_ChangeSummaryMon(u8 taskId)
         break;
     case 5:
         RemoveAndCreateMonMarkingsSprite(&sMonSummaryScreen->currentMon);
+        UpdateExFormIndicators();
         break;
     case 6:
         CreateCaughtBallSprite(&sMonSummaryScreen->currentMon);
@@ -3093,13 +3183,13 @@ static void PrintMonOTID(void)
 
 static void PrintMonAbilityName(void)
 {
-    u8 ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
+    u8 ability = GetMonAbility(&sMonSummaryScreen->currentMon);
     PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilityNames[ability], 0, 1, 0, 1);
 }
 
 static void PrintMonAbilityDescription(void)
 {
-    u8 ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
+    u8 ability = GetMonAbility(&sMonSummaryScreen->currentMon);
     PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilityDescriptionPointers[ability], 0, 17, 0, 0);
 }
 
@@ -3732,6 +3822,8 @@ static void ResetSpriteIds(void)
 
     for (i = 0; i < ARRAY_COUNT(sMonSummaryScreen->spriteIds); i++)
         sMonSummaryScreen->spriteIds[i] = SPRITE_NONE;
+    sMonSummaryScreen->exHintSpriteId = SPRITE_NONE;
+    sMonSummaryScreen->exLogoSpriteId = SPRITE_NONE;
 }
 
 static void DestroySpriteInArray(u8 spriteArrayId)
@@ -3758,6 +3850,7 @@ static void HidePageSpecificSprites(void)
         if (sMonSummaryScreen->spriteIds[i] != SPRITE_NONE)
             SetSpriteInvisibility(i, TRUE);
     }
+    HideExFormIndicators();
 }
 
 static void SetTypeIcons(void)
@@ -3811,10 +3904,10 @@ static void SetMonTypeIcons(void)
     }
     else
     {
-        SetTypeSpritePosAndPal(gSpeciesInfo[summary->species].types[0], 120, 48, SPRITE_ARR_ID_TYPE);
-        if (gSpeciesInfo[summary->species].types[0] != gSpeciesInfo[summary->species].types[1])
+        SetTypeSpritePosAndPal(GetMonType(&sMonSummaryScreen->currentMon, 0), 120, 48, SPRITE_ARR_ID_TYPE);
+        if (GetMonType(&sMonSummaryScreen->currentMon, 0) != GetMonType(&sMonSummaryScreen->currentMon, 1))
         {
-            SetTypeSpritePosAndPal(gSpeciesInfo[summary->species].types[1], 160, 48, SPRITE_ARR_ID_TYPE + 1);
+            SetTypeSpritePosAndPal(GetMonType(&sMonSummaryScreen->currentMon, 1), 160, 48, SPRITE_ARR_ID_TYPE + 1);
             SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, FALSE);
         }
         else
@@ -3822,6 +3915,7 @@ static void SetMonTypeIcons(void)
             SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, TRUE);
         }
     }
+    UpdateExFormIndicators(); // The EX sprites are also on the Info page
 }
 
 static void SetMoveTypeIcons(void)
@@ -3884,6 +3978,43 @@ static void SwapMovesTypeSprites(u8 moveIndex1, u8 moveIndex2)
     sprite2->animEnded = FALSE;
 }
 
+// Decompresses the Pokémon's front picture, in its regular or EX form
+static void LoadSummaryMonPic(void)
+{
+    struct PokeSummary *summary = &sMonSummaryScreen->summary;
+    const struct CompressedSpriteSheet *sheet = GetSpeciesFormPicSheet(summary->species2, IsMonEx(&sMonSummaryScreen->currentMon), TRUE);
+    void *dest;
+    bool32 handleDeoxys;
+
+    if (gMain.inBattle)
+    {
+        dest = gMonSpritesGfxPtr->sprites.ptr[B_POSITION_OPPONENT_LEFT];
+        handleDeoxys = !ShouldIgnoreDeoxysForm(3, sMonSummaryScreen->curMonIndex);
+    }
+    else
+    {
+        if (gMonSpritesGfxPtr != NULL)
+            dest = gMonSpritesGfxPtr->sprites.ptr[B_POSITION_OPPONENT_LEFT];
+        else
+            dest = MonSpritesGfxManager_GetSpritePtr(MON_SPR_GFX_MANAGER_A, B_POSITION_OPPONENT_LEFT);
+        handleDeoxys = (sMonSummaryScreen->monList.mons == gPlayerParty || sMonSummaryScreen->mode == SUMMARY_MODE_BOX || sMonSummaryScreen->handleDeoxys == TRUE);
+    }
+
+    if (handleDeoxys)
+        HandleLoadSpecialPokePic_2(sheet, dest, summary->species2, summary->pid);
+    else
+        HandleLoadSpecialPokePic_DontHandleDeoxys(sheet, dest, summary->species2, summary->pid);
+}
+
+// Loads the regular or EX form's colors into the Pokémon picture's palette
+static void LoadSummaryMonPalette(struct Sprite *sprite)
+{
+    struct PokeSummary *summary = &sMonSummaryScreen->summary;
+
+    LZDecompressWram(GetSpeciesFormSpritePal(summary->species2, IsMonEx(&sMonSummaryScreen->currentMon), summary->OTID, summary->pid), gDecompressionBuffer);
+    LoadPalette(gDecompressionBuffer, OBJ_PLTT_ID(sprite->oam.paletteNum), PLTT_SIZE_4BPP);
+}
+
 static u8 LoadMonGfxAndSprite(struct Pokemon *mon, s16 *state)
 {
     const struct CompressedSpritePalette *pal;
@@ -3894,48 +4025,7 @@ static u8 LoadMonGfxAndSprite(struct Pokemon *mon, s16 *state)
     default:
         return CreateMonSprite(mon);
     case 0:
-        if (gMain.inBattle)
-        {
-            if (ShouldIgnoreDeoxysForm(3, sMonSummaryScreen->curMonIndex))
-                HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[summary->species2],
-                                                          gMonSpritesGfxPtr->sprites.ptr[B_POSITION_OPPONENT_LEFT],
-                                                          summary->species2,
-                                                          summary->pid);
-            else
-                HandleLoadSpecialPokePic_2(&gMonFrontPicTable[summary->species2],
-                                           gMonSpritesGfxPtr->sprites.ptr[B_POSITION_OPPONENT_LEFT],
-                                           summary->species2,
-                                           summary->pid);
-        }
-        else
-        {
-            if (gMonSpritesGfxPtr != NULL)
-            {
-                if (sMonSummaryScreen->monList.mons == gPlayerParty || sMonSummaryScreen->mode == SUMMARY_MODE_BOX || sMonSummaryScreen->handleDeoxys == TRUE)
-                    HandleLoadSpecialPokePic_2(&gMonFrontPicTable[summary->species2],
-                                               gMonSpritesGfxPtr->sprites.ptr[B_POSITION_OPPONENT_LEFT],
-                                               summary->species2,
-                                               summary->pid);
-                else
-                    HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[summary->species2],
-                                                              gMonSpritesGfxPtr->sprites.ptr[B_POSITION_OPPONENT_LEFT],
-                                                              summary->species2,
-                                                              summary->pid);
-            }
-            else
-            {
-                if (sMonSummaryScreen->monList.mons == gPlayerParty || sMonSummaryScreen->mode == SUMMARY_MODE_BOX || sMonSummaryScreen->handleDeoxys == TRUE)
-                    HandleLoadSpecialPokePic_2(&gMonFrontPicTable[summary->species2],
-                                                MonSpritesGfxManager_GetSpritePtr(MON_SPR_GFX_MANAGER_A, B_POSITION_OPPONENT_LEFT),
-                                                summary->species2,
-                                                summary->pid);
-                else
-                    HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[summary->species2],
-                                                              MonSpritesGfxManager_GetSpritePtr(MON_SPR_GFX_MANAGER_A, B_POSITION_OPPONENT_LEFT),
-                                                              summary->species2,
-                                                              summary->pid);
-            }
-        }
+        LoadSummaryMonPic();
         (*state)++;
         return 0xFF;
     case 1:
@@ -3970,10 +4060,13 @@ static u8 CreateMonSprite(struct Pokemon *unused)
     gSprites[spriteId].callback = SpriteCB_Pokemon;
     gSprites[spriteId].oam.priority = 0;
 
-    if (!IsMonSpriteNotFlipped(summary->species2))
+    if (!IsSpeciesFormSpriteNotFlipped(summary->species2, IsMonEx(&sMonSummaryScreen->currentMon)))
         gSprites[spriteId].hFlip = TRUE;
     else
         gSprites[spriteId].hFlip = FALSE;
+
+    if (IsMonEx(&sMonSummaryScreen->currentMon))
+        LoadSummaryMonPalette(&gSprites[spriteId]);
 
     return spriteId;
 }
@@ -3984,12 +4077,302 @@ static void SpriteCB_Pokemon(struct Sprite *sprite)
 
     if (!gPaletteFade.active && sprite->data[2] != 1)
     {
-        sprite->data[1] = IsMonSpriteNotFlipped(sprite->data[0]);
+        sprite->data[1] = IsSpeciesFormSpriteNotFlipped(sprite->data[0], IsMonEx(&sMonSummaryScreen->currentMon));
         PlayMonCry();
         SetSummaryMonAnimNature(summary->isEgg ? NUM_NATURES : summary->nature);
         PokemonSummaryDoMonAnimation(sprite, sprite->data[0], summary->isEgg);
     }
 }
+
+// EX forms (see data/pokemon/ex_forms.h)
+
+// The player can switch their own Pokémon's EX form, just not in battle or while choosing a move to forget
+static bool32 CanChangeExFormHere(void)
+{
+    return !gMain.inBattle
+        && sMonSummaryScreen->mode != SUMMARY_MODE_SELECT_MOVE
+        && (sMonSummaryScreen->monList.mons == gPlayerParty || sMonSummaryScreen->mode == SUMMARY_MODE_BOX);
+}
+
+// Mixes color2 into color1 by amount, out of 16
+static u16 MixColors(u16 color1, u16 color2, u8 amount)
+{
+    s32 r = GET_R(color1) + ((GET_R(color2) - GET_R(color1)) * amount) / 16;
+    s32 g = GET_G(color1) + ((GET_G(color2) - GET_G(color1)) * amount) / 16;
+    s32 b = GET_B(color1) + ((GET_B(color2) - GET_B(color1)) * amount) / 16;
+
+    return RGB(r, g, b);
+}
+
+// Draws the font's large {EX} logo into a 16x16 sprite's 4 tiles
+static void DrawExLogoTiles(u8 *dest)
+{
+    static const u8 sText_ExLogo[] = _("{EX_E}{EX_X}");
+    static const u8 sColors[3] = { 0, EX_LOGO_PAL_FILL, EX_LOGO_PAL_SHADOW }; // Transparent background
+    // Only drawn into, never shown, so its position and tiles don't matter
+    static const struct WindowTemplate sTemplate = { .bg = 0, .width = 2, .height = 2 };
+    u8 windowId = AddWindow(&sTemplate);
+
+    if (windowId == WINDOW_NONE)
+    {
+        memset(dest, 0, 4 * TILE_SIZE_4BPP);
+        return;
+    }
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(0));
+    AddTextPrinterParameterized4(windowId, FONT_NORMAL, 0, 0, 0, 0, sColors, TEXT_SKIP_DRAW, sText_ExLogo);
+    // A 2x2 tile window's tiles are in the same order as a 16x16 sprite's
+    memcpy(dest, (u8 *)GetWindowAttribute(windowId, WINDOW_TILE_DATA), 4 * TILE_SIZE_4BPP);
+    RemoveWindow(windowId);
+}
+
+// Creates the SELECT hint, from the font's SELECT button icon, and the EX logo
+static void CreateExFormSprites(void)
+{
+    // A 32x16 sprite is 4 tiles across. The icon is tiles 0x09-0x0B of the keypad icons, with its bottom half 16 tiles later
+    static const u8 sSelectIconTiles[] = { 0x09, 0x0A, 0x0B };
+    u8 hintTiles[8 * TILE_SIZE_4BPP];
+    u8 logoTiles[4 * TILE_SIZE_4BPP];
+    u16 hintPal[16] = {0};
+    u16 logoPal[16] = {0};
+    struct SpriteSheet hintSheet = { hintTiles, sizeof(hintTiles), TAG_EX_HINT };
+    struct SpriteSheet logoSheet = { logoTiles, sizeof(logoTiles), TAG_EX_LOGO };
+    struct SpritePalette hintPalette = { hintPal, TAG_EX_HINT };
+    struct SpritePalette logoPalette = { logoPal, TAG_EX_LOGO };
+    u16 barColor = gPlttBufferUnfaded[BG_PLTT_ID(0) + ABILITY_BAR_COLOR_ID];
+    u32 i;
+
+    memset(hintTiles, 0, sizeof(hintTiles));
+    for (i = 0; i < ARRAY_COUNT(sSelectIconTiles); i++)
+    {
+        memcpy(&hintTiles[i * TILE_SIZE_4BPP], &gKeypadIconTiles[sSelectIconTiles[i] * TILE_SIZE_4BPP], TILE_SIZE_4BPP);
+        memcpy(&hintTiles[(i + 4) * TILE_SIZE_4BPP], &gKeypadIconTiles[(sSelectIconTiles[i] + 16) * TILE_SIZE_4BPP], TILE_SIZE_4BPP);
+    }
+    DrawExLogoTiles(logoTiles);
+
+    // The hint's colors are mixed with the bar behind it, so it looks see-through
+    hintPal[EX_HINT_PAL_BUTTON] = MixColors(sExHintColors[EX_HINT_PAL_BUTTON], barColor, EX_HINT_BLEND);
+    hintPal[EX_HINT_PAL_TEXT] = MixColors(sExHintColors[EX_HINT_PAL_TEXT], barColor, EX_HINT_BLEND);
+    logoPal[EX_LOGO_PAL_FILL] = sExLogoColors[EX_LOGO_PAL_FILL];
+    logoPal[EX_LOGO_PAL_SHADOW] = sExLogoColors[EX_LOGO_PAL_SHADOW];
+
+    LoadSpriteSheet(&hintSheet);
+    LoadSpriteSheet(&logoSheet);
+    LoadSpritePalette(&hintPalette);
+    LoadSpritePalette(&logoPalette);
+    sMonSummaryScreen->exHintSpriteId = CreateSprite(&sSpriteTemplate_ExHint, EX_HINT_X, EX_HINT_Y, 0);
+    sMonSummaryScreen->exLogoSpriteId = CreateSprite(&sSpriteTemplate_ExLogo, EX_LOGO_X, EX_LOGO_Y, 0);
+    UpdateExFormIndicators();
+}
+
+static void Task_AnimateExLogo(u8 taskId);
+
+// Stops the EX logo's flash or fade, leaving it as it should be with no blending
+static void StopExLogoAnimation(void)
+{
+    u8 taskId = FindTaskIdByFunc(Task_AnimateExLogo);
+
+    if (taskId != TASK_NONE)
+        DestroyTask(taskId);
+    if (sMonSummaryScreen->exLogoSpriteId != SPRITE_NONE)
+    {
+        struct Sprite *logo = &gSprites[sMonSummaryScreen->exLogoSpriteId];
+        u16 paletteOffset = OBJ_PLTT_ID(logo->oam.paletteNum);
+
+        logo->oam.objMode = ST_OAM_OBJ_NORMAL;
+        LoadPalette(sExLogoColors, paletteOffset, sizeof(sExLogoColors));
+    }
+    SetGpuReg(REG_OFFSET_BLDCNT, 0);
+    SetGpuReg(REG_OFFSET_BLDALPHA, 0);
+}
+
+// On the Info page, shows the EX logo while the Pokémon is in its EX form,
+// and the SELECT hint if the player can switch its form here
+static void UpdateExFormIndicators(void)
+{
+    struct Pokemon *mon = &sMonSummaryScreen->currentMon;
+    bool32 onInfoPage = (sMonSummaryScreen->currPageIndex == PSS_PAGE_INFO);
+
+    if (sMonSummaryScreen->exLogoSpriteId == SPRITE_NONE)
+        return;
+
+    StopExLogoAnimation();
+    gSprites[sMonSummaryScreen->exLogoSpriteId].invisible = !(onInfoPage && IsMonEx(mon));
+    gSprites[sMonSummaryScreen->exHintSpriteId].invisible = !(onInfoPage && CanMonChangeExForm(mon) && CanChangeExFormHere());
+}
+
+static void HideExFormIndicators(void)
+{
+    if (sMonSummaryScreen->exLogoSpriteId == SPRITE_NONE)
+        return;
+
+    StopExLogoAnimation();
+    gSprites[sMonSummaryScreen->exLogoSpriteId].invisible = TRUE;
+    gSprites[sMonSummaryScreen->exHintSpriteId].invisible = TRUE;
+}
+
+#define tFrame     data[0]
+#define tFadingIn  data[1]
+
+// Flashes the EX logo in when the EX form is turned on, or fades it out when it's turned off.
+// The logo is blended with what's behind it, from invisible (0) to solid (16)
+static void Task_AnimateExLogo(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    struct Sprite *logo = &gSprites[sMonSummaryScreen->exLogoSpriteId];
+    u16 paletteOffset = OBJ_PLTT_ID(logo->oam.paletteNum);
+    u8 opacity;
+
+    tFrame++;
+    if (tFadingIn)
+    {
+        // Shimmers from white to its blue as it fades in
+        u8 whiteness = 16 - min(tFrame * 16 / EX_LOGO_FLASH_FRAMES, 16);
+        u16 fill = MixColors(sExLogoColors[EX_LOGO_PAL_FILL], RGB_WHITE, whiteness);
+        u16 shadow = MixColors(sExLogoColors[EX_LOGO_PAL_SHADOW], RGB(20, 28, 31), whiteness);
+
+        opacity = min(tFrame * 16 / EX_LOGO_FADE_IN_FRAMES, 16);
+        LoadPalette(&fill, paletteOffset + EX_LOGO_PAL_FILL, PLTT_SIZEOF(1));
+        LoadPalette(&shadow, paletteOffset + EX_LOGO_PAL_SHADOW, PLTT_SIZEOF(1));
+        if (tFrame >= EX_LOGO_FLASH_FRAMES)
+        {
+            StopExLogoAnimation();
+            return;
+        }
+    }
+    else
+    {
+        opacity = 16 - min(tFrame * 16 / EX_LOGO_FADE_OUT_FRAMES, 16);
+        if (tFrame >= EX_LOGO_FADE_OUT_FRAMES)
+        {
+            StopExLogoAnimation();
+            logo->invisible = TRUE;
+            return;
+        }
+    }
+    SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(opacity, 16 - opacity));
+}
+
+static void StartExLogoAnimation(bool32 fadingIn)
+{
+    struct Sprite *logo;
+    u8 taskId;
+
+    if (sMonSummaryScreen->exLogoSpriteId == SPRITE_NONE || sMonSummaryScreen->currPageIndex != PSS_PAGE_INFO)
+        return;
+
+    StopExLogoAnimation();
+    logo = &gSprites[sMonSummaryScreen->exLogoSpriteId];
+    logo->invisible = FALSE;
+    logo->oam.objMode = ST_OAM_OBJ_BLEND;
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT2_BG_ALL | BLDCNT_TGT2_BD);
+    SetGpuReg(REG_OFFSET_BLDALPHA, fadingIn ? BLDALPHA_BLEND(0, 16) : BLDALPHA_BLEND(16, 0));
+    taskId = CreateTask(Task_AnimateExLogo, 2);
+    gTasks[taskId].tFrame = 0;
+    gTasks[taskId].tFadingIn = fadingIn;
+}
+
+#undef tFrame
+#undef tFadingIn
+
+// Shrinks or grows the Pokémon's picture horizontally. scale is out of 256
+static void SetMonPicSquish(struct Sprite *sprite, u16 scale, bool32 flip)
+{
+    s16 xScale = 0x10000 / scale;
+
+    SetOamMatrix(sprite->oam.matrixNum, flip ? -xScale : xScale, 0, 0, 0x100);
+}
+
+#define tState      data[0]
+#define tStep       data[1]
+#define tHasMatrix  data[2]
+
+// Switches the Pokémon between its regular and EX forms. Its picture quickly squishes
+// into a line, swaps, and grows back, like it's spinning around.
+static void Task_ChangeExForm(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    struct Sprite *sprite = &gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_MON]];
+    struct PokeSummary *summary = &sMonSummaryScreen->summary;
+
+    switch (tState)
+    {
+    case 0:
+        // Cut off its cry animation, which may be using the sprite's affine matrix itself
+        SummaryScreen_DestroyAnimDelayTask();
+        sprite->callback = SpriteCallbackDummy;
+        sprite->x2 = 0;
+        sprite->y2 = 0;
+        sprite->affineAnimPaused = TRUE;
+        if (sprite->oam.affineMode == ST_OAM_AFFINE_OFF)
+            sprite->oam.matrixNum = AllocOamMatrix();
+        tHasMatrix = (sprite->oam.matrixNum != 0xFF);
+        if (tHasMatrix)
+        {
+            sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+            CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+        }
+        // Turning EX on gets the sound of a full EXP bar
+        PlaySE(IsMonEx(&sMonSummaryScreen->currentMon) ? SE_SELECT : SE_EXP_MAX);
+        tStep = 0;
+        tState++;
+        // fallthrough
+    case 1:
+        // Squish down to a line
+        if (tHasMatrix)
+            SetMonPicSquish(sprite, sExFormSquishScales[tStep], sprite->hFlip);
+        if (++tStep < (s16)ARRAY_COUNT(sExFormSquishScales))
+            break;
+        tState++;
+        break;
+    case 2:
+        // Swap forms while it's a line
+        if (sMonSummaryScreen->isBoxMon)
+            ToggleBoxMonExForm(&sMonSummaryScreen->monList.boxMons[sMonSummaryScreen->curMonIndex]);
+        else
+            ToggleMonExForm(&sMonSummaryScreen->monList.mons[sMonSummaryScreen->curMonIndex]);
+        CopyMonToSummaryStruct(&sMonSummaryScreen->currentMon);
+        sMonSummaryScreen->switchCounter = 0;
+        while (!ExtractMonDataToSummaryStruct(&sMonSummaryScreen->currentMon))
+            ;
+        sMonSummaryScreen->switchCounter = 0;
+
+        LoadSummaryMonPic();
+        LoadSummaryMonPalette(sprite);
+        StartSpriteAnim(sprite, 0); // Copies the new picture to VRAM
+        sprite->hFlip = !IsSpeciesFormSpriteNotFlipped(summary->species2, IsMonEx(&sMonSummaryScreen->currentMon));
+        sprite->data[1] = !sprite->hFlip; // Animations' sDontFlip
+
+        SetTypeIcons();
+        PrintPageSpecificText(sMonSummaryScreen->currPageIndex);
+        StartExLogoAnimation(IsMonEx(&sMonSummaryScreen->currentMon));
+        tStep = ARRAY_COUNT(sExFormSquishScales) - 1;
+        tState++;
+        break;
+    case 3:
+        // Grow back to full width
+        if (--tStep >= 0)
+        {
+            if (tHasMatrix)
+                SetMonPicSquish(sprite, sExFormSquishScales[tStep], sprite->hFlip);
+            break;
+        }
+        if (tHasMatrix)
+        {
+            FreeOamMatrix(sprite->oam.matrixNum);
+            sprite->oam.affineMode = ST_OAM_AFFINE_OFF;
+            CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+        }
+        sprite->oam.matrixNum = sprite->hFlip << 3; // Without affine, these bits are the flip
+        sprite->affineAnimPaused = FALSE;
+        tState = 0;
+        gTasks[taskId].func = Task_HandleInput;
+        break;
+    }
+}
+
+#undef tState
+#undef tStep
+#undef tHasMatrix
 
 // Track and then destroy Task_PokemonSummaryAnimateAfterDelay
 // Normally destroys itself but it can be interrupted before the animation starts

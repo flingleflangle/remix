@@ -5716,7 +5716,6 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_PLUSLE]      = sAnims_Plusle,
     [SPECIES_MINUN]       = sAnims_Minun,
     [SPECIES_MAWILE]      = sAnims_Mawile,
-    [SPECIES_MAWILE_EX]   = sAnims_Mawile,
     [SPECIES_MEDITITE]    = sAnims_Meditite,
     [SPECIES_MEDICHAM]    = sAnims_Medicham,
     [SPECIES_SWABLU]      = sAnims_Swablu,

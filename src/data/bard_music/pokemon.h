@@ -2660,14 +2660,6 @@ static const struct BardSoundTemplate sBardSoundTemplates_Pokemon[NUM_SPECIES][M
         NULL_BARD_SOUND,
         NULL_BARD_SOUND,
     },
-	[SPECIES_MAWILE_EX] = {
-        { .songId = PHONEME_ID(PH_THOUGHT_BLEND) },
-        { .songId = PHONEME_ID(PH_PRICE_BLEND) },
-        PREV_BARD_SOUND,
-        NULL_BARD_SOUND,
-        NULL_BARD_SOUND,
-        NULL_BARD_SOUND,
-    },
     [SPECIES_MEDITITE] = {
         { .songId = PHONEME_ID(PH_DRESS_BLEND) },
         { .songId = PHONEME_ID(PH_KIT_SOLO) },

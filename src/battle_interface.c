@@ -2055,7 +2055,7 @@ static void UpdateStatusIconInHealthbox(u8 healthboxSpriteId)
             CpuCopy32(statusGfxPtr, (void *)(OBJ_VRAM0 + (gSprites[healthboxSpriteId].oam.tileNum + tileNumAdder + i) * TILE_SIZE_4BPP), 32);
 
         // With no status icon to show, EX Pokemon get the EX logo in its place
-        if (IsSpeciesEx(GetMonData(mon, MON_DATA_SPECIES)))
+        if (IsMonEx(mon))
             CpuCopy32(gHealthboxExLogoGfx, (void *)(OBJ_VRAM0 + (gSprites[healthboxSpriteId].oam.tileNum + tileNumAdder) * TILE_SIZE_4BPP), 96);
 
         if (!gBattleSpritesDataPtr->battlerData[battler].hpNumbersNoBars)

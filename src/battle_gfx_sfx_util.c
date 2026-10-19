@@ -599,7 +599,7 @@ void BattleLoadOpponentMonSpriteGfx(struct Pokemon *mon, u8 battler)
 
     otId = GetMonData(mon, MON_DATA_OT_ID);
     position = GetBattlerPosition(battler);
-    HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonFrontPicTable[species],
+    HandleLoadSpecialPokePic_DontHandleDeoxys(GetSpeciesFormPicSheet(species, IsMonEx(mon) && species == GetMonData(mon, MON_DATA_SPECIES), TRUE),
                                               gMonSpritesGfxPtr->sprites.ptr[position],
                                               species, currentPersonality);
 
@@ -655,13 +655,13 @@ void BattleLoadPlayerMonSpriteGfx(struct Pokemon *mon, u8 battler)
 
     if (ShouldIgnoreDeoxysForm(1, battler) == TRUE || gBattleSpritesDataPtr->battlerData[battler].transformSpecies != SPECIES_NONE)
     {
-        HandleLoadSpecialPokePic_DontHandleDeoxys(&gMonBackPicTable[species],
+        HandleLoadSpecialPokePic_DontHandleDeoxys(GetSpeciesFormPicSheet(species, IsMonEx(mon) && species == GetMonData(mon, MON_DATA_SPECIES), FALSE),
                                                   gMonSpritesGfxPtr->sprites.ptr[position],
                                                   species, currentPersonality);
     }
     else
     {
-        HandleLoadSpecialPokePic(&gMonBackPicTable[species],
+        HandleLoadSpecialPokePic(GetSpeciesFormPicSheet(species, IsMonEx(mon), FALSE),
                                 gMonSpritesGfxPtr->sprites.ptr[position],
                                 species, currentPersonality);
     }

@@ -10204,37 +10204,9 @@ const struct SpeciesInfo gSpeciesInfo[] =
         .safariZoneFleeRate = 0,
         .bodyColor = BODY_COLOR_BLACK,
         .noFlip = FALSE,
+        .exEnabled = TRUE, // EX form in data/pokemon/ex_forms.h
     },
 	
-	[SPECIES_MAWILE_EX] =
-    {
-        .baseHP        = 50,
-        .baseAttack    = 85,
-        .baseDefense   = 85,
-        .baseSpeed     = 50,
-        .baseSpAttack  = 85,
-        .baseSpDefense = 55,
-        .types = { TYPE_STEEL, TYPE_DARK },
-        .catchRate = 45,
-        .expYield = 98,
-        .evYield_HP        = 0,
-        .evYield_Attack    = 2,
-        .evYield_Defense   = 2,
-        .evYield_Speed     = 0,
-        .evYield_SpAttack  = 0,
-        .evYield_SpDefense = 0,
-        .itemCommon = ITEM_METAL_COAT,
-        .itemRare   = ITEM_SALAC_BERRY,
-        .genderRatio = PERCENT_FEMALE(50),
-        .eggCycles = 10,
-        .friendship = STANDARD_FRIENDSHIP,
-        .growthRate = GROWTH_FAST,
-        .eggGroups = { EGG_GROUP_FIELD, EGG_GROUP_FAIRY },
-        .abilities = {ABILITY_HUGE_POWER, ABILITY_HUGE_POWER},
-        .safariZoneFleeRate = 0,
-        .bodyColor = BODY_COLOR_BLACK,
-        .noFlip = TRUE,
-    },
 
     [SPECIES_MEDITITE] =
     {
