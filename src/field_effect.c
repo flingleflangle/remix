@@ -2274,6 +2274,8 @@ static void EscapeRopeWarpOutEffect_Spin(struct Task *task)
     u8 spinDirections[5] =  {DIR_SOUTH, DIR_WEST, DIR_EAST, DIR_NORTH, DIR_SOUTH};
     if (task->tTimer != 0 && (--task->tTimer) == 0)
     {
+        // Remove the "used Escape Rope" message so its frame doesn't linger through the fade
+        ClearDialogWindowAndFrame(0, TRUE);
         TryFadeOutOldMapMusic();
         WarpFadeOutScreen();
     }
