@@ -219,7 +219,6 @@ s16 GetFigure8XOffset(s16 idx);
 s16 GetFigure8YOffset(s16 idx);
 void CameraObjectFreeze(void);
 u8 GetObjectEventBerryTreeId(u8 objectEventId);
-void SetBerryTreeJustPicked(u8 mapId, u8 mapNumber, u8 mapGroup);
 bool8 IsBerryTreeSparkling(u8 localId, u8 mapNum, u8 mapGroup);
 
 void MovementType_None(struct Sprite *sprite);

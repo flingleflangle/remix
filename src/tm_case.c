@@ -525,8 +525,11 @@ static void InitTMCaseListMenuItems(void)
     gMultiuseListMenuTemplate.item_X = 8;
     gMultiuseListMenuTemplate.cursor_X = 0;
     gMultiuseListMenuTemplate.lettersSpacing = 0;
-    gMultiuseListMenuTemplate.itemVerticalPadding = 2;
-    gMultiuseListMenuTemplate.upText_Y = 2;
+    // Emerald's FONT_NORMAL is 16px tall (FRLG's is 14px), so rows need no extra padding
+    // for 5 of them to fit in the 80px list window. Otherwise the 5th row is drawn
+    // partly outside the window and shows up cut off once it scrolls into view.
+    gMultiuseListMenuTemplate.itemVerticalPadding = 0;
+    gMultiuseListMenuTemplate.upText_Y = 0;
     gMultiuseListMenuTemplate.maxShowed = sTMCaseDynamicResources->maxTMsShown;
     gMultiuseListMenuTemplate.fontId = FONT_NORMAL;
     gMultiuseListMenuTemplate.cursorPal = 2;

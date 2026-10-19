@@ -3087,7 +3087,6 @@ enum {
 
 #define BERRY_FLAG_SET_GFX     (1 << 0)
 #define BERRY_FLAG_SPARKLING   (1 << 1)
-#define BERRY_FLAG_JUST_PICKED (1 << 2)
 
 void MovementType_BerryTreeGrowth(struct Sprite *sprite)
 {
@@ -3116,7 +3115,8 @@ bool8 MovementType_BerryTreeGrowth_Normal(struct ObjectEvent *objectEvent, struc
     berryStage = GetStageByBerryTreeId(objectEvent->trainerRange_berryTreeId);
     if (berryStage == BERRY_STAGE_NO_BERRY)
     {
-        if (!(sprite->sBerryTreeFlags & BERRY_FLAG_JUST_PICKED) && sprite->animNum == BERRY_STAGE_FLOWERING)
+        // Sparkle when a tree with berries disappears, whether it was picked or withered
+        if (sprite->animNum == BERRY_STAGE_FLOWERING)
         {
             gFieldEffectArguments[0] = objectEvent->currentCoords.x;
             gFieldEffectArguments[1] = objectEvent->currentCoords.y;
@@ -4767,14 +4767,6 @@ bool8 IsBerryTreeSparkling(u8 localId, u8 mapNum, u8 mapGroup)
         return TRUE;
 
     return FALSE;
-}
-
-void SetBerryTreeJustPicked(u8 localId, u8 mapNum, u8 mapGroup)
-{
-    u8 objectEventId;
-
-    if (!TryGetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroup, &objectEventId))
-        gSprites[gObjectEvents[objectEventId].spriteId].sBerryTreeFlags |= BERRY_FLAG_JUST_PICKED;
 }
 
 #undef sTimer

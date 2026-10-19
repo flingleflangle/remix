@@ -1,5 +1,6 @@
 #include "global.h"
 #include "battle.h"
+#include "main.h"
 #include "palette.h"
 #include "pokemon.h"
 #include "pokemon_animation.h"
@@ -209,6 +210,7 @@ static void WaitAnimEnd(struct Sprite *sprite);
 static struct PokemonAnimData sAnims[MAX_BATTLERS_COUNT];
 static u8 sAnimIdx;
 static bool32 sIsSummaryAnim;
+static EWRAM_DATA u8 sSummaryAnimNature = 0;
 
 static const u8 sSpeciesToBackAnimSet[] =
 {
@@ -5545,8 +5547,76 @@ static void Anim_ShakeGlowBlue_Slow(struct Sprite *sprite)
     sprite->data[2]++;
 }
 
+// Fierce and Patient natures play a short extra effect once the normal animation ends,
+// on the summary screen and when an opposing Pokémon enters battle
+#define NATURE_EFFECT_FRAMES 10
+
+static const u8 sFierceBlendCoeffs[NATURE_EFFECT_FRAMES] = {3, 6, 8, 8, 7, 6, 4, 3, 1, 0};
+static const s8 sFierceShakeX[NATURE_EFFECT_FRAMES]      = {2, -2, 2, -2, 1, -1, 1, -1, 0, 0};
+static const u8 sPatientBlendCoeffs[NATURE_EFFECT_FRAMES] = {1, 4, 9, 12, 9, 6, 4, 2, 1, 0};
+
+static void NatureEffect_Fierce(struct Sprite *sprite)
+{
+    u32 frame = sprite->data[2]++;
+
+    BlendPalette(sprite->data[7], 16, sFierceBlendCoeffs[frame], RGB_RED);
+    sprite->x2 = sFierceShakeX[frame];
+    if (frame == NATURE_EFFECT_FRAMES - 1)
+        sprite->callback = SpriteCallbackDummy;
+}
+
+static void NatureEffect_Patient(struct Sprite *sprite)
+{
+    u32 frame = sprite->data[2]++;
+
+    BlendPalette(sprite->data[7], 16, sPatientBlendCoeffs[frame], RGB(24, 28, 31));
+    if (frame == NATURE_EFFECT_FRAMES - 1)
+        sprite->callback = SpriteCallbackDummy;
+}
+
+void SetSummaryMonAnimNature(u8 nature)
+{
+    sSummaryAnimNature = nature;
+}
+
+static u8 GetMonAnimNature(struct Sprite *sprite)
+{
+    u32 battler;
+
+    if (sIsSummaryAnim)
+        return sSummaryAnimNature;
+
+    if (gMain.inBattle)
+    {
+        for (battler = 0; battler < gBattlersCount; battler++)
+        {
+            if (GET_BATTLER_SIDE2(battler) == B_SIDE_OPPONENT && &gSprites[gBattlerSpriteIds[battler]] == sprite)
+                return GetNature(&gEnemyParty[gBattlerPartyIndexes[battler]]);
+        }
+    }
+    return NUM_NATURES;
+}
+
 static void WaitAnimEnd(struct Sprite *sprite)
 {
-    if (sprite->animEnded)
+    u8 nature;
+
+    if (!sprite->animEnded)
+        return;
+
+    nature = GetMonAnimNature(sprite);
+    if (sIsSummaryAnim)
+        sSummaryAnimNature = NUM_NATURES; // Only once per summary animation
+
+    if (nature == NATURE_FIERCE || nature == NATURE_PATIENT)
+    {
+        sprite->data[2] = 0;
+        sprite->data[7] = OBJ_PLTT_ID(sprite->oam.paletteNum);
+        sprite->callback = (nature == NATURE_FIERCE) ? NatureEffect_Fierce : NatureEffect_Patient;
+        sprite->callback(sprite);
+    }
+    else
+    {
         sprite->callback = SpriteCallbackDummy;
+    }
 }

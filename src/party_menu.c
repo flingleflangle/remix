@@ -3578,8 +3578,9 @@ static void CursorCb_SendMon(u8 taskId)
     {
         Task_ClosePartyMenu(taskId);
     }
-	else if (switchMon == 2)
+	else if (switchMon == 2 && gPartyMenu.action != PARTY_ACTION_SEND_OUT)
     {
+        // Picking the active mon backs out quietly, except on forced send-outs (U-turn, Baton Pass, etc.) where it can't be cancelled
         HandleChooseMonCancel(taskId, GetCurrentPartySlotPtr());
     }
     else

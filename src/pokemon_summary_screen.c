@@ -28,6 +28,7 @@
 #include "palette.h"
 #include "pokeball.h"
 #include "pokemon.h"
+#include "pokemon_animation.h"
 #include "pokemon_storage_system.h"
 #include "pokemon_summary_screen.h"
 #include "region_map.h"
@@ -3985,6 +3986,7 @@ static void SpriteCB_Pokemon(struct Sprite *sprite)
     {
         sprite->data[1] = IsMonSpriteNotFlipped(sprite->data[0]);
         PlayMonCry();
+        SetSummaryMonAnimNature(summary->isEgg ? NUM_NATURES : summary->nature);
         PokemonSummaryDoMonAnimation(sprite, sprite->data[0], summary->isEgg);
     }
 }

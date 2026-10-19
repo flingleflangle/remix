@@ -1127,10 +1127,22 @@ static void GetItemNameFromPocket(u8 *dest, u16 itemId)
         }
         break;
     case BERRIES_POCKET:
+    {
+        u32 nameLen, suffixLen;
+
         ConvertIntToDecimalStringN(gStringVar1, itemId - FIRST_BERRY_INDEX + 1, STR_CONV_MODE_LEADING_ZEROS, 2);
         CopyItemName(itemId, gStringVar2);
+        // Registered berries drop the " BERRY" suffix so the quantity still fits next to the registered icon
+        if (RegisteredItemIndex(itemId) >= 0)
+        {
+            nameLen = StringLength(gStringVar2);
+            suffixLen = StringLength(gText_Berry2);
+            if (nameLen > suffixLen && StringCompare(&gStringVar2[nameLen - suffixLen], gText_Berry2) == 0)
+                gStringVar2[nameLen - suffixLen] = EOS;
+        }
         StringExpandPlaceholders(dest, gText_NumberItem_TMBerry);
         break;
+    }
     default:
         CopyItemName(itemId, dest);
         break;
