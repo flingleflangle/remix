@@ -238,6 +238,8 @@ static const u8 sText_ExStatsRestored[] = _("{B_ATK_NAME_WITH_PREFIX} returned i
 static const u8 sText_ExReplacementHealed[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s HP\nwas restored!");
 static const u8 sText_PkmnAimedNextAttack[] = _("{B_ATK_NAME_WITH_PREFIX} took aim\nat its next attack!");
 static const u8 sText_PkmnMasteredStat[] = _("{B_BUFF1} honed its {B_BUFF2}\nto mastery and became {B_BUFF3}{EX}!");
+static const u8 sText_NorthStarPerish[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_LAST_ABILITY}\nset {B_DEF_NAME_WITH_PREFIX}'s\lPERISH count!");
+static const u8 sText_PkmnMaxedFriendship[] = _("{B_BUFF1}'s bond with you\nmade it become {B_BUFF3}{EX}!");
 static const u8 sText_PkmnFellForFirstSight[] = _("{B_DEF_NAME_WITH_PREFIX} fell for\n{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}!");
 static const u8 sText_PkmnFledFromBattle[] = _("{B_ATK_NAME_WITH_PREFIX} fled from\nbattle!");
 static const u8 sText_PkmnForesawAttack[] = _("{B_ATK_NAME_WITH_PREFIX} foresaw\nan attack!");
@@ -953,6 +955,8 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_EXREPLACEMENTHEALED - BATTLESTRINGS_TABLE_START] = sText_ExReplacementHealed,
     [STRINGID_PKMNAIMEDNEXTATTACK - BATTLESTRINGS_TABLE_START] = sText_PkmnAimedNextAttack,
     [STRINGID_PKMNMASTEREDSTAT - BATTLESTRINGS_TABLE_START] = sText_PkmnMasteredStat,
+    [STRINGID_NORTHSTARPERISH - BATTLESTRINGS_TABLE_START] = sText_NorthStarPerish,
+    [STRINGID_PKMNMAXEDFRIENDSHIP - BATTLESTRINGS_TABLE_START] = sText_PkmnMaxedFriendship,
 };
 
 const u16 gMissStringIds[] =
@@ -1330,6 +1334,13 @@ const u16 gCaughtMonStringIds[] =
     [B_MSG_SENT_LANETTES_PC]  = STRINGID_PKMNTRANSFERREDLANETTESPC,
     [B_MSG_SOMEONES_BOX_FULL] = STRINGID_PKMNBOXSOMEONESPCFULL,
     [B_MSG_LANETTES_BOX_FULL] = STRINGID_PKMNBOXLANETTESPCFULL,
+};
+
+// How a Pokémon unlocked its EX form after gaining EXP (BattleScript_ExTrainingUnlock)
+const u16 gExUnlockStringIds[] =
+{
+    [B_MSG_EX_UNLOCK_TRAINING]   = STRINGID_PKMNMASTEREDSTAT,
+    [B_MSG_EX_UNLOCK_FRIENDSHIP] = STRINGID_PKMNMAXEDFRIENDSHIP,
 };
 
 const u16 gTrappingMoves[NUM_TRAPPING_MOVES + 1] =

@@ -27,12 +27,35 @@
 // - .noFlip is the EX front sprite's version of species_info.h's noFlip.
 // - .backAnim replaces the battle back sprite animation (BACK_ANIM_*). Leave it out to keep
 //   the regular one.
+// - .frontAnim replaces the front sprite's movement, written as FRONT_ANIM(ANIM_*), such as
+//   FRONT_ANIM(ANIM_H_SHAKE). The ANIM_* list is in include/pokemon_animation.h, and
+//   sMonFrontAnimIdsTable in pokemon.c shows which one each species uses. Leave it out to
+//   keep the regular one. .frontAnimDelay is how many frames to wait before it starts
+//   (0 for none), and is only used along with .frontAnim.
+// - .frontFrames replaces when the front sprite switches between the two frames of its
+//   anim_front picture. Leave it out to keep the regular timing (front_pic_anims.h).
+//   Make one with EX_FRONT_FRAMES below, and list the frames as ANIMCMD_FRAME(frame, duration):
+//     static const union AnimCmd sAnim_FlygonEx_1[] =
+//     {
+//         ANIMCMD_FRAME(0, 10),
+//         ANIMCMD_FRAME(1, 30),
+//         ANIMCMD_FRAME(0, 20),
+//         ANIMCMD_END,
+//     };
+//     EX_FRONT_FRAMES(FlygonEx);
+//   and then .frontFrames = sAnims_FlygonEx in the entry.
+// - .grounded = TRUE makes an enemy's EX front sprite stand on the ground in battle, for a
+//   species that normally floats (gEnemyMonElevation). It also hides the floating shadow.
+// - .frontYOffset is added to the regular front sprite's y_offset (front_pic_coordinates.h),
+//   for an EX front sprite with a different number of empty rows below it.
 //
 // How an EX form is unlocked. A species can use any of these, or none:
 // - .unlockStat unlocks the EX form through training, once the Pokémon has at least
 //   EX_UNLOCK_EV_THRESHOLD (230) EVs in that stat. Use the stat's MON_DATA_*_EV, such as
 //   MON_DATA_ATK_EV or MON_DATA_SPEED_EV. It's checked after the Pokémon
 //   gains EXP in battle, with a message (BattleScript_ExTrainingUnlock).
+//   .unlockStat = MON_DATA_FRIENDSHIP instead unlocks it once the Pokémon has at least
+//   EX_UNLOCK_FRIENDSHIP_THRESHOLD (220) friendship. It's checked at the same time, with its own message.
 // - .unlockItem unlocks the EX form when used on the Pokémon from the bag.
 // - A story event unlocks it with "grantex SPECIES_X" in a script, for every Pokémon of
 //   that species in the party (see asm/macros/event.inc). Any species with an EX form can
@@ -49,8 +72,32 @@
 //   and an ability in sExMoveAbilities (battle_util.c) adds the EX moves in its list
 //   (Wishmaker adds every EX move).
 
+// The still first frame every front sprite rests on, like data.c's sAnim_GeneralFrame0
+static const union AnimCmd sAnim_ExFrame0[] =
+{
+    ANIMCMD_FRAME(0, 0),
+    ANIMCMD_END,
+};
+
+// An EX form's .frontFrames, made from sAnim_<name>_1. See .frontFrames above
+#define EX_FRONT_FRAMES(name)                       \
+static const union AnimCmd *const sAnims_##name[] = \
+{                                                   \
+    sAnim_ExFrame0,                                 \
+    sAnim_##name##_1,                               \
+}
+
+static const union AnimCmd sAnim_FlygonEX_1[] =
+{
+    ANIMCMD_FRAME(1, 20),
+    ANIMCMD_FRAME(0, 20),
+    ANIMCMD_END,
+};
+EX_FRONT_FRAMES(FlygonEX);
+
 static const u16 sMawileExMoves[] =
 {
+    MOVE_BITE,
     MOVE_CRUNCH,
     MOVE_ROCK_TOMB,
     MOVE_FAKE_TEARS,
@@ -60,11 +107,35 @@ static const u16 sMawileExMoves[] =
 
 static const u16 sSceptileExMoves[] =
 {
-    MOVE_OLD_FURY_CUTTER,
+    MOVE_ABSORB,
+    MOVE_MEGA_DRAIN,
     MOVE_FURY_CUTTER,
+    MOVE_OLD_FURY_CUTTER,
     MOVE_LEAF_BLADE,
     MOVE_BULLET_SEED,
     MOVE_AGILITY,
+    MOVE_NONE,
+};
+
+static const u16 sFlygonExMoves[] =
+{
+    MOVE_BITE,
+    MOVE_SAND_ATTACK,
+    MOVE_SAND_TOMB,
+    MOVE_MAGNITUDE,
+    MOVE_EARTHQUAKE,
+    MOVE_DRAGON_DANCE,
+    MOVE_HYPER_VOICE,
+    MOVE_NONE,
+};
+
+static const u16 sLuvdiscExMoves[] =
+{
+    MOVE_ATTRACT,
+    MOVE_SWEET_KISS,
+    MOVE_LOVELY_KISS,
+    MOVE_SWAGGER,
+    MOVE_FLATTER,
     MOVE_NONE,
 };
 
@@ -76,7 +147,6 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
         .types = { TYPE_STEEL, TYPE_DARK },
         .ability = ABILITY_HUGE_POWER,
         .noFlip = TRUE,
-        .backAnim = BACK_ANIM_SHAKE_FLASH_YELLOW,
         .unlockStat = MON_DATA_ATK_EV,
         .exMoves = sMawileExMoves,
         .frontPic = gMonFrontPic_MawileEX,
@@ -93,6 +163,48 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
         .exMoves = sSceptileExMoves,
     },
 
+    [SPECIES_FLYGON] =
+    {
+        .baseHP = +20,
+        .baseAttack = -20,
+        .baseDefense = -10,
+        .baseSpeed = +10,
+        .baseSpAttack = +30,
+        .types = { TYPE_GROUND, TYPE_SOUND },
+        .ability = ABILITY_MYSTIC_VEIL,
+        .noFlip = TRUE,
+        .grounded = TRUE,
+        .frontYOffset = +4,
+        .unlockStat = MON_DATA_SPATK_EV,
+        .exMoves = sFlygonExMoves,
+        .frontPic = gMonFrontPic_FlygonEX,
+        .frontAnim = FRONT_ANIM(ANIM_H_VIBRATE),
+        .frontFrames = sAnims_FlygonEX,
+        .backAnim = BACK_ANIM_H_VIBRATE,
+    },
+
+    [SPECIES_LUVDISC] =
+    {
+        .baseHP = +27,
+        .baseSpeed = +3,
+        .types = { TYPE_WATER, TYPE_ASTRAL },
+        .ability = ABILITY_FIRST_SIGHT,
+        .noFlip = TRUE,
+        .grounded = TRUE,
+        .unlockStat = MON_DATA_SPEED_EV,
+        .exMoves = sLuvdiscExMoves,
+    },
+
+    [SPECIES_LEDIAN] =
+    {
+        .baseHP = +35,
+        .baseAttack = -15,
+        .types = { TYPE_ASTRAL, TYPE_FIGHTING },
+        .ability = ABILITY_NORTH_STAR,
+        .unlockStat = MON_DATA_FRIENDSHIP,
+        .exMoves = sLuvdiscExMoves,
+    },
+
     // Planned EX forms, not made yet:
     // [SPECIES_MAGNEMITE] =
     // [SPECIES_BUTTERFREE] =
@@ -100,12 +212,10 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
     // [SPECIES_NIDOKING] =
     // [SPECIES_NIDOQUEEN] =
     // [SPECIES_SNEASEL] =
-    // [SPECIES_LEDIAN] =
     // [SPECIES_NOSEPASS] =
     // [SPECIES_SABLEYE] =
     // [SPECIES_AGGRON] =
     // [SPECIES_TORKOAL] =
-    // [SPECIES_FLYGON] =
     // [SPECIES_GLALIE] =
     // [SPECIES_DRAGONITE] =
     // [SPECIES_TYRANITAR] =

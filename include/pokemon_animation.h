@@ -36,6 +36,11 @@ void SetSummaryMonAnimNature(u8 nature);
 #define BACK_ANIM_SHAKE_GLOW_GREEN             24
 #define BACK_ANIM_SHAKE_GLOW_BLUE              25
 
+// An EX form's front animation (.frontAnim in data/pokemon/ex_forms.h), as FRONT_ANIM(ANIM_*).
+// The ANIM_* ids start at 0, so they're stored 1 higher to leave 0 for FRONT_ANIM_NONE
+#define FRONT_ANIM_NONE  0
+#define FRONT_ANIM(anim) ((anim) + 1)
+
 // Pokémon animation function ids (for front and back)
 // Each front anim uses 1, and each back anim uses a set of 3
 #define ANIM_V_SQUISH_AND_BOUNCE                0

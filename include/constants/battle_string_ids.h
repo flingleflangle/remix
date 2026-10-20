@@ -412,8 +412,10 @@
 #define STRINGID_EXREPLACEMENTHEALED        412
 #define STRINGID_PKMNAIMEDNEXTATTACK        413
 #define STRINGID_PKMNMASTEREDSTAT           414
+#define STRINGID_NORTHSTARPERISH            415
+#define STRINGID_PKMNMAXEDFRIENDSHIP        416
 
-#define BATTLESTRINGS_COUNT                 415
+#define BATTLESTRINGS_COUNT                 417
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,
@@ -635,6 +637,10 @@
 #define B_MSG_REF_OPPONENT_WON       6
 #define B_MSG_REF_DRAW               7
 #define B_MSG_REF_COMMENCE_BATTLE    8
+
+// gExUnlockStringIds
+#define B_MSG_EX_UNLOCK_TRAINING   0
+#define B_MSG_EX_UNLOCK_FRIENDSHIP 1
 
 #define NUM_TRAPPING_MOVES 7
 

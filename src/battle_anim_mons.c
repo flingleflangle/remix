@@ -242,7 +242,7 @@ u8 GetBattlerYDelta(u8 battler, u16 species)
         }
         else
         {
-            ret = gMonFrontPicCoords[species].y_offset;
+            ret = GetSpeciesFormFrontYOffset(species, IsBattlerSpeciesEx(battler, species));
         }
     }
     return ret;
@@ -260,7 +260,7 @@ u8 GetBattlerElevation(u8 battler, u16 species)
             else if (species > NUM_SPECIES)
                 ret = gEnemyMonElevation[0];
             else
-                ret = gEnemyMonElevation[species];
+                ret = GetSpeciesFormEnemyElevation(species, IsBattlerSpeciesEx(battler, species));
         }
     }
     return ret;

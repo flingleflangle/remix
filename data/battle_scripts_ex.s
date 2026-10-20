@@ -521,7 +521,7 @@ BattleScript_ExTrainingUnlock::
 	various BS_ATTACKER, VARIOUS_EX_TRAINING_ANIM
 	waitanimation
 	various BS_ATTACKER, VARIOUS_EX_TRAINING_UPDATE_FORM
-	printstring STRINGID_PKMNMASTEREDSTAT
+	printfromtable gExUnlockStringIds
 	waitmessage B_WAIT_TIME_SHORT
 	various BS_ATTACKER, VARIOUS_EX_TRAINING_JINGLE
 	various BS_ATTACKER, VARIOUS_WAIT_FANFARE

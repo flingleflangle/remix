@@ -4080,7 +4080,7 @@ static void SpriteCB_Pokemon(struct Sprite *sprite)
         sprite->data[1] = IsSpeciesFormSpriteNotFlipped(sprite->data[0], IsMonEx(&sMonSummaryScreen->currentMon));
         PlayMonCry();
         SetSummaryMonAnimNature(summary->isEgg ? NUM_NATURES : summary->nature);
-        PokemonSummaryDoMonAnimation(sprite, sprite->data[0], summary->isEgg);
+        PokemonSummaryDoMonAnimation(sprite, sprite->data[0], IsMonEx(&sMonSummaryScreen->currentMon), summary->isEgg);
     }
 }
 

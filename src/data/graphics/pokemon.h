@@ -2159,6 +2159,7 @@ const u8 gMonIcon_Vibrava[] = INCBIN_U8("graphics/pokemon/vibrava/icon.4bpp");
 const u8 gMonFootprint_Vibrava[] = INCBIN_U8("graphics/pokemon/vibrava/footprint.1bpp");
 
 const u32 gMonStillFrontPic_Flygon[] = INCBIN_U32("graphics/pokemon/flygon/front.4bpp.lz");
+const u32 gMonStillFrontPic_FlygonEX[] = INCBIN_U32("graphics/pokemon/flygon/EXfront.4bpp.lz");
 const u32 gMonPalette_Flygon[] = INCBIN_U32("graphics/pokemon/flygon/normal.gbapal.lz");
 const u32 gMonBackPic_Flygon[] = INCBIN_U32("graphics/pokemon/flygon/back.4bpp.lz");
 const u32 gMonShinyPalette_Flygon[] = INCBIN_U32("graphics/pokemon/flygon/shiny.gbapal.lz");

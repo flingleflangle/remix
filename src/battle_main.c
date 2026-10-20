@@ -2996,7 +2996,7 @@ void SpriteCB_OpponentMonFromBall(struct Sprite *sprite)
         if (!(gHitMarker & HITMARKER_NO_ANIMATIONS) || gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK))
         {
             if (HasTwoFramesAnimation(sprite->sSpeciesId))
-                StartSpriteAnim(sprite, 1);
+                StartMonFrontFramesAnim(sprite, sprite->sSpeciesId, IsBattlerSpeciesEx(sprite->sBattler, sprite->sSpeciesId));
         }
         BattleAnimateFrontSprite(sprite, sprite->sSpeciesId, TRUE, 1);
     }

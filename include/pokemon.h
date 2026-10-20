@@ -349,16 +349,21 @@ struct ExFormInfo
     u8 types[2];
     u8 ability;      // The only ability an EX form can have
     u8 backAnim;     // BACK_ANIM_*, or BACK_ANIM_NONE to keep the regular one
+    u8 frontAnim;    // FRONT_ANIM(ANIM_*), or FRONT_ANIM_NONE to keep the regular one
+    u8 frontAnimDelay; // Frames to wait before frontAnim starts. Only used with frontAnim
     bool8 noFlip;    // Same as SpeciesInfo's noFlip, for the EX front sprite
-    u8 unlockStat;   // MON_DATA_*_EV that unlocks the EX form at EX_UNLOCK_EV_THRESHOLD. 0 for none
+    u8 unlockStat;   // MON_DATA_*_EV that unlocks the EX form at EX_UNLOCK_EV_THRESHOLD, or MON_DATA_FRIENDSHIP at EX_UNLOCK_FRIENDSHIP_THRESHOLD. 0 for none
     u16 unlockItem;  // Using this item on the Pokémon unlocks its EX form. ITEM_NONE for none
     bool8 exFixed;   // Once in its EX form, the Pokémon can't switch back
+    bool8 grounded;  // The EX front sprite stands on the ground in battle, with no elevation or shadow
+    s8 frontYOffset; // Added to the regular front sprite's y_offset (front_pic_coordinates.h)
     const u16 *exMoves; // EX moves the EX form can always use, ending with MOVE_NONE. NULL for none
     // NULL to keep the regular graphics
     const u32 *frontPic;
     const u32 *backPic;
     const u32 *palette;
     const u32 *shinyPalette;
+    const union AnimCmd *const *frontFrames; // The front sprite's frame animations. NULL to keep the regular ones
 };
 
 struct BattleMove
@@ -567,6 +572,10 @@ bool32 IsSpeciesFrontPicSheet(const struct CompressedSpriteSheet *src, s32 speci
 const struct CompressedSpriteSheet *GetSpeciesFormPicSheet(u16 species, bool32 isEx, bool32 isFrontPic);
 const u32 *GetSpeciesFormSpritePal(u16 species, bool32 isEx, u32 otId, u32 personality);
 u8 GetSpeciesFormBackAnimSet(u16 species, bool32 isEx);
+void StartMonFrontFramesAnim(struct Sprite *sprite, u16 species, bool32 isEx);
+bool32 IsBattlerSpeciesEx(u8 battler, u16 species);
+u8 GetSpeciesFormFrontYOffset(u16 species, bool32 isEx);
+u8 GetSpeciesFormEnemyElevation(u16 species, bool32 isEx);
 void ClearBattleMonForms(void);
 u16 GetBattleBGM(void);
 void PlayBattleBGM(void);
@@ -591,7 +600,8 @@ bool8 IsShinyOtIdPersonality(u32 otId, u32 personality);
 const u8 *GetTrainerPartnerName(void);
 void BattleAnimateFrontSprite(struct Sprite *sprite, u16 species, bool8 noCry, u8 panMode);
 void DoMonFrontSpriteAnimation(struct Sprite *sprite, u16 species, bool8 noCry, u8 panModeAnimFlag);
-void PokemonSummaryDoMonAnimation(struct Sprite *sprite, u16 species, bool8 oneFrame);
+void DoMonFormFrontSpriteAnimation(struct Sprite *sprite, u16 species, bool32 isEx, bool8 noCry, u8 panModeAnimFlag);
+void PokemonSummaryDoMonAnimation(struct Sprite *sprite, u16 species, bool32 isEx, bool8 oneFrame);
 void StopPokemonAnimationDelayTask(void);
 void BattleAnimateBackSprite(struct Sprite *sprite, u16 species);
 u8 GetOpposingLinkMultiBattlerId(bool8 rightSide, u8 multiplayerId);

@@ -1263,6 +1263,8 @@ static void Cmd_accuracycheck(void)
             calc = (calc * 75) / 100; // 1.25 snow cloak loss
         if (WEATHER_HAS_EFFECT && gBattleMons[gBattlerAttacker].ability == ABILITY_PRISM_SCALE && gBattleWeather & B_WEATHER_ANY)
             calc = (calc * 130) / 100; // 1.3 prism scale boost
+        if (WEATHER_HAS_EFFECT && gBattleMons[gBattlerAttacker].ability == ABILITY_MYSTIC_VEIL && gBattleWeather & B_WEATHER_SANDSTORM)
+            calc = (calc * 130) / 100; // 1.3 mystic veil boost
         if (gBattleMons[gBattlerAttacker].ability == ABILITY_HUSTLE && IS_TYPE_PHYSICAL(type))
             calc = (calc * 80) / 100; // 1.2 hustle loss
 
@@ -3684,8 +3686,16 @@ static bool32 TryUnlockExpGetterExFormWithTraining(void)
         return FALSE;
 
     PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, 0, monId);
-    PREPARE_STAT_BUFFER(gBattleTextBuff2, exForm->unlockStat - MON_DATA_HP_EV);
     PREPARE_SPECIES_BUFFER(gBattleTextBuff3, species);
+    if (exForm->unlockStat == MON_DATA_FRIENDSHIP)
+    {
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_EX_UNLOCK_FRIENDSHIP;
+    }
+    else
+    {
+        PREPARE_STAT_BUFFER(gBattleTextBuff2, exForm->unlockStat - MON_DATA_HP_EV);
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_EX_UNLOCK_TRAINING;
+    }
     return TRUE;
 }
 
@@ -4738,6 +4748,27 @@ static void Cmd_moveend(void)
         case MOVEEND_ON_DAMAGE_ABILITIES: // Such as abilities activating on contact (Effect Spore, Rough Skin, etc.).
             if (AbilityBattleEffects(ABILITYEFFECT_ON_DAMAGE, gBattlerTarget, 0, 0, 0))
                 effect = TRUE;
+            gBattleScripting.moveendState++;
+            break;
+        case MOVEEND_ATTACKER_CONTACT_ABILITIES: // The attacker's abilities activating on contact (North Star)
+            if (gBattleMons[gBattlerAttacker].ability == ABILITY_NORTH_STAR
+                && gBattlerAttacker != gBattlerTarget
+                && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                && TARGET_TURN_DAMAGED
+                && gBattleMons[gBattlerTarget].hp != 0
+                && (gBattleMoves[gCurrentMove].flags & FLAG_MAKES_CONTACT)
+                && !(gStatuses3[gBattlerTarget] & STATUS3_PERISH_SONG)
+                && (Random() % 10) < 3)
+            {
+                // Same as Perish Song, but only on the target
+                gStatuses3[gBattlerTarget] |= STATUS3_PERISH_SONG;
+                gDisableStructs[gBattlerTarget].perishSongTimer = 3;
+                gDisableStructs[gBattlerTarget].perishSongTimerStartValue = 3;
+                gLastUsedAbility = ABILITY_NORTH_STAR;
+                BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_NorthStarActivates;
+                effect = TRUE;
+            }
             gBattleScripting.moveendState++;
             break;
         case MOVEEND_IMMUNITY_ABILITIES: // status immunities
@@ -8397,6 +8428,7 @@ static void Cmd_weatherdamage(void)
                 && gBattleMons[gBattlerAttacker].types[1] != TYPE_STEEL
                 && gBattleMons[gBattlerAttacker].types[1] != TYPE_GROUND
                 && gBattleMons[gBattlerAttacker].ability != ABILITY_SAND_VEIL
+                && gBattleMons[gBattlerAttacker].ability != ABILITY_MYSTIC_VEIL
                 && gBattleMons[gBattlerAttacker].ability != ABILITY_PRISM_SCALE
                 && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERGROUND)
                 && !(gStatuses3[gBattlerAttacker] & STATUS3_UNDERWATER))

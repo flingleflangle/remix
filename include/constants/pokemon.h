@@ -210,6 +210,7 @@
 #define MAX_TOTAL_EVS 510
 #define EV_ITEM_RAISE_LIMIT 100
 #define EX_UNLOCK_EV_THRESHOLD 230 // EVs an EX form's unlockStat needs to unlock it (see data/pokemon/ex_forms.h)
+#define EX_UNLOCK_FRIENDSHIP_THRESHOLD 220 // Friendship needed to unlock an EX form whose unlockStat is MON_DATA_FRIENDSHIP
 
 // Battle move flags
 #define FLAG_MAKES_CONTACT          (1 << 0)

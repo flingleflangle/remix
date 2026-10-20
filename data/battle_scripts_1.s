@@ -6344,6 +6344,11 @@ BattleScript_CuteCharmActivates::
 	waitmessage B_WAIT_TIME_LONG
 	return
 
+BattleScript_NorthStarActivates::
+	printstring STRINGID_NORTHSTARPERISH
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_ApplySecondaryEffect::
 	waitstate
 	seteffectsecondary

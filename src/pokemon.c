@@ -3354,7 +3354,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         attack = (150 * attack) / 100;
     if (defender->ability == ABILITY_MARVEL_SCALE && defender->status1)
         defense = (150 * defense) / 100;
-    if (attacker->ability == ABILITY_PRISM_SCALE && (gBattleWeather & B_WEATHER_ANY))
+    if (WEATHER_HAS_EFFECT2 && attacker->ability == ABILITY_PRISM_SCALE && (gBattleWeather & B_WEATHER_ANY))
         spAttack = (130 * spAttack) / 100;
     if (type == TYPE_ELECTRIC && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, ABILITYEFFECT_MUD_SPORT, 0))
         gBattleMovePower /= 2;
@@ -3384,20 +3384,8 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         {
             defense = (150 * defense) / 100;
         }
-        if ((gBattleWeather & B_WEATHER_HAIL_TEMPORARY) && (
-            defender->species == SPECIES_BLASTOISE || defender->species == SPECIES_DEWGONG || defender->species == SPECIES_CLOYSTER || defender->species == SPECIES_SMOOCHUM || defender->species == SPECIES_JYNX ||
-            defender->species == SPECIES_LAPRAS || defender->species == SPECIES_ARTICUNO || defender->species == SPECIES_SNEASEL ||
-            defender->species == SPECIES_SWINUB || defender->species == SPECIES_PILOSWINE || defender->species == SPECIES_DELIBIRD || defender->species == SPECIES_SUICUNE ||
-            defender->species == SPECIES_CASTFORM || defender->species == SPECIES_SNORUNT || defender->species == SPECIES_GLALIE || defender->species == SPECIES_FROSLASS ||
-            defender->species == SPECIES_SPHEAL || defender->species == SPECIES_SEALEO || defender->species == SPECIES_WALREIN || defender->species == SPECIES_MILOTIC ||
-            defender->species == SPECIES_REGICE 
-        ))
-        {
-            defense = (150 * defense) / 100;
-        }
 
         // Boost Special Defense for Rock-types in sand
-        //hate that i have to add so many blocks of code. don't know how to do it better, oh well
         if ((gBattleWeather & B_WEATHER_SANDSTORM) && (
             defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
             defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_MAROWAK ||
@@ -3412,34 +3400,12 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         {
             spDefense = (150 * spDefense) / 100;
         }
-        if ((gBattleWeather & B_WEATHER_SANDSTORM_TEMPORARY) && (
-            defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
-            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_MAROWAK ||
-            defender->species == SPECIES_RHYHORN || defender->species == SPECIES_RHYDON || defender->species == SPECIES_OMANYTE || defender->species == SPECIES_OMASTAR || defender->species == SPECIES_KABUTO || defender->species == SPECIES_KABUTOPS || 
-            defender->species == SPECIES_AERODACTYL || defender->species == SPECIES_BONSLY || defender->species == SPECIES_SUDOWOODO || defender->species == SPECIES_SHUCKLE || defender->species == SPECIES_MAGCARGO || 
-            defender->species == SPECIES_CORSOLA || defender->species == SPECIES_LARVITAR || defender->species == SPECIES_PUPITAR || defender->species == SPECIES_TYRANITAR ||
-            defender->species == SPECIES_NOSEPASS || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_AGGRON ||
-            defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
-            defender->species == SPECIES_LILEEP || defender->species == SPECIES_CRADILY || defender->species == SPECIES_ANORITH || defender->species == SPECIES_ARMALDO || defender->species == SPECIES_RELICANTH ||
-            defender->species == SPECIES_REGIROCK ||
-            defender->ability == ABILITY_SAND_VEIL))
-        {
-            spDefense = (150 * spDefense) / 100;
-        }
-        if ((gBattleWeather & B_WEATHER_SANDSTORM_PERMANENT) && (
-            defender->species == SPECIES_GEODUDE || defender->species == SPECIES_GRAVELER || defender->species == SPECIES_GOLEM || defender->species == SPECIES_ONIX || defender->species == SPECIES_STEELIX ||
-            defender->species == SPECIES_NIDOQUEEN || defender->species == SPECIES_NIDOKING || defender->species == SPECIES_MAROWAK ||
-            defender->species == SPECIES_RHYHORN || defender->species == SPECIES_RHYDON || defender->species == SPECIES_OMANYTE || defender->species == SPECIES_OMASTAR || defender->species == SPECIES_KABUTO || defender->species == SPECIES_KABUTOPS || 
-            defender->species == SPECIES_AERODACTYL || defender->species == SPECIES_BONSLY || defender->species == SPECIES_SUDOWOODO || defender->species == SPECIES_SHUCKLE || defender->species == SPECIES_MAGCARGO || 
-            defender->species == SPECIES_CORSOLA || defender->species == SPECIES_LARVITAR || defender->species == SPECIES_PUPITAR || defender->species == SPECIES_TYRANITAR ||
-            defender->species == SPECIES_NOSEPASS || defender->species == SPECIES_ARON || defender->species == SPECIES_LAIRON || defender->species == SPECIES_AGGRON ||
-            defender->species == SPECIES_LUNATONE || defender->species == SPECIES_SOLROCK ||
-            defender->species == SPECIES_LILEEP || defender->species == SPECIES_CRADILY || defender->species == SPECIES_ANORITH || defender->species == SPECIES_ARMALDO || defender->species == SPECIES_RELICANTH ||
-            defender->species == SPECIES_REGIROCK ||
-            defender->ability == ABILITY_SAND_VEIL))
-        {
-            spDefense = (150 * spDefense) / 100;
-        }
+
+        // Mystic Veil boosts Special Attack and Special Defense in sand
+        if ((gBattleWeather & B_WEATHER_SANDSTORM) && attacker->ability == ABILITY_MYSTIC_VEIL)
+            spAttack = (130 * spAttack) / 100;
+        if ((gBattleWeather & B_WEATHER_SANDSTORM) && defender->ability == ABILITY_MYSTIC_VEIL)
+            spDefense = (130 * spDefense) / 100;
     }
 
     // Self-destruct / Explosion cut defense in half
@@ -6839,15 +6805,24 @@ bool32 TryUnlockMonExFormWithItem(struct Pokemon *mon, u16 item)
     return UnlockMonExForm(mon);
 }
 
-// Unlocks the Pokémon's EX form if its unlockStat has reached EX_UNLOCK_EV_THRESHOLD EVs.
-// Returns TRUE if it was unlocked.
+// Unlocks the Pokémon's EX form if its unlockStat has reached EX_UNLOCK_EV_THRESHOLD EVs,
+// or EX_UNLOCK_FRIENDSHIP_THRESHOLD friendship if its unlockStat is MON_DATA_FRIENDSHIP. Returns TRUE if it was unlocked.
 bool32 TryUnlockMonExFormWithTraining(struct Pokemon *mon)
 {
     const struct ExFormInfo *exForm = GetSpeciesExFormInfo(GetMonData(mon, MON_DATA_SPECIES, NULL));
 
-    if (exForm == NULL || exForm->unlockStat < MON_DATA_HP_EV || exForm->unlockStat > MON_DATA_SPDEF_EV
-        || GetMonData(mon, exForm->unlockStat, NULL) < EX_UNLOCK_EV_THRESHOLD)
+    if (exForm == NULL)
         return FALSE;
+    if (exForm->unlockStat == MON_DATA_FRIENDSHIP)
+    {
+        if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) < EX_UNLOCK_FRIENDSHIP_THRESHOLD)
+            return FALSE;
+    }
+    else if (exForm->unlockStat < MON_DATA_HP_EV || exForm->unlockStat > MON_DATA_SPDEF_EV
+        || GetMonData(mon, exForm->unlockStat, NULL) < EX_UNLOCK_EV_THRESHOLD)
+    {
+        return FALSE;
+    }
     return UnlockMonExForm(mon);
 }
 
@@ -7022,6 +6997,34 @@ u8 GetSpeciesFormBackAnimSet(u16 species, bool32 isEx)
     if (exForm != NULL && exForm->backAnim != BACK_ANIM_NONE)
         return exForm->backAnim - 1;
     return GetSpeciesBackAnimSet(species);
+}
+
+// Whether the battler is in its EX form and species is its own species (not one it transformed into)
+bool32 IsBattlerSpeciesEx(u8 battler, u16 species)
+{
+    struct Pokemon *mon = GetBattlerPartyMon(battler);
+
+    return GetMonData(mon, MON_DATA_SPECIES, NULL) == species && IsMonEx(mon);
+}
+
+// The front sprite's y_offset for the species' regular or EX form
+u8 GetSpeciesFormFrontYOffset(u16 species, bool32 isEx)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL)
+        return gMonFrontPicCoords[species].y_offset + exForm->frontYOffset;
+    return gMonFrontPicCoords[species].y_offset;
+}
+
+// How high an enemy's front sprite floats in battle, for the species' regular or EX form
+u8 GetSpeciesFormEnemyElevation(u16 species, bool32 isEx)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL && exForm->grounded)
+        return 0;
+    return gEnemyMonElevation[species];
 }
 
 void ClearBattleMonForms(void)
@@ -7426,15 +7429,56 @@ static void Task_PokemonSummaryAnimateAfterDelay(u8 taskId)
 
 void BattleAnimateFrontSprite(struct Sprite *sprite, u16 species, bool8 noCry, u8 panMode)
 {
+    bool32 isEx = IsBattlerSpeciesEx(sprite->data[0], species); // data[0] is the battler
+
     if (gHitMarker & HITMARKER_NO_ANIMATIONS && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK)))
-        DoMonFrontSpriteAnimation(sprite, species, noCry, panMode | SKIP_FRONT_ANIM);
+        DoMonFormFrontSpriteAnimation(sprite, species, isEx, noCry, panMode | SKIP_FRONT_ANIM);
     else
-        DoMonFrontSpriteAnimation(sprite, species, noCry, panMode);
+        DoMonFormFrontSpriteAnimation(sprite, species, isEx, noCry, panMode);
 }
 
 void DoMonFrontSpriteAnimation(struct Sprite *sprite, u16 species, bool8 noCry, u8 panModeAnimFlag)
 {
+    DoMonFormFrontSpriteAnimation(sprite, species, FALSE, noCry, panModeAnimFlag);
+}
+
+// The front sprite animation (ANIM_*) for the species' regular or EX form
+static u8 GetSpeciesFormFrontAnimId(u16 species, bool32 isEx)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL && exForm->frontAnim != FRONT_ANIM_NONE)
+        return exForm->frontAnim - 1;
+    return sMonFrontAnimIdsTable[species - 1];
+}
+
+// How many frames to wait before the front sprite animation starts, for the species' regular or EX form
+static u8 GetSpeciesFormFrontAnimDelay(u16 species, bool32 isEx)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL && exForm->frontAnim != FRONT_ANIM_NONE)
+        return exForm->frontAnimDelay;
+    return sMonAnimationDelayTable[species - 1];
+}
+
+// Starts the front sprite's frame animation, using the EX form's frontFrames if it has them.
+// Always sets the sprite's anims, since the summary screen keeps the same sprite when switching forms
+void StartMonFrontFramesAnim(struct Sprite *sprite, u16 species, bool32 isEx)
+{
+    const struct ExFormInfo *exForm = isEx ? GetSpeciesExFormInfo(species) : NULL;
+
+    if (exForm != NULL && exForm->frontFrames != NULL)
+        sprite->anims = exForm->frontFrames;
+    else
+        sprite->anims = gMonFrontAnimsPtrTable[species];
+    StartSpriteAnim(sprite, 1);
+}
+
+void DoMonFormFrontSpriteAnimation(struct Sprite *sprite, u16 species, bool32 isEx, bool8 noCry, u8 panModeAnimFlag)
+{
     s8 pan;
+    u8 delay;
     switch (panModeAnimFlag & (u8)~SKIP_FRONT_ANIM) // Exclude anim flag to get pan mode
     {
     case 0:
@@ -7460,43 +7504,46 @@ void DoMonFrontSpriteAnimation(struct Sprite *sprite, u16 species, bool8 noCry, 
         {
             PlayCry_Normal(species, pan);
             if (HasTwoFramesAnimation(species))
-                StartSpriteAnim(sprite, 1);
+                StartMonFrontFramesAnim(sprite, species, isEx);
         }
-        if (sMonAnimationDelayTable[species - 1] != 0)
+        delay = GetSpeciesFormFrontAnimDelay(species, isEx);
+        if (delay != 0)
         {
             // Animation has delay, start delay task
             u8 taskId = CreateTask(Task_AnimateAfterDelay, 0);
             STORE_PTR_IN_TASK(sprite, taskId, 0);
-            gTasks[taskId].sAnimId = sMonFrontAnimIdsTable[species - 1];
-            gTasks[taskId].sAnimDelay = sMonAnimationDelayTable[species - 1];
+            gTasks[taskId].sAnimId = GetSpeciesFormFrontAnimId(species, isEx);
+            gTasks[taskId].sAnimDelay = delay;
         }
         else
         {
             // No delay, start animation
-            LaunchAnimationTaskForFrontSprite(sprite, sMonFrontAnimIdsTable[species - 1]);
+            LaunchAnimationTaskForFrontSprite(sprite, GetSpeciesFormFrontAnimId(species, isEx));
         }
         sprite->callback = SpriteCallbackDummy_2;
     }
 }
 
-void PokemonSummaryDoMonAnimation(struct Sprite *sprite, u16 species, bool8 oneFrame)
+void PokemonSummaryDoMonAnimation(struct Sprite *sprite, u16 species, bool32 isEx, bool8 oneFrame)
 {
+    u8 delay = GetSpeciesFormFrontAnimDelay(species, isEx);
+
     if (!oneFrame && HasTwoFramesAnimation(species))
-        StartSpriteAnim(sprite, 1);
-    if (sMonAnimationDelayTable[species - 1] != 0)
+        StartMonFrontFramesAnim(sprite, species, isEx);
+    if (delay != 0)
     {
         // Animation has delay, start delay task
         u8 taskId = CreateTask(Task_PokemonSummaryAnimateAfterDelay, 0);
         STORE_PTR_IN_TASK(sprite, taskId, 0);
-        gTasks[taskId].sAnimId = sMonFrontAnimIdsTable[species - 1];
-        gTasks[taskId].sAnimDelay = sMonAnimationDelayTable[species - 1];
+        gTasks[taskId].sAnimId = GetSpeciesFormFrontAnimId(species, isEx);
+        gTasks[taskId].sAnimDelay = delay;
         SummaryScreen_SetAnimDelayTaskId(taskId);
         SetSpriteCB_MonAnimDummy(sprite);
     }
     else
     {
         // No delay, start animation
-        StartMonSummaryAnimation(sprite, sMonFrontAnimIdsTable[species - 1]);
+        StartMonSummaryAnimation(sprite, GetSpeciesFormFrontAnimId(species, isEx));
     }
 }
 

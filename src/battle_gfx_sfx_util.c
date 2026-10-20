@@ -1266,7 +1266,7 @@ void SetBattlerShadowSpriteCallback(u8 battler, u16 species)
     if (gBattleSpritesDataPtr->battlerData[battler].transformSpecies != SPECIES_NONE)
         species = gBattleSpritesDataPtr->battlerData[battler].transformSpecies;
 
-    if (gEnemyMonElevation[species] != 0)
+    if (GetSpeciesFormEnemyElevation(species, IsBattlerSpeciesEx(battler, species)) != 0)
         gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteId].callback = SpriteCB_EnemyShadow;
     else
         gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteId].callback = SpriteCB_SetInvisible;
