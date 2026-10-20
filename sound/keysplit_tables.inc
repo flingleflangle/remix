@@ -33,3 +33,10 @@ keysplit tuba, 24
 keysplit french_horn, 36
 	split 0, 66
 	split 1, 108
+
+@ Like keysplit_strings, but starting at note 24 so low notes in ported songs (voicegroups/srt_og.inc)
+@ play the lowest strings sample instead of reading before the table
+keysplit srt_og_strings, 24
+	split 0, 69
+	split 1, 81
+	split 2, 108

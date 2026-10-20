@@ -60,3 +60,16 @@ the original's sample can be brought over. Copy it out of the stripped ROM as a 
 samples, and one extra byte), convert it to `.aif` with `tools/aif2pcm/aif2pcm.exe x.bin x.aif`, check that
 converting back gives the same bytes, put the `.aif` in `sound/direct_sound_samples/`, and add a
 `DirectSoundWaveData_` label for it in `sound/direct_sound_data.inc`. The build makes the `.bin` from the `.aif`.
+
+## Drill Dozer
+
+Drill Dozer (also by Game Freak) uses mostly the same samples as Emerald, so its songs are copied exactly with
+`mkvoicegroup.pl` instead of `post.pl`: each song gets its own voicegroup (`sound/voicegroups/dd_*.inc`) with
+the original instrument settings, pointing at the identical Emerald samples. The few samples Emerald lacks are
+brought over as `dd_*` samples. No tracks need cutting or shifting.
+
+- Song table at ROM `0x085079B8` (table offset `5079b8`). Each `.minigsf` sets a 16-bit song number at `0x0864B940`.
+
+       perl tools/m4a_port/mkvoicegroup.pl lib.bin 5079b8 <song> dd_<name> dd <sample dir> > sound/voicegroups/dd_<name>.inc
+       perl tools/m4a_port/dis.pl lib.bin 5079b8 <song> mus_dd_<name> > sound/songs/mus_dd_<name>.s
+         (then set mus_dd_<name>_grp to voicegroup_dd_<name> in the song file)

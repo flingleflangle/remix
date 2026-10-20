@@ -7063,18 +7063,26 @@ u16 GetBattleBGM(void)
         {
         case TRAINER_CLASS_BUG_MANIAC:
         case TRAINER_CLASS_COLLECTOR:
-        case TRAINER_CLASS_GUITARIST:
         case TRAINER_CLASS_POKEMANIAC:
         case TRAINER_CLASS_DRAGON_TAMER:
             return MUS_RG_VS_TRAINER;
         case TRAINER_CLASS_WINSTRATE:
             return MUS_RG_VS_GYM_LEADER;
+        case TRAINER_CLASS_BEAUTY:
+        case TRAINER_CLASS_RICH_BOY:
+        case TRAINER_CLASS_GUITARIST:
         case TRAINER_CLASS_COOLTRAINER:
         case TRAINER_CLASS_COOLTRAINER_2:
+            return MUS_DD_MUSEUM;
         case TRAINER_CLASS_BLACK_BELT:
         case TRAINER_CLASS_BATTLE_GIRL:
         case TRAINER_CLASS_PSYCHIC:
-            return MUS_T_DRILL_MISSILE;
+            return MUS_DD_DRILL_MISSILE;
+        case TRAINER_CLASS_LASS:
+        case TRAINER_CLASS_PKMN_BREEDER:
+        case TRAINER_CLASS_PKMN_RANGER:
+        case TRAINER_CLASS_INTERVIEWER:
+            return MUS_DD_FACTORY;
         case TRAINER_CLASS_CRYSTAL_DUKE:
             return MUS_T_MARIONETTE;
         case TRAINER_CLASS_AQUA_LEADER:
@@ -7106,7 +7114,7 @@ u16 GetBattleBGM(void)
         case TRAINER_CLASS_PYRAMID_KING:
             return MUS_VS_FRONTIER_BRAIN;
         default:
-            return MUS_VS_TRAINER;
+            return MUS_TROMBE;
         }
     }
     else

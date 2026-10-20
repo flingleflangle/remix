@@ -544,13 +544,21 @@
 #define PH_NURSE_SOLO               609
 
 #define MUS_T_MARIONETTE            610
-#define MUS_T_DRILL_MISSILE         611
-#define MUS_T_MR_X                  612
-#define MUS_T_CAVEMAN               613
-#define MUS_FOR_THE_DAY_THAT_MUST_COME 614
-#define MUS_ICE_MAN                 615
-#define MUS_FLAPPER_GIRL            616
-#define MUS_TIME_DIVER              617
+#define MUS_FOR_THE_DAY_THAT_MUST_COME 611
+#define MUS_TROMBE                  612
+#define MUS_WOMAN_THE_COOL_SPY      613
+#define MUS_WILDERNESS_OF_BATTLE    614
+#define MUS_MARIONETTE_MESSIAH      615
+#define MUS_MESSENGER_FROM_THE_VOID 616
+#define MUS_THE_SWORD_THAT_CLEAVES_EVIL 617
+#define MUS_DD_HIDEOUT              618
+#define MUS_DD_FACTORY              619
+#define MUS_DD_3RD_GEAR             620
+#define MUS_DD_MUSEUM               621
+#define MUS_DD_DETECTIVE            622
+#define MUS_DD_SUNKEN_RUINS         623
+#define MUS_DD_METAL_CITY           624
+#define MUS_DD_DRILL_MISSILE        625
 
 #define MUS_ROUTE118                0x7FFF  // Map is split into 2 music sections. controlled by GetCurrLocationDefaultMusic().
 

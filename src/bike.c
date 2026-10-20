@@ -984,9 +984,9 @@ void GetOnOffBike(u8 transitionFlags)
     else
     {
         SetPlayerAvatarTransitionFlags(transitionFlags);
-        // TEMP: testing MUS_TIME_DIVER. Change both back to MUS_CYCLING
-        Overworld_SetSavedMusic(MUS_TIME_DIVER);
-        Overworld_ChangeMusicTo(MUS_TIME_DIVER);
+        // TEMP: testing MUS_T_MARIONETTE. Change both back to MUS_CYCLING
+        Overworld_SetSavedMusic(MUS_T_MARIONETTE);
+        Overworld_ChangeMusicTo(MUS_T_MARIONETTE);
     }
 }
 

@@ -612,13 +612,21 @@ gSongTable::
 	song ph_nurse_held, 2, 2
 	song ph_nurse_solo, 2, 2
 	song mus_t_marionette, 0, 0
-	song mus_t_drill_missile, 0, 0
-	song mus_t_mrx, 0, 0
-	song mus_t_caveman, 0, 0
 	song mus_for_the_day_that_must_come, 0, 0
-	song mus_ice_man, 0, 0
-	song mus_flapper_girl, 0, 0
-	song mus_time_diver, 0, 0
+	song mus_trombe, 0, 0
+	song mus_woman_the_cool_spy, 0, 0
+	song mus_wilderness_of_battle, 0, 0
+	song mus_marionette_messiah, 0, 0
+	song mus_messenger_from_the_void, 0, 0
+	song mus_the_sword_that_cleaves_evil, 0, 0
+	song mus_dd_hideout, 0, 0
+	song mus_dd_factory, 0, 0
+	song mus_dd_3rd_gear, 0, 0
+	song mus_dd_museum, 0, 0
+	song mus_dd_detective, 0, 0
+	song mus_dd_sunken_ruins, 0, 0
+	song mus_dd_metal_city, 0, 0
+	song mus_dd_drill_missile, 0, 0
 
 	.align 2
 dummy_song_header:

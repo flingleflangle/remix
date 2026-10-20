@@ -2238,3 +2238,48 @@ DirectSoundWaveData_srt_og_drum_fx_73::
 @ A sound effect in Super Robot Taisen: Original Generation's drum kit 110, key 74 (see voicegroups/drumsets/srt_og_110.inc)
 DirectSoundWaveData_srt_og_drum_fx_74::
 	.incbin "sound/direct_sound_samples/srt_og_drum_fx_74.bin"
+
+	.align 2
+@ The orchestra hit in slot 55 of Super Robot Taisen: Original Generation's instruments (see voicegroups/srt_og.inc)
+DirectSoundWaveData_srt_og_orchestra_hit_55::
+	.incbin "sound/direct_sound_samples/srt_og_orchestra_hit_55.bin"
+
+	.align 2
+@ A Drill Dozer sample Emerald doesn't have (see voicegroups/dd_*.inc)
+DirectSoundWaveData_dd_drum_36::
+	.incbin "sound/direct_sound_samples/dd_drum_36.bin"
+
+	.align 2
+@ A Drill Dozer sample Emerald doesn't have (see voicegroups/dd_*.inc)
+DirectSoundWaveData_dd_drum_37::
+	.incbin "sound/direct_sound_samples/dd_drum_37.bin"
+
+	.align 2
+@ A Drill Dozer sample Emerald doesn't have (see voicegroups/dd_*.inc)
+DirectSoundWaveData_dd_drum_53::
+	.incbin "sound/direct_sound_samples/dd_drum_53.bin"
+
+	.align 2
+@ A Drill Dozer sample Emerald doesn't have (see voicegroups/dd_*.inc)
+DirectSoundWaveData_dd_slot_2::
+	.incbin "sound/direct_sound_samples/dd_slot_2.bin"
+
+	.align 2
+@ A Drill Dozer sample Emerald doesn't have (see voicegroups/dd_*.inc)
+DirectSoundWaveData_dd_slot_36::
+	.incbin "sound/direct_sound_samples/dd_slot_36.bin"
+
+	.align 2
+@ A Drill Dozer sample Emerald doesn't have (see voicegroups/dd_*.inc)
+DirectSoundWaveData_dd_slot_54::
+	.incbin "sound/direct_sound_samples/dd_slot_54.bin"
+
+	.align 2
+@ A Drill Dozer sample Emerald doesn't have (see voicegroups/dd_*.inc)
+DirectSoundWaveData_dd_slot_57::
+	.incbin "sound/direct_sound_samples/dd_slot_57.bin"
+
+	.align 2
+@ A Drill Dozer sample Emerald doesn't have (see voicegroups/dd_*.inc)
+DirectSoundWaveData_dd_split_60_0::
+	.incbin "sound/direct_sound_samples/dd_split_60_0.bin"
