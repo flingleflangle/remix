@@ -547,6 +547,10 @@
 #define MUS_T_DRILL_MISSILE         611
 #define MUS_T_MR_X                  612
 #define MUS_T_CAVEMAN               613
+#define MUS_FOR_THE_DAY_THAT_MUST_COME 614
+#define MUS_ICE_MAN                 615
+#define MUS_FLAPPER_GIRL            616
+#define MUS_TIME_DIVER              617
 
 #define MUS_ROUTE118                0x7FFF  // Map is split into 2 music sections. controlled by GetCurrLocationDefaultMusic().
 

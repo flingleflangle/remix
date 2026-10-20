@@ -1190,6 +1190,10 @@ SECTIONS {
         sound/songs/midi/mus_t_drill_missile.o(.rodata);
         sound/songs/midi/mus_t_mrx.o(.rodata);
         sound/songs/midi/mus_t_caveman.o(.rodata);
+        sound/songs/mus_for_the_day_that_must_come.o(.rodata);
+        sound/songs/mus_ice_man.o(.rodata);
+        sound/songs/mus_flapper_girl.o(.rodata);
+        sound/songs/mus_time_diver.o(.rodata);
         sound/songs/midi/ph_trap_blend.o(.rodata);
         sound/songs/midi/ph_trap_held.o(.rodata);
         sound/songs/midi/ph_trap_solo.o(.rodata);

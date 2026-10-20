@@ -615,6 +615,10 @@ gSongTable::
 	song mus_t_drill_missile, 0, 0
 	song mus_t_mrx, 0, 0
 	song mus_t_caveman, 0, 0
+	song mus_for_the_day_that_must_come, 0, 0
+	song mus_ice_man, 0, 0
+	song mus_flapper_girl, 0, 0
+	song mus_time_diver, 0, 0
 
 	.align 2
 dummy_song_header:

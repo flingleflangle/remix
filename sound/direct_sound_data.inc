@@ -2218,3 +2218,23 @@ DirectSoundWaveData_sd90_classical_whistle::
 	.align 2
 DirectSoundWaveData_sd90_enhanced_delay_shaku::
 	.incbin "sound/direct_sound_samples/sd90_enhanced_delay_shaku.bin"
+
+	.align 2
+@ The orchestra hit from Super Robot Taisen: Original Generation, which Emerald has no instrument for (see voicegroups/srt_og.inc)
+DirectSoundWaveData_srt_og_orchestra_hit::
+	.incbin "sound/direct_sound_samples/srt_og_orchestra_hit.bin"
+
+	.align 2
+@ A sound effect in Super Robot Taisen: Original Generation's drum kit 110, key 72 (see voicegroups/drumsets/srt_og_110.inc)
+DirectSoundWaveData_srt_og_drum_fx_72::
+	.incbin "sound/direct_sound_samples/srt_og_drum_fx_72.bin"
+
+	.align 2
+@ A sound effect in Super Robot Taisen: Original Generation's drum kit 110, key 73 (see voicegroups/drumsets/srt_og_110.inc)
+DirectSoundWaveData_srt_og_drum_fx_73::
+	.incbin "sound/direct_sound_samples/srt_og_drum_fx_73.bin"
+
+	.align 2
+@ A sound effect in Super Robot Taisen: Original Generation's drum kit 110, key 74 (see voicegroups/drumsets/srt_og_110.inc)
+DirectSoundWaveData_srt_og_drum_fx_74::
+	.incbin "sound/direct_sound_samples/srt_og_drum_fx_74.bin"
