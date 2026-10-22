@@ -181,7 +181,7 @@ EWRAM_DATA s32 gBattleMoveDamage = 0;
 EWRAM_DATA s32 gHpDealt = 0;
 EWRAM_DATA s32 gBideDmg[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u16 gLastUsedItem = 0;
-EWRAM_DATA u8 gBattleMoveIsEx = 0;      // The current move is being used as an EX move (see data/battle_scripts_ex.s)
+EWRAM_DATA u8 gBattleMoveIsEx = 0;      // The current move is being used as an EX move (see data/ex_battle_scripts.s)
 EWRAM_DATA u8 gBattleExAnimPending = 0; // Its next animation should start with the EX flash
 EWRAM_DATA u16 gBattleExUpgradedFrom = 0; // The chosen move, if it became a stronger move as an EX upgrade
 EWRAM_DATA u8 gBattleExBonusPending = 0; // The move gets an EX bonus at its attackstring
@@ -189,6 +189,7 @@ EWRAM_DATA u8 gExHealReplacementSides = 0; // Sides whose next Pokémon to switc
 EWRAM_DATA u8 gSureCritBattlers = 0; // Battlers whose next damaging move is a guaranteed critical hit (Foresight)
 EWRAM_DATA u8 gThisMoveSureCrit = 0; // The current move is that guaranteed critical hit
 EWRAM_DATA u8 gIgnoreResistances = 0;   // The next typecalc treats resisted hits as neutral
+EWRAM_DATA u8 gExNoHpCost = 0;          // The current move's Substitute or Explosion costs the user no HP (VARIOUS_EX_NO_HP_COST)
 EWRAM_DATA u8 gExMoveChosenBits = 0;    // Battlers that chose to use their move as an EX move this turn
 EWRAM_DATA u8 gExMoveUsedSlots[MAX_BATTLERS_COUNT] = {0}; // Each battler's move slots that were used as EX moves, which can't be again
                                                           // until it switches out, KOs an opponent, or uses its other moves (see UpdateExMoveLocks)
@@ -4654,7 +4655,7 @@ static void HandleTurnActionSelectionState(void)
                             break;
                         }
 
-                        // The player can choose to use their move as an EX move (see data/battle_scripts_ex.s)
+                        // The player can choose to use their move as an EX move (see data/ex_battle_scripts.s)
                         if (gBattleBufferB[gActiveBattler][2] & CHOSEN_MOVE_EX_FLAG)
                         {
                             gBattleBufferB[gActiveBattler][2] &= ~CHOSEN_MOVE_EX_FLAG;

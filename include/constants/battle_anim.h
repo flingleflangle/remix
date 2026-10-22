@@ -380,7 +380,7 @@
 #define B_ANIM_INGRAIN_HEAL             21
 #define B_ANIM_WISH_HEAL                22
 #define B_ANIM_SMOKEBALL_ESCAPE_TRAINER 23
-#define B_ANIM_EX_FLASH                 24 // The EXMove flash, for EX move bonuses (see data/battle_scripts_ex.s)
+#define B_ANIM_EX_FLASH                 24 // The EXMove flash, for EX move bonuses (see data/ex_battle_scripts.s)
 #define B_ANIM_EX_MASTERY               25 // A Pokémon glows, sparkles and turns into its EX form (see BattleScript_ExTrainingUnlock)
 
 // special animations table (gBattleAnims_Special)

@@ -1313,7 +1313,7 @@ static void Cmd_attackstring(void)
     gBattlescriptCurrInstr++;
     gBattleCommunication[MSG_DISPLAY] = 0;
 
-    // An EX move's bonus comes right after "X used Y!" (see gExMoveBonuses in data/battle_scripts_ex.s)
+    // An EX move's bonus comes right after "X used Y!" (see gExMoveBonuses in data/ex_battle_scripts.s)
     TryStartExMoveBonus();
 }
 
@@ -3295,7 +3295,7 @@ static void Cmd_seteffectwithchance(void)
     else
         percentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
     // An EX move with no EX effect of its own is 1.5x as likely to get its effect (not a move used in its place)
-    if (gBattleMoveIsEx && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker] && !HasExMoveEffect(gCurrentMove))
+    if (gBattleMoveIsEx && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker] && !BattlerHasExMoveEffect(gBattlerAttacker, gCurrentMove))
         percentChance = percentChance * 3 / 2;
 
     if (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN
@@ -7173,7 +7173,11 @@ static void Cmd_various(void)
         // The next typecalc of this move treats resisted hits as neutral
         gIgnoreResistances = TRUE;
         break;
-    // EX move bonuses (see gExMoveBonuses in data/battle_scripts_ex.s)
+    case VARIOUS_EX_NO_HP_COST:
+        // This move's setsubstitute or tryexplosion costs the user no HP
+        gExNoHpCost = TRUE;
+        break;
+    // EX move bonuses (see gExMoveBonuses in data/ex_battle_scripts.s)
     case VARIOUS_EX_BONUS_END:
         RestoreExMoveBonusState();
         break;
@@ -7345,11 +7349,14 @@ static void Cmd_tryexplosion(void)
 
     if (gBattlerTarget == gBattlersCount)
     {
-        // Success, no battlers with Damp. Drop user's HP bar to 0
-        gActiveBattler = gBattlerAttacker;
-        gBattleMoveDamage = gBattleMons[gActiveBattler].hp;
-        BtlController_EmitHealthBarUpdate(B_COMM_TO_CONTROLLER, INSTANT_HP_BAR_DROP);
-        MarkBattlerForControllerExec(gActiveBattler);
+        // Success, no battlers with Damp. Drop user's HP bar to 0, unless it costs no HP (VARIOUS_EX_NO_HP_COST)
+        if (!gExNoHpCost)
+        {
+            gActiveBattler = gBattlerAttacker;
+            gBattleMoveDamage = gBattleMons[gActiveBattler].hp;
+            BtlController_EmitHealthBarUpdate(B_COMM_TO_CONTROLLER, INSTANT_HP_BAR_DROP);
+            MarkBattlerForControllerExec(gActiveBattler);
+        }
         gBattlescriptCurrInstr++;
 
         // Find first target
@@ -8687,7 +8694,8 @@ static void Cmd_setsubstitute(void)
     {
         SetSubstituteWall();
     }
-    else if (gBattleMons[gBattlerAttacker].hp <= hp)
+    // A Substitute that costs no HP doesn't need enough to spare (see BattleScript_ExSubstituteNoCost)
+    else if (gBattleMons[gBattlerAttacker].hp <= hp && !gExNoHpCost)
     {
         gBattleMoveDamage = 0;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SUBSTITUTE_FAILED;
@@ -8701,6 +8709,8 @@ static void Cmd_setsubstitute(void)
         gBattleMons[gBattlerAttacker].status2 |= STATUS2_SUBSTITUTE;
         gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_WRAPPED;
         gDisableStructs[gBattlerAttacker].substituteHP = gBattleMoveDamage;
+        if (gExNoHpCost)
+            gBattleMoveDamage = 0;
         gDisableStructs[gBattlerAttacker].substituteWall = SUBSTITUTE_WALL_NONE;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SET_SUBSTITUTE;
         gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
@@ -10971,49 +10981,38 @@ static void Cmd_settypetoenvironment(void)
     }
 }
 
+// Turns the user into a pure type, picked by the move. If it already is that pure type, jumps to failInstr
 static void Cmd_settypewithmove(void)
 {
-	if (gCurrentMove == MOVE_ASCENSION) {
-		if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_DRAGON))
-		{
-			SET_BATTLER_TYPE(gBattlerAttacker, TYPE_DRAGON);
-			PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_DRAGON);
+    u8 type;
 
-			gBattlescriptCurrInstr += 1;
-		}
-		else
-		{
-			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-		}
-	}
-	
-	if (gCurrentMove == MOVE_AWAKENING) {
-		if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_PSYCHIC))
-		{
-			SET_BATTLER_TYPE(gBattlerAttacker, TYPE_PSYCHIC);
-			PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_PSYCHIC);
+    switch (gCurrentMove)
+    {
+    case MOVE_ASCENSION:
+        type = TYPE_DRAGON;
+        break;
+    case MOVE_AWAKENING:
+        type = TYPE_PSYCHIC;
+        break;
+    case MOVE_ATTUNEMENT:
+    case MOVE_EXPLOSION: // Banette's EX Explosion (BattleScript_ExExplosionBanette)
+        type = TYPE_GHOST;
+        break;
+    default:
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        return;
+    }
 
-			gBattlescriptCurrInstr += 1;
-		}
-		else
-		{
-			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-		}
-	}
-	
-	if (gCurrentMove == MOVE_ATTUNEMENT) {
-		if (!IS_BATTLER_OF_TYPE(gBattlerAttacker, TYPE_GHOST))
-		{
-			SET_BATTLER_TYPE(gBattlerAttacker, TYPE_GHOST);
-			PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_GHOST);
-
-			gBattlescriptCurrInstr += 1;
-		}
-		else
-		{
-			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-		}
-	}
+    if (gBattleMons[gBattlerAttacker].types[0] == type && gBattleMons[gBattlerAttacker].types[1] == type)
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+    else
+    {
+        SET_BATTLER_TYPE(gBattlerAttacker, type);
+        PREPARE_TYPE_BUFFER(gBattleTextBuff1, type);
+        gBattlescriptCurrInstr += 5;
+    }
 }
 
 

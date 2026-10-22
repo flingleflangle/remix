@@ -98,6 +98,7 @@ void HandleAction_UseMove(void)
     gBattleMoveIsEx = FALSE;
     gBattleExAnimPending = FALSE;
     gIgnoreResistances = FALSE;
+    gExNoHpCost = FALSE;
     gBattleExUpgradedFrom = MOVE_NONE;
     gThisMoveSureCrit = FALSE;
     gBattleExBonusPending = FALSE;
@@ -289,7 +290,7 @@ void HandleAction_UseMove(void)
     }
     else
     {
-        // A move the player chose to use as an EX move runs its EX script instead (see data/battle_scripts_ex.s)
+        // A move the player chose to use as an EX move runs its EX script instead (see data/ex_battle_scripts.s)
         if (gExMoveChosenBits & gBitTable[gBattlerAttacker]
          && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker]
          && gCurrentMove == gBattleMons[gBattlerAttacker].moves[gCurrMovePos]
@@ -297,10 +298,17 @@ void HandleAction_UseMove(void)
          && !(gExMoveUsedSlots[gBattlerAttacker] & gBitTable[gCurrMovePos])
          && CanBattlerUseExMove(gBattlerAttacker, gCurrentMove))
         {
+            const u8 *speciesScript = GetSpeciesExMoveScript(gBattlerAttacker, gCurrentMove);
             u16 upgrade = GetExMoveUpgrade(gCurrentMove);
 
             gBattleMoveIsEx = TRUE;
-            if (upgrade != MOVE_NONE)
+            if (speciesScript != NULL)
+            {
+                // The species' own EX version, instead of the move's usual one (see data/pokemon/ex_species_moves.h)
+                gBattleExAnimPending = EX_ANIM_EX_MOVE;
+                gBattlescriptCurrInstr = speciesScript;
+            }
+            else if (upgrade != MOVE_NONE)
             {
                 // Becomes a stronger move, but its messages still name the chosen move. gChosenMove stays the chosen move too
                 gBattleExUpgradedFrom = gCurrentMove;
@@ -713,6 +721,7 @@ void HandleAction_ActionFinished(void)
     gBattleMoveIsEx = FALSE;
     gBattleExAnimPending = FALSE;
     gIgnoreResistances = FALSE;
+    gExNoHpCost = FALSE;
     gBattleExUpgradedFrom = MOVE_NONE;
     gThisMoveSureCrit = FALSE;
     gBattleExBonusPending = FALSE;
@@ -3351,7 +3360,7 @@ bool32 IsBattlerFloatingOnAirBalloon(u8 battler)
     return GetItemHoldEffect(gBattleMons[battler].item) == HOLD_EFFECT_AIR_BALLOON;
 }
 
-// EX moves (see data/battle_scripts_ex.s)
+// EX moves (see data/ex_battle_scripts.s)
 
 struct ExMove
 {
@@ -3385,6 +3394,41 @@ static const struct
     { ABILITY_WISHMAKER, .allExMoves = TRUE },
     { ABILITY_NONE }, // End of list, keep this last
 };
+
+// Each species' EX moves, its own EX versions of moves, or every EX move (see data/pokemon/ex_species_moves.h)
+#define MAX_SPECIES_EX_MOVES 3
+
+struct SpeciesExMoves
+{
+    u16 exMoves[MAX_SPECIES_EX_MOVES]; // MOVE_NONE for an empty slot
+    bool8 allExMoves;
+    const struct ExMove *exScripts;
+};
+
+#include "data/pokemon/ex_species_moves.h"
+
+static const struct SpeciesExMoves *GetBattlerSpeciesExMoves(u8 battler)
+{
+    u16 species = gBattleMons[battler].species;
+
+    return species < NUM_SPECIES ? &sSpeciesExMoves[species] : NULL;
+}
+
+// The battler's species' own EX script for the move (.exScripts in ex_species_moves.h), or NULL
+const u8 *GetSpeciesExMoveScript(u8 battler, u16 move)
+{
+    const struct SpeciesExMoves *speciesExMoves = GetBattlerSpeciesExMoves(battler);
+    u32 i;
+
+    if (speciesExMoves == NULL || speciesExMoves->exScripts == NULL)
+        return NULL;
+    for (i = 0; speciesExMoves->exScripts[i].move != MOVE_NONE; i++)
+    {
+        if (speciesExMoves->exScripts[i].move == move)
+            return speciesExMoves->exScripts[i].script;
+    }
+    return NULL;
+}
 
 static const struct ExMove *GetExMove(u16 move)
 {
@@ -3426,7 +3470,7 @@ u16 GetExMoveUpgrade(u16 move)
     return MOVE_NONE;
 }
 
-// EX bonuses, which mostly status moves get before their regular effect (see gExMoveBonuses in data/battle_scripts_ex.s)
+// EX bonuses, which mostly status moves get before their regular effect (see gExMoveBonuses in data/ex_battle_scripts.s)
 
 struct ExMoveBonus
 {
@@ -3718,15 +3762,43 @@ static bool32 DoesAbilityAllowExMove(u8 battler, u16 move)
     return FALSE;
 }
 
+// Whether the battler's species has .allExMoves, or the move in its .exMoves or .exScripts (see ex_species_moves.h).
+// Like an ability, a Pokémon transformed into the species gets them too
+static bool32 DoesSpeciesAllowExMove(u8 battler, u16 move)
+{
+    const struct SpeciesExMoves *speciesExMoves = GetBattlerSpeciesExMoves(battler);
+    u32 i;
+
+    if (speciesExMoves == NULL)
+        return FALSE;
+    if (speciesExMoves->allExMoves || GetSpeciesExMoveScript(battler, move) != NULL)
+        return TRUE;
+    for (i = 0; i < MAX_SPECIES_EX_MOVES; i++)
+    {
+        if (speciesExMoves->exMoves[i] != MOVE_NONE && speciesExMoves->exMoves[i] == move)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+// Whether the move does something extra when this battler uses it as an EX move, including its species' own EX version
+bool32 BattlerHasExMoveEffect(u8 battler, u16 move)
+{
+    return GetSpeciesExMoveScript(battler, move) != NULL || HasExMoveEffect(move);
+}
+
 // Whether the battler can use this move as an EX move. Each of these gives access to some EX moves,
 // and they stack: its EX form (.exMoves), its ability (sExMoveAbilities, where Wishmaker gives every
-// EX move), and its held crystal's types (sExMoveCrystals)
+// EX move), its species (data/pokemon/ex_species_moves.h), and its held crystal's types (sExMoveCrystals)
 bool32 CanBattlerUseExMove(u8 battler, u16 move)
 {
+    if (GetSpeciesExMoveScript(battler, move) != NULL)
+        return TRUE;
     if (!CanMoveBeUsedAsEx(move))
         return FALSE;
     return DoesExFormAllowExMove(battler, move)
         || DoesAbilityAllowExMove(battler, move)
+        || DoesSpeciesAllowExMove(battler, move)
         || DoesHeldCrystalAllowExMove(battler, move);
 }
 
@@ -3772,7 +3844,8 @@ static bool32 IsExMoveFromHeldCrystal(u8 battler)
     return gBattleMoveIsEx
         && DoesHeldCrystalAllowExMove(battler, move)
         && !DoesExFormAllowExMove(battler, move)
-        && !DoesAbilityAllowExMove(battler, move);
+        && !DoesAbilityAllowExMove(battler, move)
+        && !DoesSpeciesAllowExMove(battler, move);
 }
 
 // A popped Air Balloon or Bubble Coat is gone for good, like a consumed berry, so the

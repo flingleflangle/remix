@@ -99,6 +99,8 @@ u16 GetExMoveUpgrade(u16 move);
 bool32 CanMoveBeUsedAsEx(u16 move);
 bool32 HasExMoveBonus(u16 move);
 bool32 HasExMoveEffect(u16 move);
+bool32 BattlerHasExMoveEffect(u8 battler, u16 move);
+const u8 *GetSpeciesExMoveScript(u8 battler, u16 move);
 void UpdateExMoveLocks(u8 battler, u8 slot, bool32 usedAsEx);
 bool32 TryStartExMoveBonus(void);
 void RestoreExMoveBonusState(void);

@@ -127,8 +127,9 @@
 #define VARIOUS_WAIT_EX_LOGO                    46
 #define VARIOUS_EX_TRAINING_JINGLE              47
 #define VARIOUS_EX_TRAINING_LOGO                48
+#define VARIOUS_EX_NO_HP_COST                   49
 
-// EX move bonuses, which status moves get before their effect when used as EX moves (see gExMoveBonuses in data/battle_scripts_ex.s)
+// EX move bonuses, which status moves get before their effect when used as EX moves (see gExMoveBonuses in data/ex_battle_scripts.s)
 #define EX_BONUS_STAT_UP          0 // Raises one of the user's stats
 #define EX_BONUS_ALL_STATS_UP     1 // Raises all of the user's stats by 1
 #define EX_BONUS_RESET_STATS      2 // Returns the user's lowered stats to normal

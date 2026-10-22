@@ -68,7 +68,7 @@
 // - .exFixed = TRUE means a Pokémon in its EX form can't switch back to its regular form.
 // - .exMoves lists the moves the EX form can always use as EX moves, with no crystal or
 //   ability needed. End the list with MOVE_NONE. A move only counts if it has an EX version
-//   (see data/battle_scripts_ex.s). A held crystal still adds the EX moves of its types,
+//   (see data/ex_battle_scripts.s). A held crystal still adds the EX moves of its types,
 //   and an ability in sExMoveAbilities (battle_util.c) adds the EX moves in its list
 //   (Wishmaker adds every EX move).
 

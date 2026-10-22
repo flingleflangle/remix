@@ -92,7 +92,7 @@ static void LoadMoveBg(u16 bgId);
 
 EWRAM_DATA static const u8 *sBattleAnimScriptPtr = NULL;
 EWRAM_DATA static const u8 *sBattleAnimScriptRetAddr = NULL;
-EWRAM_DATA static bool8 sAnimMoveIsEx = FALSE; // The move animation is for an EX move (see data/battle_scripts_ex.s)
+EWRAM_DATA static bool8 sAnimMoveIsEx = FALSE; // The move animation is for an EX move (see data/ex_battle_scripts.s)
 
 // The chooseEXanimation command, which an EX move's animation can start with to pick its own EX version
 #define ANIM_CMD_CHOOSE_EX_ANIMATION 0x30
@@ -213,7 +213,7 @@ void DoMoveAnim(u16 move)
     gBattleAnimAttacker = gBattlerAttacker;
     gBattleAnimTarget = gBattlerTarget;
 
-    // EX moves (see data/battle_scripts_ex.s) are flagged in the controller's move animation command
+    // EX moves (see data/ex_battle_scripts.s) are flagged in the controller's move animation command
     if (!IsContest() && gBattleBufferA[gActiveBattler][0] == CONTROLLER_MOVEANIMATION)
         exAnim = gBattleBufferA[gActiveBattler][14];
     sAnimMoveIsEx = (exAnim == EX_ANIM_EX_MOVE);
@@ -1102,7 +1102,7 @@ static void Cmd_choosetwoturnanim(void)
     sBattleAnimScriptPtr = T2_READ_PTR(sBattleAnimScriptPtr);
 }
 
-// Goes to the first label for a regular move, or the second for an EX move (see data/battle_scripts_ex.s)
+// Goes to the first label for a regular move, or the second for an EX move (see data/ex_battle_scripts.s)
 static void Cmd_chooseEXanimation(void)
 {
     sBattleAnimScriptPtr++;

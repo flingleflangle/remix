@@ -1253,8 +1253,10 @@
 	.byte \position
 	.endm
 	
-	.macro settypewithmove
+	@ Turns the attacker into a pure type picked by the move, or goes to failInstr if it already is that pure type
+	.macro settypewithmove failInstr:req
 	.byte 0xf9
+	.4byte \failInstr
 	.endm
 
 	.macro ballthrowend
@@ -1457,7 +1459,7 @@
 	jumpifword CMP_NO_COMMON_BITS, gBattleTypeFlags, \flags, \jumpptr
 	.endm
 
-@ EX moves (see data/battle_scripts_ex.s)
+@ EX moves (see data/ex_battle_scripts.s)
 	.macro jumpifexmove ptr:req
 	jumpifbyte CMP_NOT_EQUAL, gBattleMoveIsEx, FALSE, \ptr
 	.endm

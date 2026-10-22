@@ -271,7 +271,7 @@
 	.byte 0x2f
 	.endm
 
-@ Goes to ptr1 for a regular move, or ptr2 for an EX move (see data/battle_scripts_ex.s).
+@ Goes to ptr1 for a regular move, or ptr2 for an EX move (see data/ex_battle_scripts.s).
 @ An EX move's animation must start with this to replace the automatic EXMove flash with its own EX version
 	.macro chooseEXanimation ptr1:req, ptr2:req
 	.byte 0x30

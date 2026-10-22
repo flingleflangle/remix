@@ -548,7 +548,7 @@ BattleScript_GloryBlazeMissed:
 	tryfaintmon BS_ATTACKER
 	end
 
-BattleScript_PreserveMissedBitDoMoveAnim:
+BattleScript_PreserveMissedBitDoMoveAnim::
 	bicbyte gMoveResultFlags, MOVE_RESULT_MISSED
 	attackanimation
 	waitanimation
@@ -1533,39 +1533,36 @@ BattleScript_RockSmashed::
 	setbyte sDMG_MULTIPLIER, 2
 	goto BattleScript_EffectHit
 	
+@ Ascension, Awakening, and Attunement turn the user into a pure type (see settypewithmove), then raise a stat.
+@ They fail if the user already is that pure type
 BattleScript_EffectAscension::
-	attackstring
-	ppreduce
-	jumpiftype BS_ATTACKER, TYPE_DRAGON, BattleScript_EffectSpecialAttackUp
-	attackanimation
-	waitanimation
-	settypewithmove
-	printstring STRINGID_PKMNCHANGEDTYPE
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-	
+	setstatchanger STAT_ATK, 1, FALSE @ Attack, not Sp. Atk, to match Dragon Dance
+	goto BattleScript_EffectSetPureType
+
 BattleScript_EffectAwakening::
-	attackstring
-	ppreduce
-	jumpiftype BS_ATTACKER, TYPE_PSYCHIC, BattleScript_EffectSpecialAttackUp
-	attackanimation
-	waitanimation
-	settypewithmove
-	printstring STRINGID_PKMNCHANGEDTYPE
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_MoveEnd
-	
+	setstatchanger STAT_SPATK, 1, FALSE
+	goto BattleScript_EffectSetPureType
+
 BattleScript_EffectAttunement::
+	setstatchanger STAT_SPEED, 1, FALSE
+BattleScript_EffectSetPureType:
+	attackcanceler
 	attackstring
 	ppreduce
-	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_EffectSpeedUp
+	settypewithmove BattleScript_ButItFailed
 	attackanimation
 	waitanimation
-	settypewithmove
 	printstring STRINGID_PKMNCHANGEDTYPE
 	waitmessage B_WAIT_TIME_LONG
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_MoveEnd
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_EffectSetPureTypeStatString
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+BattleScript_EffectSetPureTypeStatString:
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
-	
+
 BattleScript_EffectVenomFang::
 	attackcanceler
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE

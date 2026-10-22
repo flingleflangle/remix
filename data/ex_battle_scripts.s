@@ -17,8 +17,9 @@
 @
 @ A Pokémon in its EX form can use the EX moves in its .exMoves list (data/pokemon/ex_forms.h).
 @ A Pokémon with an ability in sExMoveAbilities in battle_util.c can use the EX moves in that
-@ ability's list, or every EX move with .allExMoves (Wishmaker). Any Pokémon can also use the EX
-@ moves matching its held crystal's types (sExMoveCrystals). These all stack.
+@ ability's list, or every EX move with .allExMoves (Wishmaker). A Pokémon can use the EX moves its
+@ species lists in src/data/pokemon/ex_species_moves.h, whatever its ability or form. Any Pokémon
+@ can also use the EX moves matching its held crystal's types (sExMoveCrystals). These all stack.
 @ They can highlight one of these moves in battle and press L to use its EX version.
 @ The move's name turns yellow, and using it costs 2 PP instead of 1.
 @ EX moves do 1.2x damage, unless they're an EX upgrade (see Cmd_damagecalc). A damaging move that
@@ -515,6 +516,119 @@ BattleScript_ExBulletSeedMoveEnd:
 BattleScript_ExFuryCutter::
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
 	goto BattleScript_EffectHit
+
+@ Species EX scripts. These are only for the species that list them in src/data/pokemon/ex_species_moves.h,
+@ and replace whatever EX version the move has for everyone else.
+
+@ Banette: makes a regular Substitute without costing the user any HP, so it works at any HP
+BattleScript_ExSubstituteNoCost::
+	various BS_ATTACKER, VARIOUS_EX_NO_HP_COST
+	attackcanceler
+	ppreduce
+	attackstring
+	waitstate
+	jumpifstatus2 BS_ATTACKER, STATUS2_SUBSTITUTE, BattleScript_AlreadyHasSubstitute
+	setsubstitute
+	attackanimation
+	waitanimation
+	goto BattleScript_SubstituteString
+
+@ Banette: while it's Normal type, it survives its Explosion, but loses its Normal type to become pure Ghost.
+@ Once it isn't Normal type, it's a regular Explosion, as a regular EX move
+BattleScript_ExExplosionBanette::
+	jumpiftype BS_ATTACKER, TYPE_NORMAL, BattleScript_ExExplosionBanetteNoCost
+	goto BattleScript_EffectExplosion
+BattleScript_ExExplosionBanetteNoCost:
+	various BS_ATTACKER, VARIOUS_EX_NO_HP_COST
+	attackcanceler
+	attackstring
+	ppreduce
+	tryexplosion
+	waitstate
+	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_ExExplosionBanetteDoAnim
+	call BattleScript_PreserveMissedBitDoMoveAnim
+	goto BattleScript_ExExplosionBanetteLoop
+BattleScript_ExExplosionBanetteDoAnim:
+	attackanimation
+	waitanimation
+BattleScript_ExExplosionBanetteLoop:
+	movevaluescleanup
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	accuracycheck BattleScript_ExExplosionBanetteMissed, ACC_CURR_MOVE
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	tryfaintmon BS_TARGET
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_ExExplosionBanetteLoop
+	goto BattleScript_ExExplosionBanetteBecomeGhost
+BattleScript_ExExplosionBanetteMissed:
+	effectivenesssound
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_ExExplosionBanetteLoop
+BattleScript_ExExplosionBanetteBecomeGhost:
+	settypewithmove BattleScript_ExExplosionBanetteEnd @ Like Attunement
+	printstring STRINGID_PKMNCHANGEDTYPE
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_ExExplosionBanetteEnd:
+	end
+
+@ Glalie: a regular Explosion that always freezes everything it hits, including its ally
+BattleScript_ExExplosionGlalie::
+	attackcanceler
+	attackstring
+	ppreduce
+	tryexplosion
+	setatkhptozero
+	waitstate
+	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_ExExplosionGlalieDoAnim
+	call BattleScript_PreserveMissedBitDoMoveAnim
+	goto BattleScript_ExExplosionGlalieLoop
+BattleScript_ExExplosionGlalieDoAnim:
+	attackanimation
+	waitanimation
+BattleScript_ExExplosionGlalieLoop:
+	movevaluescleanup
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	accuracycheck BattleScript_ExExplosionGlalieMissed, ACC_CURR_MOVE
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	setmoveeffect MOVE_EFFECT_FREEZE | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_ExExplosionGlalieLoop
+	tryfaintmon BS_ATTACKER
+	end
+BattleScript_ExExplosionGlalieMissed:
+	effectivenesssound
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_ExExplosionGlalieLoop
+	tryfaintmon BS_ATTACKER
+	end
 
 @ A Pokémon unlocked its EX form through training, after gaining EXP (see Cmd_getexp).
 @ If it's on the field it glows and turns into its EX form (B_ANIM_EX_MASTERY), then its message shows.

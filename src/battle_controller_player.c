@@ -194,7 +194,7 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(void) =
 };
 
 static EWRAM_DATA bool8 sDescriptionSubmenu = 0;
-static EWRAM_DATA bool8 sExModeOn = FALSE; // L was pressed, so highlighted moves will be used as EX moves (see data/battle_scripts_ex.s)
+static EWRAM_DATA bool8 sExModeOn = FALSE; // L was pressed, so highlighted moves will be used as EX moves (see data/ex_battle_scripts.s)
 
 static const u8 sTargetIdentities[MAX_BATTLERS_COUNT] = {B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, B_POSITION_OPPONENT_LEFT};
 
@@ -511,7 +511,7 @@ static void HandleInputChooseMove(void)
     else
         gPlayerDpadHoldFrames = 0;
 
-    // L turns EX mode on or off (see data/battle_scripts_ex.s). While it's on, every highlighted move that can
+    // L turns EX mode on or off (see data/ex_battle_scripts.s). While it's on, every highlighted move that can
     // be used as an EX move is readied, with its name pulsing yellow.
     // With the L=A option, L chooses the move like A, so START turns EX mode on or off instead (in place of the move description)
     if (JOY_NEW(GetExModeButton()) && !sDescriptionSubmenu
@@ -1548,7 +1548,7 @@ static void MoveSelectionDisplayMoveNames(void)
     }
 }
 
-// EX moves (see data/battle_scripts_ex.s)
+// EX moves (see data/ex_battle_scripts.s)
 
 // Unused colors of the battle text palette (BG palette 5), for an EX move's yellow name
 #define EX_MOVE_NAME_COLOR        9
@@ -1767,7 +1767,7 @@ static void MoveSelectionCreateCursorAt(u8 cursorPosition, u8 baseTileNum)
     src[0] = baseTileNum + 1;
     src[1] = baseTileNum + 2;
 
-    // On moves that can be used as EX moves (see data/battle_scripts_ex.s), the cursor pulses yellow.
+    // On moves that can be used as EX moves (see data/ex_battle_scripts.s), the cursor pulses yellow.
     // Once EX mode is on, the pulse moves to the readied move's name instead
     if (baseTileNum == 0)
     {
