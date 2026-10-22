@@ -398,6 +398,20 @@ gCryTable::
 	cry Cry_Gallade
 	cry Cry_Togekiss
 	cry Cry_Roserade
+	cry Cry_Budew
+	cry Cry_Glameow
+	cry Cry_Purugly
+	cry Cry_Buizel
+	cry Cry_Floatzel
+	cry Cry_Shellos
+	cry Cry_Gastrodon
+	cry Cry_Mantyke
+	cry Cry_Buneary
+	cry Cry_Lopunny
+	cry Cry_Chingling
+	cry Cry_Giratina
+	cry Cry_Phione
+	cry Cry_Manaphy
 	cry Cry_Lucario
 
 	.align 2
@@ -800,4 +814,18 @@ gCryTable_Reverse::
 	cry_reverse Cry_Gallade
 	cry_reverse Cry_Togekiss
 	cry_reverse Cry_Roserade
+	cry_reverse Cry_Budew
+	cry_reverse Cry_Glameow
+	cry_reverse Cry_Purugly
+	cry_reverse Cry_Buizel
+	cry_reverse Cry_Floatzel
+	cry_reverse Cry_Shellos
+	cry_reverse Cry_Gastrodon
+	cry_reverse Cry_Mantyke
+	cry_reverse Cry_Buneary
+	cry_reverse Cry_Lopunny
+	cry_reverse Cry_Chingling
+	cry_reverse Cry_Giratina
+	cry_reverse Cry_Phione
+	cry_reverse Cry_Manaphy
 	cry_reverse Cry_Lucario

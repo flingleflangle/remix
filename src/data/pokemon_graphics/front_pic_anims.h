@@ -2689,6 +2689,15 @@ static const union AnimCmd sAnim_Delibird_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Mantyke_1[] =
+{
+    ANIMCMD_FRAME(1, 5),
+    ANIMCMD_FRAME(0, 5),
+    ANIMCMD_FRAME(1, 45),
+    ANIMCMD_FRAME(0, 5),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Mantine_1[] =
 {
     ANIMCMD_FRAME(1, 30),
@@ -3381,6 +3390,25 @@ static const union AnimCmd sAnim_Pelipper_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Buizel_1[] =
+{
+    ANIMCMD_FRAME(0, 12),
+    ANIMCMD_FRAME(1, 45),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Floatzel_1[] =
+{
+    ANIMCMD_FRAME(1, 5),
+    ANIMCMD_FRAME(0, 5),
+    ANIMCMD_FRAME(1, 5),
+    ANIMCMD_FRAME(0, 28),
+    ANIMCMD_FRAME(1, 20),
+    ANIMCMD_FRAME(0, 5),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Surskit_1[] =
 {
     ANIMCMD_FRAME(0, 6),
@@ -3450,6 +3478,41 @@ static const union AnimCmd sAnim_Delcatty_1[] =
     ANIMCMD_FRAME(0, 10),
     ANIMCMD_FRAME(1, 46),
     ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Glameow_1[] =
+{
+    ANIMCMD_FRAME(0, 12),
+    ANIMCMD_FRAME(1, 45),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Purugly_1[] =
+{
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 50),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Buneary_1[] =
+{
+    ANIMCMD_FRAME(1, 35),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Lopunny_1[] =
+{
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 20),
+    ANIMCMD_FRAME(0, 15),
     ANIMCMD_END,
 };
 
@@ -3546,6 +3609,25 @@ static const union AnimCmd sAnim_Whiscash_1[] =
     ANIMCMD_FRAME(0, 15),
     ANIMCMD_FRAME(1, 15),
     ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 15),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Shellos_1[] =
+{
+    ANIMCMD_FRAME(0, 1),
+    ANIMCMD_FRAME(1, 36),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Gastrodon_1[] =
+{
     ANIMCMD_FRAME(1, 15),
     ANIMCMD_FRAME(0, 15),
     ANIMCMD_FRAME(1, 15),
@@ -4050,6 +4132,14 @@ static const union AnimCmd sAnim_Dusclops_1[] =
     ANIMCMD_FRAME(0, 15),
     ANIMCMD_FRAME(1, 15),
     ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Budew_1[] =
+{
+    ANIMCMD_FRAME(0, 30),
+    ANIMCMD_FRAME(1, 30),
+    ANIMCMD_FRAME(0, 20),
     ANIMCMD_END,
 };
 
@@ -4652,12 +4742,51 @@ static const union AnimCmd sAnim_Deoxys_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Phione_1[] =
+{
+    ANIMCMD_FRAME(0, 20),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Manaphy_1[] =
+{
+    ANIMCMD_FRAME(1, 50),
+    ANIMCMD_FRAME(1, 50),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Giratina_1[] =
+{
+    ANIMCMD_FRAME(0, 11),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Deoxys_2[] =
 {
     ANIMCMD_FRAME(0, 20),
     ANIMCMD_FRAME(2, 20),
     ANIMCMD_FRAME(0, 20),
     ANIMCMD_FRAME(2, 20),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Chingling_1[] =
+{
+    ANIMCMD_FRAME(1, 12),
+    ANIMCMD_FRAME(0, 12),
+    ANIMCMD_FRAME(1, 12),
+    ANIMCMD_FRAME(0, 30),
+    ANIMCMD_FRAME(1, 12),
+    ANIMCMD_FRAME(0, 12),
+    ANIMCMD_FRAME(1, 12),
+    ANIMCMD_FRAME(0, 15),
     ANIMCMD_END,
 };
 
@@ -5167,6 +5296,7 @@ DOUBLE_ANIMATION(Corsola);
 SINGLE_ANIMATION(Remoraid);
 SINGLE_ANIMATION(Octillery);
 SINGLE_ANIMATION(Delibird);
+SINGLE_ANIMATION(Mantyke);
 SINGLE_ANIMATION(Mantine);
 DOUBLE_ANIMATION(Skarmory);
 SINGLE_ANIMATION(Houndour);
@@ -5236,12 +5366,18 @@ static const union AnimCmd *const sAnims_Spinda[] ={
 };
 SINGLE_ANIMATION(Wingull);
 SINGLE_ANIMATION(Pelipper);
+SINGLE_ANIMATION(Buizel);
+SINGLE_ANIMATION(Floatzel);
 DOUBLE_ANIMATION(Surskit);
 DOUBLE_ANIMATION(Masquerain);
 SINGLE_ANIMATION(Wailmer);
 SINGLE_ANIMATION(Wailord);
 SINGLE_ANIMATION(Skitty);
 SINGLE_ANIMATION(Delcatty);
+SINGLE_ANIMATION(Glameow);
+SINGLE_ANIMATION(Purugly);
+SINGLE_ANIMATION(Buneary);
+SINGLE_ANIMATION(Lopunny);
 SINGLE_ANIMATION(Kecleon);
 SINGLE_ANIMATION(Baltoy);
 SINGLE_ANIMATION(Claydol);
@@ -5250,6 +5386,8 @@ SINGLE_ANIMATION(Torkoal);
 SINGLE_ANIMATION(Sableye);
 SINGLE_ANIMATION(Barboach);
 SINGLE_ANIMATION(Whiscash);
+SINGLE_ANIMATION(Shellos);
+SINGLE_ANIMATION(Gastrodon);
 SINGLE_ANIMATION(Luvdisc);
 SINGLE_ANIMATION(Corphish);
 SINGLE_ANIMATION(Crawdaunt);
@@ -5290,6 +5428,7 @@ DOUBLE_ANIMATION(Altaria);
 SINGLE_ANIMATION(Wynaut);
 SINGLE_ANIMATION(Duskull);
 SINGLE_ANIMATION(Dusclops);
+SINGLE_ANIMATION(Budew);
 SINGLE_ANIMATION(Roselia);
 SINGLE_ANIMATION(Roserade);
 SINGLE_ANIMATION(Slakoth);
@@ -5345,6 +5484,10 @@ DOUBLE_ANIMATION(Latias);
 DOUBLE_ANIMATION(Latios);
 DOUBLE_ANIMATION(Jirachi);
 DOUBLE_ANIMATION(Deoxys);
+SINGLE_ANIMATION(Phione);
+SINGLE_ANIMATION(Manaphy);
+SINGLE_ANIMATION(Giratina);
+SINGLE_ANIMATION(Chingling);
 SINGLE_ANIMATION(Chimecho);
 SINGLE_ANIMATION(Munchlax);
 SINGLE_ANIMATION(Bonsly);
@@ -5609,6 +5752,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_REMORAID]    = sAnims_Remoraid,
     [SPECIES_OCTILLERY]   = sAnims_Octillery,
     [SPECIES_DELIBIRD]    = sAnims_Delibird,
+    [SPECIES_MANTYKE]     = sAnims_Mantyke,
     [SPECIES_MANTINE]     = sAnims_Mantine,
     [SPECIES_SKARMORY]    = sAnims_Skarmory,
     [SPECIES_HOUNDOUR]    = sAnims_Houndour,
@@ -5669,12 +5813,18 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_SPINDA]      = sAnims_Spinda,
     [SPECIES_WINGULL]     = sAnims_Wingull,
     [SPECIES_PELIPPER]    = sAnims_Pelipper,
+    [SPECIES_BUIZEL]      = sAnims_Buizel,
+    [SPECIES_FLOATZEL]    = sAnims_Floatzel,
     [SPECIES_SURSKIT]     = sAnims_Surskit,
     [SPECIES_MASQUERAIN]  = sAnims_Masquerain,
     [SPECIES_WAILMER]     = sAnims_Wailmer,
     [SPECIES_WAILORD]     = sAnims_Wailord,
     [SPECIES_SKITTY]      = sAnims_Skitty,
     [SPECIES_DELCATTY]    = sAnims_Delcatty,
+    [SPECIES_GLAMEOW]     = sAnims_Glameow,
+    [SPECIES_PURUGLY]     = sAnims_Purugly,
+    [SPECIES_BUNEARY]     = sAnims_Buneary,
+    [SPECIES_LOPUNNY]     = sAnims_Lopunny,
     [SPECIES_KECLEON]     = sAnims_Kecleon,
     [SPECIES_BALTOY]      = sAnims_Baltoy,
     [SPECIES_CLAYDOL]     = sAnims_Claydol,
@@ -5683,6 +5833,8 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_SABLEYE]     = sAnims_Sableye,
     [SPECIES_BARBOACH]    = sAnims_Barboach,
     [SPECIES_WHISCASH]    = sAnims_Whiscash,
+    [SPECIES_SHELLOS]     = sAnims_Shellos,
+    [SPECIES_GASTRODON]   = sAnims_Gastrodon,
     [SPECIES_LUVDISC]     = sAnims_Luvdisc,
     [SPECIES_CORPHISH]    = sAnims_Corphish,
     [SPECIES_CRAWDAUNT]   = sAnims_Crawdaunt,
@@ -5723,6 +5875,7 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_WYNAUT]      = sAnims_Wynaut,
     [SPECIES_DUSKULL]     = sAnims_Duskull,
     [SPECIES_DUSCLOPS]    = sAnims_Dusclops,
+    [SPECIES_BUDEW]       = sAnims_Budew,
     [SPECIES_ROSELIA]     = sAnims_Roselia,
     [SPECIES_ROSERADE]    = sAnims_Roserade,
     [SPECIES_SLAKOTH]     = sAnims_Slakoth,
@@ -5773,6 +5926,10 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_LATIOS]      = sAnims_Latios,
     [SPECIES_JIRACHI]     = sAnims_Jirachi,
     [SPECIES_DEOXYS]      = sAnims_Deoxys,
+    [SPECIES_PHIONE]      = sAnims_Phione,
+    [SPECIES_MANAPHY]     = sAnims_Manaphy,
+    [SPECIES_GIRATINA]    = sAnims_Giratina,
+    [SPECIES_CHINGLING]   = sAnims_Chingling,
     [SPECIES_CHIMECHO]    = sAnims_Chimecho,
     [SPECIES_MUNCHLAX]    = sAnims_Munchlax,
     [SPECIES_BONSLY]      = sAnims_Bonsly,

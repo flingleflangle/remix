@@ -7716,6 +7716,9 @@ static void Cmd_manipulatedamage(void)
     case DMG_DOUBLED:
         gBattleMoveDamage *= 2;
         break;
+    case DMG_HEAL_ATTACKER_FULLY: // 0 at full HP. Unlike tryhealhalfhealth, doesn't make the attacker the target
+        gBattleMoveDamage = gBattleMons[gBattlerAttacker].hp - gBattleMons[gBattlerAttacker].maxHP;
+        break;
     }
 
     gBattlescriptCurrInstr += 2;

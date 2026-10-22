@@ -65,5 +65,8 @@ const u8 gEnemyMonElevation[NUM_SPECIES] =
     [SPECIES_LATIOS] = 6,
     [SPECIES_JIRACHI] = 12,
     [SPECIES_DEOXYS] = 8,
+    [SPECIES_PHIONE] = 8,
+    [SPECIES_MANAPHY] = 10,
+    [SPECIES_GIRATINA] = 7,
     [SPECIES_CHIMECHO] = 12,
 };

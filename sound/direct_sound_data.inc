@@ -1981,6 +1981,62 @@ Cry_Togekiss::
 	.align 2
 Cry_Roserade::
 	.incbin "sound/direct_sound_samples/cries/roserade.bin"
+
+	.align 2
+Cry_Budew::
+	.incbin "sound/direct_sound_samples/cries/budew.bin"
+
+	.align 2
+Cry_Glameow::
+	.incbin "sound/direct_sound_samples/cries/glameow.bin"
+
+	.align 2
+Cry_Purugly::
+	.incbin "sound/direct_sound_samples/cries/purugly.bin"
+
+	.align 2
+Cry_Buizel::
+	.incbin "sound/direct_sound_samples/cries/buizel.bin"
+
+	.align 2
+Cry_Floatzel::
+	.incbin "sound/direct_sound_samples/cries/floatzel.bin"
+
+	.align 2
+Cry_Shellos::
+	.incbin "sound/direct_sound_samples/cries/shellos.bin"
+
+	.align 2
+Cry_Gastrodon::
+	.incbin "sound/direct_sound_samples/cries/gastrodon.bin"
+
+	.align 2
+Cry_Mantyke::
+	.incbin "sound/direct_sound_samples/cries/mantyke.bin"
+
+	.align 2
+Cry_Buneary::
+	.incbin "sound/direct_sound_samples/cries/buneary.bin"
+
+	.align 2
+Cry_Lopunny::
+	.incbin "sound/direct_sound_samples/cries/lopunny.bin"
+
+	.align 2
+Cry_Chingling::
+	.incbin "sound/direct_sound_samples/cries/chingling.bin"
+
+	.align 2
+Cry_Giratina::
+	.incbin "sound/direct_sound_samples/cries/giratina.bin"
+
+	.align 2
+Cry_Phione::
+	.incbin "sound/direct_sound_samples/cries/phione.bin"
+
+	.align 2
+Cry_Manaphy::
+	.incbin "sound/direct_sound_samples/cries/manaphy.bin"
 	
 
 	.align 2

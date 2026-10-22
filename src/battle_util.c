@@ -2774,8 +2774,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                         effect++;
                     }
                     break;
+                case ABILITY_HYDRATION:
+                    if (!WEATHER_HAS_EFFECT || !(gBattleWeather & B_WEATHER_RAIN))
+                        break;
+                    // fallthrough: in rain, Hydration cures like a Shed Skin that always works
                 case ABILITY_SHED_SKIN:
-                    if ((gBattleMons[battler].status1 & STATUS1_ANY) && (Random() % 3) == 0)
+                    if ((gBattleMons[battler].status1 & STATUS1_ANY)
+                     && (gBattleMons[battler].ability == ABILITY_HYDRATION || (Random() % 3) == 0))
                     {
                         if (gBattleMons[battler].status1 & (STATUS1_POISON | STATUS1_TOXIC_POISON))
                             StringCopy(gBattleTextBuff1, gStatusConditionString_PoisonJpn);

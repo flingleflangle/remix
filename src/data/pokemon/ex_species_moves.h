@@ -279,6 +279,7 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_REMORAID]     = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 300: 3 EX slots
     [SPECIES_OCTILLERY]    = { .exMoves = { MOVE_NONE } }, // 480: 1 EX slot
     [SPECIES_DELIBIRD]     = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 330: 3 EX slots
+    [SPECIES_MANTYKE]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 345: 3 EX slots
     [SPECIES_MANTINE]      = { .exMoves = { MOVE_NONE } }, // 485: 1 EX slot
     [SPECIES_SKARMORY]     = { .exMoves = { MOVE_STEEL_WING } }, // 465: 1 EX slot
     [SPECIES_HOUNDOUR]     = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 330: 3 EX slots
@@ -339,12 +340,18 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_SPINDA]       = { .exMoves = { MOVE_DIZZY_PUNCH, MOVE_NONE, MOVE_NONE } }, // 360: 3 EX slots
     [SPECIES_WINGULL]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 270: 3 EX slots
     [SPECIES_PELIPPER]     = { .exMoves = { MOVE_NONE, MOVE_NONE } }, // 440: 2 EX slots
+    [SPECIES_BUIZEL]       = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 330: 3 EX slots
+    [SPECIES_FLOATZEL]     = { .exMoves = { MOVE_NONE } }, // 495: 1 EX slot
     [SPECIES_SURSKIT]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 269: 3 EX slots
     [SPECIES_MASQUERAIN]   = { .exMoves = { MOVE_NONE, MOVE_NONE } }, // 454: 2 EX slots
     [SPECIES_WAILMER]      = { .exMoves = { MOVE_NONE, MOVE_NONE } }, // 400: 2 EX slots
     [SPECIES_WAILORD]      = { .exMoves = { MOVE_NONE } }, // 500: 1 EX slot
     [SPECIES_SKITTY]       = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 260: 3 EX slots
     [SPECIES_DELCATTY]     = { .exMoves = { MOVE_NONE, MOVE_NONE } }, // 400: 2 EX slots
+    [SPECIES_GLAMEOW]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 310: 3 EX slots
+    [SPECIES_PURUGLY]      = { .exMoves = { MOVE_NONE, MOVE_NONE } }, // 452: 2 EX slots
+    [SPECIES_BUNEARY]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 350: 3 EX slots
+    [SPECIES_LOPUNNY]      = { .exMoves = { MOVE_NONE } }, // 480: 1 EX slot
     [SPECIES_KECLEON]      = { .exMoves = { MOVE_NONE, MOVE_NONE } }, // 440: 2 EX slots
     [SPECIES_BALTOY]       = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 300: 3 EX slots
     [SPECIES_CLAYDOL]      = { .exMoves = { MOVE_NONE } }, // 500: 1 EX slot
@@ -353,6 +360,8 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_SABLEYE]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 380: 3 EX slots
     [SPECIES_BARBOACH]     = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 288: 3 EX slots
     [SPECIES_WHISCASH]     = { .exMoves = { MOVE_NONE } }, // 468: 1 EX slot
+    [SPECIES_SHELLOS]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 325: 3 EX slots
+    [SPECIES_GASTRODON]    = { .exMoves = { MOVE_NONE } }, // 475: 1 EX slot
     [SPECIES_LUVDISC]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 330: 3 EX slots
     [SPECIES_CORPHISH]     = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 308: 3 EX slots
     [SPECIES_CRAWDAUNT]    = { .exMoves = { MOVE_NONE } }, // 468: 1 EX slot
@@ -393,6 +402,7 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_WYNAUT]       = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 260: 3 EX slots
     [SPECIES_DUSKULL]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 295: 3 EX slots
     [SPECIES_DUSCLOPS]     = { .exMoves = { MOVE_NONE } }, // 495: 1 EX slot
+    [SPECIES_BUDEW]        = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 280: 3 EX slots
     [SPECIES_ROSELIA]      = { .exMoves = { MOVE_PETAL_DANCE, MOVE_NONE } }, // 400: 2 EX slots
     [SPECIES_ROSERADE]     = { .exMoves = { MOVE_PETAL_DANCE } }, // 515: 1 EX slot
     [SPECIES_SLAKOTH]      = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 280: 3 EX slots
@@ -443,6 +453,10 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_LATIOS]       = { .exMoves = { MOVE_NONE } }, // 600: 1 EX slot
     [SPECIES_JIRACHI]      = { .exMoves = { MOVE_NONE } }, // 600: 1 EX slot
     [SPECIES_DEOXYS]       = { .exMoves = { MOVE_NONE } }, // 600: 1 EX slot
+    [SPECIES_PHIONE]       = { .exMoves = { MOVE_NONE } }, // 480: 1 EX slot
+    [SPECIES_MANAPHY]      = { .exMoves = { MOVE_NONE } }, // 600: 1 EX slot
+    [SPECIES_GIRATINA]     = { .exMoves = { MOVE_NONE } }, // 680: 1 EX slot
+    [SPECIES_CHINGLING]    = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 285: 3 EX slots
     [SPECIES_CHIMECHO]     = { .exMoves = { MOVE_NONE, MOVE_NONE } }, // 455: 2 EX slots
     [SPECIES_LUCARIO]      = { .exMoves = { MOVE_NONE } }, // 525: 1 EX slot
 };

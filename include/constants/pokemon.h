@@ -264,6 +264,7 @@
 #define EVO_SMART            19 // Pokémon levels up with smart ≥ specified value
 #define EVO_COOL             20 // Pokémon levels up with cool ≥ specified value
 #define EVO_CUTE             21 // Pokémon levels up with cute ≥ specified value
+#define EVO_SPECIES_IN_PARTY 22 // Pokémon levels up with the specified species in the party
 
 #define EVOS_PER_MON 8
 

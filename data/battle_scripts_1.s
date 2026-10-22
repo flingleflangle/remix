@@ -1524,11 +1524,11 @@ BattleScript_WagerFail::
 	end
 
 
+@ Not a move script: BattleScript_FaintTarget jumps here when Soul Steal knocks out its target
 BattleScript_EffectSoulSteal::
-	tryhealhalfhealth SoulStolen, BS_ATTACKER
-	healthbarupdate BS_ATTACKER
-	datahpupdate BS_ATTACKER
-	tryhealhalfhealth SoulStolen, BS_ATTACKER
+	jumpifhasnohp BS_ATTACKER, SoulStolen @ e.g. the target's Destiny Bond took the user down too
+	manipulatedamage DMG_HEAL_ATTACKER_FULLY
+	jumpifword CMP_EQUAL, gBattleMoveDamage, 0, SoulStolen
 	healthbarupdate BS_ATTACKER
 	datahpupdate BS_ATTACKER
 SoulStolen::
