@@ -258,7 +258,7 @@
 #define ITEM_TOXIC_ORB 228
 
 // Unused item slots
-#define ITEM_0E5 229
+#define ITEM_SOLID_RAGE 229 // Was ITEM_0E5, unused
 #define ITEM_0E6 230
 #define ITEM_0E7 231
 #define ITEM_0E8 232
@@ -521,5 +521,9 @@
 
 // Check if the item is one that can be used on a Pokémon.
 #define ITEM_HAS_EFFECT(item) ((item) >= ITEM_POTION && (item) <= MAX_BERRY_INDEX)
+
+// The EX move crystals and Solid Rage can't be knocked off, stolen, or swapped away in battle
+#define ITEM_IS_EX_CRYSTAL(item) ((item) >= ITEM_STAR_CRYSTAL && (item) <= ITEM_METAL_CRYSTAL)
+#define ITEM_CANT_BE_REMOVED(item) (ITEM_IS_EX_CRYSTAL(item) || (item) == ITEM_SOLID_RAGE)
 
 #endif  // GUARD_CONSTANTS_ITEMS_H

@@ -246,7 +246,7 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_FLAME_ORB] = {gItemIcon_FlameOrb, gItemIconPalette_FlameOrb},
     [ITEM_TOXIC_ORB] = {gItemIcon_ToxicOrb, gItemIconPalette_ToxicOrb},
     //unused
-    [ITEM_0E5] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_SOLID_RAGE] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
     [ITEM_0E6] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_0E7] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     [ITEM_0E8] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},

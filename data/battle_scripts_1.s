@@ -5653,6 +5653,20 @@ BattleScript_SelectingNotAllowedMoveTauntInPalace::
 	printstring STRINGID_PKMNCANTUSEMOVETAUNT
 	goto BattleScript_SelectingUnusableMoveInPalace
 
+@ Solid Rage works like a Taunt for as long as it's held
+BattleScript_SelectingNotAllowedMoveRage::
+	printselectionstring STRINGID_PKMNCANTUSEMOVERAGE
+	endselectionscript
+
+BattleScript_MoveUsedIsEnraged::
+	printstring STRINGID_PKMNCANTUSEMOVERAGE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+BattleScript_SelectingNotAllowedMoveRageInPalace::
+	printstring STRINGID_PKMNCANTUSEMOVERAGE
+	goto BattleScript_SelectingUnusableMoveInPalace
+
 BattleScript_WishComesTrue::
 	trywish 1, BattleScript_WishButFullHp
 	playanimation BS_TARGET, B_ANIM_WISH_HEAL
@@ -6218,6 +6232,16 @@ BattleScript_FirstSightPrevented:
 @ Air Balloon: announced on switch-in, then pops when the holder is hit
 BattleScript_AirBalloonFloats::
 	printstring STRINGID_PKMNFLOATSWITHAIRBALLOON
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+@ The stat stages and Perish count are set in ItemBattleEffects (ITEMEFFECT_ON_SWITCH_IN)
+BattleScript_SolidRageActivates::
+	playanimation BS_SCRIPTING, B_ANIM_HELD_ITEM_EFFECT, NULL
+	printstring STRINGID_SOLIDRAGEACTIVATES
+	waitmessage B_WAIT_TIME_LONG
+	playanimation BS_SCRIPTING, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printstring STRINGID_SOLIDRAGEPERISH
 	waitmessage B_WAIT_TIME_LONG
 	end2
 

@@ -418,8 +418,11 @@
 #define STRINGID_EXSWAPPEDSTATS             418
 #define STRINGID_PKMNLOSTHPLIFEORB          419
 #define STRINGID_PKMNHIDBEHINDPOKEDOLL      420
+#define STRINGID_SOLIDRAGEACTIVATES         421
+#define STRINGID_SOLIDRAGEPERISH            422
+#define STRINGID_PKMNCANTUSEMOVERAGE        423
 
-#define BATTLESTRINGS_COUNT                 421
+#define BATTLESTRINGS_COUNT                 424
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,

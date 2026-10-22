@@ -219,5 +219,13 @@
 #define COMBO_STARTER_POUND         60
 #define COMBO_STARTER_SMOG          61
 #define COMBO_STARTER_CALM_MIND     62
+#define COMBO_STARTER_CONFUSE_RAY   63
+#define COMBO_STARTER_SUPER_FANG    64
+#define COMBO_STARTER_FREEZE_RAY    65
+#define COMBO_STARTER_STAGGER       66
+#define COMBO_STARTER_ATTUNEMENT    67
+#define COMBO_STARTER_AWAKENING     68
+#define COMBO_STARTER_ASCENSION     69
+#define COMBO_STARTER_CHAKRA_SURGE  70 // Chakra Surge has no contest entry yet. Give it this comboStarterId once it does
 
 #endif  // GUARD_CONSTANTS_CONTEST_H

@@ -122,6 +122,7 @@ bool32 SetExBonusStatsUpAnim(u8 battler);
 bool32 SetNextExBonusStat(void);
 bool32 SetExBonusHealDamage(u8 battler);
 bool32 CanBattlerUseExMove(u8 battler, u16 move);
+bool32 IsBattlerEnragedBySolidRage(u8 battler);
 void ClearFuryCutterDestinyBondGrudge(u8 battler);
 void HandleAction_RunBattleScript(void);
 u8 GetMoveTarget(u16 move, u8 setTarget);

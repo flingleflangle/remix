@@ -244,6 +244,9 @@ static const u8 sText_ExDeeperSleep[] = _("{B_DEF_NAME_WITH_PREFIX} fell into\na
 static const u8 sText_ExSwappedStats[] = _("{B_ATK_NAME_WITH_PREFIX} switched stat\nchanges with {B_DEF_NAME_WITH_PREFIX}!");
 static const u8 sText_PkmnLostHpLifeOrb[] = _("{B_ATK_NAME_WITH_PREFIX} lost some\nof its HP!");
 static const u8 sText_PkmnHidBehindPokeDoll[] = _("{B_ATK_NAME_WITH_PREFIX} hid behind\nthe POKé DOLL!");
+static const u8 sText_SolidRageActivates[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_LAST_ITEM}\nfilled it with fury!");
+static const u8 sText_SolidRagePerish[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} will faint\nin three turns!");
+static const u8 sText_PkmnCantUseMoveRage[] = _("{B_ACTIVE_NAME_WITH_PREFIX} is too enraged\nto use {B_CURRENT_MOVE}!\p");
 static const u8 sText_PkmnFellForFirstSight[] = _("{B_DEF_NAME_WITH_PREFIX} fell for\n{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}!");
 static const u8 sText_PkmnFledFromBattle[] = _("{B_ATK_NAME_WITH_PREFIX} fled from\nbattle!");
 static const u8 sText_PkmnForesawAttack[] = _("{B_ATK_NAME_WITH_PREFIX} foresaw\nan attack!");
@@ -965,6 +968,9 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_EXSWAPPEDSTATS - BATTLESTRINGS_TABLE_START] = sText_ExSwappedStats,
     [STRINGID_PKMNLOSTHPLIFEORB - BATTLESTRINGS_TABLE_START] = sText_PkmnLostHpLifeOrb,
     [STRINGID_PKMNHIDBEHINDPOKEDOLL - BATTLESTRINGS_TABLE_START] = sText_PkmnHidBehindPokeDoll,
+    [STRINGID_SOLIDRAGEACTIVATES - BATTLESTRINGS_TABLE_START] = sText_SolidRageActivates,
+    [STRINGID_SOLIDRAGEPERISH - BATTLESTRINGS_TABLE_START] = sText_SolidRagePerish,
+    [STRINGID_PKMNCANTUSEMOVERAGE - BATTLESTRINGS_TABLE_START] = sText_PkmnCantUseMoveRage,
 };
 
 const u16 gMissStringIds[] =

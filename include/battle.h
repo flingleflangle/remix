@@ -92,7 +92,8 @@ struct DisableStruct
     u8 isFirstTurn;
     u8 focusBandProtectUse:1; // Focus Band saved it, which counts as a use of Protect
     u8 airBalloonAnnounced:1; // Air Balloon was announced on switch-in
-    u8 filler_17:6; // Unused field.
+    u8 solidRageActivated:1; // Solid Rage took effect on switch-in
+    u8 filler_17:5; // Unused field.
     u8 truantCounter:1;
     u8 truantSwitchInHack:1;
     u8 wideOpen:1; // Failed Detect, so the next hit from a foe is critical

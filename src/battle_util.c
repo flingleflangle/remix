@@ -1090,6 +1090,15 @@ void BattleScriptPop(void)
     gBattlescriptCurrInstr = gBattleResources->battleScriptsStack->ptr[--gBattleResources->battleScriptsStack->size];
 }
 
+// Solid Rage raises these stats on switch-in, and its holder can't dodge or use status moves
+#define SOLID_RAGE_STAGES 3
+static const u8 sSolidRageStats[] = {STAT_ATK, STAT_SPATK, STAT_SPEED, STAT_ACC};
+
+bool32 IsBattlerEnragedBySolidRage(u8 battler)
+{
+    return GetItemHoldEffect(gBattleMons[battler].item) == HOLD_EFFECT_SOLID_RAGE;
+}
+
 u8 TrySetCantSelectMoveBattleScript(void)
 {
     u8 limitations = 0;
@@ -1139,6 +1148,20 @@ u8 TrySetCantSelectMoveBattleScript(void)
         else
         {
             gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveTaunt;
+            limitations++;
+        }
+    }
+    else if (IsBattlerEnragedBySolidRage(gActiveBattler) && gBattleMoves[move].power == 0)
+    {
+        gCurrentMove = move;
+        if (gBattleTypeFlags & BATTLE_TYPE_PALACE)
+        {
+            gPalaceSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveRageInPalace;
+            gProtectStructs[gActiveBattler].palaceUnableToUseMove = TRUE;
+        }
+        else
+        {
+            gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveRage;
             limitations++;
         }
     }
@@ -1224,7 +1247,8 @@ u8 CheckMoveLimitations(u8 battler, u8 unusableMoves, u8 check)
         if (gBattleMons[battler].moves[i] == gLastMoves[battler] && check & MOVE_LIMITATION_TORMENTED && gBattleMons[battler].status2 & STATUS2_TORMENT)
             unusableMoves |= gBitTable[i];
         // Taunt
-        if (gDisableStructs[battler].tauntTimer && check & MOVE_LIMITATION_TAUNT && gBattleMoves[gBattleMons[battler].moves[i]].power == 0)
+        if ((gDisableStructs[battler].tauntTimer || IsBattlerEnragedBySolidRage(battler))
+         && check & MOVE_LIMITATION_TAUNT && gBattleMoves[gBattleMons[battler].moves[i]].power == 0)
             unusableMoves |= gBitTable[i];
         // Imprison
         if (GetImprisonedMovesCount(battler, gBattleMons[battler].moves[i]) && check & MOVE_LIMITATION_IMPRISON)
@@ -2294,6 +2318,14 @@ u8 AtkCanceller_UnableToUseMove(void)
                 gProtectStructs[gBattlerAttacker].usedTauntedMove = 1;
                 CancelMultiTurnMoves(gBattlerAttacker);
                 gBattlescriptCurrInstr = BattleScript_MoveUsedIsTaunted;
+                gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+                effect = 1;
+            }
+            else if (IsBattlerEnragedBySolidRage(gBattlerAttacker) && gBattleMoves[gCurrentMove].power == 0)
+            {
+                gProtectStructs[gBattlerAttacker].usedTauntedMove = 1;
+                CancelMultiTurnMoves(gBattlerAttacker);
+                gBattlescriptCurrInstr = BattleScript_MoveUsedIsEnraged;
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                 effect = 1;
             }
@@ -3780,10 +3812,13 @@ static const struct
     { ITEM_METAL_CRYSTAL, 2, { TYPE_STEEL, TYPE_BLADE } },
 };
 
-// Whether the battler's held crystal covers the move's type
-static bool32 DoesHeldCrystalAllowExMove(u8 battler, u16 move)
+// Whether the battler's held crystal covers the move's type, or its held contest scarf the move's contest category
+static bool32 DoesHeldItemAllowExMove(u8 battler, u16 move)
 {
     u32 i, j;
+
+    if (DoesScarfMatchMoveContestCategory(gBattleMons[battler].item, move))
+        return TRUE;
 
     for (i = 0; i < ARRAY_COUNT(sExMoveCrystals); i++)
     {
@@ -3865,7 +3900,8 @@ bool32 BattlerHasExMoveEffect(u8 battler, u16 move)
 
 // Whether the battler can use this move as an EX move. Each of these gives access to some EX moves,
 // and they stack: its EX form (.exMoves), its ability (sExMoveAbilities, where Wishmaker gives every
-// EX move), its species (data/pokemon/ex_species_moves.h), and its held crystal's types (sExMoveCrystals)
+// EX move), its species (data/pokemon/ex_species_moves.h), its held crystal's types (sExMoveCrystals), and
+// its held contest scarf's contest category
 bool32 CanBattlerUseExMove(u8 battler, u16 move)
 {
     if (GetSpeciesExMove(battler, move) != NULL)
@@ -3875,7 +3911,7 @@ bool32 CanBattlerUseExMove(u8 battler, u16 move)
     return DoesExFormAllowExMove(battler, move)
         || DoesAbilityAllowExMove(battler, move)
         || DoesSpeciesAllowExMove(battler, move)
-        || DoesHeldCrystalAllowExMove(battler, move);
+        || DoesHeldItemAllowExMove(battler, move);
 }
 
 // For each battler's locked EX move slot, the other slots it has used since locking it
@@ -3920,14 +3956,14 @@ void UpdateExMoveLocks(u8 battler, u8 slot, bool32 usedAsEx)
     }
 }
 
-// Whether the battler's current move is an EX move that only its held crystal allowed.
-// The crystal's power goes into the EX move, so it doesn't roll its usual on-hit effect that turn
-static bool32 IsExMoveFromHeldCrystal(u8 battler)
+// Whether the battler's current move is an EX move that only its held crystal or scarf allowed.
+// The item's power goes into the EX move, so it doesn't roll its usual on-hit effect that turn
+static bool32 IsExMoveFromHeldItem(u8 battler)
 {
     u16 move = gChosenMoveByBattler[battler];
 
     return gBattleMoveIsEx
-        && DoesHeldCrystalAllowExMove(battler, move)
+        && DoesHeldItemAllowExMove(battler, move)
         && !DoesExFormAllowExMove(battler, move)
         && !DoesAbilityAllowExMove(battler, move)
         && !DoesSpeciesAllowExMove(battler, move);
@@ -4077,6 +4113,32 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
         case HOLD_EFFECT_DOUBLE_PRIZE:
             if (GetBattlerSide(battler) == B_SIDE_PLAYER)
                 gBattleStruct->moneyMultiplier = 2;
+            break;
+        case HOLD_EFFECT_SOLID_RAGE:
+            // Once per switch-in, since the switch-in effects run again after this script
+            if (!gDisableStructs[battler].solidRageActivated)
+            {
+                gDisableStructs[battler].solidRageActivated = TRUE;
+                for (i = 0; i < ARRAY_COUNT(sSolidRageStats); i++)
+                {
+                    gBattleMons[battler].statStages[sSolidRageStats[i]] += SOLID_RAGE_STAGES;
+                    if (gBattleMons[battler].statStages[sSolidRageStats[i]] > MAX_STAT_STAGE)
+                        gBattleMons[battler].statStages[sSolidRageStats[i]] = MAX_STAT_STAGE;
+                }
+                // A Perish count it already has (like one passed on by Baton Pass) keeps going
+                if (!(gStatuses3[battler] & STATUS3_PERISH_SONG))
+                {
+                    gStatuses3[battler] |= STATUS3_PERISH_SONG;
+                    gDisableStructs[battler].perishSongTimer = 3;
+                    gDisableStructs[battler].perishSongTimerStartValue = 3;
+                }
+                gBattleScripting.battler = battler;
+                gBattleScripting.animArg1 = STAT_ANIM_MULTIPLE_PLUS2;
+                gBattleScripting.animArg2 = 0;
+                gLastUsedItem = gBattleMons[battler].item;
+                BattleScriptExecute(BattleScript_SolidRageActivates);
+                effect = ITEM_EFFECT_OTHER;
+            }
             break;
         case HOLD_EFFECT_AIR_BALLOON:
             // Once per switch-in, since the switch-in effects run again after this script
@@ -4610,7 +4672,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
         }
         break;
     case ITEMEFFECT_KINGSROCK_SHELLBELL:
-        if (IsExMoveFromHeldCrystal(gBattlerAttacker))
+        if (IsExMoveFromHeldItem(gBattlerAttacker))
             break;
         if (gBattleMoveDamage)
         {

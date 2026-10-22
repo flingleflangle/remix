@@ -240,6 +240,7 @@ static const u16 sNewGamePCItems[][2] =
     { ITEM_X_SPDEF, 1 },
     { ITEM_V_SPDEF, 1 },
     { ITEM_POKE_DOLL, 3 },
+    { ITEM_SOLID_RAGE, 1 },
     { ITEM_FRESH_WATER, 2},
     { ITEM_TASTY_TREAT, 5 },
     { ITEM_LUCKY_EGG, 1 },

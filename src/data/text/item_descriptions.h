@@ -874,6 +874,11 @@ static const u8 sRewindOrbDesc[] = _(
     "to its previous\n"
     "form. Never runs out.");
 
+static const u8 sSolidRageDesc[] = _(
+    "Fills the holder\n"
+    "with doomed fury,\n"
+    "then it faints.");
+
 static const u8 sAirBalloonDesc[] = _(
     "Makes the holder\n"
     "float until it is\n"

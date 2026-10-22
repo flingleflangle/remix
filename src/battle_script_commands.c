@@ -1186,9 +1186,11 @@ static bool8 JumpIfMoveAffectedByProtect(u16 move)
 
 static bool8 AccuracyCalcHelper(u16 move)
 {
-    // EX_FLAG_SURE_HIT works like Lock-On, and so does an EX_FLAG_TRAP_LOCK_ON trap against the Pokémon that set it
+    // EX_FLAG_SURE_HIT works like Lock-On, and so does an EX_FLAG_TRAP_LOCK_ON trap against the Pokémon that set it.
+    // A Solid Rage holder can't dodge anything, even while flying or underground
     if ((gStatuses3[gBattlerTarget] & STATUS3_ALWAYS_HITS && gDisableStructs[gBattlerTarget].battlerWithSureHit == gBattlerAttacker)
      || (gExMoveFlags & EX_FLAG_SURE_HIT)
+     || (IsBattlerEnragedBySolidRage(gBattlerTarget) && gBattlerAttacker != gBattlerTarget)
      || ((gExLockOnTrapBattlers & gBitTable[gBattlerTarget])
       && (gBattleMons[gBattlerTarget].status2 & STATUS2_WRAPPED)
       && gBattleStruct->wrappedBy[gBattlerTarget] == gBattlerAttacker))
@@ -1242,6 +1244,12 @@ static void Cmd_accuracycheck(void)
     {
         if (gStatuses3[gBattlerTarget] & STATUS3_ALWAYS_HITS && move == NO_ACC_CALC_CHECK_LOCK_ON && gDisableStructs[gBattlerTarget].battlerWithSureHit == gBattlerAttacker)
             gBattlescriptCurrInstr += 7;
+        else if (IsBattlerEnragedBySolidRage(gBattlerTarget) && gBattlerAttacker != gBattlerTarget)
+        {
+            // Can't dodge even while flying or underground, but Protect still works
+            if (!JumpIfMoveAffectedByProtect(0))
+                gBattlescriptCurrInstr += 7;
+        }
         else if (gStatuses3[gBattlerTarget] & (STATUS3_ON_AIR | STATUS3_UNDERGROUND | STATUS3_UNDERWATER))
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
         else if (!JumpIfMoveAffectedByProtect(0))
@@ -1487,6 +1495,7 @@ static void Cmd_damagecalc(void)
     // Same conditions as MOVE_EFFECT_KNOCK_OFF, which is applied after the hit.
     if (gBattleMoves[gCurrentMove].effect == EFFECT_KNOCK_OFF
      && gBattleMons[gBattlerTarget].item != ITEM_NONE
+     && !ITEM_CANT_BE_REMOVED(gBattleMons[gBattlerTarget].item)
      && gBattleMons[gBattlerTarget].ability != ABILITY_STICKY_HOLD
      && !(gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE))
         gBattleMoveDamage *= 2;
@@ -3207,6 +3216,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     else if (gBattleMons[gBattlerAttacker].item != ITEM_NONE
                         || gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY
                         || IS_ITEM_MAIL(gBattleMons[gBattlerTarget].item)
+                        || ITEM_CANT_BE_REMOVED(gBattleMons[gBattlerTarget].item)
                         || gBattleMons[gBattlerTarget].item == ITEM_NONE)
                     {
                         gBattlescriptCurrInstr++;
@@ -3330,7 +3340,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     }
                     break;
                 }
-                if (gBattleMons[gEffectBattler].item)
+                if (gBattleMons[gEffectBattler].item && !ITEM_CANT_BE_REMOVED(gBattleMons[gEffectBattler].item))
                 {
                     side = GetBattlerSide(gEffectBattler);
 
@@ -10502,7 +10512,9 @@ static void Cmd_tryswapitems(void)
                  || gBattleMons[gBattlerAttacker].item == ITEM_ENIGMA_BERRY
                  || gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY
                  || IS_ITEM_MAIL(gBattleMons[gBattlerAttacker].item)
-                 || IS_ITEM_MAIL(gBattleMons[gBattlerTarget].item))
+                 || IS_ITEM_MAIL(gBattleMons[gBattlerTarget].item)
+                 || ITEM_CANT_BE_REMOVED(gBattleMons[gBattlerAttacker].item)
+                 || ITEM_CANT_BE_REMOVED(gBattleMons[gBattlerTarget].item))
         {
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
         }

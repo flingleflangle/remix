@@ -3173,8 +3173,9 @@ void DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
     (var) /= (gStatStageRatios)[(mon)->statStages[(statIndex)]][1];                 \
 }
 
-// Each contest scarf boosts the battle damage of moves in the contest category it raises
-static bool8 IsMoveBoostedByScarf(u16 item, u16 move)
+// Whether the item is a contest scarf for the move's contest category. Like a crystal, a held scarf
+// gives access to those moves' EX versions (see DoesHeldItemAllowExMove)
+bool8 DoesScarfMatchMoveContestCategory(u16 item, u16 move)
 {
     const struct ContestMove *contestMove = &gContestMoves[move];
     u8 category;
@@ -3652,9 +3653,6 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     // Life Orb boosts damage by 30%, paid for with recoil after the move
     if (attackerHoldEffect == HOLD_EFFECT_LIFE_ORB)
         damage = (13 * damage) / 10;
-
-    if (IsMoveBoostedByScarf(attacker->item, move))
-        damage = (11 * damage) / 10;
 
     return damage + 2;
 }
