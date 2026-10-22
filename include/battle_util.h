@@ -93,14 +93,28 @@ void BattleScriptPushCursorAndCallback(const u8 *BS_ptr);
 u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn);
 bool32 IsBattlerFloatingOnAirBalloon(u8 battler);
 void PopBattlerHeldItem(u8 battler);
+// A move's own EX version: for everyone (gExMoves in data/ex_battle_scripts.s), or for a species
+// (.exVersions in src/data/pokemon/ex_species_moves.h)
+struct ExMove
+{
+    u16 move;
+    u16 extraEffect;  // A MOVE_EFFECT_* that always happens after it hits, on top of its own (gExExtraMoveEffect). 0 for none
+    u32 flags;        // EX_FLAG_*, for what it does on top of its script
+    const u8 *script; // NULL to run its regular script, with just the flags
+};
+
+STATIC_ASSERT(sizeof(struct ExMove) == 12, ExMoveSize); // The size the exmove macro emits
+
 bool32 IsExMove(u16 move);
-const u8 *GetExMoveBattleScript(u16 move);
+bool32 IsShieldedByExCounter(u8 battler, u8 moveType);
+void StartUsualExMoveVersion(void);
+const struct ExMove *GetExMove(u16 move);
 u16 GetExMoveUpgrade(u16 move);
 bool32 CanMoveBeUsedAsEx(u16 move);
 bool32 HasExMoveBonus(u16 move);
 bool32 HasExMoveEffect(u16 move);
 bool32 BattlerHasExMoveEffect(u8 battler, u16 move);
-const u8 *GetSpeciesExMoveScript(u8 battler, u16 move);
+const struct ExMove *GetSpeciesExMove(u8 battler, u16 move);
 void UpdateExMoveLocks(u8 battler, u8 slot, bool32 usedAsEx);
 bool32 TryStartExMoveBonus(void);
 void RestoreExMoveBonusState(void);

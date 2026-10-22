@@ -4,6 +4,7 @@
 #include "battle_arena.h"
 #include "battle_pyramid.h"
 #include "battle_util.h"
+#include "battle_script_commands.h"
 #include "pokemon.h"
 #include "international_string_util.h"
 #include "item.h"
@@ -76,6 +77,55 @@ static const u8 sPkblToEscapeFactor[][3] = {
 static const u8 sGoNearCounterToCatchFactor[] = {4, 3, 2, 1};
 static const u8 sGoNearCounterToEscapeFactor[] = {4, 4, 4, 4};
 
+// Only the charging turn of a two-turn move is chosen, so only it's an EX move. Its EX flags and extra effect are
+// kept here for its attacking turn, so they still work then (like EX Dragon Fist getting past Protect)
+static EWRAM_DATA u16 sExChargingMove[MAX_BATTLERS_COUNT] = {0};
+static EWRAM_DATA u32 sExChargingFlags[MAX_BATTLERS_COUNT] = {0};
+static EWRAM_DATA u8 sExChargingExtraEffect[MAX_BATTLERS_COUNT] = {0};
+
+// Runs the current move as this EX version: its EX script, or its regular one with just the EX flags (EX_FLAG_*)
+static void StartExMoveVersion(const struct ExMove *exMove)
+{
+    gExMoveFlags = exMove->flags;
+    gExExtraMoveEffect = exMove->extraEffect != 0 ? (exMove->extraEffect | MOVE_EFFECT_CERTAIN) : 0;
+    gBattleExAnimPending = EX_ANIM_EX_MOVE;
+    if (exMove->script != NULL)
+        gBattlescriptCurrInstr = exMove->script;
+    else
+        gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+}
+
+// Runs the current move as its EX version for everyone: its own (gExMoves), an upgrade, a bonus, or just the
+// EX damage boost. A species' own EX version can fall back to this with VARIOUS_EX_USE_USUAL_VERSION
+void StartUsualExMoveVersion(void)
+{
+    const struct ExMove *exMove = GetExMove(gCurrentMove);
+    u16 upgrade = GetExMoveUpgrade(gCurrentMove);
+
+    if (exMove != NULL)
+    {
+        StartExMoveVersion(exMove);
+    }
+    else if (upgrade != MOVE_NONE)
+    {
+        // Becomes a stronger move, but its messages still name the chosen move. gChosenMove stays the chosen move too
+        gBattleExUpgradedFrom = gCurrentMove;
+        gCurrentMove = upgrade;
+        gBattleExAnimPending = EX_ANIM_FLASH_ONLY;
+        gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+    }
+    else
+    {
+        // An EX bonus runs from the move's attackstring, along with the EX flash (see TryStartExMoveBonus).
+        // Without one, the move just gets the EX damage boost (see Cmd_damagecalc), and the flash before its animation
+        if (HasExMoveBonus(gCurrentMove))
+            gBattleExBonusPending = TRUE;
+        else
+            gBattleExAnimPending = EX_ANIM_FLASH_ONLY;
+        gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+    }
+}
+
 void HandleAction_UseMove(void)
 {
     u8 side;
@@ -97,8 +147,9 @@ void HandleAction_UseMove(void)
     gBattleCommunication[MISS_TYPE] = 0;
     gBattleMoveIsEx = FALSE;
     gBattleExAnimPending = FALSE;
-    gIgnoreResistances = FALSE;
-    gExNoHpCost = FALSE;
+    gExMoveFlags = 0;
+    gExExtraMoveEffect = 0;
+    gExEffectChance = 0;
     gBattleExUpgradedFrom = MOVE_NONE;
     gThisMoveSureCrit = FALSE;
     gBattleExBonusPending = FALSE;
@@ -298,42 +349,29 @@ void HandleAction_UseMove(void)
          && !(gExMoveUsedSlots[gBattlerAttacker] & gBitTable[gCurrMovePos])
          && CanBattlerUseExMove(gBattlerAttacker, gCurrentMove))
         {
-            const u8 *speciesScript = GetSpeciesExMoveScript(gBattlerAttacker, gCurrentMove);
-            u16 upgrade = GetExMoveUpgrade(gCurrentMove);
+            // The species' own EX version comes first (see data/pokemon/ex_species_moves.h)
+            const struct ExMove *speciesExMove = GetSpeciesExMove(gBattlerAttacker, gCurrentMove);
 
             gBattleMoveIsEx = TRUE;
-            if (speciesScript != NULL)
-            {
-                // The species' own EX version, instead of the move's usual one (see data/pokemon/ex_species_moves.h)
-                gBattleExAnimPending = EX_ANIM_EX_MOVE;
-                gBattlescriptCurrInstr = speciesScript;
-            }
-            else if (upgrade != MOVE_NONE)
-            {
-                // Becomes a stronger move, but its messages still name the chosen move. gChosenMove stays the chosen move too
-                gBattleExUpgradedFrom = gCurrentMove;
-                gCurrentMove = upgrade;
-                gBattleExAnimPending = EX_ANIM_FLASH_ONLY;
-                gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
-            }
-            else if (IsExMove(gCurrentMove))
-            {
-                gBattleExAnimPending = EX_ANIM_EX_MOVE;
-                gBattlescriptCurrInstr = GetExMoveBattleScript(gCurrentMove);
-            }
+            if (speciesExMove != NULL)
+                StartExMoveVersion(speciesExMove);
             else
-            {
-                // An EX bonus runs from the move's attackstring, along with the EX flash (see TryStartExMoveBonus).
-                // Without one, the move just gets the EX damage boost (see Cmd_damagecalc), and the flash before its animation
-                if (HasExMoveBonus(gCurrentMove))
-                    gBattleExBonusPending = TRUE;
-                else
-                    gBattleExAnimPending = EX_ANIM_FLASH_ONLY;
-                gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
-            }
+                StartUsualExMoveVersion();
+            sExChargingMove[gBattlerAttacker] = gCurrentMove;
+            sExChargingFlags[gBattlerAttacker] = gExMoveFlags;
+            sExChargingExtraEffect[gBattlerAttacker] = gExExtraMoveEffect;
         }
         else
         {
+            // The attacking turn of a two-turn move used as an EX move keeps its EX flags (see sExChargingMove)
+            if ((gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS)
+             && IsTwoTurnsMove(gCurrentMove)
+             && sExChargingMove[gBattlerAttacker] == gCurrentMove)
+            {
+                gExMoveFlags = sExChargingFlags[gBattlerAttacker];
+                gExExtraMoveEffect = sExChargingExtraEffect[gBattlerAttacker];
+            }
+            sExChargingMove[gBattlerAttacker] = MOVE_NONE;
             gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
         }
     }
@@ -720,8 +758,9 @@ void HandleAction_ActionFinished(void)
     *(gBattleStruct->monToSwitchIntoId + gBattlerByTurnOrder[gCurrentTurnActionNumber]) = PARTY_SIZE;
     gBattleMoveIsEx = FALSE;
     gBattleExAnimPending = FALSE;
-    gIgnoreResistances = FALSE;
-    gExNoHpCost = FALSE;
+    gExMoveFlags = 0;
+    gExExtraMoveEffect = 0;
+    gExEffectChance = 0;
     gBattleExUpgradedFrom = MOVE_NONE;
     gThisMoveSureCrit = FALSE;
     gBattleExBonusPending = FALSE;
@@ -945,6 +984,7 @@ void CancelMultiTurnMoves(u8 battler)
 {
     gBattleMons[battler].status2 &= ~STATUS2_MULTIPLETURNS;
     gBattleMons[battler].status2 &= ~STATUS2_LOCK_CONFUSE;
+    gExCalmRampageBattlers &= ~gBitTable[battler];
     gBattleMons[battler].status2 &= ~STATUS2_UPROAR;
     gBattleMons[battler].status2 &= ~STATUS2_BIDE;
 
@@ -1580,9 +1620,30 @@ u8 DoBattlerEndTurnEffects(void)
                  && gBattleMons[gActiveBattler].hp != 0)
                 {
                     gBattlerTarget = gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER; // Notice gBattlerTarget is actually the HP receiver.
-                    gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-                    if (gBattleMoveDamage == 0)
-                        gBattleMoveDamage = 1;
+                    if (gExLeechSeedTurns[gActiveBattler] != 0)
+                    {
+                        // EX Leech Seed drains 1/16 more each turn, like Toxic. After its 15/16 turn, it wears off
+                        // (see BattleScript_LeechSeedTurnPrintAndUpdateHp)
+                        gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
+                        if (gBattleMoveDamage == 0)
+                            gBattleMoveDamage = 1;
+                        gBattleMoveDamage *= gExLeechSeedTurns[gActiveBattler];
+                        if (gExLeechSeedTurns[gActiveBattler] == 15)
+                        {
+                            gExLeechSeedTurns[gActiveBattler] = 0;
+                            gStatuses3[gActiveBattler] &= ~(STATUS3_LEECHSEED | STATUS3_LEECHSEED_BATTLER);
+                        }
+                        else
+                        {
+                            gExLeechSeedTurns[gActiveBattler]++;
+                        }
+                    }
+                    else
+                    {
+                        gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
+                        if (gBattleMoveDamage == 0)
+                            gBattleMoveDamage = 1;
+                    }
                     gBattleScripting.animArg1 = gBattlerTarget;
                     gBattleScripting.animArg2 = gBattlerAttacker;
                     BattleScriptExecute(BattleScript_LeechSeedTurnDrain);
@@ -1749,7 +1810,12 @@ u8 DoBattlerEndTurnEffects(void)
                      && (gBattleMons[gActiveBattler].status2 & STATUS2_MULTIPLETURNS))
                     {
                         gBattleMons[gActiveBattler].status2 &= ~STATUS2_MULTIPLETURNS;
-                        if (!(gBattleMons[gActiveBattler].status2 & STATUS2_CONFUSION))
+                        if (gExCalmRampageBattlers & gBitTable[gActiveBattler])
+                        {
+                            // An EX rampage ends calmly (EX_FLAG_CALM_RAMPAGE)
+                            gExCalmRampageBattlers &= ~gBitTable[gActiveBattler];
+                        }
+                        else if (!(gBattleMons[gActiveBattler].status2 & STATUS2_CONFUSION))
                         {
                             gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION | MOVE_EFFECT_AFFECTS_USER;
                             SetMoveEffect(TRUE, 0);
@@ -1814,7 +1880,8 @@ u8 DoBattlerEndTurnEffects(void)
                 gBattleStruct->turnEffectsTracker++;
                 break;
             case ENDTURN_TAUNT:  // taunt
-                if (gDisableStructs[gActiveBattler].tauntTimer)
+                // An EX Taunt doesn't count down, it lasts while its user is out (see EndExLastingTaunts)
+                if (gDisableStructs[gActiveBattler].tauntTimer && gExLastingTauntBy[gActiveBattler] == 0)
                     gDisableStructs[gActiveBattler].tauntTimer--;
                 gBattleStruct->turnEffectsTracker++;
                 break;
@@ -3362,13 +3429,6 @@ bool32 IsBattlerFloatingOnAirBalloon(u8 battler)
 
 // EX moves (see data/ex_battle_scripts.s)
 
-struct ExMove
-{
-    u16 move;
-    u16 padding;
-    const u8 *script;
-};
-
 struct ExMoveUpgrade
 {
     u16 move;
@@ -3402,7 +3462,7 @@ struct SpeciesExMoves
 {
     u16 exMoves[MAX_SPECIES_EX_MOVES]; // MOVE_NONE for an empty slot
     bool8 allExMoves;
-    const struct ExMove *exScripts;
+    const struct ExMove *exVersions;
 };
 
 #include "data/pokemon/ex_species_moves.h"
@@ -3414,23 +3474,24 @@ static const struct SpeciesExMoves *GetBattlerSpeciesExMoves(u8 battler)
     return species < NUM_SPECIES ? &sSpeciesExMoves[species] : NULL;
 }
 
-// The battler's species' own EX script for the move (.exScripts in ex_species_moves.h), or NULL
-const u8 *GetSpeciesExMoveScript(u8 battler, u16 move)
+// The battler's species' own EX version of the move (.exVersions in ex_species_moves.h), or NULL
+const struct ExMove *GetSpeciesExMove(u8 battler, u16 move)
 {
     const struct SpeciesExMoves *speciesExMoves = GetBattlerSpeciesExMoves(battler);
     u32 i;
 
-    if (speciesExMoves == NULL || speciesExMoves->exScripts == NULL)
+    if (speciesExMoves == NULL || speciesExMoves->exVersions == NULL)
         return NULL;
-    for (i = 0; speciesExMoves->exScripts[i].move != MOVE_NONE; i++)
+    for (i = 0; speciesExMoves->exVersions[i].move != MOVE_NONE; i++)
     {
-        if (speciesExMoves->exScripts[i].move == move)
-            return speciesExMoves->exScripts[i].script;
+        if (speciesExMoves->exVersions[i].move == move)
+            return &speciesExMoves->exVersions[i];
     }
     return NULL;
 }
 
-static const struct ExMove *GetExMove(u16 move)
+// The move's own EX version for everyone (gExMoves in data/ex_battle_scripts.s), or NULL
+const struct ExMove *GetExMove(u16 move)
 {
     u32 i;
 
@@ -3445,13 +3506,6 @@ static const struct ExMove *GetExMove(u16 move)
 bool32 IsExMove(u16 move)
 {
     return GetExMove(move) != NULL;
-}
-
-const u8 *GetExMoveBattleScript(u16 move)
-{
-    const struct ExMove *exMove = GetExMove(move);
-
-    return exMove != NULL ? exMove->script : NULL;
 }
 
 // The stronger move this one becomes when used as an EX move, or MOVE_NONE.
@@ -3496,6 +3550,13 @@ static const u8 *const sExBonusScripts[] =
     [EX_BONUS_RECOVER_HP]       = BattleScript_ExBonusRecoverHp,
     [EX_BONUS_HEAL_REPLACEMENT] = BattleScript_ExBonusHealReplacement,
     [EX_BONUS_STATS_UP]         = BattleScript_ExBonusStatsUp,
+    [EX_BONUS_FLINCH]           = BattleScript_ExBonusFlinch,
+    [EX_BONUS_CURE_STATUS]      = BattleScript_ExBonusCureStatus,
+    [EX_BONUS_DEEPER_SLEEP]     = BattleScript_ExBonusDeeperSleep,
+    [EX_BONUS_TAUNT]            = BattleScript_ExBonusTaunt,
+    [EX_BONUS_COPY_STATS]       = BattleScript_ExBonusCopyStats,
+    [EX_BONUS_PROTECT]          = BattleScript_ExBonusProtect,
+    [EX_BONUS_SWAP_STATS]       = BattleScript_ExBonusSwapStats,
 };
 
 // The current bonus's details, for its script
@@ -3762,7 +3823,7 @@ static bool32 DoesAbilityAllowExMove(u8 battler, u16 move)
     return FALSE;
 }
 
-// Whether the battler's species has .allExMoves, or the move in its .exMoves or .exScripts (see ex_species_moves.h).
+// Whether the battler's species has .allExMoves, or the move in its .exMoves or .exVersions (see ex_species_moves.h).
 // Like an ability, a Pokémon transformed into the species gets them too
 static bool32 DoesSpeciesAllowExMove(u8 battler, u16 move)
 {
@@ -3771,7 +3832,7 @@ static bool32 DoesSpeciesAllowExMove(u8 battler, u16 move)
 
     if (speciesExMoves == NULL)
         return FALSE;
-    if (speciesExMoves->allExMoves || GetSpeciesExMoveScript(battler, move) != NULL)
+    if (speciesExMoves->allExMoves || GetSpeciesExMove(battler, move) != NULL)
         return TRUE;
     for (i = 0; i < MAX_SPECIES_EX_MOVES; i++)
     {
@@ -3784,7 +3845,7 @@ static bool32 DoesSpeciesAllowExMove(u8 battler, u16 move)
 // Whether the move does something extra when this battler uses it as an EX move, including its species' own EX version
 bool32 BattlerHasExMoveEffect(u8 battler, u16 move)
 {
-    return GetSpeciesExMoveScript(battler, move) != NULL || HasExMoveEffect(move);
+    return GetSpeciesExMove(battler, move) != NULL || HasExMoveEffect(move);
 }
 
 // Whether the battler can use this move as an EX move. Each of these gives access to some EX moves,
@@ -3792,7 +3853,7 @@ bool32 BattlerHasExMoveEffect(u8 battler, u16 move)
 // EX move), its species (data/pokemon/ex_species_moves.h), and its held crystal's types (sExMoveCrystals)
 bool32 CanBattlerUseExMove(u8 battler, u16 move)
 {
-    if (GetSpeciesExMoveScript(battler, move) != NULL)
+    if (GetSpeciesExMove(battler, move) != NULL)
         return TRUE;
     if (!CanMoveBeUsedAsEx(move))
         return FALSE;
@@ -3805,12 +3866,26 @@ bool32 CanBattlerUseExMove(u8 battler, u16 move)
 // For each battler's locked EX move slot, the other slots it has used since locking it
 static EWRAM_DATA u8 sExMoveUnlockProgress[MAX_BATTLERS_COUNT][MAX_MON_MOVES] = {0};
 
+// The battler's move slots with a move in them, other than this one
+static u32 GetOtherMoveSlots(u8 battler, u8 slot)
+{
+    u32 i, otherMoves = 0;
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (i != slot && gBattleMons[battler].moves[i] != MOVE_NONE)
+            otherMoves |= gBitTable[i];
+    }
+    return otherMoves;
+}
+
 // Called by ppreduce when the battler spends PP on the move in this slot. Using a move as an EX move locks
 // that slot's EX version (see gExMoveUsedSlots). It unlocks once each of the battler's other moves has been
-// used since, or if it has no other moves, once it's used normally. Switching out or KOing an opponent also unlocks them all
+// used since. A battler with no other moves has nothing to use, so it never locks. Switching out or KOing an
+// opponent also unlocks them all
 void UpdateExMoveLocks(u8 battler, u8 slot, bool32 usedAsEx)
 {
-    u32 i, j, otherMoves;
+    u32 i, otherMoves;
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
@@ -3818,17 +3893,12 @@ void UpdateExMoveLocks(u8 battler, u8 slot, bool32 usedAsEx)
             continue;
         if (i != slot)
             sExMoveUnlockProgress[battler][i] |= gBitTable[slot];
-        otherMoves = 0;
-        for (j = 0; j < MAX_MON_MOVES; j++)
-        {
-            if (j != i && gBattleMons[battler].moves[j] != MOVE_NONE)
-                otherMoves |= gBitTable[j];
-        }
+        otherMoves = GetOtherMoveSlots(battler, i);
         if ((sExMoveUnlockProgress[battler][i] & otherMoves) == otherMoves)
             gExMoveUsedSlots[battler] &= ~gBitTable[i];
     }
 
-    if (usedAsEx)
+    if (usedAsEx && GetOtherMoveSlots(battler, slot) != 0)
     {
         gExMoveUsedSlots[battler] |= gBitTable[slot];
         sExMoveUnlockProgress[battler][slot] = 0;
@@ -3846,6 +3916,45 @@ static bool32 IsExMoveFromHeldCrystal(u8 battler)
         && !DoesExFormAllowExMove(battler, move)
         && !DoesAbilityAllowExMove(battler, move)
         && !DoesSpeciesAllowExMove(battler, move);
+}
+
+// Whether a hit of this type will do no damage to the battler, as it chose to use an EX_FLAG_COUNTER_SHIELD move this turn
+// (EX Counter or EX Mirror Coat) that will counter it. These move last, so this shields it before they're used.
+// The damage is still recorded for them to return. Only if the battler will be able to use it: it'll be used as an
+// EX move, and the battler isn't asleep, frozen or flinched. (Full paralysis or confusion can't be known yet)
+bool32 IsShieldedByExCounter(u8 battler, u8 moveType)
+{
+    u16 move = gChosenMoveByBattler[battler];
+    u8 movePos = gBattleStruct->chosenMovePositions[battler];
+    const struct ExMove *exMove;
+
+    if (!(gExMoveChosenBits & gBitTable[battler])
+     || gChosenActionByBattler[battler] != B_ACTION_USE_MOVE
+     || gBattleMons[battler].moves[movePos] != move
+     || gBattleMons[battler].pp[movePos] < 2
+     || (gExMoveUsedSlots[battler] & gBitTable[movePos])
+     || !CanBattlerUseExMove(battler, move))
+        return FALSE;
+
+    exMove = GetSpeciesExMove(battler, move);
+    if (exMove == NULL)
+        exMove = GetExMove(move);
+    if (exMove == NULL || !(exMove->flags & EX_FLAG_COUNTER_SHIELD))
+        return FALSE;
+
+    if ((gBattleMons[battler].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
+     || (gBattleMons[battler].status2 & STATUS2_FLINCHED))
+        return FALSE;
+
+    switch (gBattleMoves[move].effect)
+    {
+    case EFFECT_COUNTER:
+        return IS_TYPE_PHYSICAL(moveType);
+    case EFFECT_MIRROR_COAT:
+        return IS_TYPE_SPECIAL(moveType);
+    default:
+        return FALSE;
+    }
 }
 
 // A popped Air Balloon or Bubble Coat is gone for good, like a consumed berry, so the

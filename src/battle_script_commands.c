@@ -54,16 +54,53 @@
 
 extern const u8 *const gBattleScriptsForMoveEffects[];
 
-// Detect blocks every attacking move, including ones that get past Protect
-#define DEFENDER_IS_PROTECTED (((gProtectStructs[gBattlerTarget].protected) && (gBattleMoves[gCurrentMove].flags & FLAG_PROTECT_AFFECTED)) \
-                            || ((gProtectStructs[gBattlerTarget].detected) && gBattleMoves[gCurrentMove].power != 0))
+// The weather of each type, for EX_FLAG_SET_WEATHER (VARIOUS_EX_SET_WEATHER)
+static const struct
+{
+    u8 type;
+    u8 message; // B_MSG_STARTED_*, for gMoveWeatherChangeStringIds
+    u8 anim;
+    u16 weather;
+    u16 anyWeather; // Fails if it's already this weather
+} sExMoveWeathers[] =
+{
+    { TYPE_FIRE,   B_MSG_STARTED_SUNLIGHT, B_ANIM_SUN_CONTINUES,       B_WEATHER_SUN_TEMPORARY,       B_WEATHER_SUN },
+    { TYPE_WATER,  B_MSG_STARTED_RAIN,     B_ANIM_RAIN_CONTINUES,      B_WEATHER_RAIN_TEMPORARY,      B_WEATHER_RAIN },
+    { TYPE_GROUND, B_MSG_STARTED_SANDSTORM, B_ANIM_SANDSTORM_CONTINUES, B_WEATHER_SANDSTORM_TEMPORARY, B_WEATHER_SANDSTORM },
+    { TYPE_ICE,    B_MSG_STARTED_HAIL,     B_ANIM_HAIL_CONTINUES,      B_WEATHER_HAIL_TEMPORARY,      B_WEATHER_HAIL },
+};
+
+// Detect blocks every attacking move, including ones that get past Protect (like EX_FLAG_IGNORE_PROTECT).
+// EX Reflect and EX Light Screen block physical or special moves on their side, like Protect (IsBlockedByExScreen)
+#define DEFENDER_IS_PROTECTED (((gProtectStructs[gBattlerTarget].protected) && (gBattleMoves[gCurrentMove].flags & FLAG_PROTECT_AFFECTED) && !(gExMoveFlags & EX_FLAG_IGNORE_PROTECT)) \
+                            || ((gProtectStructs[gBattlerTarget].detected) && gBattleMoves[gCurrentMove].power != 0) \
+                            || IsBlockedByExScreen())
+
+// Whether the current move is blocked by an EX Reflect or EX Light Screen on the target's side this turn (EX_FLAG_SCREEN_BLOCK).
+// Like Protect, it only blocks moves Protect can block, and not ones that get past Protect
+static bool32 IsBlockedByExScreen(void)
+{
+    u8 side = GET_BATTLER_SIDE(gBattlerTarget);
+    u8 moveType;
+
+    if (gExScreenBlockSides == 0
+     || gBattleMoves[gCurrentMove].power == 0
+     || !(gBattleMoves[gCurrentMove].flags & FLAG_PROTECT_AFFECTED)
+     || (gExMoveFlags & EX_FLAG_IGNORE_PROTECT))
+        return FALSE;
+    GET_MOVE_TYPE(gCurrentMove, moveType);
+    if (IS_TYPE_PHYSICAL(moveType))
+        return (gExScreenBlockSides & EX_SCREEN_BLOCK_PHYSICAL(side)) != 0;
+    else
+        return (gExScreenBlockSides & EX_SCREEN_BLOCK_SPECIAL(side)) != 0;
+}
 
 #define LEVEL_UP_BANNER_START 416
 #define LEVEL_UP_BANNER_END   512
 
 #define TAG_LVLUP_BANNER_MON_ICON 55130
 
-static bool8 IsTwoTurnsMove(u16 move);
+bool8 IsTwoTurnsMove(u16 move);
 static void TrySetDestinyBondToHappen(void);
 static u8 AttacksThisTurn(u8 battler, u16 move); // Note: returns 1 if it's a charging turn, otherwise 2.
 static void CheckWonderGuardAndLevitate(void);
@@ -1149,7 +1186,12 @@ static bool8 JumpIfMoveAffectedByProtect(u16 move)
 
 static bool8 AccuracyCalcHelper(u16 move)
 {
-    if (gStatuses3[gBattlerTarget] & STATUS3_ALWAYS_HITS && gDisableStructs[gBattlerTarget].battlerWithSureHit == gBattlerAttacker)
+    // EX_FLAG_SURE_HIT works like Lock-On, and so does an EX_FLAG_TRAP_LOCK_ON trap against the Pokémon that set it
+    if ((gStatuses3[gBattlerTarget] & STATUS3_ALWAYS_HITS && gDisableStructs[gBattlerTarget].battlerWithSureHit == gBattlerAttacker)
+     || (gExMoveFlags & EX_FLAG_SURE_HIT)
+     || ((gExLockOnTrapBattlers & gBitTable[gBattlerTarget])
+      && (gBattleMons[gBattlerTarget].status2 & STATUS2_WRAPPED)
+      && gBattleStruct->wrappedBy[gBattlerTarget] == gBattlerAttacker))
     {
         JumpIfMoveFailed(7, move);
         return TRUE;
@@ -1469,8 +1511,10 @@ void AI_CalcDmg(u8 attacker, u8 defender)
 
 static void ModulateDmgByType(u8 multiplier)
 {
-    // Some EX moves treat resisted hits as neutral (see VARIOUS_IGNORE_RESISTANCES)
-    if (multiplier == TYPE_MUL_NOT_EFFECTIVE && gIgnoreResistances)
+    // Some EX moves treat resisted hits as neutral (EX_FLAG_IGNORE_RESISTANCES), or immune ones (EX_FLAG_IGNORE_IMMUNITY)
+    if (multiplier == TYPE_MUL_NOT_EFFECTIVE && (gExMoveFlags & EX_FLAG_IGNORE_RESISTANCES))
+        return;
+    if (multiplier == TYPE_MUL_NO_EFFECT && (gExMoveFlags & EX_FLAG_IGNORE_IMMUNITY))
         return;
 
     gBattleMoveDamage = gBattleMoveDamage * multiplier / 10;
@@ -1518,8 +1562,8 @@ static void Cmd_typecalc(void)
 
     GET_MOVE_TYPE(gCurrentMove, moveType);
 
-    // check stab
-    if (IS_BATTLER_OF_TYPE(gBattlerAttacker, moveType))
+    // check stab (not for EX_FLAG_NO_STAB)
+    if (IS_BATTLER_OF_TYPE(gBattlerAttacker, moveType) && !(gExMoveFlags & EX_FLAG_NO_STAB))
     {
         gBattleMoveDamage = gBattleMoveDamage * 15;
         gBattleMoveDamage = gBattleMoveDamage / 10;
@@ -2089,6 +2133,31 @@ static void Cmd_waitanimation(void)
         gBattlescriptCurrInstr++;
 }
 
+// The current move's type, for recording physical or special damage for Counter/Mirror Coat.
+// For moves with a dynamic type that have F_DYNAMIC_TYPE_IGNORE_PHYSICALITY set (in vanilla, just Hidden Power) this will ignore
+// the dynamic type and use the move's base type instead, meaning (as a Normal type) Hidden Power will only ever trigger Counter.
+// It also means that Hidden Power Fire is unable to defrost targets.
+static u32 GetDamageMoveType(void)
+{
+    if (gBattleStruct->dynamicMoveType == 0)
+        return gBattleMoves[gCurrentMove].type;
+    else if (!(gBattleStruct->dynamicMoveType & F_DYNAMIC_TYPE_IGNORE_PHYSICALITY))
+        return gBattleStruct->dynamicMoveType & DYNAMIC_TYPE_MASK;
+    else
+        return gBattleMoves[gCurrentMove].type;
+}
+
+// Whether this hit on the active battler does no damage, as it's going to EX Counter or EX Mirror Coat it (IsShieldedByExCounter)
+static bool32 IsHitShieldedByExCounter(void)
+{
+    if (gBattlescriptCurrInstr[1] != BS_TARGET
+     || (gHitMarker & HITMARKER_PASSIVE_HP_UPDATE)
+     || gCurrentMove == MOVE_PAIN_SPLIT
+     || gBattleMoveDamage <= 0)
+        return FALSE;
+    return IsShieldedByExCounter(gActiveBattler, GetDamageMoveType());
+}
+
 static void Cmd_healthbarupdate(void)
 {
     if (gBattleControllerExecFlags)
@@ -2109,6 +2178,8 @@ static void Cmd_healthbarupdate(void)
             s32 currDmg = gBattleMoveDamage;
             s32 maxPossibleDmgValue = 10000; // not present in R/S, ensures that huge damage values don't change sign
 
+            if (IsHitShieldedByExCounter())
+                currDmg = 0;
             if (currDmg <= maxPossibleDmgValue)
                 healthValue = currDmg;
             else
@@ -2158,20 +2229,13 @@ static bool32 ShouldSubstituteWallShatter(u8 battler, u8 moveType)
 static void Cmd_datahpupdate(void)
 {
     u32 moveType;
+    bool32 shieldedByExCounter;
 
     if (gBattleControllerExecFlags)
         return;
 
-    // moveType will be used later to record for Counter/Mirror Coat whether this was physical or special damage.
-    // For moves with a dynamic type that have F_DYNAMIC_TYPE_IGNORE_PHYSICALITY set (in vanilla, just Hidden Power) this will ignore
-    // the dynamic type and use the move's base type instead, meaning (as a Normal type) Hidden Power will only ever trigger Counter.
-    // It also means that Hidden Power Fire is unable to defrost targets.
-    if (gBattleStruct->dynamicMoveType == 0)
-        moveType = gBattleMoves[gCurrentMove].type;
-    else if (!(gBattleStruct->dynamicMoveType & F_DYNAMIC_TYPE_IGNORE_PHYSICALITY))
-        moveType = gBattleStruct->dynamicMoveType & DYNAMIC_TYPE_MASK;
-    else
-        moveType = gBattleMoves[gCurrentMove].type;
+    // moveType will be used later to record for Counter/Mirror Coat whether this was physical or special damage
+    moveType = GetDamageMoveType();
 
     if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
     {
@@ -2245,20 +2309,24 @@ static void Cmd_datahpupdate(void)
                         gBideTarget[gActiveBattler] = gBattlerTarget;
                 }
 
-                // Deal damage to the battler
+                // Deal damage to the battler. EX Counter and EX Mirror Coat take none of the damage they'll counter,
+                // but it's still recorded below for them to return
+                shieldedByExCounter = IsHitShieldedByExCounter();
                 if (gBattleMons[gActiveBattler].hp > gBattleMoveDamage)
                 {
-                    gBattleMons[gActiveBattler].hp -= gBattleMoveDamage;
+                    if (!shieldedByExCounter)
+                        gBattleMons[gActiveBattler].hp -= gBattleMoveDamage;
                     gHpDealt = gBattleMoveDamage;
                 }
                 else
                 {
                     gHpDealt = gBattleMons[gActiveBattler].hp;
-                    gBattleMons[gActiveBattler].hp = 0;
+                    if (!shieldedByExCounter)
+                        gBattleMons[gActiveBattler].hp = 0;
                 }
 
                 // Record damage for Shell Bell
-                if (gSpecialStatuses[gActiveBattler].shellBellDmg == 0 && !(gHitMarker & HITMARKER_PASSIVE_HP_UPDATE))
+                if (gSpecialStatuses[gActiveBattler].shellBellDmg == 0 && !(gHitMarker & HITMARKER_PASSIVE_HP_UPDATE) && !shieldedByExCounter)
                     gSpecialStatuses[gActiveBattler].shellBellDmg = gHpDealt;
 
                 // Note: While physicalDmg/specialDmg below are only distinguished between for Counter/Mirror Coat, they are
@@ -2666,9 +2734,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_STATUS_HAD_NO_EFFECT;
                 RESET_RETURN
             }
-            if (IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_POISON))
+            if (IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_POISON) && !(gExMoveFlags & EX_FLAG_POISON_ANY_TYPE))
                 break;
-            if (IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_STEEL))
+            if (IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_STEEL) && !(gExMoveFlags & EX_FLAG_POISON_ANY_TYPE))
                 break;
             if (gBattleMons[gEffectBattler].status1)
                 break;
@@ -2795,7 +2863,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
             }
             if (gBattleMons[gEffectBattler].status1)
                 break;
-            if (!IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_POISON) && !IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_STEEL))
+            if ((!IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_POISON) && !IS_BATTLER_OF_TYPE(gEffectBattler, TYPE_STEEL)) || (gExMoveFlags & EX_FLAG_POISON_ANY_TYPE))
             {
                 if (gBattleMons[gEffectBattler].ability == ABILITY_IMMUNITY)
                     break;
@@ -2978,6 +3046,10 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     *(gBattleStruct->wrappedMove + gEffectBattler * 2 + 0) = gCurrentMove;
                     *(gBattleStruct->wrappedMove + gEffectBattler * 2 + 1) = gCurrentMove >> 8;
                     *(gBattleStruct->wrappedBy + gEffectBattler) = gBattlerAttacker;
+                    if (gExMoveFlags & EX_FLAG_TRAP_LOCK_ON)
+                        gExLockOnTrapBattlers |= gBitTable[gEffectBattler];
+                    else
+                        gExLockOnTrapBattlers &= ~gBitTable[gEffectBattler];
 
                     BattleScriptPush(gBattlescriptCurrInstr + 1);
                     gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
@@ -3238,6 +3310,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
                     gLockedMoves[gEffectBattler] = gCurrentMove;
                     gBattleMons[gEffectBattler].status2 |= STATUS2_LOCK_CONFUSE_TURN((Random() & 1) + 2); // thrash for 2-3 turns
+                    if (gExMoveFlags & EX_FLAG_CALM_RAMPAGE)
+                        gExCalmRampageBattlers |= gBitTable[gEffectBattler];
                 }
                 break;
             case MOVE_EFFECT_KNOCK_OFF:
@@ -3287,16 +3361,17 @@ void SetMoveEffect(bool8 primary, u8 certain)
 
 static void Cmd_seteffectwithchance(void)
 {
-    u32 percentChance;
+    // Some EX moves have their own chance (gExEffectChance)
+    u32 percentChance = gExEffectChance ? gExEffectChance : gBattleMoves[gCurrentMove].secondaryEffectChance;
 
     if (gBattleMons[gBattlerAttacker].ability == ABILITY_SERENE_GRACE
      || gBattleMons[gBattlerAttacker].ability == ABILITY_WISHMAKER) // Works like Serene Grace too
-        percentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
-    else
-        percentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
+        percentChance *= 2;
     // An EX move with no EX effect of its own is 1.5x as likely to get its effect (not a move used in its place)
     if (gBattleMoveIsEx && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker] && !BattlerHasExMoveEffect(gBattlerAttacker, gCurrentMove))
         percentChance = percentChance * 3 / 2;
+    if (gExMoveFlags & EX_FLAG_SURE_EFFECT)
+        percentChance = 100;
 
     if (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN
         && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
@@ -7169,14 +7244,6 @@ static void Cmd_various(void)
     case VARIOUS_CANCEL_SWITCH:
         *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
         break;
-    case VARIOUS_IGNORE_RESISTANCES:
-        // The next typecalc of this move treats resisted hits as neutral
-        gIgnoreResistances = TRUE;
-        break;
-    case VARIOUS_EX_NO_HP_COST:
-        // This move's setsubstitute or tryexplosion costs the user no HP
-        gExNoHpCost = TRUE;
-        break;
     // EX move bonuses (see gExMoveBonuses in data/ex_battle_scripts.s)
     case VARIOUS_EX_BONUS_END:
         RestoreExMoveBonusState();
@@ -7272,6 +7339,77 @@ static void Cmd_various(void)
         // The music stays paused after it, for the EX logo (see VARIOUS_EX_TRAINING_MUSIC)
         PlayFanfareThenSilence(MUS_OBTAIN_B_POINTS);
         break;
+    case VARIOUS_EX_SET_WEATHER:
+        // EX_FLAG_SET_WEATHER: sets the weather of the move's type, like the move that does, with its animation in
+        // sB_ANIM_ARG1. gBattleCommunication is FALSE if its type has no weather, or it's already that weather
+        gBattleCommunication[0] = FALSE;
+        for (i = 0; i < ARRAY_COUNT(sExMoveWeathers); i++)
+        {
+            if (sExMoveWeathers[i].type == gBattleMoves[gCurrentMove].type)
+            {
+                if (!(gBattleWeather & sExMoveWeathers[i].anyWeather))
+                {
+                    gBattleWeather = sExMoveWeathers[i].weather;
+                    gWishFutureKnock.weatherDuration = 5;
+                    gBattleCommunication[MULTISTRING_CHOOSER] = sExMoveWeathers[i].message;
+                    gBattleScripting.animArg1 = sExMoveWeathers[i].anim;
+                    gBattleCommunication[0] = TRUE;
+                }
+                break;
+            }
+        }
+        break;
+    case VARIOUS_EX_TRY_BONUS:
+        // Starts an EX bonus that's waiting for attackstring, for scripts without one (the charging turn of a two-turn move).
+        // The bonus script comes back to this command, which then moves on as the bonus isn't waiting anymore
+        if (TryStartExMoveBonus())
+            return;
+        break;
+    case VARIOUS_EX_SWAP_STATS:
+        // EX_BONUS_SWAP_STATS: the battler and the target swap their stat changes
+        for (i = 0; i < NUM_BATTLE_STATS; i++)
+        {
+            s8 stage = gBattleMons[gActiveBattler].statStages[i];
+
+            gBattleMons[gActiveBattler].statStages[i] = gBattleMons[gBattlerTarget].statStages[i];
+            gBattleMons[gBattlerTarget].statStages[i] = stage;
+        }
+        break;
+    case VARIOUS_EX_TRANSFER_STATUS:
+        // EX_FLAG_TRANSFER_STATUS: sets the move effect to give the target the battler's burn, poison or paralysis,
+        // for seteffectwithchance. Bad poison stays bad poison, starting over
+        if (gBattleMons[gActiveBattler].status1 & STATUS1_BURN)
+            gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_BURN | MOVE_EFFECT_CERTAIN;
+        else if (gBattleMons[gActiveBattler].status1 & STATUS1_TOXIC_POISON)
+            gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_TOXIC | MOVE_EFFECT_CERTAIN;
+        else if (gBattleMons[gActiveBattler].status1 & STATUS1_POISON)
+            gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON | MOVE_EFFECT_CERTAIN;
+        else if (gBattleMons[gActiveBattler].status1 & STATUS1_PARALYSIS)
+            gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS | MOVE_EFFECT_CERTAIN;
+        else
+            gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
+        break;
+    case VARIOUS_EX_PROTECT:
+        // EX_BONUS_PROTECT: protected for the rest of the turn, like Protect. It always works, and isn't a Protect use
+        gProtectStructs[gActiveBattler].protected = 1;
+        break;
+    case VARIOUS_EX_RESET_SLEEP:
+        // EX_BONUS_DEEPER_SLEEP: rerolls a sleeping battler's sleep, like it was just put to sleep (2-5 turns).
+        // gBattleCommunication is FALSE if it isn't asleep
+        gBattleCommunication[0] = FALSE;
+        if (gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP)
+        {
+            gBattleMons[gActiveBattler].status1 &= ~STATUS1_SLEEP;
+            gBattleMons[gActiveBattler].status1 |= STATUS1_SLEEP_TURN((Random() & 3) + 2);
+            BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+            MarkBattlerForControllerExec(gActiveBattler);
+            gBattleCommunication[0] = TRUE;
+        }
+        break;
+    case VARIOUS_EX_USE_USUAL_VERSION:
+        // A species' own EX version (data/pokemon/ex_species_moves.h) falls back to the move's EX version for everyone
+        StartUsualExMoveVersion();
+        return;
     case VARIOUS_EX_TRAINING_LOGO:
         // The EX logo slams into the healthbox of the Pokémon that unlocked its EX form, if it's on the field
         gActiveBattler = GetExpGetterBattlerOnField();
@@ -7349,8 +7487,8 @@ static void Cmd_tryexplosion(void)
 
     if (gBattlerTarget == gBattlersCount)
     {
-        // Success, no battlers with Damp. Drop user's HP bar to 0, unless it costs no HP (VARIOUS_EX_NO_HP_COST)
-        if (!gExNoHpCost)
+        // Success, no battlers with Damp. Drop user's HP bar to 0, unless it costs no HP (EX_FLAG_NO_HP_COST)
+        if (!(gExMoveFlags & EX_FLAG_NO_HP_COST))
         {
             gActiveBattler = gBattlerAttacker;
             gBattleMoveDamage = gBattleMons[gActiveBattler].hp;
@@ -7422,7 +7560,10 @@ static void Cmd_tryhealhalfhealth(void)
     if (gBattlescriptCurrInstr[5] == BS_ATTACKER)
         gBattlerTarget = gBattlerAttacker;
 
-    gBattleMoveDamage = gBattleMons[gBattlerTarget].maxHP / 2;
+    if (gExMoveFlags & EX_FLAG_BIG_HEAL) // EX Soft-Boiled heals 3/4
+        gBattleMoveDamage = gBattleMons[gBattlerTarget].maxHP * 3 / 4;
+    else
+        gBattleMoveDamage = gBattleMons[gBattlerTarget].maxHP / 2;
     if (gBattleMoveDamage == 0)
         gBattleMoveDamage = 1;
     gBattleMoveDamage *= -1;
@@ -7499,6 +7640,10 @@ static void Cmd_setrain(void)
 
 static void Cmd_setreflect(void)
 {
+    // EX Reflect blocks physical moves on the user's side this turn, even if Reflect is already up
+    if (gExMoveFlags & EX_FLAG_SCREEN_BLOCK)
+        gExScreenBlockSides |= EX_SCREEN_BLOCK_PHYSICAL(GET_BATTLER_SIDE(gBattlerAttacker));
+
     if (gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] & SIDE_STATUS_REFLECT)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
@@ -7547,6 +7692,7 @@ static void Cmd_setseeded(void)
     {
         gStatuses3[gBattlerTarget] |= gBattlerAttacker;
         gStatuses3[gBattlerTarget] |= STATUS3_LEECHSEED;
+        gExLeechSeedTurns[gBattlerTarget] = (gExMoveFlags & EX_FLAG_GROWING_SEED) ? 1 : 0;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_LEECH_SEED_SET;
     }
 
@@ -7958,6 +8104,10 @@ static void Cmd_setmultihitcounter(void)
     {
         gMultiHitCounter = gBattlescriptCurrInstr[1];
     }
+    else if (gExMoveFlags & EX_FLAG_FOUR_HITS)
+    {
+        gMultiHitCounter = 4;
+    }
     else
     {
         gMultiHitCounter = Random() & 3;
@@ -7997,6 +8147,10 @@ static bool8 TryDoForceSwitchOut(void)
     
     if (gCurrentMove == MOVE_FLUSH) {
     gBattlescriptCurrInstr = BattleScript_SuccessForceOut2;
+    return TRUE;
+    }
+    else if (gExMoveFlags & EX_FLAG_FORCE_SWITCH) {
+    gBattlescriptCurrInstr = BattleScript_SuccessForceOutNoAnim; // The move's animation already played with its hit
     return TRUE;
     }
     else {
@@ -8290,6 +8444,10 @@ static void Cmd_givepaydaymoney(void)
 
 static void Cmd_setlightscreen(void)
 {
+    // EX Light Screen blocks special moves on the user's side this turn, even if Light Screen is already up
+    if (gExMoveFlags & EX_FLAG_SCREEN_BLOCK)
+        gExScreenBlockSides |= EX_SCREEN_BLOCK_SPECIAL(GET_BATTLER_SIDE(gBattlerAttacker));
+
     if (gSideStatuses[GET_BATTLER_SIDE(gBattlerAttacker)] & SIDE_STATUS_LIGHTSCREEN)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
@@ -8694,8 +8852,8 @@ static void Cmd_setsubstitute(void)
     {
         SetSubstituteWall();
     }
-    // A Substitute that costs no HP doesn't need enough to spare (see BattleScript_ExSubstituteNoCost)
-    else if (gBattleMons[gBattlerAttacker].hp <= hp && !gExNoHpCost)
+    // A Substitute that costs no HP doesn't need enough to spare (EX_FLAG_NO_HP_COST)
+    else if (gBattleMons[gBattlerAttacker].hp <= hp && !(gExMoveFlags & EX_FLAG_NO_HP_COST))
     {
         gBattleMoveDamage = 0;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SUBSTITUTE_FAILED;
@@ -8709,7 +8867,7 @@ static void Cmd_setsubstitute(void)
         gBattleMons[gBattlerAttacker].status2 |= STATUS2_SUBSTITUTE;
         gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_WRAPPED;
         gDisableStructs[gBattlerAttacker].substituteHP = gBattleMoveDamage;
-        if (gExNoHpCost)
+        if (gExMoveFlags & EX_FLAG_NO_HP_COST)
             gBattleMoveDamage = 0;
         gDisableStructs[gBattlerAttacker].substituteWall = SUBSTITUTE_WALL_NONE;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_SET_SUBSTITUTE;
@@ -9101,7 +9259,7 @@ static void Cmd_copymovepermanently(void)
     }
 }
 
-static bool8 IsTwoTurnsMove(u16 move)
+bool8 IsTwoTurnsMove(u16 move)
 {
     if (gBattleMoves[move].effect == EFFECT_SKULL_BASH
      || gBattleMoves[move].effect == EFFECT_RAZOR_WIND
@@ -10276,6 +10434,8 @@ static void Cmd_settaunt(void)
     {
         gDisableStructs[gBattlerTarget].tauntTimer = 2;
         gDisableStructs[gBattlerTarget].tauntTimer2 = 2;
+        // EX Taunt keeps it taunted until the user switches out or faints, rather than counting down (see EndExLastingTaunts)
+        gExLastingTauntBy[gBattlerTarget] = (gExMoveFlags & EX_FLAG_LASTING_TAUNT) ? gBattlerAttacker + 1 : 0;
         gBattlescriptCurrInstr += 5;
     }
     else
@@ -10995,7 +11155,7 @@ static void Cmd_settypewithmove(void)
         type = TYPE_PSYCHIC;
         break;
     case MOVE_ATTUNEMENT:
-    case MOVE_EXPLOSION: // Banette's EX Explosion (BattleScript_ExExplosionBanette)
+    case MOVE_SELF_DESTRUCT: // Banette's EX Self-Destruct (BattleScript_ExSelfDestructBanette)
         type = TYPE_GHOST;
         break;
     default:

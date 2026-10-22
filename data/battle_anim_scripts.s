@@ -486,6 +486,7 @@ gBattleAnims_General::
 	.4byte General_SmokeballEscapeTrainer   @ B_ANIM_SMOKEBALL_ESCAPE_TRAINER
 	.4byte General_ExFlash                  @ B_ANIM_EX_FLASH
 	.4byte General_ExMastery                @ B_ANIM_EX_MASTERY
+	.4byte General_SpikesBurst              @ B_ANIM_SPIKES_BURST
 
 	.align 2
 gBattleAnims_Special::
@@ -9273,6 +9274,18 @@ General_ExMastery:
 	createvisualtask AnimTask_ExSparkles, 5
 	waitforvisualfinish
 	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 2, 12, 0, RGB_CYAN
+	waitforvisualfinish
+	end
+
+@ Spikes burst out of the Pokémon that was hit, arc up, and land scattered around its feet, like Spikes'
+@ animation. As a general animation, the attacker and target are both the Pokémon that was hit
+General_SpikesBurst:
+	loadspritegfx ANIM_TAG_SPIKES
+	playsewithpan SE_M_JUMP_KICK, SOUND_PAN_ATTACKER
+	createsprite gSpikesSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, -24, 24, 30
+	createsprite gSpikesSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 0, 24, 30
+	createsprite gSpikesSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 24, 24, 30
+	waitplaysewithpan SE_M_HORN_ATTACK, SOUND_PAN_ATTACKER, 28
 	waitforvisualfinish
 	end
 

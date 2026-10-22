@@ -188,8 +188,14 @@ EWRAM_DATA u8 gBattleExBonusPending = 0; // The move gets an EX bonus at its att
 EWRAM_DATA u8 gExHealReplacementSides = 0; // Sides whose next Pokémon to switch in gets its HP restored (EX_BONUS_HEAL_REPLACEMENT)
 EWRAM_DATA u8 gSureCritBattlers = 0; // Battlers whose next damaging move is a guaranteed critical hit (Foresight)
 EWRAM_DATA u8 gThisMoveSureCrit = 0; // The current move is that guaranteed critical hit
-EWRAM_DATA u8 gIgnoreResistances = 0;   // The next typecalc treats resisted hits as neutral
-EWRAM_DATA u8 gExNoHpCost = 0;          // The current move's Substitute or Explosion costs the user no HP (VARIOUS_EX_NO_HP_COST)
+EWRAM_DATA u32 gExMoveFlags = 0;       // EX_FLAG_* for the current move (see exmove in data/ex_battle_scripts.s)
+EWRAM_DATA u8 gExExtraMoveEffect = 0;  // The current move's extra move effect (struct ExMove), with MOVE_EFFECT_CERTAIN, or 0
+EWRAM_DATA u8 gExEffectChance = 0;     // If set, the current move's secondary effect chance instead of its usual one
+EWRAM_DATA u8 gExCalmRampageBattlers = 0; // Battlers whose rampage won't confuse them when it ends (EX_FLAG_CALM_RAMPAGE)
+EWRAM_DATA u8 gExLeechSeedTurns[MAX_BATTLERS_COUNT] = {0}; // Each seeded battler's EX Leech Seed turn (1-15), or 0 for a regular one (EX_FLAG_GROWING_SEED)
+EWRAM_DATA u8 gExLockOnTrapBattlers = 0; // Battlers trapped by an EX_FLAG_TRAP_LOCK_ON move, which can't dodge the Pokémon trapping them
+EWRAM_DATA u8 gExScreenBlockSides = 0; // EX_SCREEN_BLOCK_* of each side, which blocks physical or special moves this turn (EX_FLAG_SCREEN_BLOCK)
+EWRAM_DATA u8 gExLastingTauntBy[MAX_BATTLERS_COUNT] = {0}; // For each battler, 1 + the battler whose EX Taunt keeps it taunted, or 0 (EX_FLAG_LASTING_TAUNT)
 EWRAM_DATA u8 gExMoveChosenBits = 0;    // Battlers that chose to use their move as an EX move this turn
 EWRAM_DATA u8 gExMoveUsedSlots[MAX_BATTLERS_COUNT] = {0}; // Each battler's move slots that were used as EX moves, which can't be again
                                                           // until it switches out, KOs an opponent, or uses its other moves (see UpdateExMoveLocks)
@@ -3199,6 +3205,10 @@ static void BattleStartClearSetData(void)
     SpecialStatusesClear();
     gExHealReplacementSides = 0;
     gSureCritBattlers = 0;
+    gExCalmRampageBattlers = 0;
+    memset(gExLeechSeedTurns, 0, sizeof(gExLeechSeedTurns));
+    gExLockOnTrapBattlers = 0;
+    memset(gExLastingTauntBy, 0, sizeof(gExLastingTauntBy));
     memset(gExMoveUsedSlots, 0, sizeof(gExMoveUsedSlots));
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
@@ -3313,6 +3323,24 @@ static void BattleStartClearSetData(void)
     gBattleStruct->arenaLostOpponentMons = 0;
 }
 
+// The battler is leaving the field (switching out or fainting): the EX Taunts it set end (EX_FLAG_LASTING_TAUNT),
+// and so does its own record of being taunted by one
+static void EndExLastingTaunts(u8 battler)
+{
+    s32 i;
+
+    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+    {
+        if (gExLastingTauntBy[i] == battler + 1)
+        {
+            gDisableStructs[i].tauntTimer = 0;
+            gDisableStructs[i].tauntTimer2 = 0;
+            gExLastingTauntBy[i] = 0;
+        }
+    }
+    gExLastingTauntBy[battler] = 0;
+}
+
 void SwitchInClearSetData(void)
 {
     struct DisableStruct disableStructCopy = gDisableStructs[gActiveBattler];
@@ -3321,6 +3349,9 @@ void SwitchInClearSetData(void)
 
     gSureCritBattlers &= ~gBitTable[gActiveBattler]; // Foresight's guaranteed critical hit doesn't carry over
     gExMoveUsedSlots[gActiveBattler] = 0;
+    gExCalmRampageBattlers &= ~gBitTable[gActiveBattler];
+    EndExLastingTaunts(gActiveBattler);
+    gExLockOnTrapBattlers &= ~gBitTable[gActiveBattler];
 
     if (gBattleMoves[gCurrentMove].effect != EFFECT_BATON_PASS)
     {
@@ -3433,6 +3464,8 @@ void FaintClearSetData(void)
 {
     s32 i;
     u8 *ptr;
+
+    EndExLastingTaunts(gActiveBattler);
 
     for (i = 0; i < NUM_BATTLE_STATS; i++)
         gBattleMons[gActiveBattler].statStages[i] = DEFAULT_STAT_STAGE;
@@ -5147,6 +5180,8 @@ static void TurnValuesCleanUp(bool8 var0)
 {
     s32 i;
     u8 *dataPtr;
+
+    gExScreenBlockSides = 0; // Only lasts for the turn, like Protect
 
     for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
     {

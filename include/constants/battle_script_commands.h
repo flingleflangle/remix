@@ -110,24 +110,59 @@
 #define VARIOUS_TRY_BLOCK_SWITCH                29
 #define VARIOUS_SET_TARGET_TO_PARTNER           30
 #define VARIOUS_CANCEL_SWITCH                   31
-#define VARIOUS_IGNORE_RESISTANCES              32
-#define VARIOUS_EX_BONUS_END                    33
-#define VARIOUS_EX_RESET_LOWERED_STATS          34
-#define VARIOUS_EX_BOOST_CRITS                  35
-#define VARIOUS_EX_FOLLOW_ME                    36
-#define VARIOUS_EX_SET_HEAL                     37
-#define VARIOUS_EX_HEAL_REPLACEMENT             38
-#define VARIOUS_EX_STATS_UP_ANIM                39
-#define VARIOUS_EX_NEXT_BONUS_STAT              40
-#define VARIOUS_SET_SURE_CRIT                   41
-#define VARIOUS_EX_TRAINING_ANIM                42
-#define VARIOUS_EX_TRAINING_UPDATE_FORM         43
-#define VARIOUS_WAIT_FANFARE                    44
-#define VARIOUS_EX_TRAINING_MUSIC               45
-#define VARIOUS_WAIT_EX_LOGO                    46
-#define VARIOUS_EX_TRAINING_JINGLE              47
-#define VARIOUS_EX_TRAINING_LOGO                48
-#define VARIOUS_EX_NO_HP_COST                   49
+#define VARIOUS_EX_BONUS_END                    32
+#define VARIOUS_EX_RESET_LOWERED_STATS          33
+#define VARIOUS_EX_BOOST_CRITS                  34
+#define VARIOUS_EX_FOLLOW_ME                    35
+#define VARIOUS_EX_SET_HEAL                     36
+#define VARIOUS_EX_HEAL_REPLACEMENT             37
+#define VARIOUS_EX_STATS_UP_ANIM                38
+#define VARIOUS_EX_NEXT_BONUS_STAT              39
+#define VARIOUS_SET_SURE_CRIT                   40
+#define VARIOUS_EX_TRAINING_ANIM                41
+#define VARIOUS_EX_TRAINING_UPDATE_FORM         42
+#define VARIOUS_WAIT_FANFARE                    43
+#define VARIOUS_EX_TRAINING_MUSIC               44
+#define VARIOUS_WAIT_EX_LOGO                    45
+#define VARIOUS_EX_TRAINING_JINGLE              46
+#define VARIOUS_EX_TRAINING_LOGO                47
+#define VARIOUS_EX_USE_USUAL_VERSION            48
+#define VARIOUS_EX_SET_WEATHER                  49
+#define VARIOUS_EX_TRY_BONUS                    50
+#define VARIOUS_EX_RESET_SLEEP                  51
+#define VARIOUS_EX_PROTECT                      52
+#define VARIOUS_EX_TRANSFER_STATUS              53
+#define VARIOUS_EX_SWAP_STATS                   54
+
+// EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
+// They last for the move that set them (gExMoveFlags)
+#define EX_FLAG_IGNORE_RESISTANCES  (1 << 0) // Resisted hits do neutral damage
+#define EX_FLAG_NO_HP_COST          (1 << 1) // Substitute and Explosion cost the user no HP
+#define EX_FLAG_SURE_HIT            (1 << 2) // Can't miss, like after Lock-On
+#define EX_FLAG_IGNORE_PROTECT      (1 << 3) // Hits through Protect, but not Detect
+#define EX_FLAG_SURE_EFFECT         (1 << 4) // Its secondary effect always happens
+#define EX_FLAG_POISON_ANY_TYPE     (1 << 5) // Can poison Poison and Steel types, and badly poison them
+#define EX_FLAG_CALM_RAMPAGE        (1 << 6) // Its rampage doesn't confuse the user when it ends (see gExCalmRampageBattlers)
+#define EX_FLAG_LOCK_ON             (1 << 7) // After it hits, the user's next move against the target can't miss
+#define EX_FLAG_IGNORE_IMMUNITY     (1 << 8) // Hits Pokémon immune to its type, for neutral damage, like Normal against Ghost or Electric against Ground
+#define EX_FLAG_SPIKES              (1 << 9) // Scatters a layer of Spikes on the foe's side after it hits
+#define EX_FLAG_FOUR_HITS           (1 << 10) // A move that hits 2-5 times always hits 4 times, like EX Bullet Seed
+#define EX_FLAG_LEECH_SEED          (1 << 11) // Seeds the target like Leech Seed after it hits
+#define EX_FLAG_GROWING_SEED        (1 << 12) // Its Leech Seed drains more each turn, like Toxic, then wears off (see gExLeechSeedTurns)
+#define EX_FLAG_SET_WEATHER         (1 << 13) // After it hits, sets the weather of its type: Fire sun, Water rain, Ground sandstorm, Ice hail
+#define EX_FLAG_TRAP_LOCK_ON        (1 << 14) // While its trap lasts, the user's moves can't miss the trapped Pokémon (see gExLockOnTrapBattlers)
+#define EX_FLAG_FORCE_SWITCH        (1 << 15) // After it hits, the target is forced out, like Roar
+#define EX_FLAG_SCREEN_BLOCK        (1 << 16) // Reflect and Light Screen also block physical or special moves on the user's side this turn, like Protect (gExScreenBlockSides)
+#define EX_FLAG_COUNTER_SHIELD      (1 << 17) // Counter or Mirror Coat: the user takes no damage it'll counter this turn, before it moves (IsShieldedByExCounter)
+#define EX_FLAG_NO_STAB             (1 << 18) // Doesn't get STAB, even if the user shares its type
+#define EX_FLAG_EFFECT_EACH_HIT     (1 << 19) // A multi-hit move rolls its chance effect after every hit, not once after them all
+#define EX_FLAG_TRANSFER_STATUS     (1 << 20) // After it hits, passes the user's burn, poison or paralysis to the target, and cures the user
+#define EX_FLAG_SWITCH_OUT_USER     (1 << 21) // Afterwards, the user switches out, like Baton Pass without passing anything on
+#define EX_FLAG_BIG_HEAL            (1 << 22) // Its half-HP heal (tryhealhalfhealth) restores 3/4 of the user's max HP instead
+#define EX_FLAG_WEAKEN_REPLACEMENT  (1 << 23) // When it forces the target out in a trainer battle, the Pokémon dragged in has its Attack lowered by 1
+#define EX_FLAG_FORCE_OUT_DAMAGE    (1 << 24) // When it forces the target out, the target takes a fixed 30 damage first
+#define EX_FLAG_LASTING_TAUNT       (1 << 25) // Its Taunt lasts until the user switches out or faints (gExLastingTauntBy)
+#define EX_FLAG_CHARGE_USER         (1 << 26) // After it hits, the user is charged like after Charge (BattleScript_EffectThunderCrash)
 
 // EX move bonuses, which status moves get before their effect when used as EX moves (see gExMoveBonuses in data/ex_battle_scripts.s)
 #define EX_BONUS_STAT_UP          0 // Raises one of the user's stats
@@ -139,6 +174,13 @@
 #define EX_BONUS_RECOVER_HP       6 // Restores some of the user's HP: 1/stages of its max HP (half if 0)
 #define EX_BONUS_HEAL_REPLACEMENT 7 // Fully restores the HP of the next Pokemon to switch in on the user's side
 #define EX_BONUS_STATS_UP         8 // Raises several of the user's stats (stat is a mask of BIT_*), each by stages
+#define EX_BONUS_FLINCH           9 // Makes the target flinch, if it hasn't moved yet this turn
+#define EX_BONUS_CURE_STATUS      10 // Cures the user's burn, poison or paralysis, like Refresh
+#define EX_BONUS_DEEPER_SLEEP     11 // Rerolls a sleeping target's sleep, like it was just put to sleep
+#define EX_BONUS_TAUNT            12 // Taunts the target, like Taunt
+#define EX_BONUS_COPY_STATS       13 // Copies the target's stat changes, like Psych Up
+#define EX_BONUS_PROTECT          14 // Protects the user for the rest of the turn, like Protect
+#define EX_BONUS_SWAP_STATS       15 // Swaps the user's and the target's stat changes
 
 // Cmd_manipulatedmg
 #define DMG_CHANGE_SIGN            0

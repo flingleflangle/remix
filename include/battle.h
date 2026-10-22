@@ -672,8 +672,18 @@ extern u8 gThisMoveSureCrit;
 #define EX_ANIM_NONE       0
 #define EX_ANIM_EX_MOVE    1 // EXMove flash, or the animation's own EX version (chooseEXanimation)
 #define EX_ANIM_FLASH_ONLY 2 // EXMove flash before the regular animation, for EX upgrades
-extern u8 gIgnoreResistances;
-extern u8 gExNoHpCost;
+extern u32 gExMoveFlags;
+extern u8 gExExtraMoveEffect;
+extern u8 gExEffectChance;
+extern u8 gExCalmRampageBattlers;
+extern u8 gExLeechSeedTurns[MAX_BATTLERS_COUNT];
+extern u8 gExLockOnTrapBattlers;
+extern u8 gExScreenBlockSides;
+extern u8 gExLastingTauntBy[MAX_BATTLERS_COUNT];
+
+// gExScreenBlockSides bits for a side, from EX Reflect and EX Light Screen
+#define EX_SCREEN_BLOCK_PHYSICAL(side) (1 << ((side) * 2))
+#define EX_SCREEN_BLOCK_SPECIAL(side)  (1 << ((side) * 2 + 1))
 extern u8 gExMoveChosenBits;
 extern u8 gExMoveUsedSlots[MAX_BATTLERS_COUNT];
 extern struct BattleOddsModifierButtonPress gBallShakesBData;

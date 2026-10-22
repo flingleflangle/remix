@@ -304,7 +304,15 @@ BattleScript_HitFromAtkAnimation::
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	seteffectwithchance
+	call BattleScript_TryExExtraEffect
 	tryfaintmon BS_TARGET
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_TRANSFER_STATUS, BattleScript_ExTransferStatusAfterHit
+BattleScript_HitTrySetWeather::
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_SET_WEATHER, BattleScript_ExWeatherAfterHit
+BattleScript_HitTryLockOn::
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_LOCK_ON, BattleScript_ExLockOnAfterHit
+BattleScript_HitTryForceSwitch::
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_FORCE_SWITCH, BattleScript_ExForceSwitchAfterHit
 BattleScript_MoveEnd::
 	moveendall
 	end
@@ -804,6 +812,9 @@ StarBarragePostCalc:
 	waitmessage B_WAIT_TIME_LONG
 	jumpifmove MOVE_STAR_BARRAGE, StarBarrageRecoil
 StarBarrageReturn:
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_EFFECT_EACH_HIT, BattleScript_MultiHitAfterEffect
+	seteffectwithchance @ Clears the effect, so the roll after the last hit (BattleScript_MultiHitEnd) does nothing
+BattleScript_MultiHitAfterEffect:
 	printstring STRINGID_EMPTYSTRING3
 	waitmessage 1
 	addbyte sMULTIHIT_STRING + 4, 1
@@ -831,6 +842,20 @@ BattleScript_MultiHitEnd::
 	seteffectwithchance
 	tryfaintmon BS_TARGET
 	tryfaintmon BS_ATTACKER
+	jumpifmovehadnoeffect BattleScript_MultiHitMoveEnd
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_SPIKES, BattleScript_MultiHitTrySeed
+	trysetspikes BattleScript_MultiHitTrySeed @ EX Pin Missile, Spike Cannon, and Icicle Spear
+	playanimation BS_TARGET, B_ANIM_SPIKES_BURST, NULL
+	waitanimation
+	printstring STRINGID_SPIKESSCATTERED
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_MultiHitTrySeed:
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_LEECH_SEED, BattleScript_MultiHitMoveEnd
+	jumpifhasnohp BS_TARGET, BattleScript_MultiHitMoveEnd
+	setseeded @ EX Bullet Seed
+	printfromtable gLeechSeedStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_MultiHitMoveEnd:
 	moveendcase MOVEEND_SYNCHRONIZE_TARGET
 	moveendfrom MOVEEND_IMMUNITY_ABILITIES
 	end
@@ -915,8 +940,10 @@ BattleScript_EffectToxic::
 	jumpifstatus BS_TARGET, STATUS1_POISON, BattleScript_AlreadyPoisoned
 	jumpifstatus BS_TARGET, STATUS1_TOXIC_POISON, BattleScript_AlreadyPoisoned
 	jumpifstatus BS_TARGET, STATUS1_ANY, BattleScript_ButItFailed
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_POISON_ANY_TYPE, BattleScript_ToxicTypeChecked @ EX Toxic
 	jumpiftype BS_TARGET, TYPE_POISON, BattleScript_NotAffected
 	jumpiftype BS_TARGET, TYPE_STEEL, BattleScript_NotAffected
+BattleScript_ToxicTypeChecked:
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
 	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_SafeguardProtected
 	attackanimation
@@ -1049,6 +1076,11 @@ BattleScript_KOFail::
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectRazorWind::
+	@ In a sandstorm, it fires right away, like Solar Beam in sunlight
+	jumpifabilitypresent ABILITY_CLOUD_NINE, BattleScript_RazorWindDecideTurn
+	jumpifabilitypresent ABILITY_AIR_LOCK, BattleScript_RazorWindDecideTurn
+	jumpifhalfword CMP_COMMON_BITS, gBattleWeather, B_WEATHER_SANDSTORM, BattleScript_SolarBeamOnFirstTurn
+BattleScript_RazorWindDecideTurn:
 	jumpifstatus2 BS_ATTACKER, STATUS2_MULTIPLETURNS, BattleScript_TwoTurnMovesSecondTurn
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_NO_ATTACKSTRING, BattleScript_TwoTurnMovesSecondTurn
 	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_RAZOR_WIND
@@ -1078,6 +1110,7 @@ BattleScriptFirstChargingTurn::
 	copybyte cMULTISTRING_CHOOSER, sTWOTURN_STRINGID
 	printfromtable gFirstTurnOfTwoStringIds
 	waitmessage B_WAIT_TIME_LONG
+	various BS_ATTACKER, VARIOUS_EX_TRY_BONUS @ An EX bonus comes on the charging turn, as there's no attackstring
 	return
 
 BattleScript_EffectSuperFang::
@@ -1254,9 +1287,10 @@ NegateRecoil:
 	end
 	
 BattleScript_EffectFinalSting::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
-	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE 
 	attackanimation
 	waitanimation
 	critcalc
@@ -1281,16 +1315,20 @@ BattleScript_EffectFinalSting::
 	
 
 
+@ Fire Crash and Thunder Crash hurt the user if they miss, like Hi Jump Kick (BattleScript_MoveMissedDoDamage).
+@ Fire Crash always makes the target flinch and burns it. Thunder Crash always paralyzes it and makes it flinch
+BattleScript_EffectThunderCrash::
 BattleScript_EffectFireCrash::
 	attackcanceler
+	accuracycheck BattleScript_MoveMissedDoDamage, ACC_CURR_MOVE
 	attackstring
-	accuracycheck BattleScript_MoveMissedDoDamage, ACC_CURR_MOVE 
 	ppreduce
-	attackanimation
-	waitanimation
 	critcalc
 	damagecalc
 	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
 	effectivenesssound
 	hitanimation BS_TARGET
 	waitstate
@@ -1300,40 +1338,24 @@ BattleScript_EffectFireCrash::
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
-	setmoveeffect MOVE_EFFECT_FLINCH 
+	jumpifmovehadnoeffect BattleScript_MoveEnd
+	jumpifmove MOVE_THUNDER_CRASH, BattleScript_ThunderCrashEffects
+	setmoveeffect MOVE_EFFECT_FLINCH
 	seteffectprimary
-	setmoveeffect MOVE_EFFECT_BURN 
+	setmoveeffect MOVE_EFFECT_BURN
 	seteffectsecondary
-	tryfaintmon BS_TARGET
-	end
-	
-BattleScript_EffectThunderCrash::
-	attackcanceler
-	attackstring
-	accuracycheck BattleScript_MoveMissedDoDamage, ACC_CURR_MOVE 
-	ppreduce
-	typecalc
-	jumpifmovehadnoeffect BattleScript_HitFromAtkCanceler
-	attackanimation
-	waitanimation
-	critcalc
-	damagecalc
-	effectivenesssound
-	hitanimation BS_TARGET
-	waitstate
-	healthbarupdate BS_TARGET
-	datahpupdate BS_TARGET
-	critmessage
-	waitmessage B_WAIT_TIME_LONG
-	resultmessage
-	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_CrashMoveEffectsDone
+BattleScript_ThunderCrashEffects:
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	seteffectprimary
 	setmoveeffect MOVE_EFFECT_FLINCH
 	seteffectprimary
+BattleScript_CrashMoveEffectsDone:
+	call BattleScript_TryExExtraEffect @ EX Fire Crash ignites the user
+	call BattleScript_TryExChargeUser @ EX Thunder Crash charges the user
 	tryfaintmon BS_TARGET
-	end
-	
+	goto BattleScript_MoveEnd
+
 BattleScript_EffectStagger::
 	attackcanceler
 	attackstring
@@ -1899,6 +1921,7 @@ BattleScript_EntwineContinue::
 
 BattleScript_EffectBoulderDash::
 	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
 	jumpifstatus2 BS_ATTACKER, STATUS2_DEFENSE_CURL, BoulderDashDoubleDmg
@@ -1921,9 +1944,14 @@ BoulderDashContinue:
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance @ Needle Arm's flinch
 	tryfaintmon BS_TARGET
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_SPIKES, BoulderDashSpikes @ EX Needle Arm always scatters Spikes
 	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_MoveEnd
+BoulderDashSpikes:
 	trysetspikes BattleScript_MoveEnd
+	playanimation BS_TARGET, B_ANIM_SPIKES_BURST, NULL
+	waitanimation
 	printstring STRINGID_SPIKESSCATTERED
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
@@ -2827,6 +2855,7 @@ BattleScript_PerishSongLoop::
 BattleScript_PerishSongLoopIncrement::
 	addbyte sBATTLER, 1
 	jumpifbytenotequal sBATTLER, gBattlersCount, BattleScript_PerishSongLoop
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_SWITCH_OUT_USER, BattleScript_ExSwitchOutUser @ EX Perish Song
 	goto BattleScript_MoveEnd
 
 BattleScript_PerishSongNotAffected::
@@ -5243,6 +5272,10 @@ BattleScript_LeechSeedTurnPrintAndUpdateHp::
 	datahpupdate BS_TARGET
 	printfromtable gLeechSeedStringIds
 	waitmessage B_WAIT_TIME_LONG
+	jumpifstatus3 BS_ATTACKER, STATUS3_LEECHSEED, BattleScript_LeechSeedTurnTryFaint
+	printstring STRINGID_PKMNSHEDLEECHSEED @ An EX Leech Seed wore off after its last drain (EX_FLAG_GROWING_SEED)
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_LeechSeedTurnTryFaint:
 	tryfaintmon BS_ATTACKER
 	tryfaintmon BS_TARGET
 	end2
@@ -5287,6 +5320,8 @@ BattleScript_BideNoEnergyToAttack::
 BattleScript_SuccessForceOut::
 	attackanimation
 	waitanimation
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_FORCE_OUT_DAMAGE, BattleScript_ExForceOutDamage @ EX Whirlwind
+BattleScript_SuccessForceOutNoAnim:: @ For EX_FLAG_FORCE_SWITCH, after the move's hit
 	switchoutabilities BS_TARGET
 	returntoball BS_TARGET
 	waitstate
@@ -5301,6 +5336,7 @@ BattleScript_TrainerBattleForceOut::
 	waitstate
 	printstring STRINGID_PKMNWASDRAGGEDOUT
 	switchineffects BS_TARGET
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_WEAKEN_REPLACEMENT, BattleScript_ExWeakenReplacement @ EX Roar
 	goto BattleScript_MoveEnd
 
 BattleScript_SuccessForceOut2::
@@ -6013,6 +6049,10 @@ BattleScript_MoveEffectPayDay::
 BattleScript_MoveEffectWrap::
 	printfromtable gWrappedStringIds
 	waitmessage B_WAIT_TIME_LONG
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_TRAP_LOCK_ON, BattleScript_MoveEffectWrapEnd
+	printstring STRINGID_PKMNTOOKAIM @ EX Wrap and Clamp can't miss the trapped Pokémon while it lasts
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_MoveEffectWrapEnd:
 	return
 
 BattleScript_MoveEffectConfusion::
