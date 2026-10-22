@@ -294,6 +294,7 @@ void HandleAction_UseMove(void)
          && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker]
          && gCurrentMove == gBattleMons[gBattlerAttacker].moves[gCurrMovePos]
          && gBattleMons[gBattlerAttacker].pp[gCurrMovePos] >= 2
+         && !(gExMoveUsedSlots[gBattlerAttacker] & gBitTable[gCurrMovePos])
          && CanBattlerUseExMove(gBattlerAttacker, gCurrentMove))
         {
             u16 upgrade = GetExMoveUpgrade(gCurrentMove);
@@ -314,8 +315,12 @@ void HandleAction_UseMove(void)
             }
             else
             {
-                // An EX bonus runs from the move's attackstring, along with the EX flash (see TryStartExMoveBonus)
-                gBattleExBonusPending = TRUE;
+                // An EX bonus runs from the move's attackstring, along with the EX flash (see TryStartExMoveBonus).
+                // Without one, the move just gets the EX damage boost (see Cmd_damagecalc), and the flash before its animation
+                if (HasExMoveBonus(gCurrentMove))
+                    gBattleExBonusPending = TRUE;
+                else
+                    gBattleExAnimPending = EX_ANIM_FLASH_ONLY;
                 gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
             }
         }
@@ -3588,10 +3593,50 @@ void RestoreExMoveBonusState(void)
     memcpy(gBattleTextBuff2, sExBonusSavedState.textBuff2, TEXT_BUFF_ARRAY_COUNT);
 }
 
-// Whether the move has an EX version: its own EX script, an upgrade, or a bonus
-bool32 CanMoveBeUsedAsEx(u16 move)
+bool32 HasExMoveBonus(u16 move)
+{
+    return GetExMoveBonus(move) != NULL;
+}
+
+// Whether the move does something extra as an EX move: its own EX script, an upgrade, or a bonus
+bool32 HasExMoveEffect(u16 move)
 {
     return IsExMove(move) || GetExMoveUpgrade(move) != MOVE_NONE || GetExMoveBonus(move) != NULL;
+}
+
+// Whether a damaging move with no EX script, upgrade, or bonus can still be used as an EX move, just for the
+// EX damage boost. Not moves whose damage skips damagecalc, as the boost would do nothing, or two-turn moves,
+// as only the turn they're chosen on is an EX move, so the boost would miss the turn they hit
+static bool32 CanMoveGetDefaultExBoost(u16 move)
+{
+    if (gBattleMoves[move].power == 0)
+        return FALSE;
+    switch (gBattleMoves[move].effect)
+    {
+    case EFFECT_FIXED_DAMAGE:
+    case EFFECT_LEVEL_DAMAGE:
+    case EFFECT_PSYWAVE:
+    case EFFECT_SUPER_FANG:
+    case EFFECT_ENDEAVOR:
+    case EFFECT_OHKO:
+    case EFFECT_COUNTER:
+    case EFFECT_MIRROR_COAT:
+    case EFFECT_BIDE:
+    case EFFECT_FUTURE_SIGHT:
+    case EFFECT_RAZOR_WIND:
+    case EFFECT_SKY_ATTACK:
+    case EFFECT_SKULL_BASH:
+    case EFFECT_SOLAR_BEAM:
+    case EFFECT_SEMI_INVULNERABLE:
+        return FALSE;
+    }
+    return TRUE;
+}
+
+// Whether the move has an EX version: its own EX script, an upgrade, a bonus, or just the EX damage boost
+bool32 CanMoveBeUsedAsEx(u16 move)
+{
+    return HasExMoveEffect(move) || CanMoveGetDefaultExBoost(move);
 }
 
 // Holding a crystal gives access to the EX moves of its types
@@ -3683,6 +3728,51 @@ bool32 CanBattlerUseExMove(u8 battler, u16 move)
     return DoesExFormAllowExMove(battler, move)
         || DoesAbilityAllowExMove(battler, move)
         || DoesHeldCrystalAllowExMove(battler, move);
+}
+
+// For each battler's locked EX move slot, the other slots it has used since locking it
+static EWRAM_DATA u8 sExMoveUnlockProgress[MAX_BATTLERS_COUNT][MAX_MON_MOVES] = {0};
+
+// Called by ppreduce when the battler spends PP on the move in this slot. Using a move as an EX move locks
+// that slot's EX version (see gExMoveUsedSlots). It unlocks once each of the battler's other moves has been
+// used since, or if it has no other moves, once it's used normally. Switching out or KOing an opponent also unlocks them all
+void UpdateExMoveLocks(u8 battler, u8 slot, bool32 usedAsEx)
+{
+    u32 i, j, otherMoves;
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (!(gExMoveUsedSlots[battler] & gBitTable[i]))
+            continue;
+        if (i != slot)
+            sExMoveUnlockProgress[battler][i] |= gBitTable[slot];
+        otherMoves = 0;
+        for (j = 0; j < MAX_MON_MOVES; j++)
+        {
+            if (j != i && gBattleMons[battler].moves[j] != MOVE_NONE)
+                otherMoves |= gBitTable[j];
+        }
+        if ((sExMoveUnlockProgress[battler][i] & otherMoves) == otherMoves)
+            gExMoveUsedSlots[battler] &= ~gBitTable[i];
+    }
+
+    if (usedAsEx)
+    {
+        gExMoveUsedSlots[battler] |= gBitTable[slot];
+        sExMoveUnlockProgress[battler][slot] = 0;
+    }
+}
+
+// Whether the battler's current move is an EX move that only its held crystal allowed.
+// The crystal's power goes into the EX move, so it doesn't roll its usual on-hit effect that turn
+static bool32 IsExMoveFromHeldCrystal(u8 battler)
+{
+    u16 move = gChosenMoveByBattler[battler];
+
+    return gBattleMoveIsEx
+        && DoesHeldCrystalAllowExMove(battler, move)
+        && !DoesExFormAllowExMove(battler, move)
+        && !DoesAbilityAllowExMove(battler, move);
 }
 
 // A popped Air Balloon or Bubble Coat is gone for good, like a consumed berry, so the
@@ -4323,6 +4413,8 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
         }
         break;
     case ITEMEFFECT_KINGSROCK_SHELLBELL:
+        if (IsExMoveFromHeldCrystal(gBattlerAttacker))
+            break;
         if (gBattleMoveDamage)
         {
             switch (atkHoldEffect)

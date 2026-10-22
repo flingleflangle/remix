@@ -21,6 +21,9 @@
 @ moves matching its held crystal's types (sExMoveCrystals). These all stack.
 @ They can highlight one of these moves in battle and press L to use its EX version.
 @ The move's name turns yellow, and using it costs 2 PP instead of 1.
+@ EX moves do 1.2x damage, unless they're an EX upgrade (see Cmd_damagecalc). A damaging move that
+@ isn't in any list below can still be used as an EX move, for just that boost (see CanMoveGetDefaultExBoost),
+@ and 1.5x the chance of its secondary effect (see Cmd_seteffectwithchance).
 @
 @ An EX move runs its script below instead of its regular move effect script. These scripts can
 @ goto back into the regular scripts in battle_scripts_1.s for anything that stays the same.

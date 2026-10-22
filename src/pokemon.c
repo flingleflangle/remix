@@ -7078,13 +7078,8 @@ u16 GetBattleBGM(void)
         case TRAINER_CLASS_BATTLE_GIRL:
         case TRAINER_CLASS_PSYCHIC:
             return MUS_DD_DRILL_MISSILE;
-        case TRAINER_CLASS_LASS:
-        case TRAINER_CLASS_PKMN_BREEDER:
-        case TRAINER_CLASS_PKMN_RANGER:
-        case TRAINER_CLASS_INTERVIEWER:
-            return MUS_DD_FACTORY;
         case TRAINER_CLASS_CRYSTAL_DUKE:
-            return MUS_T_MARIONETTE;
+            return MUS_MARIONETTE_MESSIAH;
         case TRAINER_CLASS_AQUA_LEADER:
         case TRAINER_CLASS_MAGMA_LEADER:
             return MUS_VS_AQUA_MAGMA_LEADER;
@@ -7114,7 +7109,7 @@ u16 GetBattleBGM(void)
         case TRAINER_CLASS_PYRAMID_KING:
             return MUS_VS_FRONTIER_BRAIN;
         default:
-            return MUS_TROMBE;
+            return MUS_VS_TRAINER;
         }
     }
     else

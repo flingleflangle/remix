@@ -1348,6 +1348,7 @@ static void Cmd_ppreduce(void)
     if (!(gHitMarker & (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING)) && gBattleMons[gBattlerAttacker].pp[gCurrMovePos])
     {
         gProtectStructs[gBattlerAttacker].notFirstStrike = 1;
+        UpdateExMoveLocks(gBattlerAttacker, gCurrMovePos, gBattleMoveIsEx);
 
         if (gBattleMons[gBattlerAttacker].pp[gCurrMovePos] > ppToDeduct)
             gBattleMons[gBattlerAttacker].pp[gCurrMovePos] -= ppToDeduct;
@@ -1437,6 +1438,9 @@ static void Cmd_damagecalc(void)
         gBattleMoveDamage *= 2;
     if (gProtectStructs[gBattlerAttacker].helpingHand)
         gBattleMoveDamage = gBattleMoveDamage * 15 / 10;
+    // EX moves do 1.2x damage, unless another move is used in their place (EX upgrades, a move called by Sleep Talk, or disobeying)
+    if (gBattleMoveIsEx && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker])
+        gBattleMoveDamage = gBattleMoveDamage * 12 / 10;
     // Knock Off does double damage if it's going to knock the target's item off.
     // Same conditions as MOVE_EFFECT_KNOCK_OFF, which is applied after the hit.
     if (gBattleMoves[gCurrentMove].effect == EFFECT_KNOCK_OFF
@@ -3290,6 +3294,9 @@ static void Cmd_seteffectwithchance(void)
         percentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
     else
         percentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
+    // An EX move with no EX effect of its own is 1.5x as likely to get its effect (not a move used in its place)
+    if (gBattleMoveIsEx && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker] && !HasExMoveEffect(gCurrentMove))
+        percentChance = percentChance * 3 / 2;
 
     if (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN
         && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
@@ -3394,6 +3401,9 @@ static void Cmd_tryfaintmon(void)
                     gBattleResults.opponentFaintCounter++;
                 gBattleResults.lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_SPECIES, NULL);
             }
+            // KOing an opponent lets the attacker use its EX moves again
+            if (gActiveBattler == gBattlerTarget && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gBattlerTarget))
+                gExMoveUsedSlots[gBattlerAttacker] = 0;
             if ((gHitMarker & HITMARKER_DESTINYBOND) && gBattleMons[gBattlerAttacker].hp != 0)
             {
                 gHitMarker &= ~HITMARKER_DESTINYBOND;

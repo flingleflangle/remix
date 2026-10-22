@@ -190,6 +190,8 @@ EWRAM_DATA u8 gSureCritBattlers = 0; // Battlers whose next damaging move is a g
 EWRAM_DATA u8 gThisMoveSureCrit = 0; // The current move is that guaranteed critical hit
 EWRAM_DATA u8 gIgnoreResistances = 0;   // The next typecalc treats resisted hits as neutral
 EWRAM_DATA u8 gExMoveChosenBits = 0;    // Battlers that chose to use their move as an EX move this turn
+EWRAM_DATA u8 gExMoveUsedSlots[MAX_BATTLERS_COUNT] = {0}; // Each battler's move slots that were used as EX moves, which can't be again
+                                                          // until it switches out, KOs an opponent, or uses its other moves (see UpdateExMoveLocks)
 EWRAM_DATA struct BattleOddsModifierButtonPress gBallShakesBData = {0};
 EWRAM_DATA u8 gLastUsedAbility = 0;
 EWRAM_DATA u8 gBattlerAttacker = 0;
@@ -3196,6 +3198,7 @@ static void BattleStartClearSetData(void)
     SpecialStatusesClear();
     gExHealReplacementSides = 0;
     gSureCritBattlers = 0;
+    memset(gExMoveUsedSlots, 0, sizeof(gExMoveUsedSlots));
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
     {
@@ -3316,6 +3319,7 @@ void SwitchInClearSetData(void)
     u8 *ptr;
 
     gSureCritBattlers &= ~gBitTable[gActiveBattler]; // Foresight's guaranteed critical hit doesn't carry over
+    gExMoveUsedSlots[gActiveBattler] = 0;
 
     if (gBattleMoves[gCurrentMove].effect != EFFECT_BATON_PASS)
     {

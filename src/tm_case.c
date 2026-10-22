@@ -123,7 +123,6 @@ static void Task_QuantitySelect_HandleInput(u8 taskId);
 static void Task_PrintSaleConfirmedText(u8 taskId);
 static void Task_DoSaleOfTMs(u8 taskId);
 static void Task_AfterSale_ReturnToList(u8 taskId);
-static void HandlePrintMoneyOnHand(void);
 static void Task_TMContextMenu_HandleInput(u8 taskId);
 static void TMHMContextMenuAction_Use(u8 taskId);
 static void TMHMContextMenuAction_Exit(u8 taskId);
@@ -221,7 +220,7 @@ static const struct WindowTemplate sWindowTemplates[] = {
     [WIN_MOVE_INFO]        = {0x00, 0x07, 0x0d, 0x05, 0x06, 0x0c, 0x0267},
     [WIN_MESSAGE]          = {0x01, 0x02, 0x0f, 0x1a, 0x04, 0x0b, 0x0285},
     [WIN_SELL_QUANTITY]    = {0x01, 0x11, 0x09, 0x0c, 0x04, 0x0f, 0x02ed},
-    [WIN_MONEY]            = {0x01, 0x01, 0x01, 0x08, 0x03, 0x0d, 0x031d},
+    [WIN_MONEY]            = {0x01, 0x01, 0x01, 0x0a, 0x02, 0x0f, 0x031d}, // Same layout as the bag's, for the money label sprite
     [WIN_COUNT]            = DUMMY_WIN_TEMPLATE
 };
 
@@ -910,6 +909,18 @@ static s32 GetTMSalePrice(u16 itemId, s16 quantity)
     return (GetItemPrice(itemId) / 2) * quantity;
 }
 
+static void ShowMoneyBox(void)
+{
+    PrintMoneyAmountInMoneyBoxWithBorder(WIN_MONEY, 0x78, 13, GetMoney(&gSaveBlock1Ptr->money));
+    AddMoneyLabelObject(19, 11);
+}
+
+static void HideMoneyBox_TMCase(void)
+{
+    RemoveMoneyLabelObject();
+    ClearStdWindowAndFrameToTransparent(WIN_MONEY, FALSE);
+}
+
 static void Task_SelectTMAction_FromSellMenu(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
@@ -925,7 +936,7 @@ static void Task_SelectTMAction_FromSellMenu(u8 taskId)
         tItemCount = 1;
         if (tQuantity == 1)
         {
-            HandlePrintMoneyOnHand();
+            ShowMoneyBox();
             Task_AskConfirmSaleWithAmount(taskId);
         }
         else
@@ -969,7 +980,7 @@ static void Task_SaleOfTMsCanceled(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
 
-    ClearStdWindowAndFrameToTransparent(WIN_MONEY, FALSE);
+    HideMoneyBox_TMCase();
     ClearDialogWindowAndFrameToTransparent(WIN_MESSAGE, FALSE);
     PutMainWindowTilemaps();
     PrintListMenuCursorByID_WithColorIdx(tListTaskId, COLORID_LIST_SELECTED);
@@ -982,7 +993,7 @@ static void Task_InitQuantitySelectUI(u8 taskId)
 
     TMCase_DrawWindowBorder(WIN_SELL_QUANTITY);
     SellTM_PrintQuantityAndSalePrice(1, GetTMSalePrice(gSpecialVar_ItemId, 1));
-    HandlePrintMoneyOnHand();
+    ShowMoneyBox();
     sTMCaseDynamicResources->sellQuantityArrowPos = 1;
     sTMCaseDynamicResources->scrollIndicatorArrowPairId = AddScrollIndicatorArrowPairParameterized(2, 0x98, 0x48, 0x68, 2, 0x6E, 0x6E, &sTMCaseDynamicResources->sellQuantityArrowPos);
     ScheduleBgCopyTilemapToVram(0);
@@ -1020,7 +1031,7 @@ static void Task_QuantitySelect_HandleInput(u8 taskId)
     {
         PlaySE(SE_SELECT);
         ClearStdWindowAndFrameToTransparent(WIN_SELL_QUANTITY, FALSE);
-        ClearStdWindowAndFrameToTransparent(WIN_MONEY, FALSE);
+        HideMoneyBox_TMCase();
         ClearDialogWindowAndFrameToTransparent(WIN_MESSAGE, FALSE);
         PutMainWindowTilemaps();
         RemoveTMCaseScrollIndicatorArrowPair();
@@ -1074,15 +1085,10 @@ static void Task_AfterSale_ReturnToList(u8 taskId)
     if (JOY_NEW(A_BUTTON | B_BUTTON))
     {
         PlaySE(SE_SELECT);
-        ClearStdWindowAndFrameToTransparent(WIN_MONEY, FALSE);
+        HideMoneyBox_TMCase();
         PutWindowTilemap(WIN_TITLE);
         Subtask_CloseContextMenuAndReturnToMain(taskId);
     }
-}
-
-static void HandlePrintMoneyOnHand(void)
-{
-    PrintMoneyAmountInMoneyBoxWithBorder(WIN_MONEY, 0x78, 13, GetMoney(&gSaveBlock1Ptr->money));
 }
 
 static void InitWindowTemplatesAndPals(void)
@@ -1096,7 +1102,6 @@ static void InitWindowTemplatesAndPals(void)
     LoadPalette(sTMCase_TextWindow_Pal, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
     LoadPalette(sTMCase_TextWindow_Pal, BG_PLTT_ID(10), PLTT_SIZE_4BPP);
     LoadPalette(sPal3Override, BG_PLTT_ID(15) + 6, sizeof(sPal3Override));
-    LoadPalette(sPal3Override, BG_PLTT_ID(13) + 6, sizeof(sPal3Override));
     ListMenuLoadStdPalAt(BG_PLTT_ID(12), 1);
     for (i = 0; i < WIN_COUNT; i++)
         FillWindowPixelBuffer(i, 0);

@@ -1641,12 +1641,14 @@ static void StartExMoveFlash(void)
 #undef tFrame
 #undef tBattler
 
-// Whether this Pokémon can use the move in this slot as an EX move right now, with the 2 PP one costs
+// Whether this Pokémon can use the move in this slot as an EX move right now, with the 2 PP one costs,
+// and not having used it as one already (see gExMoveUsedSlots)
 static bool32 IsCursorOnExMove(u8 cursorPosition)
 {
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
 
-    return CanBattlerUseExMove(gActiveBattler, moveInfo->moves[cursorPosition])
+    return !(gExMoveUsedSlots[gActiveBattler] & gBitTable[cursorPosition])
+        && CanBattlerUseExMove(gActiveBattler, moveInfo->moves[cursorPosition])
         && moveInfo->currentPp[cursorPosition] >= 2;
 }
 

@@ -674,6 +674,7 @@ extern u8 gThisMoveSureCrit;
 #define EX_ANIM_FLASH_ONLY 2 // EXMove flash before the regular animation, for EX upgrades
 extern u8 gIgnoreResistances;
 extern u8 gExMoveChosenBits;
+extern u8 gExMoveUsedSlots[MAX_BATTLERS_COUNT];
 extern struct BattleOddsModifierButtonPress gBallShakesBData;
 extern u8 gLastUsedAbility;
 extern u8 gBattlerAttacker;
