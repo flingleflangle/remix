@@ -413,10 +413,15 @@ static const u8 sVSpecialDesc[] = _(
     "SP. ATK during one\n"
     "battle.");
 
+static const u8 sVSpDefDesc[] = _(
+    "Maxes the stat\n"
+    "SP. DEF during one\n"
+    "battle.");
+
 static const u8 sPokeDollDesc[] = _(
-    "Use to flee from\n"
-    "any battle with\n"
-    "a wild POKéMON.");
+    "Use in battle to\n"
+    "make a decoy with\n"
+    "60 HP to take hits.");
 
 static const u8 sFluffyTailDesc[] = _(
     "Use to flee from\n"
@@ -864,10 +869,50 @@ static const u8 sEverstoneDesc[] = _(
     "item that prevents\n"
     "evolution.");
 
+static const u8 sRewindOrbDesc[] = _(
+    "Returns a POKéMON\n"
+    "to its previous\n"
+    "form. Never runs out.");
+
 static const u8 sAirBalloonDesc[] = _(
     "Makes the holder\n"
     "float until it is\n"
     "hit by an attack.");
+
+static const u8 sLightClayDesc[] = _(
+    "Extends the length\n"
+    "of barrier moves\n"
+    "like REFLECT.");
+
+static const u8 sLifeOrbDesc[] = _(
+    "Boosts the power of\n"
+    "moves, but costs HP\n"
+    "with each attack.");
+
+static const u8 sRazorFangDesc[] = _(
+    "A hold item that\n"
+    "may cause flinching\n"
+    "when the foe is hit.");
+
+static const u8 sRazorClawDesc[] = _(
+    "A hooked claw that\n"
+    "ups the holder's\n"
+    "critical-hit ratio.");
+
+static const u8 sMicrophoneDesc[] = _(
+    "A hold item that\n"
+    "raises the power of\n"
+    "SOUND-type moves.");
+
+static const u8 sCrystalBallDesc[] = _(
+    "A hold item that\n"
+    "raises the power of\n"
+    "ASTRAL-type moves.");
+
+static const u8 sWhetstoneDesc[] = _(
+    "A hold item that\n"
+    "raises the power of\n"
+    "BLADE-type moves.");
 
 static const u8 sBubbleCoatDesc[] = _(
     "Soaks a hit. ELEC,\n"

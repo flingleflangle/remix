@@ -481,6 +481,10 @@ bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 atkBattler, u8 de
         return TRUE;
     }
 
+    // A Poké Doll from the bag puts the battler behind a Substitute, like the move does
+    if (tableId == B_ANIM_POKE_DOLL)
+        gBattleSpritesDataPtr->battlerData[activeBattler].behindSubstitute = 1;
+
     gBattleAnimAttacker = atkBattler;
     gBattleAnimTarget = defBattler;
     gBattleSpritesDataPtr->animationData->animArg = argument;
@@ -1057,6 +1061,8 @@ void BattleLoadSubstituteOrMonSpriteGfx(u8 battler, bool8 loadMonSprite)
             LZDecompressVram(gStoneWallGfx, gMonSpritesGfxPtr->sprites.ptr[position]);
         else if (!IsContest() && gBattleSpritesDataPtr->battlerData[battler].substituteWall == SUBSTITUTE_WALL_ICE)
             LZDecompressVram(gIceWallGfx, gMonSpritesGfxPtr->sprites.ptr[position]);
+        else if (!IsContest() && gBattleSpritesDataPtr->battlerData[battler].substituteWall == SUBSTITUTE_WALL_POKE_DOLL)
+            LZDecompressVram(GetBattlerSide(battler) != B_SIDE_PLAYER ? gPokeDollFrontGfx : gPokeDollBackGfx, gMonSpritesGfxPtr->sprites.ptr[position]);
         else if (IsContest())
             LZDecompressVram(gSubstituteDollBackGfx, gMonSpritesGfxPtr->sprites.ptr[position]);
         else if (GetBattlerSide(battler) != B_SIDE_PLAYER)
@@ -1074,6 +1080,8 @@ void BattleLoadSubstituteOrMonSpriteGfx(u8 battler, bool8 loadMonSprite)
             LoadCompressedPalette(gStoneWallPal, palOffset, PLTT_SIZE_4BPP);
         else if (!IsContest() && gBattleSpritesDataPtr->battlerData[battler].substituteWall == SUBSTITUTE_WALL_ICE)
             LoadCompressedPalette(gIceWallPal, palOffset, PLTT_SIZE_4BPP);
+        else if (!IsContest() && gBattleSpritesDataPtr->battlerData[battler].substituteWall == SUBSTITUTE_WALL_POKE_DOLL)
+            LoadCompressedPalette(gPokeDollPal, palOffset, PLTT_SIZE_4BPP);
         else
             LoadCompressedPalette(gSubstituteDollPal, palOffset, PLTT_SIZE_4BPP);
     }

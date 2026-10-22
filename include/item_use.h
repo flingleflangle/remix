@@ -29,6 +29,7 @@ void ItemUseInBattle_StatIncrease(u8 taskId);
 void ItemUseInBattle_Medicine(u8 taskId);
 void ItemUseInBattle_PPRecovery(u8 taskId);
 void ItemUseInBattle_Escape(u8 taskId);
+void ItemUseInBattle_PokeDoll(u8 taskId);
 void ItemUseInBattle_EnigmaBerry(u8 taskId);
 void Task_UseDigEscapeRopeOnField(u8 taskId);
 bool8 CanUseDigOrEscapeRopeOnCurMap(void);

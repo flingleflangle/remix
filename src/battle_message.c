@@ -242,6 +242,8 @@ static const u8 sText_NorthStarPerish[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_LAST_
 static const u8 sText_PkmnMaxedFriendship[] = _("{B_BUFF1}'s bond with you\nmade it become {B_BUFF3}{EX}!");
 static const u8 sText_ExDeeperSleep[] = _("{B_DEF_NAME_WITH_PREFIX} fell into\na deeper sleep!");
 static const u8 sText_ExSwappedStats[] = _("{B_ATK_NAME_WITH_PREFIX} switched stat\nchanges with {B_DEF_NAME_WITH_PREFIX}!");
+static const u8 sText_PkmnLostHpLifeOrb[] = _("{B_ATK_NAME_WITH_PREFIX} lost some\nof its HP!");
+static const u8 sText_PkmnHidBehindPokeDoll[] = _("{B_ATK_NAME_WITH_PREFIX} hid behind\nthe POKé DOLL!");
 static const u8 sText_PkmnFellForFirstSight[] = _("{B_DEF_NAME_WITH_PREFIX} fell for\n{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}!");
 static const u8 sText_PkmnFledFromBattle[] = _("{B_ATK_NAME_WITH_PREFIX} fled from\nbattle!");
 static const u8 sText_PkmnForesawAttack[] = _("{B_ATK_NAME_WITH_PREFIX} foresaw\nan attack!");
@@ -961,6 +963,8 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNMAXEDFRIENDSHIP - BATTLESTRINGS_TABLE_START] = sText_PkmnMaxedFriendship,
     [STRINGID_EXDEEPERSLEEP - BATTLESTRINGS_TABLE_START] = sText_ExDeeperSleep,
     [STRINGID_EXSWAPPEDSTATS - BATTLESTRINGS_TABLE_START] = sText_ExSwappedStats,
+    [STRINGID_PKMNLOSTHPLIFEORB - BATTLESTRINGS_TABLE_START] = sText_PkmnLostHpLifeOrb,
+    [STRINGID_PKMNHIDBEHINDPOKEDOLL - BATTLESTRINGS_TABLE_START] = sText_PkmnHidBehindPokeDoll,
 };
 
 const u16 gMissStringIds[] =

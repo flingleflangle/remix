@@ -141,6 +141,7 @@ struct SpecialStatus
     u32 faintedHasReplacement:1;
     u32 focusBanded:1;
     u32 bubbleCoatPopped:1; // Bubble Coat took a multi-hit move's first hit, message pending
+    u32 lifeOrbRecoiled:1; // Life Orb already took its recoil for this move
     s32 shellBellDmg;
     s32 physicalDmg;
     s32 specialDmg;

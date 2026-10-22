@@ -856,6 +856,9 @@ const u32 gBattleAnimSpritePal_Confetti[] = INCBIN_U32("graphics/battle_anims/sp
 const u32 gSubstituteDollPal[] = INCBIN_U32("graphics/battle_anims/sprites/substitute.gbapal.lz");
 const u32 gSubstituteDollFrontGfx[] = INCBIN_U32("graphics/battle_anims/sprites/substitute.4bpp.lz");
 const u32 gSubstituteDollBackGfx[] = INCBIN_U32("graphics/battle_anims/sprites/substitute_back.4bpp.lz");
+const u32 gPokeDollPal[] = INCBIN_U32("graphics/battle_anims/sprites/poke_doll.gbapal.lz");
+const u32 gPokeDollFrontGfx[] = INCBIN_U32("graphics/battle_anims/sprites/poke_doll.4bpp.lz");
+const u32 gPokeDollBackGfx[] = INCBIN_U32("graphics/battle_anims/sprites/poke_doll_back.4bpp.lz");
 
 // Stone Wall and Ice Wall replace the Substitute doll, front and back
 const u32 gStoneWallGfx[] = INCBIN_U32("graphics/battle_anims/sprites/stone_wall.4bpp.lz");

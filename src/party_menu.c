@@ -5495,7 +5495,9 @@ void ItemUseCB_EvolutionStone(u8 taskId, TaskFunc task)
     }
     else
     {
-        RemoveBagItem(gSpecialVar_ItemId, 1);
+        // The Rewind Orb is never used up
+        if (gSpecialVar_ItemId != ITEM_REWIND_ORB)
+            RemoveBagItem(gSpecialVar_ItemId, 1);
         FreePartyPointers();
     }
 }

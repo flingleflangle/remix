@@ -161,6 +161,8 @@ extern const u8 BattleScript_FirstSightActivates[];
 extern const u8 BattleScript_AirBalloonFloats[];
 extern const u8 BattleScript_AirBalloonPopped[];
 extern const u8 BattleScript_BubbleCoatTookHit[];
+extern const u8 BattleScript_LifeOrbRecoilRet[];
+extern const u8 BattleScript_PokeDollSubstitute[];
 extern const u8 BattleScript_IntimidateActivates[];
 extern const u8 BattleScript_DroughtActivates[];
 extern const u8 BattleScript_TookAttack[];

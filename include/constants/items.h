@@ -103,7 +103,7 @@
 #define ITEM_V_SPEED 89
 #define ITEM_V_ACCURACY 90
 #define ITEM_V_SPECIAL 91
-#define ITEM_05C 92
+#define ITEM_V_SPDEF 92 // Was ITEM_05C, unused
 #define ITEM_SUN_STONE 93
 #define ITEM_MOON_STONE 94
 #define ITEM_FIRE_STONE 95
@@ -113,7 +113,7 @@
 #define ITEM_DUSK_STONE 99
 #define ITEM_DAWN_STONE 100
 #define ITEM_SHINY_STONE 101
-#define ITEM_066 102
+#define ITEM_REWIND_ORB 102 // Was ITEM_066, unused
 
 // Unusable
 #define ITEM_TINY_MUSHROOM 103
@@ -126,14 +126,14 @@
 #define ITEM_NUGGET 110
 #define ITEM_HEART_SCALE 111
 #define ITEM_AIR_BALLOON 112 // Was ITEM_070, unused
-#define ITEM_071 113
-#define ITEM_072 114
-#define ITEM_073 115
-#define ITEM_074 116
-#define ITEM_BUBBLE_COAT 117 // Was ITEM_075, unused
-#define ITEM_076 118
-#define ITEM_077 119
-#define ITEM_078 120
+#define ITEM_LIGHT_CLAY 113 // Was ITEM_071, unused
+#define ITEM_LIFE_ORB 114 // Was ITEM_072, unused
+#define ITEM_RAZOR_FANG 115 // Was ITEM_073, unused
+#define ITEM_RAZOR_CLAW 116 // Was ITEM_074, unused
+#define ITEM_MICROPHONE 117 // Was ITEM_075, unused
+#define ITEM_CRYSTAL_BALL 118 // Was ITEM_076, unused
+#define ITEM_WHETSTONE 119 // Was ITEM_077, unused
+#define ITEM_BUBBLE_COAT 120 // Was ITEM_078, unused
 
 // Mails
 #define ITEM_ORANGE_MAIL 121

@@ -1186,6 +1186,26 @@ void ItemUseInBattle_Escape(u8 taskId)
     }
 }
 
+// Usable in any battle. The Substitute is set up when the action runs (HandleAction_UseItem)
+void ItemUseInBattle_PokeDoll(u8 taskId)
+{
+    if (gBattleMons[gBattlerInMenuId].status2 & STATUS2_SUBSTITUTE)
+    {
+        if (CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
+            DisplayItemMessage(taskId, FONT_NORMAL, gText_WontHaveEffect, CloseItemMessage);
+        else
+            DisplayItemMessageInBattlePyramid(taskId, gText_WontHaveEffect, Task_CloseBattlePyramidBagMessage);
+    }
+    else
+    {
+        RemoveUsedItem();
+        if (CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE)
+            DisplayItemMessage(taskId, FONT_NORMAL, gStringVar4, Task_FadeAndCloseBagMenu);
+        else
+            DisplayItemMessageInBattlePyramid(taskId, gStringVar4, CloseBattlePyramidBag);
+    }
+}
+
 void ItemUseOutOfBattle_EnigmaBerry(u8 taskId)
 {
     switch (GetItemEffectType(gSpecialVar_ItemId))

@@ -487,6 +487,7 @@ gBattleAnims_General::
 	.4byte General_ExFlash                  @ B_ANIM_EX_FLASH
 	.4byte General_ExMastery                @ B_ANIM_EX_MASTERY
 	.4byte General_SpikesBurst              @ B_ANIM_SPIKES_BURST
+	.4byte General_PokeDoll                 @ B_ANIM_POKE_DOLL
 
 	.align 2
 gBattleAnims_Special::
@@ -9806,6 +9807,12 @@ Move_POISON_FANG:
 Move_SUBSTITUTE:
 	playsewithpan SE_M_ATTRACT, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_SetSubstituteWall, 2, SUBSTITUTE_WALL_NONE
+	createvisualtask AnimTask_MonToSubstitute, 2
+	end
+
+General_PokeDoll:
+	playsewithpan SE_M_ATTRACT, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_SetSubstituteWall, 2, SUBSTITUTE_WALL_POKE_DOLL
 	createvisualtask AnimTask_MonToSubstitute, 2
 	end
 

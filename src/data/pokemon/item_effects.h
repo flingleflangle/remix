@@ -279,10 +279,9 @@ const u8 gItemEffect_XSpecial[8] = {
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
 
-
-// special defense is currently nonfunctional and I don't know what to do about that
+// The effect bytes have no room left for Sp. Def, so X/V SP. DEF only carry their
+// friendship change here. The boost itself is keyed off the item ID (see GetSpDefItemBoost)
 const u8 gItemEffect_XSpDef[8] = {
-    [2] = 2, // ITEM2_X_SPDEF
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
@@ -314,6 +313,11 @@ const u8 gItemEffect_VAccuracy[8] = {
 
 const u8 gItemEffect_VSpecial[8] = {
     [2] = 12, // ITEM2_X_SPATK
+    [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
+    STAT_BOOST_FRIENDSHIP_CHANGE,
+};
+
+const u8 gItemEffect_VSpDef[8] = {
     [5] = ITEM5_FRIENDSHIP_LOW | ITEM5_FRIENDSHIP_MID,
     STAT_BOOST_FRIENDSHIP_CHANGE,
 };
@@ -387,6 +391,10 @@ const u8 gItemEffect_ShadeCrystal[6] = {
 };
 
 const u8 gItemEffect_MetalCrystal[6] = {
+    [4] = ITEM4_EVO_STONE,
+};
+
+const u8 gItemEffect_RewindOrb[6] = {
     [4] = ITEM4_EVO_STONE,
 };
 
@@ -550,6 +558,7 @@ const u8 *const gItemEffectTable[] =
     [ITEM_V_SPEED - ITEM_POTION]       = gItemEffect_VSpeed,
     [ITEM_V_ACCURACY - ITEM_POTION]    = gItemEffect_VAccuracy,
     [ITEM_V_SPECIAL - ITEM_POTION]     = gItemEffect_VSpecial,
+    [ITEM_V_SPDEF - ITEM_POTION]       = gItemEffect_VSpDef,
     [ITEM_SUN_STONE - ITEM_POTION]     = gItemEffect_SunStone,
     [ITEM_MOON_STONE - ITEM_POTION]    = gItemEffect_MoonStone,
     [ITEM_FIRE_STONE - ITEM_POTION]    = gItemEffect_FireStone,
@@ -568,6 +577,7 @@ const u8 *const gItemEffectTable[] =
     [ITEM_MIND_CRYSTAL - ITEM_POTION]  = gItemEffect_MindCrystal,
     [ITEM_SHADE_CRYSTAL - ITEM_POTION] = gItemEffect_ShadeCrystal,
     [ITEM_METAL_CRYSTAL - ITEM_POTION] = gItemEffect_MetalCrystal,
+    [ITEM_REWIND_ORB - ITEM_POTION]    = gItemEffect_RewindOrb,
     [ITEM_CHERI_BERRY - ITEM_POTION]   = gItemEffect_CheriBerry,
     [ITEM_CHESTO_BERRY - ITEM_POTION]  = gItemEffect_ChestoBerry,
     [ITEM_PECHA_BERRY - ITEM_POTION]   = gItemEffect_PechaBerry,

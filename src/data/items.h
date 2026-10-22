@@ -1047,7 +1047,7 @@ const struct Item gItems[] =
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
         .battleUsage = ITEM_B_USE_OTHER,
-        .battleUseFunc = ItemUseInBattle_Escape,
+        .battleUseFunc = ItemUseInBattle_PokeDoll,
     },
 
     [ITEM_FLUFFY_TAIL] =
@@ -1190,15 +1190,17 @@ const struct Item gItems[] =
         .battleUseFunc = ItemUseInBattle_StatIncrease,
     },
 
-    [ITEM_05C] =
+    [ITEM_V_SPDEF] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("V SP. DEF"),
+        .itemId = ITEM_V_SPDEF,
+        .price = 3500,
+        .description = sVSpDefDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .battleUsage = ITEM_B_USE_OTHER,
+        .battleUseFunc = ItemUseInBattle_StatIncrease,
     },
 
 // Evolution stones
@@ -1311,15 +1313,16 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
-    [ITEM_066] =
+    [ITEM_REWIND_ORB] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
+        .name = _("REWIND ORB"),
+        .itemId = ITEM_REWIND_ORB,
         .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .description = sRewindOrbDesc,
+        .importance = 1,
+        .pocket = POCKET_KEY_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_EvolutionStone,
     },
 
 // Valuable items
@@ -1435,45 +1438,89 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
 
-    [ITEM_071] =
+    [ITEM_LIGHT_CLAY] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("LIGHT CLAY"),
+        .itemId = ITEM_LIGHT_CLAY,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_LIGHT_CLAY,
+        .description = sLightClayDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
 
-    [ITEM_072] =
+    [ITEM_LIFE_ORB] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("LIFE ORB"),
+        .itemId = ITEM_LIFE_ORB,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_LIFE_ORB,
+        .description = sLifeOrbDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
 
-    [ITEM_073] =
+    [ITEM_RAZOR_FANG] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("RAZOR FANG"),
+        .itemId = ITEM_RAZOR_FANG,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_FLINCH,
+        .holdEffectParam = 10,
+        .description = sRazorFangDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
 
-    [ITEM_074] =
+    [ITEM_RAZOR_CLAW] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
+        .name = _("RAZOR CLAW"),
+        .itemId = ITEM_RAZOR_CLAW,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_SCOPE_LENS,
+        .description = sRazorClawDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_BAG_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+    },
+
+    [ITEM_MICROPHONE] =
+    {
+        .name = _("MICROPHONE"),
+        .itemId = ITEM_MICROPHONE,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_SOUND_POWER,
+        .holdEffectParam = 20,
+        .description = sMicrophoneDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_BAG_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+    },
+
+    [ITEM_CRYSTAL_BALL] =
+    {
+        .name = _("CRYSTAL BALL"),
+        .itemId = ITEM_CRYSTAL_BALL,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_ASTRAL_POWER,
+        .holdEffectParam = 20,
+        .description = sCrystalBallDesc,
+        .pocket = POCKET_ITEMS,
+        .type = ITEM_USE_BAG_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+    },
+
+    [ITEM_WHETSTONE] =
+    {
+        .name = _("WHETSTONE"),
+        .itemId = ITEM_WHETSTONE,
+        .price = 4000,
+        .holdEffect = HOLD_EFFECT_BLADE_POWER,
+        .holdEffectParam = 20,
+        .description = sWhetstoneDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
@@ -1486,39 +1533,6 @@ const struct Item gItems[] =
         .price = 4000,
         .holdEffect = HOLD_EFFECT_BUBBLE_COAT,
         .description = sBubbleCoatDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
-
-    [ITEM_076] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
-
-    [ITEM_077] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
-    },
-
-    [ITEM_078] =
-    {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
         .pocket = POCKET_ITEMS,
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,

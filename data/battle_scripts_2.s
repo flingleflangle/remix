@@ -117,6 +117,15 @@ BattleScript_PlayerUsesItem::
 	moveendcase MOVEEND_MIRROR_MOVE
 	end
 
+@ The Substitute itself is set up in HandleAction_UseItem
+BattleScript_PokeDollSubstitute::
+	playanimation BS_ATTACKER, B_ANIM_POKE_DOLL, NULL
+	waitanimation
+	printstring STRINGID_PKMNHIDBEHINDPOKEDOLL
+	waitmessage B_WAIT_TIME_LONG
+	moveendcase MOVEEND_MIRROR_MOVE
+	end
+
 BattleScript_OpponentUsesHealItem::
 	printstring STRINGID_EMPTYSTRING3
 	pause B_WAIT_TIME_MED

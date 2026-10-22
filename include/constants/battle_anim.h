@@ -383,6 +383,7 @@
 #define B_ANIM_EX_FLASH                 24 // The EXMove flash, for EX move bonuses (see data/ex_battle_scripts.s)
 #define B_ANIM_EX_MASTERY               25 // A Pokémon glows, sparkles and turns into its EX form (see BattleScript_ExTrainingUnlock)
 #define B_ANIM_SPIKES_BURST             26 // Spikes burst out of a Pokémon that was hit and scatter around it (BoulderDashSpikes)
+#define B_ANIM_POKE_DOLL                27 // A POKE DOLL from the bag stands in as a Substitute
 
 // special animations table (gBattleAnims_Special)
 #define B_ANIM_LVL_UP                   0

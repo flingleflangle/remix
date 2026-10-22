@@ -265,6 +265,7 @@
 #define EVO_COOL             20 // Pokémon levels up with cool ≥ specified value
 #define EVO_CUTE             21 // Pokémon levels up with cute ≥ specified value
 #define EVO_SPECIES_IN_PARTY 22 // Pokémon levels up with the specified species in the party
+#define EVO_ITEM_HOLD        23 // Pokémon levels up while holding the specified item, which is used up
 
 #define EVOS_PER_MON 8
 

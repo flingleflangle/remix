@@ -419,7 +419,17 @@ void HandleAction_UseItem(void)
     {
         gBattlescriptCurrInstr = gBattlescriptsForBallThrow[gLastUsedItem];
     }
-    else if (gLastUsedItem == ITEM_POKE_DOLL || gLastUsedItem == ITEM_FLUFFY_TAIL)
+    else if (gLastUsedItem == ITEM_POKE_DOLL)
+    {
+        // A Poké Doll stands in as a Substitute with fixed HP, costing the user none of its own
+        gBattleMons[gBattlerAttacker].status2 |= STATUS2_SUBSTITUTE;
+        gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_WRAPPED;
+        gDisableStructs[gBattlerAttacker].substituteHP = POKE_DOLL_SUBSTITUTE_HP;
+        gDisableStructs[gBattlerAttacker].substituteWall = SUBSTITUTE_WALL_POKE_DOLL;
+        gBattleScripting.battler = gBattlerAttacker;
+        gBattlescriptCurrInstr = BattleScript_PokeDollSubstitute;
+    }
+    else if (gLastUsedItem == ITEM_FLUFFY_TAIL)
     {
         gBattlescriptCurrInstr = gBattlescriptsForRunningByItem[0]; // BattleScript_RunByUsingItem
     }
@@ -4753,6 +4763,26 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                     gSpecialStatuses[gBattlerTarget].shellBellDmg = 0;
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_ItemHealHP_Ret;
+                    effect++;
+                }
+                break;
+            case HOLD_EFFECT_LIFE_ORB:
+                // Recoil is 1/10 max HP, taken once per move even if it hit multiple times or targets
+                if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                    && TARGET_TURN_DAMAGED
+                    && !gSpecialStatuses[gBattlerAttacker].lifeOrbRecoiled
+                    && gBattlerAttacker != gBattlerTarget
+                    && gBattleMons[gBattlerAttacker].hp != 0)
+                {
+                    gSpecialStatuses[gBattlerAttacker].lifeOrbRecoiled = TRUE;
+                    gLastUsedItem = atkItem;
+                    gPotentialItemEffectBattler = gBattlerAttacker;
+                    gBattleScripting.battler = gBattlerAttacker;
+                    gBattleMoveDamage = gBattleMons[gBattlerAttacker].maxHP / 10;
+                    if (gBattleMoveDamage == 0)
+                        gBattleMoveDamage = 1;
+                    BattleScriptPushCursor();
+                    gBattlescriptCurrInstr = BattleScript_LifeOrbRecoilRet;
                     effect++;
                 }
                 break;

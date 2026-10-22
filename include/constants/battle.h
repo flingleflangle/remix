@@ -183,6 +183,9 @@ enum BattlerId
 #define SUBSTITUTE_WALL_NONE  0
 #define SUBSTITUTE_WALL_STONE 1
 #define SUBSTITUTE_WALL_ICE   2
+#define SUBSTITUTE_WALL_POKE_DOLL 3 // Not a wall: a Substitute made from the bag with a POKE DOLL
+
+#define POKE_DOLL_SUBSTITUTE_HP 60
 
 // Not really sure what a "hitmarker" is.
 #define HITMARKER_WAKE_UP_CLEAR         (1 << 4) // Cleared when waking up. Never set or checked.

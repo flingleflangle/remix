@@ -102,7 +102,7 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_V_SPEED] = {gItemIcon_BattleStatItem2, gItemIconPalette_XSpeed},
     [ITEM_V_ACCURACY] = {gItemIcon_BattleStatItem2, gItemIconPalette_XAccuracy},
     [ITEM_V_SPECIAL] = {gItemIcon_BattleStatItem2, gItemIconPalette_XSpecial},
-    [ITEM_05C] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_V_SPDEF] = {gItemIcon_BattleStatItem2, gItemIconPalette_XSpecial},
     // Evolution stones
     [ITEM_SUN_STONE] = {gItemIcon_SunStone, gItemIconPalette_SunStone},
     [ITEM_MOON_STONE] = {gItemIcon_MoonStone, gItemIconPalette_MoonStone},
@@ -113,7 +113,7 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_DUSK_STONE] = {gItemIcon_DuskStone, gItemIconPalette_DuskStone},
     [ITEM_DAWN_STONE] = {gItemIcon_DawnStone, gItemIconPalette_DawnStone},
     [ITEM_SHINY_STONE] = {gItemIcon_ShinyStone, gItemIconPalette_ShinyStone},
-    [ITEM_066] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_REWIND_ORB] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
     // Valuables
     [ITEM_TINY_MUSHROOM] = {gItemIcon_TinyMushroom, gItemIconPalette_Mushroom},
     [ITEM_BIG_MUSHROOM] = {gItemIcon_BigMushroom, gItemIconPalette_Mushroom},
@@ -126,14 +126,14 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_HEART_SCALE] = {gItemIcon_HeartScale, gItemIconPalette_HeartScale},
     // ????????
     [ITEM_AIR_BALLOON] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
-    [ITEM_071] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_072] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_073] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_074] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_LIGHT_CLAY] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
+    [ITEM_LIFE_ORB] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
+    [ITEM_RAZOR_FANG] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
+    [ITEM_RAZOR_CLAW] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
+    [ITEM_MICROPHONE] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
+    [ITEM_CRYSTAL_BALL] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
+    [ITEM_WHETSTONE] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
     [ITEM_BUBBLE_COAT] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark}, // No icon yet
-    [ITEM_076] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_077] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_078] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
     // Mail
     [ITEM_ORANGE_MAIL] = {gItemIcon_OrangeMail, gItemIconPalette_OrangeMail},
     [ITEM_HARBOR_MAIL] = {gItemIcon_HarborMail, gItemIconPalette_HarborMail},

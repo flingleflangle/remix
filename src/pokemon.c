@@ -9,6 +9,8 @@
 #include "battle_pyramid.h"
 #include "battle_setup.h"
 #include "battle_tower.h"
+#include "contest_effect.h"
+#include "constants/contest.h"
 #include "data.h"
 #include "event_data.h"
 #include "evolution_scene.h"
@@ -1965,6 +1967,9 @@ static const u8 sHoldEffectToType[][2] =
     {HOLD_EFFECT_FIRE_POWER, TYPE_FIRE},
     {HOLD_EFFECT_DRAGON_POWER, TYPE_DRAGON},
     {HOLD_EFFECT_NORMAL_POWER, TYPE_NORMAL},
+    {HOLD_EFFECT_SOUND_POWER, TYPE_SOUND},
+    {HOLD_EFFECT_ASTRAL_POWER, TYPE_ASTRAL},
+    {HOLD_EFFECT_BLADE_POWER, TYPE_BLADE},
 };
 
 const struct SpriteTemplate gBattlerSpriteTemplates[MAX_BATTLERS_COUNT] =
@@ -2115,8 +2120,9 @@ static const u8 sGetMonDataEVConstants[] =
 // For stat-raising items
 static const u8 sStatsToRaise[] =
 {
-    STAT_ATK, STAT_ATK, STAT_SPEED, STAT_DEF, STAT_SPATK, STAT_ACC
+    STAT_ATK, STAT_ATK, STAT_SPEED, STAT_DEF, STAT_SPATK, STAT_ACC, STAT_SPDEF
 };
+#define STAT_RAISE_SPDEF_IDX 6 // Not tied to an effect byte like the others; used by X/V SP. DEF
 
 // 3 modifiers each for how much to change friendship for different ranges
 // 0-99, 100-199, 200+
@@ -3167,6 +3173,31 @@ void DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
     (var) /= (gStatStageRatios)[(mon)->statStages[(statIndex)]][1];                 \
 }
 
+// Each contest scarf boosts the battle damage of moves in the contest category it raises
+static bool8 IsMoveBoostedByScarf(u16 item, u16 move)
+{
+    const struct ContestMove *contestMove = &gContestMoves[move];
+    u8 category;
+
+    switch (item)
+    {
+    case ITEM_RED_SCARF:    category = CONTEST_CATEGORY_COOL;   break;
+    case ITEM_BLUE_SCARF:   category = CONTEST_CATEGORY_BEAUTY; break;
+    case ITEM_PINK_SCARF:   category = CONTEST_CATEGORY_CUTE;   break;
+    case ITEM_GREEN_SCARF:  category = CONTEST_CATEGORY_SMART;  break;
+    case ITEM_YELLOW_SCARF: category = CONTEST_CATEGORY_TOUGH;  break;
+    default:
+        return FALSE;
+    }
+
+    // Moves without contest data are left all zero, which would read as COOL. They get no boost
+    if (contestMove->effect == CONTEST_EFFECT_HIGHLY_APPEALING && contestMove->contestCategory == CONTEST_CATEGORY_COOL
+     && contestMove->comboStarterId == 0 && contestMove->comboMoves[0] == 0)
+        return FALSE;
+
+    return contestMove->contestCategory == category;
+}
+
 s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u32 move, u16 sideStatus, u16 powerOverride, u8 typeOverride, u8 battlerIdAtk, u8 battlerIdDef)
 {
     u32 i;
@@ -3617,6 +3648,13 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         if ((gBattleResources->flags->flags[battlerIdAtk] & RESOURCE_FLAG_FLASH_FIRE) && type == TYPE_FIRE)
             damage = (15 * damage) / 10;
     }
+
+    // Life Orb boosts damage by 30%, paid for with recoil after the move
+    if (attackerHoldEffect == HOLD_EFFECT_LIFE_ORB)
+        damage = (13 * damage) / 10;
+
+    if (IsMoveBoostedByScarf(attacker->item, move))
+        damage = (11 * damage) / 10;
 
     return damage + 2;
 }
@@ -4984,6 +5022,16 @@ void CopyPlayerPartyMonToBattleData(u8 battler, u8 partyIndex, bool8 resetStats)
     ClearTemporarySpeciesSpriteData(battler, FALSE);
 }
 
+// The item effect bytes have no room left for Sp. Def, so X/V SP. DEF are keyed off the item ID
+u8 GetSpDefItemBoost(u16 item)
+{
+    if (item == ITEM_X_SPDEF)
+        return 2;
+    if (item == ITEM_V_SPDEF)
+        return MAX_STAT_STAGE;
+    return 0;
+}
+
 bool8 ExecuteTableBasedItemEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 moveIndex)
 {
     return PokemonUseItemEffects(mon, item, partyIndex, moveIndex, FALSE);
@@ -5168,6 +5216,16 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
                 gBattleMons[gActiveBattler].statStages[STAT_SPATK] += itemEffect[i] & ITEM2_X_SPATK;
                 if (gBattleMons[gActiveBattler].statStages[STAT_SPATK] > MAX_STAT_STAGE)
                     gBattleMons[gActiveBattler].statStages[STAT_SPATK] = MAX_STAT_STAGE;
+                retVal = FALSE;
+            }
+
+            // X Sp Def
+            if (GetSpDefItemBoost(item) != 0
+             && gBattleMons[gActiveBattler].statStages[STAT_SPDEF] < MAX_STAT_STAGE)
+            {
+                gBattleMons[gActiveBattler].statStages[STAT_SPDEF] += GetSpDefItemBoost(item);
+                if (gBattleMons[gActiveBattler].statStages[STAT_SPDEF] > MAX_STAT_STAGE)
+                    gBattleMons[gActiveBattler].statStages[STAT_SPDEF] = MAX_STAT_STAGE;
                 retVal = FALSE;
             }
             break;
@@ -5762,6 +5820,9 @@ u8 *UseStatIncreaseItem(u16 itemId)
         }
     }
 
+    if (GetSpDefItemBoost(itemId) != 0)
+        BufferStatRoseMessage(STAT_RAISE_SPDEF_IDX);
+
     if (itemEffect[3] & ITEM3_GUARD_SPEC)
     {
         gBattlerAttacker = gBattlerInMenuId;
@@ -5779,6 +5840,25 @@ u8 GetNature(struct Pokemon *mon)
 u8 GetNatureFromPersonality(u32 personality)
 {
     return personality % NUM_NATURES;
+}
+
+// After a level-up evolution, uses up the held item if it's what triggered an EVO_ITEM_HOLD evolution
+void TryConsumeEvoHeldItem(struct Pokemon *mon, u16 preEvoSpecies, u16 postEvoSpecies)
+{
+    int i;
+    u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, 0);
+
+    for (i = 0; i < EVOS_PER_MON; i++)
+    {
+        if (gEvolutionTable[preEvoSpecies][i].method == EVO_ITEM_HOLD
+         && gEvolutionTable[preEvoSpecies][i].param == heldItem
+         && gEvolutionTable[preEvoSpecies][i].targetSpecies == postEvoSpecies)
+        {
+            heldItem = ITEM_NONE;
+            SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
+            return;
+        }
+    }
 }
 
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem)
@@ -5858,6 +5938,11 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 mode, u16 evolutionItem)
                 break;
             case EVO_LEVEL_NINJASK:
                 if (gEvolutionTable[species][i].param <= level)
+                    targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                break;
+            case EVO_ITEM_HOLD:
+                // The item is used up once the evolution finishes (TryConsumeEvoHeldItem)
+                if (heldItem == gEvolutionTable[species][i].param)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             case EVO_SPECIES_IN_PARTY:

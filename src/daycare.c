@@ -394,7 +394,9 @@ static u16 GetEggSpecies(u16 species)
         {
             for (k = 0; k < EVOS_PER_MON; k++)
             {
-                if (gEvolutionTable[j][k].targetSpecies == species)
+                // Rewind Orb entries point backwards, so they'd make this walk ping-pong between forms
+                if (gEvolutionTable[j][k].targetSpecies == species
+                 && !(gEvolutionTable[j][k].method == EVO_ITEM && gEvolutionTable[j][k].param == ITEM_REWIND_ORB))
                 {
                     species = j;
                     found = TRUE;
