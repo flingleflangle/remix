@@ -472,6 +472,12 @@ bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 atkBattler, u8 de
     {
         return TRUE;
     }
+    // Nothing to fade if a move's animation already took the Substitute down (Pierce)
+    if (!gBattleSpritesDataPtr->battlerData[activeBattler].behindSubstitute
+        && tableId == B_ANIM_SUBSTITUTE_FADE)
+    {
+        return TRUE;
+    }
     if (gBattleSpritesDataPtr->battlerData[activeBattler].behindSubstitute
         && tableId == B_ANIM_SUBSTITUTE_FADE
         && gSprites[gBattlerSpriteIds[activeBattler]].invisible)

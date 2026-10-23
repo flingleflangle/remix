@@ -425,7 +425,7 @@ gBattleAnims_Moves::
 	.4byte Move_WIDE_SLASH
 	.4byte Move_VACUUM_CUT
 	.4byte Move_PIERCE
-	.4byte Move_FOIL
+	.4byte Move_QUICK_DRAW
 	.4byte Move_SERENADE
 	.4byte Move_RESONATE
 	.4byte Move_SHRIEK
@@ -2651,7 +2651,18 @@ Move_HEADBUTT:
 	waitforvisualfinish
 	end
 
-Move_FOIL:
+@ The screen dims while the user darts around and a see-through stroke sweeps a crescent from just beside it,
+@ around through the target and back to its other side. The target shakes as the stroke passes through it
+Move_QUICK_DRAW:
+	playsewithpan SE_M_RAZOR_WIND2, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_QuickDrawSlash, 2, 4, 2, 9, 42, 12, 4, 20, 4
+	createvisualtask AnimTask_TranslateMonEllipticalRespectSide, 2, ANIM_ATTACKER, 24, 6, 1, 4
+	delay 5
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 4, 0, 10, 1
+	waitforvisualfinish
+	end
+
 Move_HORN_ATTACK:
 	loadspritegfx ANIM_TAG_IMPACT
 	loadspritegfx ANIM_TAG_HORN_HIT
@@ -3643,7 +3654,21 @@ Move_ROLLOUT:
 	end
 
 
+@ A long curved slice line drawn across the foes by a spinning Razor Wind cutter, trailed by flickering scratches
 Move_WIDE_SLASH:
+	loadspritegfx ANIM_TAG_AIR_WAVE_2
+	loadspritegfx ANIM_TAG_SCRATCH
+	playsewithpan SE_M_RAZOR_WIND2, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_WideSlashLine, 2, 3, -8, 6, 16, 10
+	delay 8
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	delay 12
+	playsewithpan SE_M_CUT, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 3, 0, 12, 1
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_DEF_PARTNER, 3, 0, 12, 1
+	waitforvisualfinish
+	end
+
 Move_FALSE_SWIPE:
 	loadspritegfx ANIM_TAG_SLASH_2
 	loadspritegfx ANIM_TAG_IMPACT
@@ -6793,7 +6818,76 @@ Move_SPIKES:
 	clearmonbg ANIM_DEF_PARTNER
 	end
 
+@ A fast lunge into a narrow thrust, marked by Cross Chop's X. Behind a Substitute, the thrust erases the doll
+@ and a second X pierces the mon it was hiding (the battle script breaks the Substitute)
 Move_PIERCE:
+	loadspritegfx ANIM_TAG_CROSS_IMPACT
+	loadspritegfx ANIM_TAG_IMPACT
+	createvisualtask AnimTask_IsTargetBehindSubstitute, 2
+	jumprettrue PierceSubstitute
+	call PierceThrust
+@ Small hits following through the target, away from the attacker: climbing when the player thrusts up at
+@ the foe, dropping when the foe thrusts down at the player
+PierceFollowThrough:
+	createvisualtask AnimTask_GetAttackerSide, 2
+	jumprettrue PierceFollowThroughDown
+	delay 3
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	createsprite gFlashingHitSplatSpriteTemplate, ANIM_TARGET, 3, 8, -3, ANIM_TARGET, 3
+	delay 3
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	createsprite gFlashingHitSplatSpriteTemplate, ANIM_TARGET, 3, 16, -7, ANIM_TARGET, 3
+	delay 3
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	createsprite gFlashingHitSplatSpriteTemplate, ANIM_TARGET, 3, 24, -12, ANIM_TARGET, 3
+PierceKnockback:
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, 1, -16, 4, 1, 4
+	waitforvisualfinish
+	createvisualtask AnimTask_ShakeMonInPlace, 2, ANIM_TARGET, -4, 1, 12, 1
+	delay 10
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 11
+	delay 3
+	createsprite gSlideMonToOriginalPosSpriteTemplate, ANIM_ATTACKER, 2, 1, 0, 7
+	waitforvisualfinish
+	end
+
+PierceThrust:
+	playsewithpan SE_M_RAZOR_WIND2, SOUND_PAN_ATTACKER
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, 0, -8, 0, 0, 5
+	waitforvisualfinish
+	createsprite gSlideMonToOffsetSpriteTemplate, ANIM_ATTACKER, 2, 0, 32, 0, 0, 3
+	delay 3
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	createsprite gComplexPaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG | F_PAL_BATTLERS, 3, 1, RGB_WHITE, 10, RGB_BLACK, 10
+	createsprite gCrossImpactSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, 20
+	return
+
+PierceSubstitute:
+	call PierceThrust
+	createvisualtask AnimTask_ShakeMon, 5, ANIM_TARGET, 4, 0, 6, 1
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 0, 16, RGB_WHITE
+	waitforvisualfinish
+	playsewithpan SE_M_TELEPORT, SOUND_PAN_TARGET
+	createvisualtask AnimTask_EraseTargetSubstitute, 2
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 16, 0, RGB_WHITE
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	createsprite gCrossImpactSpriteTemplate, ANIM_ATTACKER, 3, 0, 0, ANIM_TARGET, 20
+	goto PierceFollowThrough
+
+PierceFollowThroughDown:
+	delay 3
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	createsprite gFlashingHitSplatSpriteTemplate, ANIM_TARGET, 3, 8, 3, ANIM_TARGET, 3
+	delay 3
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	createsprite gFlashingHitSplatSpriteTemplate, ANIM_TARGET, 3, 16, 7, ANIM_TARGET, 3
+	delay 3
+	playsewithpan SE_M_HORN_ATTACK, SOUND_PAN_TARGET
+	createsprite gFlashingHitSplatSpriteTemplate, ANIM_TARGET, 3, 24, 12, ANIM_TARGET, 3
+	goto PierceKnockback
+
 Move_MEGAHORN:
 	loadspritegfx ANIM_TAG_HORN_HIT_2
 	loadspritegfx ANIM_TAG_IMPACT
@@ -7387,8 +7481,70 @@ Move_DOUBLE_KICK:
 	blendoff
 	end
 
-Move_TRIPLE_KICK:
 Move_TRIPLE_SLASH:
+	jumpifmoveturn 0, TripleSlashFirst
+	jumpifmoveturn 1, TripleSlashSecond
+	goto TripleSlashThird
+
+@ A single Cut slice
+TripleSlashFirst:
+	loadspritegfx ANIM_TAG_CUT
+	monbg ANIM_TARGET
+	setalpha 12, 8
+	playsewithpan SE_M_CUT, SOUND_PAN_TARGET
+	createsprite gCuttingSliceSpriteTemplate, ANIM_ATTACKER, 2, 40, -32, 0
+	delay 5
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 3, 10, 1
+	waitforvisualfinish
+	clearmonbg ANIM_TARGET
+	blendoff
+	waitforvisualfinish
+	end
+
+@ Semi-transparent horizontal slice line curving upward at its end, stitched with Slash marks that alternate striking down and up onto it,
+@ travelling the same way as the line
+TripleSlashSecond:
+	loadspritegfx ANIM_TAG_SLASH
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	createvisualtask AnimTask_SliceLine, 2, FALSE, 2, 40, 14, 10, 0, 14, 6
+	delay 4
+	createsprite gComplexPaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG | F_PAL_BATTLERS, 3, 1, RGB(9, 8, 10), 4, RGB_BLACK, 0
+	createsprite gSlashMarkToPointSpriteTemplate, ANIM_TARGET, 2, -4, 8, 2
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	delay 2
+	createsprite gSlashMarkToPointSpriteTemplate, ANIM_TARGET, 2, 8, -3, 3
+	delay 2
+	createsprite gSlashMarkToPointSpriteTemplate, ANIM_TARGET, 2, 20, 3, 2
+	createvisualtask AnimTask_ShakeMon, 2, ANIM_TARGET, 0, 4, 10, 1
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	delay 2
+	createsprite gSlashMarkToPointSpriteTemplate, ANIM_TARGET, 2, 32, -9, 3
+	waitforvisualfinish
+	end
+
+@ Semi-transparent vertical slice line curving left at its bottom, stitched with Slash marks that alternate striking in from the right and left,
+@ with a bigger flash and shake
+TripleSlashThird:
+	loadspritegfx ANIM_TAG_SLASH
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	createvisualtask AnimTask_SliceLine, 2, TRUE, 3, 32, 18, 12, -10, 11, 6
+	delay 4
+	createsprite gComplexPaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG | F_PAL_BATTLERS, 3, 3, RGB(9, 8, 10), 10, RGB_BLACK, 0
+	createsprite gSlashMarkToPointSpriteTemplate, ANIM_TARGET, 2, 0, -14, 0
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	delay 2
+	createsprite gSlashMarkToPointSpriteTemplate, ANIM_TARGET, 2, 6, -2, 2
+	delay 2
+	createsprite gSlashMarkToPointSpriteTemplate, ANIM_TARGET, 2, -5, 10, 0
+	playsewithpan SE_M_RAZOR_WIND, SOUND_PAN_TARGET
+	delay 2
+	createsprite gSlashMarkToPointSpriteTemplate, ANIM_TARGET, 2, -1, 22, 2
+	playsewithpan SE_M_RAZOR_WIND2, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 6, 3, 16, 1
+	waitforvisualfinish
+	end
+
+Move_TRIPLE_KICK:
 	loadspritegfx ANIM_TAG_HANDS_AND_FEET
 	loadspritegfx ANIM_TAG_IMPACT
 	monbg ANIM_DEF_PARTNER

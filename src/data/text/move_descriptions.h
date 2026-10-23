@@ -1629,7 +1629,7 @@ static const u8 sPierceDescription[] = _(
     "A lunging attack that\n"
     "cuts through defenses.");
 
-static const u8 sFoilDescription[] = _(
+static const u8 sQuickDrawDescription[] = _(
     "A blindingly fast slash\n"
     "that may disrupt the foe.");
 
@@ -2115,7 +2115,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_WIDE_SLASH - 1] = sWideSlashDescription,
     [MOVE_VACUUM_CUT - 1] = sVacuumCutDescription,
     [MOVE_PIERCE - 1] = sPierceDescription,
-    [MOVE_FOIL - 1] = sFoilDescription,
+    [MOVE_QUICK_DRAW - 1] = sQuickDrawDescription,
     [MOVE_SERENADE - 1] = sSerenadeDescription,
     [MOVE_RESONATE - 1] = sResonateDescription,
     [MOVE_SHRIEK - 1] = sShriekDescription,

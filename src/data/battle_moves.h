@@ -5304,7 +5304,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags = FLAG_MAKES_CONTACT | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 
-    [MOVE_FOIL] =
+    [MOVE_QUICK_DRAW] =
     {
         .effect = EFFECT_FLINCH_HIT,
         .power = 30,

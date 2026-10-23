@@ -2560,6 +2560,38 @@ void AnimTask_IsAttackerBehindSubstitute(u8 taskId)
     DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_IsTargetBehindSubstitute(u8 taskId)
+{
+    gBattleAnimArgs[ARG_RET_ID] = gBattleSpritesDataPtr->battlerData[gBattleAnimTarget].behindSubstitute;
+    DestroyAnimVisualTask(taskId);
+}
+
+// Flickers the target's Substitute doll out of existence, then puts the mon's own sprite back in its place.
+// The Substitute status itself is cleared by the battle script. Used by MOVE_PIERCE.
+void AnimTask_EraseTargetSubstitute(u8 taskId)
+{
+    u8 spriteId = gBattlerSpriteIds[gBattleAnimTarget];
+    struct Task *task = &gTasks[taskId];
+
+    if (++task->data[0] < 2)
+        return;
+    task->data[0] = 0;
+    if (++task->data[1] <= 9)
+    {
+        gSprites[spriteId].invisible ^= TRUE;
+        return;
+    }
+
+    LoadBattleMonGfxAndAnimate(gBattleAnimTarget, TRUE, spriteId);
+    // Start the mon fully white, so the script can fade it in from the flash
+    BlendPalettes(1 << (16 + gSprites[spriteId].oam.paletteNum), 16, RGB_WHITE);
+    gSprites[spriteId].x2 = 0;
+    gSprites[spriteId].y2 = 0;
+    gSprites[spriteId].invisible = FALSE;
+    ClearBehindSubstituteBit(gBattleAnimTarget);
+    DestroyAnimVisualTask(taskId);
+}
+
 void AnimTask_SetTargetToEffectBattler(u8 taskId)
 {
     gBattleAnimTarget = gEffectBattler;

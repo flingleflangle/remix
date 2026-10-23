@@ -7376,6 +7376,11 @@ static void Cmd_various(void)
         if (TryStartExMoveBonus())
             return;
         break;
+    case VARIOUS_PIERCE_SUBSTITUTE:
+        // Pierce breaks the battler's Substitute outright
+        gDisableStructs[gActiveBattler].substituteHP = 0;
+        gBattleMons[gActiveBattler].status2 &= ~STATUS2_SUBSTITUTE;
+        break;
     case VARIOUS_EX_SWAP_STATS:
         // EX_BONUS_SWAP_STATS: the battler and the target swap their stat changes
         for (i = 0; i < NUM_BATTLE_STATS; i++)

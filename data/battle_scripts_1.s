@@ -294,6 +294,7 @@ BattleScript_HitFromCritCalc::
 BattleScript_HitFromAtkAnimation::
 	attackanimation
 	waitanimation
+BattleScript_HitFromEffectivenessSound::
 	effectivenesssound
 	hitanimation BS_TARGET
 	waitstate
@@ -910,10 +911,10 @@ BattleScript_EffectConversion::
 
 BattleScript_EffectFlinchHit::
 	setmoveeffect MOVE_EFFECT_FLINCH
-	jumpifmove MOVE_FOIL, FoilIsABladeMove
+	jumpifmove MOVE_QUICK_DRAW, QuickDrawIsABladeMove
 	goto BattleScript_EffectHit
 
-FoilIsABladeMove:
+QuickDrawIsABladeMove:
 	furycuttercalc
 	goto BattleScript_EffectHit
 
@@ -3526,11 +3527,33 @@ BattleScript_EffectPierce:
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
 	jumpifstat BS_TARGET, CMP_LESS_THAN, STAT_DEF, DEFAULT_STAT_STAGE, DoublePierce
+PierceCheckSubstitute:
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_PierceSubstitute
 	goto BattleScript_EffectHit
 
 DoublePierce:
 	setbyte sDMG_MULTIPLIER, 2
-	goto BattleScript_EffectHit
+	goto PierceCheckSubstitute
+
+@ Pierce breaks a Substitute instead of only slipping past it. The move's animation erases the doll itself;
+@ the Substitute fade animation only plays if the move animation didn't (e.g. battle animations are off).
+BattleScript_PierceSubstitute:
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	jumpifmovehadnoeffect BattleScript_HitFromEffectivenessSound
+	various BS_TARGET, VARIOUS_PIERCE_SUBSTITUTE
+	playanimation BS_TARGET, B_ANIM_SUBSTITUTE_FADE
+	printstring STRINGID_PKMNSUBSTITUTEFADED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_HitFromEffectivenessSound
 
 
 BattleScript_EffectScissorKick:

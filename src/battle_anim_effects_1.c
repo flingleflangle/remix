@@ -4013,6 +4013,815 @@ static void AnimSlice_Step(struct Sprite *sprite)
     }
 }
 
+#define tVertical   data[0]
+#define tLineStart  data[1]
+#define tLineLength data[2]
+#define tCross      data[3]
+#define tThickness  data[4]
+#define tHoldTimer  data[5]
+#define tHead       data[6]
+#define tTail       data[7]
+#define tSpeed      data[8]
+#define tState      data[9]
+#define tReverse    data[10]
+#define tBend       data[11]
+#define tBandTop    data[12]
+#define tBandBottom data[13]
+
+static void AnimTask_SliceLine_Step(u8);
+
+// How far the line has bent off its axis at pos pixels along it. The bend grows quadratically,
+// so the stroke starts straight and curves off toward its end.
+static s16 SliceLine_BendAt(struct Task *task, s16 pos)
+{
+    return -((s32)task->tBend * pos * pos) / ((s32)task->tLineLength * task->tLineLength);
+}
+
+static void SliceLine_UpdateWindow(struct Task *task)
+{
+    u8 lo[112], hi[112];
+    s16 t, pos, row, r, edge, first, last;
+    u16 value;
+
+    for (row = task->tBandTop; row < task->tBandBottom; row++)
+    {
+        lo[row] = 255;
+        hi[row] = 0;
+    }
+
+    // Only the drawn part of the line, which grows away from the attacker's side
+    if (task->tReverse)
+    {
+        first = task->tLineLength - task->tHead;
+        last = task->tLineLength - task->tTail;
+    }
+    else
+    {
+        first = task->tTail;
+        last = task->tHead;
+    }
+
+    for (pos = first; pos < last; pos++)
+    {
+        if (task->tVertical)
+        {
+            row = task->tLineStart + pos;
+            if (row < task->tBandTop || row >= task->tBandBottom)
+                continue;
+            edge = task->tCross + SliceLine_BendAt(task, pos) - task->tThickness / 2;
+            if (edge < 0)
+                edge = 0;
+            if (edge < lo[row])
+                lo[row] = edge;
+            if (edge + task->tThickness > hi[row])
+                hi[row] = edge + task->tThickness;
+        }
+        else
+        {
+            t = task->tLineStart + pos;
+            edge = task->tCross + SliceLine_BendAt(task, pos) - task->tThickness / 2;
+            for (r = 0; r < task->tThickness; r++)
+            {
+                row = edge + r;
+                if (row < task->tBandTop || row >= task->tBandBottom)
+                    continue;
+                if (t < lo[row])
+                    lo[row] = t;
+                if (t + 1 > hi[row])
+                    hi[row] = t + 1;
+            }
+        }
+    }
+
+    for (row = task->tBandTop; row < task->tBandBottom; row++)
+    {
+        value = (lo[row] < hi[row]) ? WIN_RANGE(lo[row], hi[row]) : 0;
+        gScanlineEffectRegBuffers[0][row] = value;
+        gScanlineEffectRegBuffers[1][row] = value;
+    }
+}
+
+// Draws a thin white line that slices across the target mon, then retracts.
+// Used by MOVE_TRIPLE_SLASH.
+// arg 0: FALSE = horizontal slice, TRUE = vertical slice
+// arg 1: line thickness in pixels
+// arg 2: half-length of the line in pixels
+// arg 3: frames to hold the full line before it retracts
+// arg 4: brightness of the line, 0-16 (16 = solid white, lower = more see-through)
+// arg 5: pixel offset of the line's center along its length (negative = up/left)
+// arg 6: how far the far end (right/bottom) of the line bends off its axis, in pixels (positive = up/left)
+// arg 7: pixel offset of the whole line across its length (positive = down/right)
+void AnimTask_SliceLine(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    struct ScanlineEffectParams params;
+    s16 x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    s16 y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    s16 start, end, center, top, bottom;
+    u16 i;
+
+    task->tVertical = gBattleAnimArgs[0];
+    center = (task->tVertical ? y : x) + gBattleAnimArgs[5];
+    start = center - gBattleAnimArgs[2];
+    end = center + gBattleAnimArgs[2];
+    if (start < 0)
+        start = 0;
+    if (task->tVertical)
+    {
+        if (end > 112) // keep clear of the text box
+            end = 112;
+        task->tCross = x + gBattleAnimArgs[7];
+    }
+    else
+    {
+        if (end > DISPLAY_WIDTH)
+            end = DISPLAY_WIDTH;
+        task->tCross = y + gBattleAnimArgs[7];
+    }
+    task->tThickness = gBattleAnimArgs[1];
+    task->tLineStart = start;
+    task->tLineLength = end - start;
+    task->tHoldTimer = gBattleAnimArgs[3];
+    task->tBend = gBattleAnimArgs[6];
+    task->tHead = 0;
+    task->tTail = 0;
+    task->tSpeed = task->tLineLength / 5 + 1;
+    task->tState = 0;
+    // Slice away from the attacker's side
+    task->tReverse = (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER);
+
+    if (task->tVertical)
+    {
+        top = start;
+        bottom = end;
+    }
+    else
+    {
+        top = task->tCross - abs(task->tBend) - task->tThickness;
+        bottom = task->tCross + abs(task->tBend) + task->tThickness;
+        if (top < 0)
+            top = 0;
+        if (bottom > 112)
+            bottom = 112;
+    }
+    task->tBandTop = top;
+    task->tBandBottom = bottom;
+
+    for (i = 0; i < DISPLAY_HEIGHT; i++)
+    {
+        gScanlineEffectRegBuffers[0][i] = 0;
+        gScanlineEffectRegBuffers[1][i] = 0;
+    }
+    gBattle_WIN0H = 0;
+    gBattle_WIN0V = WIN_RANGE(top, bottom);
+    params.dmaDest = &REG_WIN0H;
+    params.dmaControl = SCANLINE_EFFECT_DMACNT_16BIT;
+    params.initState = 1;
+    params.unused9 = 0;
+    ScanlineEffect_SetParams(params);
+
+    SliceLine_UpdateWindow(task);
+    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+    SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN);
+    SetGpuReg(REG_OFFSET_BLDY, gBattleAnimArgs[4]);
+    task->func = AnimTask_SliceLine_Step;
+}
+
+static void AnimTask_SliceLine_Step(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    switch (task->tState)
+    {
+    case 0: // extend
+        task->tHead += task->tSpeed;
+        if (task->tHead >= task->tLineLength)
+        {
+            task->tHead = task->tLineLength;
+            task->tState++;
+        }
+        break;
+    case 1: // hold
+        if (--task->tHoldTimer <= 0)
+            task->tState++;
+        break;
+    case 2: // retract
+        task->tTail += task->tSpeed;
+        if (task->tTail >= task->tLineLength)
+        {
+            gScanlineEffect.state = 3;
+            gBattle_WIN0H = 0;
+            gBattle_WIN0V = 0;
+            SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+            SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+            SetGpuReg(REG_OFFSET_BLDCNT, 0);
+            SetGpuReg(REG_OFFSET_BLDY, 0);
+            DestroyAnimVisualTask(taskId);
+            return;
+        }
+        break;
+    }
+    SliceLine_UpdateWindow(task);
+}
+
+// A Slash mark positioned so the tip of its stroke lands on a point, for stitching marks along a slice line.
+// Used by MOVE_TRIPLE_SLASH.
+// arg 0: x pixel offset of the tip from the target
+// arg 1: y pixel offset of the tip from the target
+// arg 2: 0 = strikes down from the upper right, 1 = strikes up from the lower right,
+//        2 = strikes down from the upper left, 3 = strikes up from the lower left
+static void AnimSlashMarkToPoint(struct Sprite *sprite)
+{
+    s16 dx = 15, dy = -15;
+
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[0];
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
+    if (gBattleAnimArgs[2] == 1 || gBattleAnimArgs[2] == 3)
+    {
+        sprite->vFlip = TRUE;
+        dy = -dy;
+    }
+    if (gBattleAnimArgs[2] == 2 || gBattleAnimArgs[2] == 3)
+    {
+        sprite->hFlip = TRUE;
+        dx = -dx;
+    }
+    sprite->x += dx;
+    sprite->y += dy;
+    sprite->data[0] = 0;
+    sprite->data[1] = 0;
+    StoreSpriteCallbackInData6(sprite, AnimFalseSwipeSlice_Step3);
+    sprite->callback = RunStoredCallbackWhenAnimEnds;
+}
+
+const struct SpriteTemplate gSlashMarkToPointSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SLASH,
+    .paletteTag = ANIM_TAG_SLASH,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gSlashSliceAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSlashMarkToPoint,
+};
+
+#undef tVertical
+#undef tLineStart
+#undef tLineLength
+#undef tCross
+#undef tThickness
+#undef tHoldTimer
+#undef tHead
+#undef tTail
+#undef tSpeed
+#undef tState
+#undef tReverse
+#undef tBend
+#undef tBandTop
+#undef tBandBottom
+
+extern const union AnimCmd *const gScratchAnimTable[];
+
+static const union AnimCmd sAnim_WideSlashCutter[] =
+{
+    ANIMCMD_FRAME(0, 2),
+    ANIMCMD_FRAME(0, 2, .hFlip = TRUE),
+    ANIMCMD_FRAME(0, 2, .vFlip = TRUE, .hFlip = TRUE),
+    ANIMCMD_FRAME(0, 2, .vFlip = TRUE),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd *const sAnims_WideSlashCutter[] =
+{
+    sAnim_WideSlashCutter,
+};
+
+// Spinning Razor Wind crescent that rides the head of the Wide Slash line. Moved by AnimTask_WideSlashLine.
+static const struct SpriteTemplate sWideSlashCutterSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_AIR_WAVE_2,
+    .paletteTag = ANIM_TAG_AIR_WAVE_2,
+    .oam = &gOamData_AffineOff_ObjNormal_32x16,
+    .anims = sAnims_WideSlashCutter,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+// Flickers every frame so it reads as see-through, and is destroyed when its animation ends
+static void AnimWideSlashScratch(struct Sprite *sprite)
+{
+    sprite->invisible ^= TRUE;
+    if (sprite->animEnded)
+        DestroyAnimSprite(sprite);
+}
+
+static const struct SpriteTemplate sWideSlashScratchSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SCRATCH,
+    .paletteTag = ANIM_TAG_SCRATCH,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gScratchAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimWideSlashScratch,
+};
+
+#define tStartX     data[0]
+#define tLength     data[1]
+#define tBaseY      data[2]
+#define tSag        data[3]
+#define tThickness  data[4]
+#define tSpeed      data[5]
+#define tHoldTimer  data[6]
+#define tHead       data[7]
+#define tTail       data[8]
+#define tState      data[9]
+#define tBandTop    data[10]
+#define tBandHeight data[11]
+#define tCutterId   data[12]
+#define tScratchTimer data[13]
+#define tScratchSide  data[14]
+
+#define WIDE_SLASH_MAX_BAND 64
+
+static void AnimTask_WideSlashLine_Step(u8);
+
+static s16 WideSlash_CurveY(struct Task *task, s16 t)
+{
+    s32 d = 2 * t - task->tLength;
+    return task->tBaseY + task->tSag - (task->tSag * d * d) / (task->tLength * task->tLength);
+}
+
+// Each half of the arc goes in its own window, so every scanline only ever needs one span per window
+static void WideSlash_DrawLine(struct Task *task)
+{
+    u8 lo0[WIDE_SLASH_MAX_BAND], hi0[WIDE_SLASH_MAX_BAND], lo1[WIDE_SLASH_MAX_BAND], hi1[WIDE_SLASH_MAX_BAND];
+    s16 t, r, row, x, y;
+    u32 value;
+
+    for (r = 0; r < task->tBandHeight; r++)
+    {
+        lo0[r] = lo1[r] = 255;
+        hi0[r] = hi1[r] = 0;
+    }
+
+    for (t = task->tTail; t < task->tHead; t++)
+    {
+        x = task->tStartX + t;
+        y = WideSlash_CurveY(task, t) - task->tThickness / 2;
+        for (r = 0; r < task->tThickness; r++)
+        {
+            row = y + r - task->tBandTop;
+            if (row < 0 || row >= task->tBandHeight)
+                continue;
+            if (t < task->tLength / 2)
+            {
+                if (x < lo0[row])
+                    lo0[row] = x;
+                if (x + 1 > hi0[row])
+                    hi0[row] = x + 1;
+            }
+            else
+            {
+                if (x < lo1[row])
+                    lo1[row] = x;
+                if (x + 1 > hi1[row])
+                    hi1[row] = x + 1;
+            }
+        }
+    }
+
+    for (r = 0; r < task->tBandHeight; r++)
+    {
+        value = 0;
+        if (lo0[r] < hi0[r])
+            value |= WIN_RANGE(lo0[r], hi0[r]);
+        if (lo1[r] < hi1[r])
+            value |= (u32)WIN_RANGE(lo1[r], hi1[r]) << 16;
+        ((u32 *)gScanlineEffectRegBuffers[0])[task->tBandTop + r] = value;
+        ((u32 *)gScanlineEffectRegBuffers[1])[task->tBandTop + r] = value;
+    }
+}
+
+static void WideSlash_SpawnScratch(struct Task *task)
+{
+    u8 spriteId;
+    s16 t = task->tHead - 12;
+    s16 subpriority = GetBattlerSpriteSubpriority(gBattleAnimTarget) - 1;
+
+    if (t < 0)
+        return;
+    if (subpriority < 3)
+        subpriority = 3;
+    task->tScratchSide ^= 1;
+    spriteId = CreateSprite(&sWideSlashScratchSpriteTemplate,
+                            task->tStartX + t,
+                            WideSlash_CurveY(task, t) + (task->tScratchSide ? -6 : 6),
+                            subpriority);
+    if (spriteId != MAX_SPRITES)
+    {
+        gSprites[spriteId].hFlip = task->tScratchSide;
+        gAnimVisualTaskCount++;
+    }
+}
+
+// Draws a long, slightly curved white line from left to right across the target's side of the field,
+// led by a spinning Razor Wind crescent and trailed by flickering Scratch marks, then retracts it.
+// Load ANIM_TAG_AIR_WAVE_2 and ANIM_TAG_SCRATCH first. Used by MOVE_WIDE_SLASH.
+// arg 0: line thickness in pixels
+// arg 1: how far the middle of the line dips below its ends, in pixels (negative = bows upward)
+// arg 2: pixels the line extends per frame
+// arg 3: frames to hold the full line before it retracts
+// arg 4: brightness of the line, 0-16 (16 = solid white, lower = more see-through)
+void AnimTask_WideSlashLine(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    struct ScanlineEffectParams params;
+    s16 x, y, top, bottom, subpriority;
+    u16 i;
+
+    x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    if (IsDoubleBattle() && IsBattlerSpriteVisible(BATTLE_PARTNER(gBattleAnimTarget)))
+    {
+        x = (x + GetBattlerSpriteCoord(BATTLE_PARTNER(gBattleAnimTarget), BATTLER_COORD_X_2)) / 2;
+        y = (y + GetBattlerSpriteCoord(BATTLE_PARTNER(gBattleAnimTarget), BATTLER_COORD_Y_PIC_OFFSET)) / 2;
+    }
+
+    task->tLength = 128;
+    task->tStartX = x - task->tLength / 2;
+    if (task->tStartX < 0)
+        task->tStartX = 0;
+    if (task->tStartX + task->tLength > DISPLAY_WIDTH)
+        task->tStartX = DISPLAY_WIDTH - task->tLength;
+    task->tBaseY = y;
+    task->tThickness = gBattleAnimArgs[0];
+    task->tSag = gBattleAnimArgs[1];
+    task->tSpeed = gBattleAnimArgs[2];
+    task->tHoldTimer = gBattleAnimArgs[3];
+    task->tHead = 0;
+    task->tTail = 0;
+    task->tState = 0;
+    task->tScratchTimer = 0;
+    task->tScratchSide = 0;
+
+    top = y - abs(task->tSag) - task->tThickness;
+    bottom = y + abs(task->tSag) + task->tThickness;
+    if (top < 0)
+        top = 0;
+    if (bottom > 112) // keep clear of the text box
+        bottom = 112;
+    if (bottom - top > WIDE_SLASH_MAX_BAND)
+        bottom = top + WIDE_SLASH_MAX_BAND;
+    task->tBandTop = top;
+    task->tBandHeight = bottom - top;
+
+    for (i = 0; i < DISPLAY_HEIGHT; i++)
+    {
+        ((u32 *)gScanlineEffectRegBuffers[0])[i] = 0;
+        ((u32 *)gScanlineEffectRegBuffers[1])[i] = 0;
+    }
+    gBattle_WIN0H = 0;
+    gBattle_WIN1H = 0;
+    gBattle_WIN0V = WIN_RANGE(top, bottom);
+    gBattle_WIN1V = WIN_RANGE(top, bottom);
+    params.dmaDest = &REG_WIN0H; // writes WIN0H and WIN1H together
+    params.dmaControl = SCANLINE_EFFECT_DMACNT_32BIT;
+    params.initState = 1;
+    params.unused9 = 0;
+    ScanlineEffect_SetParams(params);
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON); // battles leave WIN1 off
+
+    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+    SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN);
+    SetGpuReg(REG_OFFSET_BLDY, gBattleAnimArgs[4]);
+
+    subpriority = GetBattlerSpriteSubpriority(gBattleAnimTarget) - 2;
+    if (subpriority < 3)
+        subpriority = 3;
+    task->tCutterId = CreateSprite(&sWideSlashCutterSpriteTemplate, task->tStartX, WideSlash_CurveY(task, 0), subpriority);
+    task->func = AnimTask_WideSlashLine_Step;
+}
+
+static void AnimTask_WideSlashLine_Step(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    switch (task->tState)
+    {
+    case 0: // extend, with the cutter leading
+        task->tHead += task->tSpeed;
+        if (task->tHead >= task->tLength)
+        {
+            task->tHead = task->tLength;
+            if (task->tCutterId != MAX_SPRITES)
+            {
+                DestroySprite(&gSprites[task->tCutterId]);
+                task->tCutterId = MAX_SPRITES;
+            }
+            task->tState++;
+        }
+        else
+        {
+            if (task->tCutterId != MAX_SPRITES)
+            {
+                gSprites[task->tCutterId].x = task->tStartX + task->tHead;
+                gSprites[task->tCutterId].y = WideSlash_CurveY(task, task->tHead);
+            }
+            if (++task->tScratchTimer >= 3)
+            {
+                task->tScratchTimer = 0;
+                WideSlash_SpawnScratch(task);
+            }
+        }
+        break;
+    case 1: // hold
+        if (--task->tHoldTimer <= 0)
+            task->tState++;
+        break;
+    case 2: // retract
+        task->tTail += task->tSpeed;
+        if (task->tTail >= task->tLength)
+        {
+            gScanlineEffect.state = 3;
+            gBattle_WIN0H = 0;
+            gBattle_WIN0V = 0;
+            gBattle_WIN1H = 0;
+            gBattle_WIN1V = 0;
+            if (!IsContest())
+                ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON);
+            SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+            SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+            SetGpuReg(REG_OFFSET_BLDCNT, 0);
+            SetGpuReg(REG_OFFSET_BLDY, 0);
+            DestroyAnimVisualTask(taskId);
+            return;
+        }
+        break;
+    }
+    WideSlash_DrawLine(task);
+}
+
+#undef tStartX
+#undef tLength
+#undef tBaseY
+#undef tSag
+#undef tThickness
+#undef tSpeed
+#undef tHoldTimer
+#undef tHead
+#undef tTail
+#undef tState
+#undef tBandTop
+#undef tBandHeight
+#undef tCutterId
+#undef tScratchTimer
+#undef tScratchSide
+
+#define QUICK_DRAW_SAMPLES 256 // points around the oval, one per gSineTable step
+
+#define tHead       data[0]
+#define tSpeed      data[1]
+#define tCenterX    data[2]
+#define tCenterY    data[3]
+#define tMajorX     data[4]
+#define tMajorY     data[5]
+#define tMinorX     data[6]
+#define tMinorY     data[7]
+#define tBandTop    data[8]
+#define tBandBottom data[9]
+#define tThickness  data[10]
+#define tTopBottom  data[11] // oval point indices of the topmost (low byte) and bottommost (high byte) points
+#define tFrame      data[12]
+#define tHoldTimer  data[13]
+#define tGap        data[14]
+#define tDim        data[15] // dim amount (low byte) and frames to ease it in and out over (high byte)
+
+#define TOP_IDX(task)    ((u16)(task)->tTopBottom & 0xFF)
+#define BOTTOM_IDX(task) ((u16)(task)->tTopBottom >> 8)
+
+static void AnimTask_QuickDrawSlash_Step(u8);
+
+// Dims the screen by step/steps of the full dim amount
+static void QuickDraw_SetDim(struct Task *task, s16 step)
+{
+    s16 dim = task->tDim & 0xFF;
+    s16 steps = (u16)task->tDim >> 8;
+
+    if (steps == 0 || step >= steps)
+        BlendPalettes(PALETTES_ALL, dim, RGB_BLACK);
+    else if (step <= 0)
+        BlendPalettes(PALETTES_ALL, 0, RGB_BLACK);
+    else
+        BlendPalettes(PALETTES_ALL, dim * step / steps, RGB_BLACK);
+}
+
+// Point i of the oval. Point 0 is the attacker; halfway round is the far end, past the target.
+static void QuickDraw_GetPoint(struct Task *task, s16 i, s16 *x, s16 *y)
+{
+    i &= QUICK_DRAW_SAMPLES - 1;
+    *x = task->tCenterX - Cos(i, task->tMajorX) + Sin(i, task->tMinorX);
+    *y = task->tCenterY - Cos(i, task->tMajorY) + Sin(i, task->tMinorY);
+}
+
+// The oval is convex, so every scanline crosses it at most twice: once on the chain running from its topmost
+// point to its bottommost point one way round (WIN0), and once on the chain going the other way (WIN1)
+static void QuickDraw_DrawStroke(struct Task *task)
+{
+    u8 lo[2][112], hi[2][112];
+    s16 i, x, y, r, row, chain;
+    u16 chainALength = (BOTTOM_IDX(task) - TOP_IDX(task)) & (QUICK_DRAW_SAMPLES - 1);
+    u32 value;
+
+    for (row = task->tBandTop; row < task->tBandBottom; row++)
+    {
+        lo[0][row] = lo[1][row] = 255;
+        hi[0][row] = hi[1][row] = 0;
+    }
+
+    for (i = task->tGap; i <= task->tHead && i <= QUICK_DRAW_SAMPLES - task->tGap; i++)
+    {
+        QuickDraw_GetPoint(task, i, &x, &y);
+        if (x < 0 || x >= DISPLAY_WIDTH)
+            continue;
+        chain = (((i - TOP_IDX(task)) & (QUICK_DRAW_SAMPLES - 1)) <= chainALength) ? 0 : 1;
+        for (r = 0; r < task->tThickness; r++)
+        {
+            row = y - task->tThickness / 2 + r;
+            if (row < task->tBandTop || row >= task->tBandBottom)
+                continue;
+            if (x < lo[chain][row])
+                lo[chain][row] = x;
+            if (x + task->tThickness > hi[chain][row])
+                hi[chain][row] = min(x + task->tThickness, DISPLAY_WIDTH);
+        }
+    }
+
+    for (row = task->tBandTop; row < task->tBandBottom; row++)
+    {
+        value = 0;
+        if (lo[0][row] < hi[0][row])
+            value |= WIN_RANGE(lo[0][row], hi[0][row]);
+        if (lo[1][row] < hi[1][row])
+            value |= (u32)WIN_RANGE(lo[1][row], hi[1][row]) << 16;
+        ((u32 *)gScanlineEffectRegBuffers[0])[row] = value;
+        ((u32 *)gScanlineEffectRegBuffers[1])[row] = value;
+    }
+}
+
+// Dims the screen while a semi-transparent white stroke traces an open oval: it starts just to one side of the
+// attacker, sweeps around through the target and comes back to just the other side, like a crescent.
+// Then restores the screen. Used by MOVE_QUICK_DRAW.
+// The stroke reaches the far side of the target about QUICK_DRAW_SAMPLES / 2 / arg 3 frames after starting this task.
+// arg 0: oval width, in 16ths of the attacker-target distance (each side of the long axis)
+// arg 1: stroke thickness in pixels
+// arg 2: how dark to dim the screen, 0-16
+// arg 3: oval points drawn per frame (QUICK_DRAW_SAMPLES for the whole oval)
+// arg 4: brightness of the stroke, 0-16 (16 = solid white, lower = more see-through)
+// arg 5: frames to hold the finished oval before restoring the screen
+// arg 6: oval points left off each end next to the attacker, which opens the oval up (QUICK_DRAW_SAMPLES per lap)
+// arg 7: frames to ease the dim in at the start and out at the end (0 = instant)
+void AnimTask_QuickDrawSlash(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    struct ScanlineEffectParams params;
+    s16 startX, startY, dx, dy, x, y, top, bottom, i, topIdx, bottomIdx;
+    u16 j;
+
+    startX = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
+    startY = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+    dx = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) - startX;
+    dy = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) - startY;
+
+    // The long axis runs from the attacker to a quarter past the target, so the oval sweeps through it
+    task->tMajorX = dx * 5 / 8;
+    task->tMajorY = dy * 5 / 8;
+    task->tCenterX = startX + task->tMajorX;
+    task->tCenterY = startY + task->tMajorY;
+    task->tMinorX = -dy * gBattleAnimArgs[0] / 16;
+    task->tMinorY = dx * gBattleAnimArgs[0] / 16;
+    task->tThickness = gBattleAnimArgs[1];
+    task->tSpeed = gBattleAnimArgs[3];
+    task->tHoldTimer = gBattleAnimArgs[5];
+    task->tGap = gBattleAnimArgs[6];
+    task->tHead = task->tGap + task->tSpeed;
+    task->tDim = gBattleAnimArgs[2] | (gBattleAnimArgs[7] << 8);
+    task->tFrame = 0;
+
+    topIdx = bottomIdx = 0;
+    top = bottom = startY;
+    for (i = 0; i < QUICK_DRAW_SAMPLES; i++)
+    {
+        QuickDraw_GetPoint(task, i, &x, &y);
+        if (y < top)
+        {
+            top = y;
+            topIdx = i;
+        }
+        if (y > bottom)
+        {
+            bottom = y;
+            bottomIdx = i;
+        }
+    }
+    task->tTopBottom = topIdx | (bottomIdx << 8);
+    top -= task->tThickness;
+    bottom += task->tThickness;
+    if (top < 0)
+        top = 0;
+    if (bottom > 112)
+        bottom = 112;
+    task->tBandTop = top;
+    task->tBandBottom = bottom;
+
+    for (j = 0; j < DISPLAY_HEIGHT; j++)
+    {
+        ((u32 *)gScanlineEffectRegBuffers[0])[j] = 0;
+        ((u32 *)gScanlineEffectRegBuffers[1])[j] = 0;
+    }
+    gBattle_WIN0H = 0;
+    gBattle_WIN1H = 0;
+    gBattle_WIN0V = WIN_RANGE(top, bottom);
+    gBattle_WIN1V = WIN_RANGE(top, bottom);
+    params.dmaDest = &REG_WIN0H; // writes WIN0H and WIN1H together
+    params.dmaControl = SCANLINE_EFFECT_DMACNT_32BIT;
+    params.initState = 1;
+    params.unused9 = 0;
+    ScanlineEffect_SetParams(params);
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON); // battles leave WIN1 off
+
+    // Dimmed screen, with the stroke brightened inside the windows
+    QuickDraw_SetDim(task, 1);
+    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+    SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN);
+    SetGpuReg(REG_OFFSET_BLDY, gBattleAnimArgs[4]);
+
+    QuickDraw_DrawStroke(task);
+    task->func = AnimTask_QuickDrawSlash_Step;
+}
+
+static void AnimTask_QuickDrawSlash_Step(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    task->tFrame++;
+    if (task->tHead < QUICK_DRAW_SAMPLES - task->tGap)
+    {
+        task->tHead += task->tSpeed;
+        QuickDraw_DrawStroke(task);
+        QuickDraw_SetDim(task, task->tFrame + 1);
+    }
+    else if (--task->tHoldTimer >= 0)
+    {
+        // Keep easing in if the stroke finished first
+        QuickDraw_SetDim(task, task->tFrame + 1);
+    }
+    else if (-task->tHoldTimer < ((u16)task->tDim >> 8))
+    {
+        // Ease the dim back out, with the stroke still showing
+        QuickDraw_SetDim(task, ((u16)task->tDim >> 8) + task->tHoldTimer);
+    }
+    else
+    {
+        BlendPalettes(PALETTES_ALL, 0, RGB_BLACK);
+        gScanlineEffect.state = 3;
+        gBattle_WIN0H = 0;
+        gBattle_WIN0V = 0;
+        gBattle_WIN1H = 0;
+        gBattle_WIN1V = 0;
+        if (!IsContest())
+            ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON);
+        SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+        SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+        SetGpuReg(REG_OFFSET_BLDCNT, 0);
+        SetGpuReg(REG_OFFSET_BLDY, 0);
+        DestroyAnimVisualTask(taskId);
+    }
+}
+
+#undef tHead
+#undef tSpeed
+#undef tCenterX
+#undef tCenterY
+#undef tMajorX
+#undef tMajorY
+#undef tMinorX
+#undef tMinorY
+#undef tBandTop
+#undef tBandBottom
+#undef tThickness
+#undef tTopBottom
+#undef tFrame
+#undef TOP_IDX
+#undef BOTTOM_IDX
+#undef tDim
+#undef tHoldTimer
+#undef tGap
+
 static void UNUSED UnusedFlickerAnim(struct Sprite *sprite)
 {
     if (sprite->data[2] > 1)

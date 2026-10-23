@@ -133,6 +133,7 @@
 #define VARIOUS_EX_PROTECT                      52
 #define VARIOUS_EX_TRANSFER_STATUS              53
 #define VARIOUS_EX_SWAP_STATS                   54
+#define VARIOUS_PIERCE_SUBSTITUTE               55
 
 // EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
 // They last for the move that set them (gExMoveFlags)
