@@ -384,6 +384,7 @@
 #define B_ANIM_EX_MASTERY               25 // A Pokémon glows, sparkles and turns into its EX form (see BattleScript_ExTrainingUnlock)
 #define B_ANIM_SPIKES_BURST             26 // Spikes burst out of a Pokémon that was hit and scatter around it (BoulderDashSpikes)
 #define B_ANIM_POKE_DOLL                27 // A POKE DOLL from the bag stands in as a Substitute
+#define B_ANIM_ECHO_RETURN              28 // Echo's sound wave bouncing back for its delayed hit
 
 // special animations table (gBattleAnims_Special)
 #define B_ANIM_LVL_UP                   0
@@ -421,6 +422,7 @@
 #define TRAP_ANIM_CLAMP 3
 #define TRAP_ANIM_SAND_TOMB 4
 #define TRAP_ANIM_SPROUT 5
+#define TRAP_ANIM_BLACK_HOLE 6
 
 // Weather defines for battle animation scripts.
 #define ANIM_WEATHER_NONE 0

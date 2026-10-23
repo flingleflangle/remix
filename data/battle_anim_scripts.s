@@ -12,7 +12,7 @@
 
 	.align 2
 gMovesWithQuietBGM::
-	.2byte MOVE_SING, MOVE_PERISH_SONG, MOVE_GRASS_WHISTLE, 0xFFFF
+	.2byte MOVE_SING, MOVE_PERISH_SONG, MOVE_GRASS_WHISTLE, MOVE_SERENADE, 0xFFFF
 
 	.align 2
 gBattleAnims_Moves::
@@ -488,6 +488,7 @@ gBattleAnims_General::
 	.4byte General_ExMastery                @ B_ANIM_EX_MASTERY
 	.4byte General_SpikesBurst              @ B_ANIM_SPIKES_BURST
 	.4byte General_PokeDoll                 @ B_ANIM_POKE_DOLL
+	.4byte General_EchoReturn               @ B_ANIM_ECHO_RETURN
 
 	.align 2
 gBattleAnims_Special::
@@ -698,8 +699,49 @@ Move_BODY_SLAM:
 	blendoff
 	end
 
+@ Small, see-through, shimmering gold rings bounce back and forth between the user and the target. The user sways
+@ first, and the target joins in out of step, falling into rhythm with it; then both glow gold. Each hop takes
+@ half a sway, so the rings land on the beat
 Move_RESONATE:
+	loadspritegfx ANIM_TAG_GOLD_RING
+	setalpha 10, 8
+	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_ResonateSway, 2, 196, 36, 72, 48, 3
+	delay 12
+	createvisualtask AnimTask_BlendColorCycleByTag, 2, ANIM_TAG_GOLD_RING, 2, 6, 0, 10, RGB_WHITE
+	createsprite gResonateRingSpriteTemplate, ANIM_ATTACKER, 2, 6, 24, 12, TRUE
+	delay 8
+	createsprite gResonateRingSpriteTemplate, ANIM_ATTACKER, 2, 6, 24, 12, FALSE
+	delay 8
+	createsprite gResonateRingSpriteTemplate, ANIM_ATTACKER, 2, 6, 24, 12, FALSE
+	waitforvisualfinish
+	blendoff
+	end
+
+@ The user panics (flailing like Panic, with Struggle's movement waves) while screaming out large rings in quick
+@ succession that startle the target the way Astonish does
 Move_SHRIEK:
+	loadspritegfx ANIM_TAG_MOVEMENT_WAVES
+	loadspritegfx ANIM_TAG_THIN_RING
+	loadspritegfx ANIM_TAG_SWEAT_BEAD
+	createvisualtask AnimTask_FlailMovement, 2, ANIM_ATTACKER
+	createsprite gMovementWavesSpriteTemplate, ANIM_ATTACKER, 2, 0, 0, 2
+	createsprite gMovementWavesSpriteTemplate, ANIM_ATTACKER, 2, 0, 1, 2
+	playsewithpan SE_M_SCREECH, SOUND_PAN_ATTACKER
+	createsprite gHyperVoiceRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, 0, 0, 0, 0, 1
+	delay 3
+	createsprite gHyperVoiceRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, 0, 0, 0, 0, 1
+	delay 3
+	createsprite gHyperVoiceRingSpriteTemplate, ANIM_ATTACKER, 0, 45, 0, 0, 0, 0, 0, 1
+	delay 6
+	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 0, 1
+	playsewithpan SE_M_SKETCH, SOUND_PAN_TARGET
+	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 1, 1
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 4, 0, 5, 1
+	createvisualtask AnimTask_StretchTargetUp, 3
+	waitforvisualfinish
+	end
+
 Move_SUPERSONIC:
 	loadspritegfx ANIM_TAG_GOLD_RING
 	monbg ANIM_ATK_PARTNER
@@ -723,24 +765,43 @@ SupersonicRing:
 	return
 
 
+@ Turn 0: a hit, where the rings sail past the target and on behind it. Turn 1: amped after a miss. Turn 2: a miss,
+@ where the rings sail past the target and come back to the user, which shakes with a faint gold glow (see
+@ BattleScript_EchoMiss). Its delayed hit bounces back with General_EchoReturn
 Move_ECHO:
 	loadspritegfx ANIM_TAG_GOLD_RING
 	loadspritegfx ANIM_TAG_THIN_RING
+	jumpifmoveturn 2, EchoMiss
 	choosetwoturnanim Echo, EchoAmped
 Echo:
-	monbg ANIM_ATK_PARTNER
-	splitbgprio_foes ANIM_ATTACKER
-	setalpha 12, 8
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 2, 0, 8, 1
-	call SupersonicRing
-	call SupersonicRing
-	call SupersonicRing
-	call SupersonicRing
-	call SupersonicRing
-	call SupersonicRing
+	panse SE_M_SUPERSONIC, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, +2, 0
+	createsprite gEchoPassingRingSpriteTemplate, ANIM_ATTACKER, 2, 40, 12, FALSE
+	delay 4
+	createsprite gEchoPassingRingSpriteTemplate, ANIM_ATTACKER, 2, 40, 12, FALSE
+	delay 4
+	createsprite gEchoPassingRingSpriteTemplate, ANIM_ATTACKER, 2, 40, 12, FALSE
+	delay 4
+	createsprite gEchoPassingRingSpriteTemplate, ANIM_ATTACKER, 2, 40, 12, FALSE
 	waitforvisualfinish
-	clearmonbg ANIM_ATK_PARTNER
-	blendoff
+	end
+EchoMiss:
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 2, 0, 8, 1
+	panse SE_M_SUPERSONIC, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, +2, 0
+	createsprite gEchoPassingRingSpriteTemplate, ANIM_ATTACKER, 2, 40, 12, TRUE
+	delay 4
+	createsprite gEchoPassingRingSpriteTemplate, ANIM_ATTACKER, 2, 40, 12, TRUE
+	delay 4
+	createsprite gEchoPassingRingSpriteTemplate, ANIM_ATTACKER, 2, 40, 12, TRUE
+	delay 4
+	createsprite gEchoPassingRingSpriteTemplate, ANIM_ATTACKER, 2, 40, 12, TRUE
+@ They turn around at the far end (frame 40) and reach the user again at frame 80
+	delay 28
+	panse SE_M_SUPERSONIC, SOUND_PAN_TARGET, SOUND_PAN_ATTACKER, -2, 0
+	delay 40
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 1, 0, 12, 1
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 2, 2, 0, 6, RGB(31, 25, 6)
+	waitforvisualfinish
 	end
 EchoAmped:
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 2, 0, 8, 1
@@ -2908,7 +2969,39 @@ Move_NASTY_PLOT::
 	end
 
 
+@ Notes travel to the target and circle it while this turn's part of the song plays (Littleroot's lead, one part
+@ per turn). If the song fails, it goes off key, cuts off with Yawn's sound and the notes drop
 Move_SERENADE:
+	loadspritegfx ANIM_TAG_MUSIC_NOTES
+	createvisualtask AnimTask_MusicNotesRainbowBlend, 2
+	waitforvisualfinish
+	choosetwoturnanim SerenadeSong, SerenadeFail
+SerenadeSong:
+	createvisualtask AnimTask_PlaySerenadePart, 2, FALSE
+	goto SerenadeNotes
+SerenadeFail:
+	createvisualtask AnimTask_PlaySerenadePart, 2, TRUE
+	createvisualtask AnimTask_SerenadeSourNote, 2, 70, -192, 18
+SerenadeNotes:
+@ Each later note joins the ring further round (256/7 + 5 frames x SERENADE_ORBIT_SPEED), so they end up evenly spaced
+	createsprite gSerenadeNoteSpriteTemplate, ANIM_TARGET, 2, 0, 0, 0, 36
+	delay 5
+	createsprite gSerenadeNoteSpriteTemplate, ANIM_TARGET, 2, 1, 1, 62, 36
+	delay 5
+	createsprite gSerenadeNoteSpriteTemplate, ANIM_TARGET, 2, 2, 2, 123, 36
+	delay 5
+	createsprite gSerenadeNoteSpriteTemplate, ANIM_TARGET, 2, 3, 3, 185, 36
+	delay 5
+	createsprite gSerenadeNoteSpriteTemplate, ANIM_TARGET, 2, 4, 0, 246, 36
+	delay 5
+	createsprite gSerenadeNoteSpriteTemplate, ANIM_TARGET, 2, 5, 1, 52, 36
+	delay 5
+	createsprite gSerenadeNoteSpriteTemplate, ANIM_TARGET, 2, 6, 2, 113, 36
+	waitforvisualfinish
+	createvisualtask AnimTask_MusicNotesClearRainbowBlend, 2
+	waitforvisualfinish
+	end
+
 Move_SING:
 	loadspritegfx ANIM_TAG_MUSIC_NOTES
 	monbg ANIM_DEF_PARTNER
@@ -3736,7 +3829,34 @@ Move_MILK_DRINK:
 	end
 
 
+@ The ground shakes like a weaker Magnitude while the screen flashes twice, then the target is dunked under the
+@ water (with Dive's splash) and disappears. It only comes back up if it's going to survive the hit
 Move_ABYSS:
+	loadspritegfx ANIM_TAG_SPLASH
+	loadspritegfx ANIM_TAG_SWEAT_BEAD
+	createvisualtask AnimTask_HorizontalShake, 5, (MAX_BATTLERS_COUNT + 1), 0, 50
+	createvisualtask AnimTask_HorizontalShake, 5, MAX_BATTLERS_COUNT, 0, 50
+	loopsewithpan SE_M_STRENGTH, SOUND_PAN_TARGET, 8, 10
+	delay 18
+	createsprite gComplexPaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 1, RGB_BLACK, 14, RGB_WHITE, 14
+	delay 16
+	createsprite gComplexPaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 1, RGB_BLACK, 14, RGB_WHITE, 14
+	delay 36
+	playsewithpan SE_M_DIVE, SOUND_PAN_TARGET
+	createsprite gDiveWaterSplashSpriteTemplate, ANIM_TARGET, 3, 1
+	createvisualtask AnimTask_AbyssDunk, 2, ANIM_TARGET, 10, 20, 12
+	call AbyssWaterDroplets
+	call AbyssWaterDroplets
+	call AbyssWaterDroplets
+	call AbyssWaterDroplets
+	call AbyssWaterDroplets
+	waitforvisualfinish
+	end
+AbyssWaterDroplets:
+	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 0, 1
+	createsprite gSprayWaterDropletSpriteTemplate, ANIM_TARGET, 5, 1, 1
+	return
+
 Move_MAGNITUDE:
 	createvisualtask AnimTask_IsPowerOver99, 2
 	waitforvisualfinish
@@ -5634,7 +5754,31 @@ RoarEffect:
 	return
 
 
+@ Harsh noise bursts (Snore's) close in on both sides of the target and press against it, buzzing. Once they
+@ connect, the target cycles to dark grey and back, shaking slowly as if the noise hurts
 Move_DISS:
+	loadspritegfx ANIM_TAG_SNORE_Z
+	createvisualtask SoundTask_PlayDoubleCry, 2, ANIM_ATTACKER, DOUBLE_CRY_GROWL
+	createsprite gDissNoiseSpriteTemplate, ANIM_TARGET, 2, -1, 72, 24, -14, 16, 60
+	createsprite gDissNoiseSpriteTemplate, ANIM_TARGET, 2, 1, 72, 24, -14, 16, 60
+	delay 6
+	createsprite gDissNoiseSpriteTemplate, ANIM_TARGET, 2, -1, 72, 24, 0, 16, 54
+	createsprite gDissNoiseSpriteTemplate, ANIM_TARGET, 2, 1, 72, 24, 0, 16, 54
+	delay 6
+	createsprite gDissNoiseSpriteTemplate, ANIM_TARGET, 2, -1, 72, 24, 14, 16, 48
+	createsprite gDissNoiseSpriteTemplate, ANIM_TARGET, 2, 1, 72, 24, 14, 16, 48
+@ The first pair touches the target at frame 16
+	delay 4
+	playsewithpan SE_M_SNORE, SOUND_PAN_TARGET
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 1, 4, 0, 11, RGB(6, 6, 7)
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 12, 4
+	delay 30
+	playsewithpan SE_M_SNORE, SOUND_PAN_TARGET
+	waitforvisualfinish
+	createvisualtask SoundTask_WaitForCry, 5
+	waitforvisualfinish
+	end
+
 Move_GROWL:
 	loadspritegfx ANIM_TAG_NOISE_LINE
 	createvisualtask SoundTask_PlayDoubleCry, 2, ANIM_ATTACKER, DOUBLE_CRY_GROWL
@@ -9472,7 +9616,24 @@ SoulStealFlash:
 	return
 
 
+@ A Shadow Ball drifts over from in front of the user, shrinking smaller and smaller, until it touches the target,
+@ which shakes violently, pulsing black. Then it bursts out behind the target, bigger than it, spinning, and shrinks
+@ back down. The between-turns drain is Status_BlackHole
 Move_BLACK_HOLE:
+	loadspritegfx ANIM_TAG_SHADOW_BALL
+	createsoundtask SoundTask_LoopSEAdjustPanning, SE_M_MIST, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 5, 5, 0, 5
+	createsprite gBlackHoleBallSpriteTemplate, ANIM_TARGET, 2, FALSE, 40, 20
+	delay 40
+	playsewithpan SE_M_SAND_ATTACK, SOUND_PAN_TARGET
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 6, 0, 12, 1
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 0, 4, 0, 12, RGB_BLACK
+@ It bursts out behind the target BLACK_HOLE_IMPACT_TIME frames after touching it
+	delay 12
+	playsewithpan SE_M_GIGA_DRAIN, SOUND_PAN_TARGET
+	createvisualtask AnimTask_BlackHoleDisc, 2, 44, 6, 20, 14, 12
+	waitforvisualfinish
+	end
+
 Move_HYPER_BEAM:
 	loadspritegfx ANIM_TAG_ORBS
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 4, 0, 16, RGB_BLACK
@@ -10250,7 +10411,55 @@ ReturnStrongestHit:
 	return
 
 
+@ The background turns cosmic while the user glows with power and seven stars sparkle across it one after
+@ another. Then a see-through copy of the user swells out from it and shrinks back in, locking its power in
 Move_CHAKRA_SURGE:
+	loadspritegfx ANIM_TAG_SPARKLE_4
+	createvisualtask SoundTask_PlaySE2WithPanning, 5, SE_M_COSMIC_POWER, 0
+	playsewithpan SE_M_COSMIC_POWER, 0
+	createvisualtask AnimTask_BlendNonAttackerPalettes, 2, 0, 0, 15, RGB_BLACK
+	waitforvisualfinish
+	fadetobg BG_COSMIC
+	waitbgfadeout
+	createvisualtask AnimTask_StartSlidingBg, 2, 0, 128, 0, -1
+	waitbgfadein
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 1, 6, 0, 10, RGB(31, 28, 16)
+	createvisualtask SoundTask_PlaySE1WithPanning, 5, SE_M_MORNING_SUN, SOUND_PAN_ATTACKER
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, -24, 10, ANIM_ATTACKER, TRUE
+	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER
+	delay 6
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, -15, -2, ANIM_ATTACKER, TRUE
+	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER
+	delay 6
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, -9, 8, ANIM_ATTACKER, TRUE
+	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER
+	delay 6
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 0, -6, ANIM_ATTACKER, TRUE
+	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER
+	delay 6
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 8, 4, ANIM_ATTACKER, TRUE
+	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER
+	delay 6
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 16, -10, ANIM_ATTACKER, TRUE
+	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER
+	delay 6
+	createsprite gReflectSparkleSpriteTemplate, ANIM_ATTACKER, 2, 24, -2, ANIM_ATTACKER, TRUE
+	playsewithpan SE_SHINY, SOUND_PAN_ATTACKER
+	waitforvisualfinish
+	setalpha 12, 8
+	playsewithpan SE_M_DETECT, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_TransparentCloneGrowAndShrink, 5, ANIM_ATTACKER
+	waitforvisualfinish
+	blendoff
+	createvisualtask AnimTask_BlendNonAttackerPalettes, 2, 0, 15, 0, RGB_BLACK
+	waitforvisualfinish
+	restorebg
+	waitbgfadeout
+	setarg 7, 0xFFFF
+	waitbgfadein
+	waitforvisualfinish
+	end
+
 Move_COSMIC_POWER:
 	loadspritegfx ANIM_TAG_SPARKLE_2
 	createvisualtask SoundTask_PlaySE2WithPanning, 5, SE_M_COSMIC_POWER, 0
@@ -13195,7 +13404,17 @@ General_TurnTrap:
 	jumpargeq 0, TRAP_ANIM_CLAMP,     Status_Clamp
 	jumpargeq 0, TRAP_ANIM_SAND_TOMB, Status_SandTomb
 	jumpargeq 0, TRAP_ANIM_SPROUT, 	  Status_Sprout
+	jumpargeq 0, TRAP_ANIM_BLACK_HOLE, Status_BlackHole
 	goto Status_BindWrap
+@ Caught in a Black Hole: it spreads out behind the Pokémon again, spinning, and shrinks back down
+Status_BlackHole:
+	loadspritegfx ANIM_TAG_SHADOW_BALL
+	playsewithpan SE_M_GIGA_DRAIN, SOUND_PAN_TARGET
+	createsprite gBlackHoleBallSpriteTemplate, ANIM_TARGET, 2, TRUE, 0, 20
+	createvisualtask AnimTask_BlackHoleDisc, 2, 44, 6, 20, 14, 12
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 2, 0, 10, 2
+	waitforvisualfinish
+	end
 Status_BindWrap:
 	loadspritegfx ANIM_TAG_TENDRILS
 	loopsewithpan SE_M_SCRATCH, SOUND_PAN_TARGET, 6, 2
@@ -13461,6 +13680,16 @@ General_FutureSightHit:
 	waitforvisualfinish
 	delay 1
 	call UnsetPsychicBackground
+	end
+
+@ Echo's delayed hit: its sound wave bounces back from behind the target, a ring so wide it sweeps across the
+@ whole screen before it's gone
+General_EchoReturn:
+	playsewithpan SE_M_SUPERSONIC, SOUND_PAN_TARGET
+	createvisualtask AnimTask_EchoReturnWave, 2, 48, 4, 8, 10
+	delay 6
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 3, 0, 8, 1
+	waitforvisualfinish
 	end
 
 General_DoomDesireHit:

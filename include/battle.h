@@ -681,6 +681,8 @@ extern u8 gExCalmRampageBattlers;
 extern u8 gExLeechSeedTurns[MAX_BATTLERS_COUNT];
 extern u8 gExLockOnTrapBattlers;
 extern u8 gExScreenBlockSides;
+extern u8 gTurnEndShieldedBattlers;
+extern u8 gTurnEndExScreenSides;
 extern u8 gExLastingTauntBy[MAX_BATTLERS_COUNT];
 
 // gExScreenBlockSides bits for a side, from EX Reflect and EX Light Screen

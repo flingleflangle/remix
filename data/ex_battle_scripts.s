@@ -79,6 +79,7 @@ gExMoves::
 	exmove MOVE_THUNDERBOLT, flags=EX_FLAG_IGNORE_IMMUNITY
 	exmove MOVE_HYPER_VOICE, flags=EX_FLAG_IGNORE_IMMUNITY
 	exmove MOVE_SHOCK_WAVE, extraEffect=MOVE_EFFECT_PARALYSIS
+	exmove MOVE_SHRIEK, extraEffect=MOVE_EFFECT_SP_DEF_MINUS_1
 	exmove MOVE_FIRE_CRASH, extraEffect=MOVE_EFFECT_IGNITE | MOVE_EFFECT_AFFECTS_USER @ See BattleScript_EffectFireCrash
 	exmove MOVE_THUNDER_CRASH, flags=EX_FLAG_CHARGE_USER @ See BattleScript_EffectThunderCrash
 	exmove MOVE_METAL_CLAW, BattleScript_ExMetalClaw, flags=EX_FLAG_EFFECT_EACH_HIT

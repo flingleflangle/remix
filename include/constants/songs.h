@@ -559,6 +559,12 @@
 #define MUS_DD_SUNKEN_RUINS         623
 #define MUS_DD_METAL_CITY           624
 #define MUS_DD_DRILL_MISSILE        625
+// Serenade's song, Littleroot's lead cut into one part per turn of the move
+#define SE_M_SERENADE_1             626
+#define SE_M_SERENADE_2             627
+#define SE_M_SERENADE_3             628
+#define SE_M_SERENADE_4             629
+#define SE_M_SERENADE_5             630
 
 #define MUS_ROUTE118                0x7FFF  // Map is split into 2 music sections. controlled by GetCurrLocationDefaultMusic().
 

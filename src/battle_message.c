@@ -103,6 +103,12 @@ static const u8 sText_YogaLoopBroke[] = _("{B_ATK_NAME_WITH_PREFIX}'s YOGA LOOP\
 static const u8 sText_FindFooting[] = _("{B_ATK_NAME_WITH_PREFIX} must\nfind its footing!");
 static const u8 sText_SerenadeSkip[] = _("{B_ATK_NAME_WITH_PREFIX}'s SERENADE was interrupted!\nIts SP.ATK harshly fell!");
 static const u8 sText_SerenadeMinSkip[] = _("{B_ATK_NAME_WITH_PREFIX}'s SERENADE was interrupted!");
+static const u8 sText_PkmnPulledIntoBlackHole[] = _("{B_DEF_NAME_WITH_PREFIX} was pulled\ninto the BLACK HOLE!");
+static const u8 sText_PkmnCantUseMoveBlackHole[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use\n{B_CURRENT_MOVE} in the BLACK HOLE!\p");
+static const u8 sText_ChakraSurged[] = _("{B_ATK_NAME_WITH_PREFIX}'s chakra\nsurged through its body!");
+static const u8 sText_EchoReverberating[] = _("{B_ATK_NAME_WITH_PREFIX}'s ECHO\nis still reverberating!");
+static const u8 sText_EchoRebounded[] = _("The ECHO rebounded\nonto {B_DEF_NAME_WITH_PREFIX}!");
+static const u8 sText_PkmnLostItsVoice[] = _("{B_ATK_NAME_WITH_PREFIX} lost its voice!\nIts SP.ATK harshly fell!");
 static const u8 sText_PkmnAlreadyHasBurn[] = _("{B_DEF_NAME_WITH_PREFIX} already\nhas a burn.");
 static const u8 sText_PkmnWasFrozen[] = _("{B_EFF_NAME_WITH_PREFIX} was\nfrozen solid!");
 static const u8 sText_PkmnFrozenBy[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nfroze {B_EFF_NAME_WITH_PREFIX} solid!");
@@ -971,6 +977,12 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_SOLIDRAGEACTIVATES - BATTLESTRINGS_TABLE_START] = sText_SolidRageActivates,
     [STRINGID_SOLIDRAGEPERISH - BATTLESTRINGS_TABLE_START] = sText_SolidRagePerish,
     [STRINGID_PKMNCANTUSEMOVERAGE - BATTLESTRINGS_TABLE_START] = sText_PkmnCantUseMoveRage,
+    [STRINGID_PKMNLOSTITSVOICE - BATTLESTRINGS_TABLE_START] = sText_PkmnLostItsVoice,
+    [STRINGID_ECHOREVERBERATING - BATTLESTRINGS_TABLE_START] = sText_EchoReverberating,
+    [STRINGID_ECHOREBOUNDED - BATTLESTRINGS_TABLE_START] = sText_EchoRebounded,
+    [STRINGID_CHAKRASURGED - BATTLESTRINGS_TABLE_START] = sText_ChakraSurged,
+    [STRINGID_PKMNPULLEDINTOBLACKHOLE - BATTLESTRINGS_TABLE_START] = sText_PkmnPulledIntoBlackHole,
+    [STRINGID_PKMNCANTUSEMOVEBLACKHOLE - BATTLESTRINGS_TABLE_START] = sText_PkmnCantUseMoveBlackHole,
 };
 
 const u16 gMissStringIds[] =
@@ -1130,7 +1142,8 @@ const u16 gWrappedStringIds[NUM_TRAPPING_MOVES] =
     STRINGID_PKMNCLAMPED,          // MOVE_CLAMP
     STRINGID_PKMNTRAPPEDINVORTEX,  // MOVE_WHIRLPOOL
     STRINGID_PKMNTRAPPEDBYSANDTOMB, // MOVE_SAND_TOMB
-    STRINGID_PKMNTRAPPEDBYSPROUT // MOVE_SPROUT
+    STRINGID_PKMNTRAPPEDBYSPROUT, // MOVE_SPROUT
+    STRINGID_PKMNPULLEDINTOBLACKHOLE // MOVE_BLACK_HOLE
 };
 
 const u16 gMistUsedStringIds[] =
@@ -1366,6 +1379,7 @@ const u16 gTrappingMoves[NUM_TRAPPING_MOVES + 1] =
     MOVE_WHIRLPOOL,
     MOVE_SAND_TOMB,
     MOVE_SPROUT,
+    MOVE_BLACK_HOLE,
     0xFFFF // Never read
 };
 

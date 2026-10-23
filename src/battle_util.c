@@ -1165,6 +1165,20 @@ u8 TrySetCantSelectMoveBattleScript(void)
             limitations++;
         }
     }
+    else if (IsMoveBlockedByBlackHole(gActiveBattler, move))
+    {
+        gCurrentMove = move;
+        if (gBattleTypeFlags & BATTLE_TYPE_PALACE)
+        {
+            gPalaceSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveBlackHoleInPalace;
+            gProtectStructs[gActiveBattler].palaceUnableToUseMove = TRUE;
+        }
+        else
+        {
+            gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveBlackHole;
+            limitations++;
+        }
+    }
 
     if (GetImprisonedMovesCount(gActiveBattler, move))
     {
@@ -1219,6 +1233,22 @@ u8 TrySetCantSelectMoveBattleScript(void)
     return limitations;
 }
 
+// Whether a battler is caught in a Black Hole (trapped and drained by it)
+bool32 IsBattlerInBlackHole(u8 battler)
+{
+    u16 wrappedMove = gBattleStruct->wrappedMove[battler * 2] | (gBattleStruct->wrappedMove[battler * 2 + 1] << 8);
+
+    return (gBattleMons[battler].status2 & STATUS2_WRAPPED) && wrappedMove == MOVE_BLACK_HOLE;
+}
+
+// Caught in a Black Hole, a battler can't leave the field with Fly, Dig, Dive and the like, or use priority moves
+bool32 IsMoveBlockedByBlackHole(u8 battler, u16 move)
+{
+    if (!IsBattlerInBlackHole(battler))
+        return FALSE;
+    return gBattleMoves[move].effect == EFFECT_SEMI_INVULNERABLE || gBattleMoves[move].priority > 0;
+}
+
 u8 CheckMoveLimitations(u8 battler, u8 unusableMoves, u8 check)
 {
     u8 holdEffect;
@@ -1255,6 +1285,9 @@ u8 CheckMoveLimitations(u8 battler, u8 unusableMoves, u8 check)
             unusableMoves |= gBitTable[i];
         // Encore
         if (gDisableStructs[battler].encoreTimer && gDisableStructs[battler].encoredMove != gBattleMons[battler].moves[i])
+            unusableMoves |= gBitTable[i];
+        // Black Hole
+        if (IsMoveBlockedByBlackHole(battler, gBattleMons[battler].moves[i]))
             unusableMoves |= gBitTable[i];
         // Choice Band
         if ((holdEffect == HOLD_EFFECT_CHOICE_BAND || holdEffect == HOLD_EFFECT_CHOICE_SPECS || holdEffect == HOLD_EFFECT_CHOICE_SCARF) && *choicedMove != MOVE_NONE && *choicedMove != MOVE_UNAVAILABLE && *choicedMove != gBattleMons[battler].moves[i])
@@ -1767,7 +1800,10 @@ u8 DoBattlerEndTurnEffects(void)
                         gBattleTextBuff1[3] = *(gBattleStruct->wrappedMove + gActiveBattler * 2 + 1);
                         gBattleTextBuff1[4] = EOS;
                         gBattlescriptCurrInstr = BattleScript_WrapTurnDmg;
-                        gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
+                        if (IsBattlerInBlackHole(gActiveBattler))
+                            gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8; // Black Hole drains harder
+                        else
+                            gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
                         if (gBattleMoveDamage == 0)
                             gBattleMoveDamage = 1;
                     }
@@ -1960,6 +1996,21 @@ u8 DoBattlerEndTurnEffects(void)
     return 0;
 }
 
+// Unlike Future Sight, Echo's rebound can be blocked by Protect and similar moves used that turn
+static bool32 IsEchoReboundBlocked(u8 battler)
+{
+    u8 side = GetBattlerSide(battler);
+    u8 moveType = gBattleMoves[MOVE_ECHO].type;
+
+    if (gTurnEndShieldedBattlers & gBitTable[battler])
+        return TRUE;
+    if (gStatuses3[battler] & STATUS3_DODGING)
+        return TRUE;
+    if (IS_TYPE_PHYSICAL(moveType))
+        return (gTurnEndExScreenSides & EX_SCREEN_BLOCK_PHYSICAL(side)) != 0;
+    return (gTurnEndExScreenSides & EX_SCREEN_BLOCK_SPECIAL(side)) != 0;
+}
+
 bool8 HandleWishPerishSongOnTurnEnd(void)
 {
     gHitMarker |= (HITMARKER_GRUDGE | HITMARKER_IGNORE_BIDE);
@@ -1983,6 +2034,8 @@ bool8 HandleWishPerishSongOnTurnEnd(void)
             {
                 if (gWishFutureKnock.futureSightMove[gActiveBattler] == MOVE_FUTURE_SIGHT)
                     gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FUTURE_SIGHT;
+                else if (gWishFutureKnock.futureSightMove[gActiveBattler] == MOVE_ECHO)
+                    gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ECHO; // hits like Doom Desire, with its own animation
                 else
                     gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DOOM_DESIRE;
 
@@ -1992,7 +2045,10 @@ bool8 HandleWishPerishSongOnTurnEnd(void)
                 gBattlerAttacker = gWishFutureKnock.futureSightAttacker[gActiveBattler];
                 gBattleMoveDamage = gWishFutureKnock.futureSightDmg[gActiveBattler];
                 gSpecialStatuses[gBattlerTarget].shellBellDmg = IGNORE_SHELL_BELL;
-                BattleScriptExecute(BattleScript_MonTookFutureAttack);
+                if (gWishFutureKnock.futureSightMove[gActiveBattler] == MOVE_ECHO && IsEchoReboundBlocked(gActiveBattler))
+                    BattleScriptExecute(BattleScript_EchoReboundBlocked);
+                else
+                    BattleScriptExecute(BattleScript_MonTookFutureAttack);
 
                 if (gWishFutureKnock.futureSightCounter[gActiveBattler] == 0
                  && gWishFutureKnock.futureSightCounter[BATTLE_PARTNER(gActiveBattler)] == 0)
@@ -2326,6 +2382,15 @@ u8 AtkCanceller_UnableToUseMove(void)
                 gProtectStructs[gBattlerAttacker].usedTauntedMove = 1;
                 CancelMultiTurnMoves(gBattlerAttacker);
                 gBattlescriptCurrInstr = BattleScript_MoveUsedIsEnraged;
+                gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+                effect = 1;
+            }
+            // Pulled into a Black Hole after choosing this move. A Fly or Dig already under way still finishes
+            else if (IsMoveBlockedByBlackHole(gBattlerAttacker, gCurrentMove)
+                  && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_MULTIPLETURNS))
+            {
+                gActiveBattler = gBattlerAttacker;
+                gBattlescriptCurrInstr = BattleScript_MoveUsedBlackHolePrevents;
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                 effect = 1;
             }

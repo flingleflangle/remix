@@ -5,6 +5,7 @@
 #include "decompress.h"
 #include "gpu_regs.h"
 #include "graphics.h"
+#include "m4a.h"
 #include "main.h"
 #include "math_util.h"
 #include "palette.h"
@@ -4822,6 +4823,929 @@ static void AnimTask_QuickDrawSlash_Step(u8 taskId)
 #undef tHoldTimer
 #undef tGap
 
+#define tTimer      data[0]
+#define tDuration   data[1]
+#define tTargetWait data[2]
+#define tSyncTime   data[3]
+#define tPeriod     data[4]
+#define tPixels     data[5]
+#define tGlow       data[6] // 0 to RESONATE_SWAY_EASE, how far the in-step glow has eased in
+
+#define RESONATE_SWAY_EASE 16 // frames to ease each sway, and the glow, in and out
+#define RESONATE_GOLD      RGB(31, 25, 6)
+#define RESONATE_GLOW_MAX  5  // strongest the glow gets, 0-16
+
+static void AnimTask_ResonateSway_Step(u8);
+
+// How far into its sway a mon is, 0 to RESONATE_SWAY_EASE, easing in from start and out by end
+static s16 ResonateSway_Ease(s16 t, s16 end)
+{
+    s16 ease = RESONATE_SWAY_EASE;
+
+    if (t < 0 || t >= end)
+        return 0;
+    if (t < ease)
+        ease = t;
+    if (end - t < ease)
+        ease = end - t;
+    return ease;
+}
+
+// The attacker sways from side to side, then the target joins in out of step and falls into rhythm with it.
+// Once they're in step, both glow gold, pulsing gently with the sway. Used by MOVE_RESONATE.
+// arg 0: total frames
+// arg 1: frames before the target starts swaying
+// arg 2: frames the target takes to fall into step
+// arg 3: frames per sway (there and back)
+// arg 4: sway distance in pixels
+void AnimTask_ResonateSway(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    task->tTimer = 0;
+    task->tDuration = gBattleAnimArgs[0];
+    task->tTargetWait = gBattleAnimArgs[1];
+    task->tSyncTime = gBattleAnimArgs[2];
+    task->tPeriod = gBattleAnimArgs[3];
+    task->tPixels = gBattleAnimArgs[4];
+    task->tGlow = 0;
+    task->func = AnimTask_ResonateSway_Step;
+}
+
+static void AnimTask_ResonateSway_Step(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    struct Sprite *attacker = &gSprites[gBattlerSpriteIds[gBattleAnimAttacker]];
+    struct Sprite *target = &gSprites[gBattlerSpriteIds[gBattleAnimTarget]];
+    s16 t = task->tTimer;
+    s16 phase = (t * 256 / task->tPeriod) & 0xFF;
+    s16 targetT = t - task->tTargetWait;
+    s16 offset = 0;
+    u32 bothPals = GetBattlePalettesMask(FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE);
+
+    if (t >= task->tDuration)
+    {
+        attacker->x2 = 0;
+        target->x2 = 0;
+        BlendPalettes(bothPals, 0, RESONATE_GOLD);
+        DestroyAnimVisualTask(taskId);
+        return;
+    }
+
+    attacker->x2 = Sin(phase, task->tPixels) * ResonateSway_Ease(t, task->tDuration) / RESONATE_SWAY_EASE;
+
+    // The target starts half a sway out of step and slides into time with the attacker
+    if (targetT < task->tSyncTime)
+        offset = 128 * (task->tSyncTime - targetT) / task->tSyncTime;
+    target->x2 = Sin((phase + offset) & 0xFF, task->tPixels) * ResonateSway_Ease(targetT, task->tDuration - task->tTargetWait) / RESONATE_SWAY_EASE;
+
+    // In step: glow gold, easing in, and back out as the sways wind down
+    if (targetT >= task->tSyncTime && task->tDuration - t > RESONATE_SWAY_EASE)
+    {
+        if (task->tGlow < RESONATE_SWAY_EASE)
+            task->tGlow++;
+    }
+    else if (task->tGlow > 0)
+    {
+        task->tGlow--;
+    }
+    if (task->tGlow > 0 || targetT >= task->tSyncTime)
+        BlendPalettes(bothPals, (RESONATE_GLOW_MAX * (6 + Sin(phase, 2)) / 8) * task->tGlow / RESONATE_SWAY_EASE, RESONATE_GOLD);
+
+    task->tTimer++;
+}
+
+#undef tTimer
+#undef tDuration
+#undef tTargetWait
+#undef tSyncTime
+#undef tPeriod
+#undef tPixels
+#undef tGlow
+
+extern const struct OamData gOamData_AffineDouble_ObjBlend_16x32;
+
+static const union AffineAnimCmd sAffineAnim_ResonateRing[] =
+{
+    AFFINEANIMCMD_FRAME(0x90, 0x90, 0, 0), // small
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAffineAnims_ResonateRing[] =
+{
+    sAffineAnim_ResonateRing,
+};
+
+#define sTimer    data[0]
+#define sLeg      data[1]
+#define sNumLegs  data[2]
+#define sLegTime  data[3]
+#define sHeight   data[4]
+#define sAttacker data[5] // attacker's position: x (low byte), y (high byte)
+#define sTarget   data[6] // target's position, packed the same way
+#define sChime    data[7]
+
+static void AnimResonateRing_Step(struct Sprite *);
+
+// A small, see-through gold ring that bounces back and forth between the attacker and the target, starting from
+// the attacker. Use setalpha for the transparency. Used by MOVE_RESONATE.
+// arg 0: number of hops (one way each)
+// arg 1: frames per hop
+// arg 2: height of each hop in pixels
+// arg 3: TRUE to chime every time it lands
+static void AnimResonateRing(struct Sprite *sprite)
+{
+    s16 ax = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
+    s16 ay = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+    s16 tx = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    s16 ty = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+
+    sprite->sTimer = 0;
+    sprite->sLeg = 0;
+    sprite->sNumLegs = gBattleAnimArgs[0];
+    sprite->sLegTime = gBattleAnimArgs[1];
+    sprite->sHeight = gBattleAnimArgs[2];
+    sprite->sChime = gBattleAnimArgs[3];
+    sprite->sAttacker = (ax & 0xFF) | ((ay & 0xFF) << 8);
+    sprite->sTarget = (tx & 0xFF) | ((ty & 0xFF) << 8);
+    sprite->x = ax;
+    sprite->y = ay;
+    sprite->callback = AnimResonateRing_Step;
+}
+
+static void AnimResonateRing_Step(struct Sprite *sprite)
+{
+    s16 fromX, fromY, toX, toY;
+    s16 from = (sprite->sLeg & 1) ? sprite->sTarget : sprite->sAttacker;
+    s16 to = (sprite->sLeg & 1) ? sprite->sAttacker : sprite->sTarget;
+
+    fromX = from & 0xFF;
+    fromY = (u16)from >> 8;
+    toX = to & 0xFF;
+    toY = (u16)to >> 8;
+
+    sprite->sTimer++;
+    sprite->x = fromX + (toX - fromX) * sprite->sTimer / sprite->sLegTime;
+    sprite->y = fromY + (toY - fromY) * sprite->sTimer / sprite->sLegTime;
+    sprite->y2 = -Sin((sprite->sTimer * 128 / sprite->sLegTime) & 0x7F, sprite->sHeight);
+
+    if (sprite->sTimer >= sprite->sLegTime)
+    {
+        sprite->sTimer = 0;
+        sprite->y2 = 0;
+        if (sprite->sChime)
+            PlaySE12WithPanning(SE_M_HEAL_BELL, BattleAnimAdjustPanning((sprite->sLeg & 1) ? SOUND_PAN_ATTACKER : SOUND_PAN_TARGET));
+        if (++sprite->sLeg >= sprite->sNumLegs)
+            DestroyAnimSprite(sprite);
+    }
+}
+
+const struct SpriteTemplate gResonateRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GOLD_RING,
+    .paletteTag = ANIM_TAG_GOLD_RING,
+    .oam = &gOamData_AffineDouble_ObjBlend_16x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_ResonateRing,
+    .callback = AnimResonateRing,
+};
+
+#undef sTimer
+#undef sLeg
+#undef sNumLegs
+#undef sLegTime
+#undef sHeight
+#undef sAttacker
+#undef sTarget
+#undef sChime
+
+#define sTimer      data[0]
+#define sDuration   data[1]
+#define sStartX     data[2]
+#define sStartY     data[3]
+#define sEndX       data[4]
+#define sEndY       data[5]
+#define sPassTime   data[6] // when it passes the target and goes behind it
+#define sFlags      data[7]
+
+#define ECHO_RING_BEHIND     (1 << 0) // behind the target
+#define ECHO_RING_COMES_BACK (1 << 1) // turns around at the far end and flies back to the attacker
+#define ECHO_RING_RETURNING  (1 << 2) // on its way back
+
+static void AnimEchoPassingRing_Step(struct Sprite *);
+
+// A growing sound ring that flies from the attacker straight past the target, going behind it and on into the
+// distance. Then it either flickers out, or flies back past the target to the attacker. Used by MOVE_ECHO.
+// arg 0: frames to reach the far end (and as long again to come back)
+// arg 1: how far past the target it goes, in 16ths of the attacker-target distance
+// arg 2: TRUE to come back to the attacker
+static void AnimEchoPassingRing(struct Sprite *sprite)
+{
+    s16 tx = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    s16 ty = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+
+    sprite->sStartX = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
+    sprite->sStartY = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+    sprite->sEndX = tx + (tx - sprite->sStartX) * gBattleAnimArgs[1] / 16;
+    sprite->sEndY = ty + (ty - sprite->sStartY) * gBattleAnimArgs[1] / 16;
+    sprite->sDuration = gBattleAnimArgs[0];
+    sprite->sPassTime = gBattleAnimArgs[0] * 16 / (16 + gBattleAnimArgs[1]);
+    sprite->sTimer = 0;
+    sprite->sFlags = gBattleAnimArgs[2] ? ECHO_RING_COMES_BACK : 0;
+    sprite->x = sprite->sStartX;
+    sprite->y = sprite->sStartY;
+    sprite->callback = AnimEchoPassingRing_Step;
+}
+
+static void AnimEchoPassingRing_Step(struct Sprite *sprite)
+{
+    bool8 returning = (sprite->sFlags & ECHO_RING_RETURNING) != 0;
+    bool8 behind;
+    s16 t;
+
+    sprite->sTimer++;
+    // How far along the way out it is (counting back down on the way back)
+    t = returning ? sprite->sDuration - sprite->sTimer : sprite->sTimer;
+    sprite->x = sprite->sStartX + (sprite->sEndX - sprite->sStartX) * t / sprite->sDuration;
+    sprite->y = sprite->sStartY + (sprite->sEndY - sprite->sStartY) * t / sprite->sDuration;
+
+    // Behind the target whenever it's further away than the target
+    behind = (t >= sprite->sPassTime);
+    if (behind != ((sprite->sFlags & ECHO_RING_BEHIND) != 0))
+    {
+        sprite->sFlags ^= ECHO_RING_BEHIND;
+        sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+        sprite->subpriority = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].subpriority + (behind ? 1 : -1);
+    }
+
+    if (sprite->sTimer >= sprite->sDuration && (sprite->sFlags & ECHO_RING_COMES_BACK) && !returning)
+    {
+        sprite->sTimer = 0;
+        sprite->sFlags |= ECHO_RING_RETURNING;
+        return;
+    }
+    // Flicker out over the last few frames of its trip
+    if (!(sprite->sFlags & ECHO_RING_COMES_BACK) || returning)
+    {
+        if (sprite->sDuration - sprite->sTimer < 8)
+            sprite->invisible = (sprite->sTimer & 1);
+        if (sprite->sTimer >= sprite->sDuration)
+            DestroyAnimSprite(sprite);
+    }
+}
+
+const struct SpriteTemplate gEchoPassingRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GOLD_RING,
+    .paletteTag = ANIM_TAG_GOLD_RING,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gGrowingRingAffineAnimTable,
+    .callback = AnimEchoPassingRing,
+};
+
+#undef sTimer
+#undef sDuration
+#undef sStartX
+#undef sStartY
+#undef sEndX
+#undef sEndY
+#undef sPassTime
+#undef sFlags
+
+#define tCenterX    data[0]
+#define tCenterY    data[1]
+#define tRadius     data[2]
+#define tThickness  data[3]
+#define tSpeed      data[4]
+#define tMaxRadius  data[5]
+
+#define ECHO_WAVE_BOTTOM 112 // keep clear of the text box
+
+static void AnimTask_EchoReturnWave_Step(u8);
+
+static u16 EchoWave_Sqrt(u32 n)
+{
+    u32 root = 0, bit = 1 << 30;
+
+    while (bit > n)
+        bit >>= 2;
+    while (bit != 0)
+    {
+        if (n >= root + bit)
+        {
+            n -= root + bit;
+            root = (root >> 1) + bit;
+        }
+        else
+        {
+            root >>= 1;
+        }
+        bit >>= 2;
+    }
+    return root;
+}
+
+static void EchoWave_Clamp(s32 *lo, s32 *hi)
+{
+    if (*lo < 0)
+        *lo = 0;
+    if (*hi > DISPLAY_WIDTH)
+        *hi = DISPLAY_WIDTH;
+}
+
+// Each scanline crosses the ring at most twice, once on its left side (WIN0) and once on its right (WIN1). Where a
+// scanline only skims the top or bottom of the ring, it's one span, in WIN0.
+static void EchoWave_Draw(struct Task *task)
+{
+    s32 outer2 = task->tRadius * task->tRadius;
+    s32 inner = task->tRadius - task->tThickness;
+    s32 inner2 = (inner > 0) ? inner * inner : 0;
+    s32 y, dy2, wo, wi, lo, hi;
+    u32 value;
+
+    for (y = 0; y < ECHO_WAVE_BOTTOM; y++)
+    {
+        value = 0;
+        dy2 = (y - task->tCenterY) * (y - task->tCenterY);
+        if (dy2 < outer2)
+        {
+            wo = EchoWave_Sqrt(outer2 - dy2);
+            if (inner > 0 && dy2 < inner2)
+            {
+                wi = EchoWave_Sqrt(inner2 - dy2);
+                lo = task->tCenterX - wo;
+                hi = task->tCenterX - wi;
+                EchoWave_Clamp(&lo, &hi);
+                if (lo < hi)
+                    value |= WIN_RANGE(lo, hi);
+                lo = task->tCenterX + wi;
+                hi = task->tCenterX + wo;
+                EchoWave_Clamp(&lo, &hi);
+                if (lo < hi)
+                    value |= (u32)WIN_RANGE(lo, hi) << 16;
+            }
+            else
+            {
+                lo = task->tCenterX - wo;
+                hi = task->tCenterX + wo;
+                EchoWave_Clamp(&lo, &hi);
+                if (lo < hi)
+                    value |= WIN_RANGE(lo, hi);
+            }
+        }
+        ((u32 *)gScanlineEffectRegBuffers[0])[y] = value;
+        ((u32 *)gScanlineEffectRegBuffers[1])[y] = value;
+    }
+}
+
+// Echo's sound wave bouncing back: a see-through ring expands from a point behind the target until it has swept
+// across the whole screen and gone. Used by MOVE_ECHO's delayed hit (B_ANIM_ECHO_RETURN), which plays on the target.
+// arg 0: how far behind the target the ring starts, in pixels; behind is away from the other side of the field
+// arg 1: ring thickness in pixels
+// arg 2: pixels the ring grows per frame
+// arg 3: brightness of the ring, 0-16 (16 = solid white, lower = more see-through)
+void AnimTask_EchoReturnWave(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    struct ScanlineEffectParams params;
+    s16 tx = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    s16 ty = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    s32 dx, dy, far;
+    u16 i;
+
+    // The foe's side is up and to the right, the player's down and to the left; behind is further that way
+    if (GetBattlerSide(gBattleAnimTarget) != B_SIDE_PLAYER)
+    {
+        task->tCenterX = tx + gBattleAnimArgs[0];
+        task->tCenterY = ty - gBattleAnimArgs[0] * 2 / 5;
+    }
+    else
+    {
+        task->tCenterX = tx - gBattleAnimArgs[0];
+        task->tCenterY = ty + gBattleAnimArgs[0] * 2 / 5;
+    }
+    task->tThickness = gBattleAnimArgs[1];
+    task->tSpeed = gBattleAnimArgs[2];
+    task->tRadius = 0;
+
+    // It's gone once even its inner edge is past the screen corner furthest from where it started
+    dx = max(task->tCenterX, DISPLAY_WIDTH - task->tCenterX);
+    dy = max(task->tCenterY, ECHO_WAVE_BOTTOM - task->tCenterY);
+    far = EchoWave_Sqrt(dx * dx + dy * dy);
+    task->tMaxRadius = far + task->tThickness;
+
+    for (i = 0; i < DISPLAY_HEIGHT; i++)
+    {
+        ((u32 *)gScanlineEffectRegBuffers[0])[i] = 0;
+        ((u32 *)gScanlineEffectRegBuffers[1])[i] = 0;
+    }
+    gBattle_WIN0H = 0;
+    gBattle_WIN1H = 0;
+    gBattle_WIN0V = WIN_RANGE(0, ECHO_WAVE_BOTTOM);
+    gBattle_WIN1V = WIN_RANGE(0, ECHO_WAVE_BOTTOM);
+    params.dmaDest = &REG_WIN0H; // writes WIN0H and WIN1H together
+    params.dmaControl = SCANLINE_EFFECT_DMACNT_32BIT;
+    params.initState = 1;
+    params.unused9 = 0;
+    ScanlineEffect_SetParams(params);
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON); // battles leave WIN1 off
+
+    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+    SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN);
+    SetGpuReg(REG_OFFSET_BLDY, gBattleAnimArgs[3]);
+    task->func = AnimTask_EchoReturnWave_Step;
+}
+
+static void AnimTask_EchoReturnWave_Step(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    task->tRadius += task->tSpeed;
+    if (task->tRadius >= task->tMaxRadius)
+    {
+        gScanlineEffect.state = 3;
+        gBattle_WIN0H = 0;
+        gBattle_WIN0V = 0;
+        gBattle_WIN1H = 0;
+        gBattle_WIN1V = 0;
+        if (!IsContest())
+            ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON);
+        SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+        SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+        SetGpuReg(REG_OFFSET_BLDCNT, 0);
+        SetGpuReg(REG_OFFSET_BLDY, 0);
+        DestroyAnimVisualTask(taskId);
+        return;
+    }
+    EchoWave_Draw(task);
+}
+
+#undef tCenterX
+#undef tCenterY
+#undef tRadius
+#undef tThickness
+#undef tSpeed
+#undef tMaxRadius
+
+#define sTimer     data[0]
+#define sTravel    data[1]
+#define sHold      data[2]
+#define sStartX    data[3]
+#define sEndX      data[4]
+#define sState     data[5]
+
+static void AnimDissNoise_Step(struct Sprite *);
+
+// A harsh noise burst that comes in from one side of the target, presses against it and buzzes there, then
+// flickers away. Used by MOVE_DISS.
+// arg 0: side it comes from: -1 = left, 1 = right
+// arg 1: how far out from the target's middle it starts, in pixels
+// arg 2: how far from the target's middle it stops, touching the target, in pixels
+// arg 3: y offset from the target's middle
+// arg 4: frames to reach the target
+// arg 5: frames to stay pressed against it
+static void AnimDissNoise(struct Sprite *sprite)
+{
+    s16 x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+
+    sprite->sStartX = x + gBattleAnimArgs[0] * gBattleAnimArgs[1];
+    sprite->sEndX = x + gBattleAnimArgs[0] * gBattleAnimArgs[2];
+    sprite->x = sprite->sStartX;
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+    sprite->sTravel = gBattleAnimArgs[4];
+    sprite->sHold = gBattleAnimArgs[5];
+    sprite->sTimer = 0;
+    sprite->sState = 0;
+    // Point the jagged edge in at the target from either side
+    sprite->hFlip = (gBattleAnimArgs[0] > 0);
+    sprite->callback = AnimDissNoise_Step;
+}
+
+static void AnimDissNoise_Step(struct Sprite *sprite)
+{
+    sprite->sTimer++;
+    switch (sprite->sState)
+    {
+    case 0: // closing in
+        sprite->x = sprite->sStartX + (sprite->sEndX - sprite->sStartX) * sprite->sTimer / sprite->sTravel;
+        if (sprite->sTimer >= sprite->sTravel)
+        {
+            sprite->sTimer = 0;
+            sprite->sState++;
+        }
+        break;
+    case 1: // pressed against the target, buzzing
+        sprite->x2 = (sprite->sTimer & 2) ? 1 : -1;
+        if (sprite->sTimer >= sprite->sHold)
+        {
+            sprite->sTimer = 0;
+            sprite->sState++;
+        }
+        break;
+    case 2: // flickering away
+        sprite->x2 = (sprite->sTimer & 2) ? 1 : -1;
+        sprite->invisible = (sprite->sTimer & 1);
+        if (sprite->sTimer >= 10)
+            DestroyAnimSprite(sprite);
+        break;
+    }
+}
+
+const struct SpriteTemplate gDissNoiseSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SNORE_Z,
+    .paletteTag = ANIM_TAG_SNORE_Z,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimDissNoise,
+};
+
+#undef sTimer
+#undef sTravel
+#undef sHold
+#undef sStartX
+#undef sEndX
+#undef sState
+
+#define tTimer      data[0]
+#define tState      data[1]
+#define tSinkTime   data[2]
+#define tHoldTime   data[3]
+#define tRiseTime   data[4]
+#define tSpriteId   data[5]
+
+static void AnimTask_AbyssDunk_Step(u8);
+
+// Squashes the mon down to the ground line (keeping its feet in place) so it looks pulled under the water. If the
+// hit is going to knock it out, it stays under and out of sight (the faint follows); if it'll hang on (Endure,
+// Focus Band), it rises back up. Used by MOVE_ABYSS.
+// arg 0: battler
+// arg 1: frames to go under
+// arg 2: frames to stay under before coming back up, if it does
+// arg 3: frames to come back up
+void AnimTask_AbyssDunk(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    task->tSpriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
+    task->tSinkTime = gBattleAnimArgs[1];
+    task->tHoldTime = gBattleAnimArgs[2];
+    task->tRiseTime = gBattleAnimArgs[3];
+    task->tTimer = 0;
+    task->tState = 0;
+    PrepareBattlerSpriteForRotScale(task->tSpriteId, ST_OAM_OBJ_NORMAL);
+    task->func = AnimTask_AbyssDunk_Step;
+}
+
+// Sets how much of the mon shows above the water, 0-256
+static void AbyssDunk_SetShown(struct Task *task, s16 shown)
+{
+    if (shown < 8)
+    {
+        gSprites[task->tSpriteId].invisible = TRUE;
+        shown = 8;
+    }
+    else
+    {
+        gSprites[task->tSpriteId].invisible = FALSE;
+    }
+    // A bigger scale value draws smaller; widen it a little as it goes under, like it's being pulled down
+    SetSpriteRotScale(task->tSpriteId, 256 - (256 - shown) / 8, (256 * 256) / shown, 0);
+    SetBattlerSpriteYOffsetFromYScale(task->tSpriteId);
+}
+
+static void AnimTask_AbyssDunk_Step(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    task->tTimer++;
+    switch (task->tState)
+    {
+    case 0: // going under
+        AbyssDunk_SetShown(task, 256 - 256 * task->tTimer / task->tSinkTime);
+        if (task->tTimer >= task->tSinkTime)
+        {
+            task->tTimer = 0;
+            task->tState++;
+        }
+        break;
+    case 1: // under
+        if (!IsContest() && gAnimMoveDmg >= gBattleMons[gBattleAnimTarget].hp)
+        {
+            // Gone for good: it faints, and an invisible mon skips the hit flicker
+            ResetSpriteRotScale(task->tSpriteId);
+            gSprites[task->tSpriteId].y2 = 0;
+            gSprites[task->tSpriteId].invisible = TRUE;
+            DestroyAnimVisualTask(taskId);
+            return;
+        }
+        if (task->tTimer >= task->tHoldTime)
+        {
+            task->tTimer = 0;
+            task->tState++;
+        }
+        break;
+    case 2: // coming back up
+        AbyssDunk_SetShown(task, 256 * task->tTimer / task->tRiseTime);
+        if (task->tTimer >= task->tRiseTime)
+        {
+            gSprites[task->tSpriteId].invisible = FALSE;
+            ResetSpriteRotScale(task->tSpriteId);
+            gSprites[task->tSpriteId].y2 = 0;
+            DestroyAnimVisualTask(taskId);
+        }
+        break;
+    }
+}
+
+#undef tTimer
+#undef tState
+#undef tSinkTime
+#undef tHoldTime
+#undef tRiseTime
+#undef tSpriteId
+
+#define BLACK_HOLE_SMALL_SCALE  0x400 // a quarter of its size, when it reaches the target
+#define BLACK_HOLE_BIG_SCALE    0x80  // twice its size, spread out behind the target
+#define BLACK_HOLE_IMPACT_TIME  12    // frames between touching the target and spreading out behind it
+#define BLACK_HOLE_EXPAND_TIME  6
+#define BLACK_HOLE_SHRINK_TIME  14
+
+#define sState      data[0]
+#define sTimer      data[1]
+#define sTravelTime data[2]
+#define sStart      data[3] // where it's thrown from: x (low byte), y (high byte)
+#define sEndX       data[4]
+#define sEndY       data[5]
+#define sHoldTime   data[6]
+#define sSpin       data[7]
+
+enum {
+    BLACK_HOLE_TRAVEL,
+    BLACK_HOLE_IMPACT,
+    BLACK_HOLE_EXPAND,
+    BLACK_HOLE_HOLD,
+    BLACK_HOLE_SHRINK,
+};
+
+static void AnimBlackHoleBall_Step(struct Sprite *);
+
+// A spinning Shadow Ball for Black Hole. Thrown from just in front of the attacker, it drifts toward the target,
+// shrinking as it goes, vanishes as it touches, then spreads out large behind the target and shrinks away.
+// Or it can start straight from spreading out behind the target (the between-turns drain). Used by MOVE_BLACK_HOLE.
+// arg 0: FALSE to be thrown, TRUE to start already behind the target
+// arg 1: frames to reach the target, when thrown
+// arg 2: frames to stay spread out
+static void AnimBlackHoleBall(struct Sprite *sprite)
+{
+    s16 x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
+    s16 y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+
+    // Start a little in front of the attacker, toward its foe
+    x += (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER) ? 20 : -20;
+    sprite->sStart = (x & 0xFF) | ((y & 0xFF) << 8);
+    sprite->sEndX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    sprite->sEndY = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    sprite->sTravelTime = gBattleAnimArgs[1];
+    sprite->sHoldTime = gBattleAnimArgs[2];
+    sprite->sTimer = 0;
+    sprite->sSpin = 0;
+    if (gBattleAnimArgs[0])
+    {
+        sprite->sState = BLACK_HOLE_EXPAND;
+        sprite->x = sprite->sEndX;
+        sprite->y = sprite->sEndY;
+        sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+        sprite->subpriority = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].subpriority + 1;
+    }
+    else
+    {
+        sprite->sState = BLACK_HOLE_TRAVEL;
+        sprite->x = x;
+        sprite->y = y;
+    }
+    sprite->callback = AnimBlackHoleBall_Step;
+    sprite->callback(sprite);
+}
+
+static void AnimBlackHoleBall_Step(struct Sprite *sprite)
+{
+    s16 startX = sprite->sStart & 0xFF;
+    s16 startY = (u16)sprite->sStart >> 8;
+    s16 scale = BLACK_HOLE_SMALL_SCALE;
+
+    sprite->sTimer++;
+    sprite->sSpin += 0x900;
+    switch (sprite->sState)
+    {
+    case BLACK_HOLE_TRAVEL: // drifting over, getting smaller and smaller
+        sprite->x = startX + (sprite->sEndX - startX) * sprite->sTimer / sprite->sTravelTime;
+        sprite->y = startY + (sprite->sEndY - startY) * sprite->sTimer / sprite->sTravelTime;
+        scale = 0x100 + (BLACK_HOLE_SMALL_SCALE - 0x100) * sprite->sTimer / sprite->sTravelTime;
+        if (sprite->sTimer >= sprite->sTravelTime)
+        {
+            sprite->invisible = TRUE;
+            sprite->sTimer = 0;
+            sprite->sState++;
+        }
+        break;
+    case BLACK_HOLE_IMPACT: // gone into the target while it shakes
+        if (sprite->sTimer >= BLACK_HOLE_IMPACT_TIME)
+        {
+            sprite->invisible = FALSE;
+            sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+            sprite->subpriority = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].subpriority + 1;
+            sprite->sTimer = 0;
+            sprite->sState++;
+        }
+        break;
+    case BLACK_HOLE_EXPAND: // bursting out large behind the target
+        scale = BLACK_HOLE_SMALL_SCALE + (BLACK_HOLE_BIG_SCALE - BLACK_HOLE_SMALL_SCALE) * sprite->sTimer / BLACK_HOLE_EXPAND_TIME;
+        if (sprite->sTimer >= BLACK_HOLE_EXPAND_TIME)
+        {
+            sprite->sTimer = 0;
+            sprite->sState++;
+        }
+        break;
+    case BLACK_HOLE_HOLD: // spinning there
+        scale = BLACK_HOLE_BIG_SCALE;
+        if (sprite->sTimer >= sprite->sHoldTime)
+        {
+            sprite->sTimer = 0;
+            sprite->sState++;
+        }
+        break;
+    case BLACK_HOLE_SHRINK: // collapsing back down
+        scale = BLACK_HOLE_BIG_SCALE + (BLACK_HOLE_SMALL_SCALE - BLACK_HOLE_BIG_SCALE) * sprite->sTimer / BLACK_HOLE_SHRINK_TIME;
+        if (sprite->sTimer >= BLACK_HOLE_SHRINK_TIME)
+        {
+            DestroyAnimSprite(sprite);
+            return;
+        }
+        break;
+    }
+    TrySetSpriteRotScale(sprite, FALSE, scale, scale, sprite->sSpin);
+}
+
+const struct SpriteTemplate gBlackHoleBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SHADOW_BALL,
+    .paletteTag = ANIM_TAG_SHADOW_BALL,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimBlackHoleBall,
+};
+
+#undef sState
+#undef sTimer
+#undef sTravelTime
+#undef sStart
+#undef sEndX
+#undef sEndY
+#undef sHoldTime
+#undef sSpin
+
+#define tState      data[0]
+#define tTimer      data[1]
+#define tCenterX    data[2]
+#define tCenterY    data[3]
+#define tMaxRadius  data[4]
+#define tGrowTime   data[5]
+#define tHoldTime   data[6]
+#define tShrinkTime data[7]
+
+#define BLACK_HOLE_DISC_BOTTOM 112 // keep clear of the text box
+
+static void AnimTask_BlackHoleDisc_Step(u8);
+
+static void BlackHoleDisc_Draw(struct Task *task, s32 radius)
+{
+    s32 y, dy2, w, lo, hi;
+    u16 value;
+
+    for (y = 0; y < BLACK_HOLE_DISC_BOTTOM; y++)
+    {
+        value = 0;
+        dy2 = (y - task->tCenterY) * (y - task->tCenterY);
+        if (radius > 0 && dy2 < radius * radius)
+        {
+            w = EchoWave_Sqrt(radius * radius - dy2);
+            lo = task->tCenterX - w;
+            hi = task->tCenterX + w;
+            if (lo < 0)
+                lo = 0;
+            if (hi > DISPLAY_WIDTH)
+                hi = DISPLAY_WIDTH;
+            if (lo < hi)
+                value = WIN_RANGE(lo, hi);
+        }
+        gScanlineEffectRegBuffers[0][y] = value;
+        gScanlineEffectRegBuffers[1][y] = value;
+    }
+}
+
+// A dark disc that swells out behind the target, larger than it, and shrinks away. Only the background darkens,
+// so the Pokémon (and the Black Hole ball) stay in front of it. Used by MOVE_BLACK_HOLE.
+// arg 0: widest radius in pixels
+// arg 1: frames to swell
+// arg 2: frames to stay
+// arg 3: frames to shrink
+// arg 4: darkness, 0-16
+void AnimTask_BlackHoleDisc(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    struct ScanlineEffectParams params;
+    u16 i;
+
+    task->tCenterX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    task->tCenterY = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    task->tMaxRadius = gBattleAnimArgs[0];
+    task->tGrowTime = gBattleAnimArgs[1];
+    task->tHoldTime = gBattleAnimArgs[2];
+    task->tShrinkTime = gBattleAnimArgs[3];
+    task->tState = 0;
+    task->tTimer = 0;
+
+    for (i = 0; i < DISPLAY_HEIGHT; i++)
+    {
+        gScanlineEffectRegBuffers[0][i] = 0;
+        gScanlineEffectRegBuffers[1][i] = 0;
+    }
+    gBattle_WIN0H = 0;
+    gBattle_WIN0V = WIN_RANGE(0, BLACK_HOLE_DISC_BOTTOM);
+    params.dmaDest = &REG_WIN0H;
+    params.dmaControl = SCANLINE_EFFECT_DMACNT_16BIT;
+    params.initState = 1;
+    params.unused9 = 0;
+    ScanlineEffect_SetParams(params);
+
+    SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+    SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+    SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN);
+    SetGpuReg(REG_OFFSET_BLDY, gBattleAnimArgs[4]);
+    task->func = AnimTask_BlackHoleDisc_Step;
+}
+
+static void AnimTask_BlackHoleDisc_Step(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    s32 radius = 0;
+
+    task->tTimer++;
+    switch (task->tState)
+    {
+    case 0:
+        radius = task->tMaxRadius * task->tTimer / task->tGrowTime;
+        if (task->tTimer >= task->tGrowTime)
+        {
+            task->tTimer = 0;
+            task->tState++;
+        }
+        break;
+    case 1:
+        radius = task->tMaxRadius;
+        if (task->tTimer >= task->tHoldTime)
+        {
+            task->tTimer = 0;
+            task->tState++;
+        }
+        break;
+    case 2:
+        radius = task->tMaxRadius - task->tMaxRadius * task->tTimer / task->tShrinkTime;
+        if (task->tTimer >= task->tShrinkTime)
+        {
+            gScanlineEffect.state = 3;
+            gBattle_WIN0H = 0;
+            gBattle_WIN0V = 0;
+            SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
+            SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
+            SetGpuReg(REG_OFFSET_BLDCNT, 0);
+            SetGpuReg(REG_OFFSET_BLDY, 0);
+            DestroyAnimVisualTask(taskId);
+            return;
+        }
+        break;
+    }
+    BlackHoleDisc_Draw(task, radius);
+}
+
+#undef tState
+#undef tTimer
+#undef tCenterX
+#undef tCenterY
+#undef tMaxRadius
+#undef tGrowTime
+#undef tHoldTime
+#undef tShrinkTime
+
 static void UNUSED UnusedFlickerAnim(struct Sprite *sprite)
 {
     if (sprite->data[2] > 1)
@@ -6303,6 +7227,326 @@ static void AnimWavyMusicNotes_Step(struct Sprite *sprite)
         }
     }
 }
+
+// Serenade: the part of its song that's playing, whether the song failed so its notes should drop, whether the
+// notes bounce to the beat (the last, triumphant part), and frames since the part started
+EWRAM_DATA static u16 sSerenadeSong = 0;
+EWRAM_DATA static bool8 sSerenadeNotesDrop = FALSE;
+EWRAM_DATA static bool8 sSerenadeNotesBounce = FALSE;
+EWRAM_DATA static u8 sSerenadePart = 0;
+EWRAM_DATA static u16 sSerenadeFrames = 0;
+
+#define SERENADE_ORBIT_RADIUS_X 30
+#define SERENADE_ORBIT_RADIUS_Y 20
+#define SERENADE_ORBIT_SPEED    5  // gSineTable steps per frame, 256 per lap
+#define SERENADE_BLEND_CYCLE    12 // frames per color in gParticlesColorBlendTable
+#define SERENADE_BOUNCE_HEIGHT  8
+#define SERENADE_PINK           RGB(31, 21, 21) // Sweet Scent's pink
+
+// Where each part of the song starts in mus_littleroot, in ticks (see sound/songs/se_m_serenade_*.s), so the beat
+// lines up with the original. 24 ticks per beat.
+static const u16 sSerenadePartStartTicks[] = {0, 132, 204, 300, 396};
+#define SERENADE_TICKS_PER_BEAT 24
+
+// Where the song is, in ticks of mus_littleroot. Read from the music player, so it follows the song's tempo changes.
+static u32 Serenade_GetSongTick(void)
+{
+    return sSerenadePartStartTicks[sSerenadePart] + gMPlayTable[gSongTable[sSerenadeSong].ms].info->clock;
+}
+
+// How far through the current beat of the song, 0-127 (half a gSineTable lap)
+static u8 Serenade_GetBeatPhase(void)
+{
+    return ((Serenade_GetSongTick() % SERENADE_TICKS_PER_BEAT) * 128) / SERENADE_TICKS_PER_BEAT;
+}
+
+// How far through the current pair of beats, 0-255 (a whole gSineTable lap)
+static u8 Serenade_GetTwoBeatPhase(void)
+{
+    return ((Serenade_GetSongTick() % (2 * SERENADE_TICKS_PER_BEAT)) * 256) / (2 * SERENADE_TICKS_PER_BEAT);
+}
+
+// Which of Serenade's five parts this turn plays (0-4). Each turn plays the next part, as if it's one song.
+static u8 Serenade_GetPart(bool8 failed)
+{
+    s16 part;
+
+    if (IsContest())
+        return 0;
+    if (!failed)
+        part = gAnimDisableStructPtr->rolloutTimerStartValue - gAnimDisableStructPtr->rolloutTimer - 1;
+    else if (gBattleMons[gBattleAnimAttacker].status2 & STATUS2_MULTIPLETURNS)
+        part = gAnimDisableStructPtr->rolloutTimerStartValue - gAnimDisableStructPtr->rolloutTimer; // broke off before counting this turn
+    else
+        part = 0;
+
+    if (part < 0)
+        part = 0;
+    if (part > 4)
+        part = 4;
+    return part;
+}
+
+#define tMaxPink  data[0]
+#define tPink     data[1]
+#define tStarted  data[2]
+#define tSway     data[3] // 0 to SERENADE_SWAY_EASE, how far into the sway it's eased
+
+#define SERENADE_SWAY_PIXELS 3
+#define SERENADE_SWAY_EASE   16 // frames to ease the sway in and out
+
+static void AnimTask_PlaySerenadePart_Step(u8);
+
+// Plays this turn's part of Serenade's song (SE_M_SERENADE_1-5). While it plays, the target sways to it and
+// flushes pink and back to flatter it, two beats at a time. Each turn of the song is pinker. The notes keep
+// circling until it ends.
+// arg 0: TRUE if the song failed this turn
+void AnimTask_PlaySerenadePart(u8 taskId)
+{
+    sSerenadePart = Serenade_GetPart(gBattleAnimArgs[0]);
+    sSerenadeSong = SE_M_SERENADE_1 + sSerenadePart;
+    sSerenadeNotesDrop = FALSE;
+    sSerenadeNotesBounce = (sSerenadePart == 4 && !gBattleAnimArgs[0]);
+    sSerenadeFrames = 0;
+    gTasks[taskId].tMaxPink = 5 + 2 * sSerenadePart; // up to Sweet Scent's 13 on the last turn
+    gTasks[taskId].tPink = 0;
+    gTasks[taskId].tStarted = FALSE;
+    gTasks[taskId].tSway = 0;
+    PlaySE12WithPanning(sSerenadeSong, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER));
+    gTasks[taskId].func = AnimTask_PlaySerenadePart_Step;
+}
+
+static void AnimTask_PlaySerenadePart_Step(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    u32 targetPal = GetBattlePalettesMask(FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE);
+    struct Sprite *target = &gSprites[gBattlerSpriteIds[gBattleAnimTarget]];
+    u8 phase = Serenade_GetTwoBeatPhase();
+
+    sSerenadeFrames++;
+    // A song only shows as playing once the sound engine has run it, so wait to see it start (giving up after a
+    // few frames in case sound is off) before taking silence to mean it's over
+    if (IsSongPlaying(sSerenadeSong))
+        task->tStarted = TRUE;
+    if (!task->tStarted && sSerenadeFrames < 8 && !sSerenadeNotesDrop)
+        return;
+
+    if (IsSongPlaying(sSerenadeSong) && !sSerenadeNotesDrop)
+    {
+        // One full pink pulse and one sway to each side every two beats. The sway eases in.
+        task->tPink = (task->tMaxPink * (256 - Cos(phase, 256))) / 512;
+        if (task->tSway < SERENADE_SWAY_EASE)
+            task->tSway++;
+    }
+    else if (task->tPink > 0 || task->tSway > 0)
+    {
+        // The song's over: ease the pink and the sway away
+        if (task->tPink > 0)
+            task->tPink--;
+        if (task->tSway > 0)
+            task->tSway--;
+    }
+    else
+    {
+        BlendPalettes(targetPal, 0, SERENADE_PINK);
+        target->x2 = 0;
+        DestroyAnimVisualTask(taskId);
+        return;
+    }
+    BlendPalettes(targetPal, task->tPink, SERENADE_PINK);
+    target->x2 = Sin(phase, SERENADE_SWAY_PIXELS) * task->tSway / SERENADE_SWAY_EASE;
+}
+
+#undef tMaxPink
+#undef tPink
+#undef tStarted
+#undef tSway
+
+// Puts the song off key, then cuts it off with Yawn's sound and drops the notes. Start with AnimTask_PlaySerenadePart.
+// arg 0: frames into the song before it goes off key
+// arg 1: how far off key, in 256ths of a semitone
+// arg 2: frames it stays off key before cutting off
+void AnimTask_SerenadeSourNote(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+
+    task->data[0]++;
+    if (task->data[0] == gBattleAnimArgs[0])
+    {
+        m4aMPlayPitchControl(&gMPlayInfo_SE1, TRACKS_ALL, gBattleAnimArgs[1]);
+        m4aMPlayPitchControl(&gMPlayInfo_SE2, TRACKS_ALL, gBattleAnimArgs[1]);
+    }
+    else if (task->data[0] >= gBattleAnimArgs[0] + gBattleAnimArgs[2])
+    {
+        sSerenadeNotesDrop = TRUE;
+        m4aMPlayPitchControl(&gMPlayInfo_SE1, TRACKS_ALL, 0);
+        m4aMPlayPitchControl(&gMPlayInfo_SE2, TRACKS_ALL, 0);
+        m4aMPlayStop(&gMPlayInfo_SE1);
+        m4aMPlayStop(&gMPlayInfo_SE2);
+        PlaySE12WithPanning(SE_M_YAWN, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER));
+        DestroyAnimVisualTask(taskId);
+    }
+}
+
+#define sState      data[0]
+#define sBlend      data[1] // color index (low byte) and frames on that color (high byte)
+#define sTimer      data[2]
+#define sAngle      data[3]
+#define sTravelTime data[4]
+#define sStart      data[5] // where it set off from: x (low byte), y (high byte)
+#define sCenterX    data[6] // middle of the ring, worked out once so the notes stay cheap to move
+#define sCenterY    data[7]
+
+enum {
+    SERENADE_NOTE_TRAVEL,
+    SERENADE_NOTE_ORBIT,
+    SERENADE_NOTE_FADE,
+    SERENADE_NOTE_DROP,
+};
+
+static void AnimSerenadeNote_Step(struct Sprite *);
+
+// Its place on the ring around the target, at its current angle
+static void SerenadeNote_GetOrbitPos(struct Sprite *sprite, s16 *x, s16 *y)
+{
+    *x = sprite->sCenterX + Cos(sprite->sAngle & 0xFF, SERENADE_ORBIT_RADIUS_X);
+    *y = sprite->sCenterY + Sin(sprite->sAngle & 0xFF, SERENADE_ORBIT_RADIUS_Y);
+}
+
+// Moves the note to its place on the ring, in front of or behind the target to match
+static void SerenadeNote_SetOrbitPos(struct Sprite *sprite)
+{
+    s16 x, y;
+
+    SerenadeNote_GetOrbitPos(sprite, &x, &y);
+    sprite->x = x;
+    sprite->y = y;
+    sprite->subpriority = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].subpriority + (y < sprite->sCenterY ? 1 : -1);
+    // On the last part, hop on every beat, landing on the beat
+    if (sSerenadeNotesBounce)
+        sprite->y2 = -Sin(Serenade_GetBeatPhase(), SERENADE_BOUNCE_HEIGHT);
+}
+
+// A music note that travels from the attacker to the target, then circles it for as long as Serenade's song plays.
+// If the song fails, the notes drop. Used by MOVE_SERENADE.
+// arg 0: note shape (gMusicNotesAnimTable index)
+// arg 1: starting color (gParticlesColorBlendTable index)
+// arg 2: angle where it joins the ring, 0-255
+// arg 3: frames to reach the ring
+static void AnimSerenadeNote(struct Sprite *sprite)
+{
+    u8 index;
+    s16 startX = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);
+    s16 startY = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET);
+
+    StartSpriteAnim(sprite, gBattleAnimArgs[0]);
+    if ((index = IndexOfSpritePaletteTag(gParticlesColorBlendTable[gBattleAnimArgs[1]][0])) != 0xFF)
+        sprite->oam.paletteNum = index;
+    sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+    sprite->sBlend = gBattleAnimArgs[1];
+    sprite->sAngle = gBattleAnimArgs[2];
+    sprite->sTravelTime = gBattleAnimArgs[3];
+    sprite->sTimer = 0;
+    sprite->sStart = (startX & 0xFF) | ((startY & 0xFF) << 8);
+    sprite->sCenterX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    sprite->sCenterY = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    sprite->x = startX;
+    sprite->y = startY;
+    sprite->sState = SERENADE_NOTE_TRAVEL;
+    sprite->callback = AnimSerenadeNote_Step;
+}
+
+static void AnimSerenadeNote_Step(struct Sprite *sprite)
+{
+    u8 index, color, colorTimer;
+    s16 startX, startY, endX, endY;
+
+    // Cycle through the rainbow colors
+    color = sprite->sBlend & 0xFF;
+    colorTimer = (u16)sprite->sBlend >> 8;
+    if (++colorTimer > SERENADE_BLEND_CYCLE)
+    {
+        colorTimer = 0;
+        if (++color > ARRAY_COUNT(gParticlesColorBlendTable) - 1)
+            color = 0;
+        index = IndexOfSpritePaletteTag(gParticlesColorBlendTable[color][0]);
+        if (index != 0xFF)
+            sprite->oam.paletteNum = index;
+    }
+    sprite->sBlend = color | (colorTimer << 8);
+
+    switch (sprite->sState)
+    {
+    case SERENADE_NOTE_TRAVEL:
+        // Glide toward its spot on the ring, swaying once on the way
+        sprite->sTimer++;
+        startX = sprite->sStart & 0xFF;
+        startY = (u16)sprite->sStart >> 8;
+        SerenadeNote_GetOrbitPos(sprite, &endX, &endY);
+        sprite->x = startX + (endX - startX) * sprite->sTimer / sprite->sTravelTime;
+        sprite->y = startY + (endY - startY) * sprite->sTimer / sprite->sTravelTime;
+        sprite->y2 = Sin((sprite->sTimer * 256 / sprite->sTravelTime) & 0xFF, 10);
+        if (sprite->sTimer >= sprite->sTravelTime)
+        {
+            sprite->y2 = 0;
+            sprite->sTimer = 0;
+            sprite->sState = SERENADE_NOTE_ORBIT;
+            SerenadeNote_SetOrbitPos(sprite);
+        }
+        break;
+    case SERENADE_NOTE_ORBIT:
+        if (sSerenadeNotesDrop)
+        {
+            sprite->sTimer = 0;
+            sprite->sState = SERENADE_NOTE_DROP;
+            break;
+        }
+        if (!IsSongPlaying(sSerenadeSong))
+        {
+            sprite->sTimer = 0;
+            sprite->sState = SERENADE_NOTE_FADE;
+            break;
+        }
+        sprite->sAngle += SERENADE_ORBIT_SPEED;
+        SerenadeNote_SetOrbitPos(sprite);
+        break;
+    case SERENADE_NOTE_FADE:
+        // The song's over: keep circling while flickering out
+        sprite->sAngle += SERENADE_ORBIT_SPEED;
+        SerenadeNote_SetOrbitPos(sprite);
+        sprite->invisible = (++sprite->sTimer & 2) != 0;
+        if (sprite->sTimer > 16)
+            DestroyAnimSprite(sprite);
+        break;
+    case SERENADE_NOTE_DROP:
+        // A little hop, then it falls
+        sprite->sTimer++;
+        sprite->y2 = (sprite->sTimer * sprite->sTimer) / 8 - 2 * sprite->sTimer;
+        if (sprite->y + sprite->y2 > 112 || sprite->sTimer > 50)
+            DestroyAnimSprite(sprite);
+        break;
+    }
+}
+
+const struct SpriteTemplate gSerenadeNoteSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_MUSIC_NOTES,
+    .paletteTag = ANIM_TAG_MUSIC_NOTES,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gMusicNotesAnimTable,
+    .images = NULL,
+    .affineAnims = gMusicNotesAffineAnimTable,
+    .callback = AnimSerenadeNote,
+};
+
+#undef sState
+#undef sBlend
+#undef sTimer
+#undef sAngle
+#undef sTravelTime
+#undef sStart
+#undef sCenterX
+#undef sCenterY
 
 static void AnimFlyingMusicNotes(struct Sprite *sprite)
 {

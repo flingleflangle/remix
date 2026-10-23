@@ -1181,10 +1181,24 @@ SonicBoom::
 	goto BattleScript_HitFromAtkAnimation
 
 BattleScript_EffectTrap::
+	jumpifmove MOVE_BLACK_HOLE, BattleScript_EffectBlackHole
 	jumpifnotmove MOVE_WHIRLPOOL, BattleScript_DoWrapEffect
 	jumpifnostatus3 BS_TARGET, STATUS3_UNDERWATER, BattleScript_DoWrapEffect
 	orword gHitMarker, HITMARKER_IGNORE_UNDERWATER
 	setbyte sDMG_MULTIPLIER, 2
+@ Black Hole (EFFECT_TRAP, to save a move effect) skips the accuracy check altogether, so nothing avoids it: not
+@ evasion, Protect, Detect or Dodge, and not Fly, Dig or Dive either. It traps like Wrap, but drains 1/8 a turn
+@ for only 2-3 turns. While it lasts, the target's Speed is halved and it can't leave the field or use priority
+@ moves (see IsMoveBlockedByBlackHole). It fails against a target it's still draining
+BattleScript_EffectBlackHole::
+	setmoveeffect MOVE_EFFECT_WRAP
+	attackcanceler
+	attackstring
+	ppreduce
+	various BS_TARGET, VARIOUS_BLACK_HOLE_ACTIVE
+	jumpifbyte CMP_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_FAILED, BattleScript_ButItFailed
+	goto BattleScript_HitFromCritCalc
+
 BattleScript_DoWrapEffect::
 	setmoveeffect MOVE_EFFECT_WRAP
 	jumpifnotmove MOVE_SAND_TOMB, BattleScript_EffectHit
@@ -2905,21 +2919,29 @@ BattleScript_SerenadeHit::
 	end
 BattleScript_SerenadeMiss::
 	pause B_WAIT_TIME_SHORT
-	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPATK, MIN_STAT_STAGE, BattleScript_SerenadeMinMiss
-	printstring STRINGID_SERENADESKIP
-	waitmessage B_WAIT_TIME_LONG
-	setstatchanger STAT_SPATK, 2, TRUE
-	playstatchangeanimation BS_ATTACKER, BIT_SPATK, 1
-	setseeded
-	disablelastusedattack BattleScript_MoveEnd
-	datahpupdate BS_ATTACKER
-	moveendall
-	end
-BattleScript_SerenadeMinMiss::
+@ The failed song still plays its animation (the second one), which needs the miss flag out of the way
+	setbyte sB_ANIM_TURN, 1
+	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_SerenadeFailAnim
+	bicbyte gMoveResultFlags, MOVE_RESULT_MISSED
+	attackanimation
+	waitanimation
+	orbyte gMoveResultFlags, MOVE_RESULT_MISSED
+	goto BattleScript_SerenadeAfterFailAnim
+BattleScript_SerenadeFailAnim:
+	attackanimation
+	waitanimation
+BattleScript_SerenadeAfterFailAnim:
 	printstring STRINGID_SERENADESKIP2
 	waitmessage B_WAIT_TIME_LONG
+	setstatchanger STAT_SPATK, 2, TRUE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_SerenadeMinMiss
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+BattleScript_SerenadeMinMiss::
 	setseeded
 	disablelastusedattack BattleScript_MoveEnd
+	printstring STRINGID_PKMNLOSTITSVOICE
+	waitmessage B_WAIT_TIME_LONG
 	datahpupdate BS_ATTACKER
 	moveendall
 	end
@@ -3469,7 +3491,7 @@ BattleScript_Echo:
 	waitmessage B_WAIT_TIME_LONG
 	seteffectwithchance
 	tryfaintmon BS_TARGET
-	printfromtable gFutureMoveUsedStringIds
+	printstring STRINGID_ECHOREVERBERATING
 	waitmessage B_WAIT_TIME_LONG
 	moveendall
 	end
@@ -3478,6 +3500,18 @@ BattleScript_EchoMiss:
 	attackstring
 	ppreduce
 	pause B_WAIT_TIME_SHORT
+@ The rings still fly, sailing past the target and back to the user (Echo's third animation, turn 2)
+	setbyte sB_ANIM_TURN, 2
+	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_EchoMissAnim
+	bicbyte gMoveResultFlags, MOVE_RESULT_MISSED
+	attackanimation
+	waitanimation
+	orbyte gMoveResultFlags, MOVE_RESULT_MISSED
+	goto BattleScript_EchoMissMessage
+BattleScript_EchoMissAnim:
+	attackanimation
+	waitanimation
+BattleScript_EchoMissMessage:
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
@@ -4629,7 +4663,31 @@ BattleScript_CantLowerMultipleStats::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
+@ Chakra Surge (EFFECT_COSMIC_POWER, to save a move effect): only works if one of Attack, Defense, Speed, Sp. Atk and
+@ Sp. Def is raised. Averages those five stages out (lowered ones count against it) and sets them all to that,
+@ at least +1 each (see VARIOUS_CHAKRA_SURGE)
+BattleScript_EffectChakraSurge::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_ATK, DEFAULT_STAT_STAGE, BattleScript_ChakraSurgeWorks
+	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_DEF, DEFAULT_STAT_STAGE, BattleScript_ChakraSurgeWorks
+	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_SPEED, DEFAULT_STAT_STAGE, BattleScript_ChakraSurgeWorks
+	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_SPATK, DEFAULT_STAT_STAGE, BattleScript_ChakraSurgeWorks
+	jumpifstat BS_ATTACKER, CMP_GREATER_THAN, STAT_SPDEF, DEFAULT_STAT_STAGE, BattleScript_ChakraSurgeWorks
+	goto BattleScript_ButItFailed
+BattleScript_ChakraSurgeWorks:
+	attackanimation
+	waitanimation
+	setbyte sSTAT_ANIM_PLAYED, FALSE
+	playstatchangeanimation BS_ATTACKER, BIT_ATK | BIT_DEF | BIT_SPEED | BIT_SPATK | BIT_SPDEF, 0
+	various BS_ATTACKER, VARIOUS_CHAKRA_SURGE
+	printstring STRINGID_CHAKRASURGED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 BattleScript_EffectCosmicPower::
+	jumpifmove MOVE_CHAKRA_SURGE, BattleScript_EffectChakraSurge
 	attackcanceler
 	attackstring
 	ppreduce
@@ -5596,7 +5654,12 @@ BattleScript_WireTripParalyzed::
 	return
 
 BattleScript_MonTookFutureAttack::
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_ECHO, BattleScript_EchoRebounded
 	printstring STRINGID_PKMNTOOKATTACK
+	goto BattleScript_FutureAttackAnnounced
+BattleScript_EchoRebounded::
+	printstring STRINGID_ECHOREBOUNDED
+BattleScript_FutureAttackAnnounced::
 	waitmessage B_WAIT_TIME_LONG
 	jumpifbyte CMP_NOT_EQUAL, cMULTISTRING_CHOOSER, B_MSG_FUTURE_SIGHT, BattleScript_CheckDoomDesireMiss
 	accuracycheck BattleScript_FutureAttackMiss, MOVE_FUTURE_SIGHT
@@ -5609,7 +5672,11 @@ BattleScript_FutureAttackAnimate::
 	playanimation BS_ATTACKER, B_ANIM_FUTURE_SIGHT_HIT
 	goto BattleScript_DoFutureAttackHit
 BattleScript_FutureHitAnimDoomDesire::
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_ECHO, BattleScript_FutureHitAnimEcho
 	playanimation BS_ATTACKER, B_ANIM_DOOM_DESIRE_HIT
+	goto BattleScript_DoFutureAttackHit
+BattleScript_FutureHitAnimEcho::
+	playanimation BS_TARGET, B_ANIM_ECHO_RETURN
 BattleScript_DoFutureAttackHit::
 	effectivenesssound
 	hitanimation BS_TARGET
@@ -5624,6 +5691,15 @@ BattleScript_FutureAttackEnd::
 	moveendcase MOVEEND_RAGE
 	moveendfromto MOVEEND_ITEM_EFFECTS_ALL, MOVEEND_UPDATE_LAST_MOVES
 	setbyte gMoveResultFlags, 0
+	end2
+
+@ Echo's rebound into a Pokémon that protected itself that turn: the wave still comes back, and is stopped
+BattleScript_EchoReboundBlocked::
+	printstring STRINGID_ECHOREBOUNDED
+	waitmessage B_WAIT_TIME_LONG
+	playanimation BS_TARGET, B_ANIM_ECHO_RETURN
+	printstring STRINGID_PKMNPROTECTEDITSELF
+	waitmessage B_WAIT_TIME_LONG
 	end2
 
 BattleScript_FutureAttackMiss::
@@ -5675,6 +5751,19 @@ BattleScript_MoveUsedIsTaunted::
 BattleScript_SelectingNotAllowedMoveTauntInPalace::
 	printstring STRINGID_PKMNCANTUSEMOVETAUNT
 	goto BattleScript_SelectingUnusableMoveInPalace
+
+BattleScript_SelectingNotAllowedMoveBlackHole::
+	printselectionstring STRINGID_PKMNCANTUSEMOVEBLACKHOLE
+	endselectionscript
+
+BattleScript_SelectingNotAllowedMoveBlackHoleInPalace::
+	printstring STRINGID_PKMNCANTUSEMOVEBLACKHOLE
+	goto BattleScript_SelectingUnusableMoveInPalace
+
+BattleScript_MoveUsedBlackHolePrevents::
+	printstring STRINGID_PKMNCANTUSEMOVEBLACKHOLE
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
 
 @ Solid Rage works like a Taunt for as long as it's held
 BattleScript_SelectingNotAllowedMoveRage::

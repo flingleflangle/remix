@@ -73,7 +73,7 @@ static const struct
 // Detect blocks every attacking move, including ones that get past Protect (like EX_FLAG_IGNORE_PROTECT).
 // EX Reflect and EX Light Screen block physical or special moves on their side, like Protect (IsBlockedByExScreen)
 #define DEFENDER_IS_PROTECTED (((gProtectStructs[gBattlerTarget].protected) && (gBattleMoves[gCurrentMove].flags & FLAG_PROTECT_AFFECTED) && !(gExMoveFlags & EX_FLAG_IGNORE_PROTECT)) \
-                            || ((gProtectStructs[gBattlerTarget].detected) && gBattleMoves[gCurrentMove].power != 0) \
+                            || ((gProtectStructs[gBattlerTarget].detected) && gBattleMoves[gCurrentMove].power != 0 && gCurrentMove != MOVE_BLACK_HOLE) \
                             || IsBlockedByExScreen())
 
 // Whether the current move is blocked by an EX Reflect or EX Light Screen on the target's side this turn (EX_FLAG_SCREEN_BLOCK).
@@ -803,6 +803,17 @@ static const u8 sFlailHpScaleToPowerTable[] =
     16, 80,
     32, 40,
     48, 20
+};
+
+// Flail's table at a bit over half, since Shriek has priority
+static const u8 sShriekHpScaleToPowerTable[] =
+{
+    1, 110,
+    4, 80,
+    9, 55,
+    16, 45,
+    32, 20,
+    48, 10
 };
 
 static const u8 sVileCutterHpScaleToPowerTable[] =
@@ -3051,7 +3062,10 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 }
                 else
                 {
-                    gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN((Random() & 3) + 3); // 3-6 turns
+                    if (gCurrentMove == MOVE_BLACK_HOLE)
+                        gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN((Random() & 1) + 3); // drains 2-3 turns, at 1/8
+                    else
+                        gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN((Random() & 3) + 3); // 3-6 turns
 
                     *(gBattleStruct->wrappedMove + gEffectBattler * 2 + 0) = gCurrentMove;
                     *(gBattleStruct->wrappedMove + gEffectBattler * 2 + 1) = gCurrentMove >> 8;
@@ -7376,6 +7390,29 @@ static void Cmd_various(void)
         if (TryStartExMoveBonus())
             return;
         break;
+    case VARIOUS_BLACK_HOLE_ACTIVE:
+        // Black Hole fails against a battler it's still draining
+        if (IsBattlerInBlackHole(gActiveBattler))
+            gMoveResultFlags |= MOVE_RESULT_FAILED;
+        break;
+    case VARIOUS_CHAKRA_SURGE:
+    {
+        // Chakra Surge: the battler's Attack, Defense, Speed, Sp. Atk and Sp. Def stages are averaged out (rounding
+        // to nearest) and every one of them is set to that, at least +1. Lowered stats count against the total
+        static const u8 sChakraSurgeStats[] = {STAT_ATK, STAT_DEF, STAT_SPEED, STAT_SPATK, STAT_SPDEF};
+        s32 total = 0, each;
+
+        for (i = 0; i < (s32)ARRAY_COUNT(sChakraSurgeStats); i++)
+            total += gBattleMons[gActiveBattler].statStages[sChakraSurgeStats[i]] - DEFAULT_STAT_STAGE;
+        each = (total * 2 + (s32)ARRAY_COUNT(sChakraSurgeStats)) / (2 * (s32)ARRAY_COUNT(sChakraSurgeStats));
+        if (each < 1)
+            each = 1;
+        if (each > MAX_STAT_STAGE - DEFAULT_STAT_STAGE)
+            each = MAX_STAT_STAGE - DEFAULT_STAT_STAGE;
+        for (i = 0; i < (s32)ARRAY_COUNT(sChakraSurgeStats); i++)
+            gBattleMons[gActiveBattler].statStages[sChakraSurgeStats[i]] = DEFAULT_STAT_STAGE + each;
+        break;
+    }
     case VARIOUS_PIERCE_SUBSTITUTE:
         // Pierce breaks the battler's Substitute outright
         gDisableStructs[gActiveBattler].substituteHP = 0;
@@ -9442,6 +9479,12 @@ static void Cmd_remaininghptopower(void)
         battler = gBattlerTarget;
         powerTable = sVileCutterHpScaleToPowerTable;
         tableSize = sizeof(sVileCutterHpScaleToPowerTable);
+    }
+    else if (gCurrentMove == MOVE_SHRIEK)
+    {
+        battler = gBattlerAttacker;
+        powerTable = sShriekHpScaleToPowerTable;
+        tableSize = sizeof(sShriekHpScaleToPowerTable);
     }
     else
     {

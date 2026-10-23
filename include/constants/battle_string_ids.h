@@ -421,8 +421,14 @@
 #define STRINGID_SOLIDRAGEACTIVATES         421
 #define STRINGID_SOLIDRAGEPERISH            422
 #define STRINGID_PKMNCANTUSEMOVERAGE        423
+#define STRINGID_PKMNLOSTITSVOICE           424
+#define STRINGID_ECHOREVERBERATING          425
+#define STRINGID_ECHOREBOUNDED              426
+#define STRINGID_CHAKRASURGED               427
+#define STRINGID_PKMNPULLEDINTOBLACKHOLE    428
+#define STRINGID_PKMNCANTUSEMOVEBLACKHOLE   429
 
-#define BATTLESTRINGS_COUNT                 424
+#define BATTLESTRINGS_COUNT                 430
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,
@@ -564,6 +570,7 @@
 // gFutureMoveUsedStringIds
 #define B_MSG_FUTURE_SIGHT 0
 #define B_MSG_DOOM_DESIRE  1
+#define B_MSG_ECHO         2 // only for picking Echo's animation when its delayed hit lands
 
 // gItemSwapStringIds
 #define B_MSG_ITEM_SWAP_TAKEN 0
@@ -649,6 +656,6 @@
 #define B_MSG_EX_UNLOCK_TRAINING   0
 #define B_MSG_EX_UNLOCK_FRIENDSHIP 1
 
-#define NUM_TRAPPING_MOVES 7
+#define NUM_TRAPPING_MOVES 8
 
 #endif // GUARD_CONSTANTS_BATTLE_STRING_IDS_H

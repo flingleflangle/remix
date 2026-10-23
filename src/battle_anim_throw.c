@@ -2915,6 +2915,8 @@ void AnimTask_GetTrappedMoveAnimId(u8 taskId)
         gBattleAnimArgs[0] = TRAP_ANIM_SAND_TOMB;
     else if (gBattleSpritesDataPtr->animationData->animArg == MOVE_SPROUT)
         gBattleAnimArgs[0] = TRAP_ANIM_SPROUT;
+    else if (gBattleSpritesDataPtr->animationData->animArg == MOVE_BLACK_HOLE)
+        gBattleAnimArgs[0] = TRAP_ANIM_BLACK_HOLE;
     else
         gBattleAnimArgs[0] = TRAP_ANIM_BIND;
 

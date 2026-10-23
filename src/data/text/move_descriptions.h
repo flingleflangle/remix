@@ -1646,8 +1646,8 @@ static const u8 sResonateDescription[] = _(
     "HP, stats, and ability.");
 
 static const u8 sShriekDescription[] = _(
-    "Startles foes with a wicked\n"
-    "scream. May lower SP.DEF.");
+    "A panicked scream. Stronger\n"
+    "the less HP the user has.");
 
 static const u8 sDissDescription[] = _(
     "Focuses on the opponent to\n"
@@ -1670,12 +1670,12 @@ static const u8 sNebulaCrashDescription[] = _(
     "Each is +60 or -60 power.");
 
 static const u8 sChakraSurgeDescription[] = _(
-    "Star bullets hit 2-5 times.\n"
-    "Recoil taken for every shot.");
+    "Spreads the user's boosts\n"
+    "evenly over five stats.");
 
 static const u8 sBlackHoleDescription[] = _(
-    "Star bullets hit 2-5 times.\n"
-    "Recoil taken for every shot.");
+    "An unavoidable pull that\n"
+    "traps and drains the foe.");
 
 static const u8 sSuckerPunchDescription[] = _(
     "Attacks first if the foe\n"

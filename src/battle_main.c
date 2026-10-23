@@ -194,6 +194,10 @@ EWRAM_DATA u8 gExEffectChance = 0;     // If set, the current move's secondary e
 EWRAM_DATA u8 gExCalmRampageBattlers = 0; // Battlers whose rampage won't confuse them when it ends (EX_FLAG_CALM_RAMPAGE)
 EWRAM_DATA u8 gExLeechSeedTurns[MAX_BATTLERS_COUNT] = {0}; // Each seeded battler's EX Leech Seed turn (1-15), or 0 for a regular one (EX_FLAG_GROWING_SEED)
 EWRAM_DATA u8 gExLockOnTrapBattlers = 0; // Battlers trapped by an EX_FLAG_TRAP_LOCK_ON move, which can't dodge the Pokémon trapping them
+// Who was behind Protect, Detect or an EX screen as the turn ended. Those drop as the end of the turn starts, before
+// Echo's rebound lands, which they still block (see HandleWishPerishSongOnTurnEnd)
+EWRAM_DATA u8 gTurnEndShieldedBattlers = 0;
+EWRAM_DATA u8 gTurnEndExScreenSides = 0;
 EWRAM_DATA u8 gExScreenBlockSides = 0; // EX_SCREEN_BLOCK_* of each side, which blocks physical or special moves this turn (EX_FLAG_SCREEN_BLOCK)
 EWRAM_DATA u8 gExLastingTauntBy[MAX_BATTLERS_COUNT] = {0}; // For each battler, 1 + the battler whose EX Taunt keeps it taunted, or 0 (EX_FLAG_LASTING_TAUNT)
 EWRAM_DATA u8 gExMoveChosenBits = 0;    // Battlers that chose to use their move as an EX move this turn
@@ -4969,6 +4973,10 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     if (gBattleMons[battler1].status1 & STATUS1_PARALYSIS)
         speedBattler1 /= 4;
 
+    // Caught in a Black Hole
+    if (IsBattlerInBlackHole(battler1))
+        speedBattler1 /= 2;
+
     if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gRandomTurnNumber < (0xFFFF * holdEffectParam) / 100)
         speedBattler1 = UINT_MAX;
 
@@ -5005,6 +5013,10 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
 
     if (gBattleMons[battler2].status1 & STATUS1_PARALYSIS)
         speedBattler2 /= 4;
+
+    // Caught in a Black Hole
+    if (IsBattlerInBlackHole(battler2))
+        speedBattler2 /= 2;
 
     if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gRandomTurnNumber < (0xFFFF * holdEffectParam) / 100)
         speedBattler2 = UINT_MAX;
@@ -5181,6 +5193,16 @@ static void TurnValuesCleanUp(bool8 var0)
     s32 i;
     u8 *dataPtr;
 
+    if (var0)
+    {
+        gTurnEndShieldedBattlers = 0;
+        gTurnEndExScreenSides = gExScreenBlockSides;
+        for (i = 0; i < gBattlersCount; i++)
+        {
+            if (gProtectStructs[i].protected || gProtectStructs[i].detected)
+                gTurnEndShieldedBattlers |= gBitTable[i];
+        }
+    }
     gExScreenBlockSides = 0; // Only lasts for the turn, like Protect
 
     for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)

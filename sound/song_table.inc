@@ -627,6 +627,11 @@ gSongTable::
 	song mus_dd_sunken_ruins, 0, 0
 	song mus_dd_metal_city, 0, 0
 	song mus_dd_drill_missile, 0, 0
+	song se_m_serenade_1, 1, 1
+	song se_m_serenade_2, 1, 1
+	song se_m_serenade_3, 1, 1
+	song se_m_serenade_4, 1, 1
+	song se_m_serenade_5, 1, 1
 
 	.align 2
 dummy_song_header:

@@ -1202,6 +1202,11 @@ SECTIONS {
         sound/songs/mus_dd_sunken_ruins.o(.rodata);
         sound/songs/mus_dd_metal_city.o(.rodata);
         sound/songs/mus_dd_drill_missile.o(.rodata);
+        sound/songs/se_m_serenade_1.o(.rodata);
+        sound/songs/se_m_serenade_2.o(.rodata);
+        sound/songs/se_m_serenade_3.o(.rodata);
+        sound/songs/se_m_serenade_4.o(.rodata);
+        sound/songs/se_m_serenade_5.o(.rodata);
         sound/songs/midi/ph_trap_blend.o(.rodata);
         sound/songs/midi/ph_trap_held.o(.rodata);
         sound/songs/midi/ph_trap_solo.o(.rodata);

@@ -5345,12 +5345,12 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SHRIEK] =
     {
-        .effect = EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
-        .power = 40,
+        .effect = EFFECT_FLAIL, // power from the user's HP, weaker than Flail (sShriekHpScaleToPowerTable)
+        .power = 1,
         .type = TYPE_SOUND,
         .accuracy = 100,
-        .pp = 30,
-        .secondaryEffectChance = 20,
+        .pp = 15,
+        .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
         .priority = 1,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
@@ -5387,7 +5387,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .effect = EFFECT_OHKO,
         .power = 1,
         .type = TYPE_WATER,
-        .accuracy = 20,
+        .accuracy = 100,
         .pp = 5,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
@@ -5432,6 +5432,32 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+
+    [MOVE_CHAKRA_SURGE] =
+    {
+        .effect = EFFECT_COSMIC_POWER, // with its own script, see BattleScript_EffectChakraSurge
+        .power = 0,
+        .type = TYPE_ASTRAL,
+        .accuracy = 0,
+        .pp = 5,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_USER,
+        .priority = 0,
+        .flags = FLAG_SNATCH_AFFECTED,
+    },
+
+    [MOVE_BLACK_HOLE] =
+    {
+        .effect = EFFECT_TRAP, // with its own script, see BattleScript_EffectBlackHole
+        .power = 20,
+        .type = TYPE_ASTRAL,
+        .accuracy = 0, // can't miss: its script skips the accuracy check, so nothing avoids it
+        .pp = 5,
+        .secondaryEffectChance = 100,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = -7, // always last
+        .flags = FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
 
     [MOVE_SUCKER_PUNCH] =
