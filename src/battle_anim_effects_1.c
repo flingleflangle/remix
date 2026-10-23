@@ -4180,6 +4180,7 @@ void AnimTask_SliceLine(u8 taskId)
     params.initState = 1;
     params.unused9 = 0;
     ScanlineEffect_SetParams(params);
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON); // switching or using the bag rebuilds the screen with windows off
 
     SliceLine_UpdateWindow(task);
     SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
@@ -4493,6 +4494,7 @@ void AnimTask_WideSlashLine(u8 taskId)
     params.initState = 1;
     params.unused9 = 0;
     ScanlineEffect_SetParams(params);
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON); // switching or using the bag rebuilds the screen with windows off
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON); // battles leave WIN1 off
 
     SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
@@ -4752,6 +4754,7 @@ void AnimTask_QuickDrawSlash(u8 taskId)
     params.initState = 1;
     params.unused9 = 0;
     ScanlineEffect_SetParams(params);
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON); // switching or using the bag rebuilds the screen with windows off
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON); // battles leave WIN1 off
 
     // Dimmed screen, with the stroke brightened inside the windows
@@ -5251,6 +5254,7 @@ void AnimTask_EchoReturnWave(u8 taskId)
     params.initState = 1;
     params.unused9 = 0;
     ScanlineEffect_SetParams(params);
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON); // switching or using the bag rebuilds the screen with windows off
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN1_ON); // battles leave WIN1 off
 
     SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
@@ -5686,6 +5690,7 @@ void AnimTask_BlackHoleDisc(u8 taskId)
     params.initState = 1;
     params.unused9 = 0;
     ScanlineEffect_SetParams(params);
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON); // switching or using the bag rebuilds the screen with windows off
 
     SetGpuReg(REG_OFFSET_WININ, WININ_WIN0_BG_ALL | WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG_ALL | WININ_WIN1_OBJ | WININ_WIN1_CLR);
     SetGpuReg(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG_ALL | WINOUT_WINOBJ_OBJ | WINOUT_WINOBJ_CLR);
@@ -5745,6 +5750,168 @@ static void AnimTask_BlackHoleDisc_Step(u8 taskId)
 #undef tGrowTime
 #undef tHoldTime
 #undef tShrinkTime
+
+static const union AnimCmd sAnim_BlackHoleDebris_0[] =
+{
+    ANIMCMD_FRAME(32, 1),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_BlackHoleDebris_1[] =
+{
+    ANIMCMD_FRAME(48, 1),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_BlackHoleDebris_2[] =
+{
+    ANIMCMD_FRAME(64, 1),
+    ANIMCMD_END,
+};
+
+// The same rock fragments as Rock Slide's
+static const union AnimCmd *const sAnims_BlackHoleDebris[] =
+{
+    sAnim_BlackHoleDebris_0,
+    sAnim_BlackHoleDebris_1,
+    sAnim_BlackHoleDebris_2,
+};
+
+#define sTimer    data[0]
+#define sDuration data[1]
+#define sAngle    data[2]
+#define sRadius   data[3]
+#define sCenterX  data[4]
+#define sCenterY  data[5]
+
+static void AnimBlackHoleDebris_Step(struct Sprite *);
+static void BlackHole_HitSpark(s16 x, s16 y);
+
+// Which side of the middle the next Black Hole hit spark goes, so they strictly take turns left and right
+EWRAM_DATA static bool8 sBlackHoleSparkOnRight = FALSE;
+
+// A rock fragment that swirls in toward the target's middle, behind it, and vanishes there with a hit spark and a
+// hit sound. Used by MOVE_BLACK_HOLE.
+// arg 0: angle it starts at, 0-255
+// arg 1: how far out it starts, in pixels
+// arg 2: frames to reach the middle
+// arg 3: which fragment, 0-2
+static void AnimBlackHoleDebris(struct Sprite *sprite)
+{
+    sprite->sAngle = gBattleAnimArgs[0];
+    sprite->sRadius = gBattleAnimArgs[1];
+    sprite->sDuration = gBattleAnimArgs[2];
+    sprite->sTimer = 0;
+    sprite->sCenterX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    sprite->sCenterY = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    StartSpriteAnim(sprite, gBattleAnimArgs[3]);
+    sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+    sprite->subpriority = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].subpriority + 1;
+    sprite->callback = AnimBlackHoleDebris_Step;
+    sprite->callback(sprite);
+}
+
+static void AnimBlackHoleDebris_Step(struct Sprite *sprite)
+{
+    s16 r;
+
+    sprite->sTimer++;
+    // Spins faster the closer it gets
+    sprite->sAngle += 4 + 8 * sprite->sTimer / sprite->sDuration;
+    r = sprite->sRadius - sprite->sRadius * sprite->sTimer / sprite->sDuration;
+    sprite->x = sprite->sCenterX + Cos(sprite->sAngle & 0xFF, r);
+    sprite->y = sprite->sCenterY + Sin(sprite->sAngle & 0xFF, r);
+    if (sprite->sTimer >= sprite->sDuration)
+    {
+        // Alternately left and right of the middle, a little further or nearer each time, so the sparks spread out
+        sBlackHoleSparkOnRight ^= TRUE;
+        BlackHole_HitSpark(sprite->sCenterX + (sBlackHoleSparkOnRight ? 1 : -1) * (5 + (sprite->sAngle & 3)),
+                           sprite->sCenterY + ((sprite->sAngle >> 4) & 3) - 2);
+        DestroyAnimSprite(sprite);
+    }
+}
+
+const struct SpriteTemplate gBlackHoleDebrisSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROCKS,
+    .paletteTag = ANIM_TAG_ROCKS,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_BlackHoleDebris,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimBlackHoleDebris,
+};
+
+#undef sTimer
+#undef sDuration
+#undef sAngle
+#undef sRadius
+#undef sCenterX
+#undef sCenterY
+
+// Drill Peck's small hit spark: set to half size once, and never scaled after that
+static const union AffineAnimCmd sAffineAnim_BlackHoleHitSplat[] =
+{
+    AFFINEANIMCMD_FRAME(0x80, 0x80, 0, 0),
+    AFFINEANIMCMD_END,
+};
+
+#define BLACK_HOLE_SPARK_TIME 13 // frames it flashes for
+
+// Flashes on and off, like Drill Peck's sparks, then goes
+static void AnimBlackHoleHitSplat_Step(struct Sprite *sprite)
+{
+    sprite->invisible ^= 1;
+    if (sprite->data[0]++ >= BLACK_HOLE_SPARK_TIME)
+        DestroyAnimSprite(sprite);
+}
+
+static const union AffineAnimCmd *const sAffineAnims_BlackHoleHitSplat[] =
+{
+    sAffineAnim_BlackHoleHitSplat,
+};
+
+// A small, flashing hit spark in front of the Black Hole (and the target), where its debris hits. Used by MOVE_BLACK_HOLE.
+// arg 0: x offset from the target's middle
+// arg 1: y offset from the target's middle
+static void AnimBlackHoleHitSplat(struct Sprite *sprite)
+{
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[0];
+    sprite->y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
+    // Same layer as the Black Hole, in front of it
+    sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+    sprite->subpriority = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].subpriority - 2;
+    sprite->data[0] = 0;
+    sprite->callback = AnimBlackHoleHitSplat_Step;
+}
+
+const struct SpriteTemplate gBlackHoleHitSplatSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_IMPACT,
+    .paletteTag = ANIM_TAG_IMPACT,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_BlackHoleHitSplat,
+    .callback = AnimBlackHoleHitSplat,
+};
+
+// A hit spark and hit sound where a piece of debris lands, for AnimBlackHoleDebris. Load ANIM_TAG_IMPACT.
+static void BlackHole_HitSpark(s16 x, s16 y)
+{
+    u8 spriteId = CreateSprite(&gBlackHoleHitSplatSpriteTemplate, x, y, 0);
+
+    if (spriteId != MAX_SPRITES)
+    {
+        // Set up here rather than in AnimBlackHoleHitSplat, which reads its position from the script's arguments
+        gSprites[spriteId].oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+        gSprites[spriteId].subpriority = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].subpriority - 2;
+        gSprites[spriteId].data[0] = 0;
+        gSprites[spriteId].callback = AnimBlackHoleHitSplat_Step;
+        gAnimVisualTaskCount++;
+    }
+    PlaySE12WithPanning(SE_M_COMET_PUNCH, BattleAnimAdjustPanning(SOUND_PAN_TARGET));
+}
 
 static void UNUSED UnusedFlickerAnim(struct Sprite *sprite)
 {

@@ -1189,10 +1189,17 @@ BattleScript_EffectTrap::
 @ Black Hole (EFFECT_TRAP, to save a move effect) skips the accuracy check altogether, so nothing avoids it: not
 @ evasion, Protect, Detect or Dodge, and not Fly, Dig or Dive either. It traps like Wrap, but drains 1/8 a turn
 @ for only 2-3 turns. While it lasts, the target's Speed is halved and it can't leave the field or use priority
-@ moves (see IsMoveBlockedByBlackHole). It fails against a target it's still draining
+@ moves (see IsMoveBlockedByBlackHole). It fails against a target it's still draining. Like Focus Punch, it
+@ gathers at the start of the turn (BattleScript_BlackHoleSetUp) and is lost if the user takes damage before it goes
 BattleScript_EffectBlackHole::
 	setmoveeffect MOVE_EFFECT_WRAP
 	attackcanceler
+	jumpifnodamage BattleScript_BlackHoleFocused
+	ppreduce
+	printstring STRINGID_PKMNLOSTFOCUS
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+BattleScript_BlackHoleFocused:
 	attackstring
 	ppreduce
 	various BS_TARGET, VARIOUS_BLACK_HOLE_ACTIVE
@@ -5923,6 +5930,14 @@ BattleScript_FocusPunchSetUp::
 	waitmessage 1
 	playanimation BS_ATTACKER, B_ANIM_FOCUS_PUNCH_SETUP
 	printstring STRINGID_PKMNTIGHTENINGFOCUS
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+BattleScript_BlackHoleSetUp::
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
+	playanimation BS_ATTACKER, B_ANIM_BLACK_HOLE_SETUP
+	printstring STRINGID_PKMNDRAWINGINDARKNESS
 	waitmessage B_WAIT_TIME_LONG
 	end2
 

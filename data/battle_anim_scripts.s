@@ -489,6 +489,7 @@ gBattleAnims_General::
 	.4byte General_SpikesBurst              @ B_ANIM_SPIKES_BURST
 	.4byte General_PokeDoll                 @ B_ANIM_POKE_DOLL
 	.4byte General_EchoReturn               @ B_ANIM_ECHO_RETURN
+	.4byte General_BlackHoleSetUp           @ B_ANIM_BLACK_HOLE_SETUP
 
 	.align 2
 gBattleAnims_Special::
@@ -9621,19 +9622,50 @@ SoulStealFlash:
 @ back down. The between-turns drain is Status_BlackHole
 Move_BLACK_HOLE:
 	loadspritegfx ANIM_TAG_SHADOW_BALL
+	loadspritegfx ANIM_TAG_ROCKS
+	loadspritegfx ANIM_TAG_IMPACT
 	createsoundtask SoundTask_LoopSEAdjustPanning, SE_M_MIST, SOUND_PAN_ATTACKER, SOUND_PAN_TARGET, 5, 5, 0, 5
-	createsprite gBlackHoleBallSpriteTemplate, ANIM_TARGET, 2, FALSE, 40, 20
+	createsprite gBlackHoleBallSpriteTemplate, ANIM_TARGET, 2, FALSE, 40, 60
 	delay 40
 	playsewithpan SE_M_SAND_ATTACK, SOUND_PAN_TARGET
 	createvisualtask AnimTask_ShakeMon2, 2, ANIM_TARGET, 6, 0, 12, 1
-	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_TARGET, 0, 4, 0, 12, RGB_BLACK
+@ Turns black and stays black until the Black Hole is gone
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 0, 12, RGB_BLACK
 @ It bursts out behind the target BLACK_HOLE_IMPACT_TIME frames after touching it
 	delay 12
 	playsewithpan SE_M_GIGA_DRAIN, SOUND_PAN_TARGET
-	createvisualtask AnimTask_BlackHoleDisc, 2, 44, 6, 20, 14, 12
+	createvisualtask AnimTask_BlackHoleDisc, 2, 44, 6, 60, 14, 12
+@ Fully open (frames 58-118): the screen shakes and the background dims while debris swirls into the middle,
+@ each piece sparking with a hit sound as it lands (see AnimBlackHoleDebris). The shake stops at frame 104, before the hole starts to close and the background brightens
+	delay 6
+	createvisualtask AnimTask_HorizontalShake, 5, (MAX_BATTLERS_COUNT + 1), 0, 46
+	createvisualtask AnimTask_HorizontalShake, 5, MAX_BATTLERS_COUNT, 0, 46
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_BG, 2, 0, 9, RGB_BLACK
+	createsprite gBlackHoleDebrisSpriteTemplate, ANIM_TARGET, 2, 0, 72, 20, 0
+	delay 5
+	createsprite gBlackHoleDebrisSpriteTemplate, ANIM_TARGET, 2, 160, 72, 20, 1
+	delay 5
+	createsprite gBlackHoleDebrisSpriteTemplate, ANIM_TARGET, 2, 64, 72, 20, 2
+	delay 5
+	createsprite gBlackHoleDebrisSpriteTemplate, ANIM_TARGET, 2, 224, 72, 20, 0
+	delay 5
+	createsprite gBlackHoleDebrisSpriteTemplate, ANIM_TARGET, 2, 128, 72, 20, 1
+	delay 5
+	createsprite gBlackHoleDebrisSpriteTemplate, ANIM_TARGET, 2, 32, 72, 20, 2
+	delay 5
+	createsprite gBlackHoleDebrisSpriteTemplate, ANIM_TARGET, 2, 192, 72, 20, 0
+	delay 5
+	createsprite gBlackHoleDebrisSpriteTemplate, ANIM_TARGET, 2, 96, 72, 20, 1
+	delay 5
+	delay 8
+@ The hole starts to close at frame 118, and the background brightens with it
+	delay 12
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_BG, 1, 9, 0, RGB_BLACK
+	waitforvisualfinish
+@ The target eases back from black to its own colors
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 3, 12, 0, RGB_BLACK
 	waitforvisualfinish
 	end
-
 Move_HYPER_BEAM:
 	loadspritegfx ANIM_TAG_ORBS
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 4, 0, 16, RGB_BLACK
@@ -13723,6 +13755,18 @@ General_DoomDesireHit:
 	createsprite gExplosionSpriteTemplate, ANIM_ATTACKER, 3, 16, 16, 1, 1
 	waitforvisualfinish
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 3, 16, 0, RGB_WHITE
+	waitforvisualfinish
+	end
+
+@ Gathering darkness before Black Hole: the background dims (the Pokémon don't) while it trembles, pulsing dark
+General_BlackHoleSetUp:
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 2, 0, 10, RGB_BLACK
+	waitforvisualfinish
+	playsewithpan SE_M_MIST, SOUND_PAN_ATTACKER
+	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 2, 2, 0, 10, RGB_BLACK
+	createvisualtask AnimTask_ShakeMon2, 2, ANIM_ATTACKER, 1, 0, 24, 1
+	waitforvisualfinish
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 2, 10, 0, RGB_BLACK
 	waitforvisualfinish
 	end
 

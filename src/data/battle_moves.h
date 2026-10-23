@@ -5450,7 +5450,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     [MOVE_BLACK_HOLE] =
     {
         .effect = EFFECT_TRAP, // with its own script, see BattleScript_EffectBlackHole
-        .power = 20,
+        .power = 60,
         .type = TYPE_ASTRAL,
         .accuracy = 0, // can't miss: its script skips the accuracy check, so nothing avoids it
         .pp = 5,
