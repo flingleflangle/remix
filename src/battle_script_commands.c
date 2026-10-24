@@ -7006,6 +7006,44 @@ static u8 GetBattlerGender(u8 battler)
     return GetGenderFromSpeciesAndPersonality(gBattleMons[battler].species, gBattleMons[battler].personality);
 }
 
+static bool32 IsMonAbleToBeSwitchedIn(struct Pokemon *mon)
+{
+    return GetMonData(mon, MON_DATA_SPECIES) != SPECIES_NONE
+        && !GetMonData(mon, MON_DATA_IS_EGG)
+        && GetMonData(mon, MON_DATA_HP) != 0;
+}
+
+// Odor Sleuth: the next Pokémon in line in an opposing trainer's party (after the battler, wrapping around),
+// skipping the battler's partner, or PARTY_SIZE if there's none. Party halves match Cmd_forcerandomswitch's.
+// Not for link battles
+static u8 GetOpposingTrainerNextMonInLine(u8 battler)
+{
+    s32 i, firstMonId, monsCount;
+    u8 partnerMonId = gBattlerPartyIndexes[battler];
+
+    if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS))
+    {
+        firstMonId = ((battler & BIT_FLANK) != B_FLANK_LEFT) ? PARTY_SIZE / 2 : 0;
+        monsCount = PARTY_SIZE / 2;
+    }
+    else
+    {
+        firstMonId = 0;
+        monsCount = PARTY_SIZE;
+        if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+            partnerMonId = gBattlerPartyIndexes[BATTLE_PARTNER(battler)];
+    }
+
+    for (i = 1; i < monsCount; i++)
+    {
+        u8 monId = firstMonId + (gBattlerPartyIndexes[battler] - firstMonId + i) % monsCount;
+
+        if (monId != partnerMonId && IsMonAbleToBeSwitchedIn(&gEnemyParty[monId]))
+            return monId;
+    }
+    return PARTY_SIZE;
+}
+
 static void Cmd_various(void)
 {
     u8 side;
@@ -7394,6 +7432,24 @@ static void Cmd_various(void)
         // Black Hole fails against a battler it's still draining
         if (IsBattlerInBlackHole(gActiveBattler))
             gMoveResultFlags |= MOVE_RESULT_FAILED;
+        break;
+    case VARIOUS_ODOR_SLEUTH_NEXT_MON:
+        // Odor Sleuth: against a trainer, sniffs out the next Pokémon in line behind the battler, which Roar will drag out.
+        // Sets MULTISTRING_CHOOSER to 1 and buffers its species if there is one, otherwise 0
+        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+        if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+         && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK))
+         && GetBattlerSide(gActiveBattler) == B_SIDE_OPPONENT)
+        {
+            u8 monId = GetOpposingTrainerNextMonInLine(gActiveBattler);
+
+            if (monId != PARTY_SIZE)
+            {
+                gOdorSleuthNextMon[gActiveBattler] = monId;
+                PREPARE_SPECIES_BUFFER(gBattleTextBuff1, GetMonData(&gEnemyParty[monId], MON_DATA_SPECIES));
+                gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+            }
+        }
         break;
     case VARIOUS_CHAKRA_SURGE:
     {
@@ -8383,6 +8439,19 @@ static void Cmd_forcerandomswitch(void)
                 } while (GetMonData(&party[i], MON_DATA_SPECIES) == SPECIES_NONE
                        || GetMonData(&party[i], MON_DATA_IS_EGG) == TRUE
                        || GetMonData(&party[i], MON_DATA_HP) == 0); //should be one while loop, but that doesn't match.
+
+                // The Pokémon Odor Sleuth sniffed out is the one that gets dragged out, if it still can be
+                if (gOdorSleuthNextMon[gBattlerTarget] != PARTY_SIZE)
+                {
+                    u8 sleuthedMonId = gOdorSleuthNextMon[gBattlerTarget];
+
+                    if (party == gEnemyParty
+                     && sleuthedMonId >= firstMonId && sleuthedMonId < firstMonId + monsCount
+                     && sleuthedMonId != battler1PartyId && sleuthedMonId != battler2PartyId
+                     && IsMonAbleToBeSwitchedIn(&party[sleuthedMonId]))
+                        i = sleuthedMonId;
+                    gOdorSleuthNextMon[gBattlerTarget] = PARTY_SIZE;
+                }
         // Bug: If the opponent uses forced switchout moves in a Multi Battle, the player side party
         //      might get the order messed up where the mons appear in the wrong slots of the party screen.
         //      This causes a hardlock when all mons on the player side are knocked out and the player

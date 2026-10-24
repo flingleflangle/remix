@@ -522,8 +522,8 @@
 // Check if the item is one that can be used on a Pokémon.
 #define ITEM_HAS_EFFECT(item) ((item) >= ITEM_POTION && (item) <= MAX_BERRY_INDEX)
 
-// The EX move crystals and Solid Rage can't be knocked off, stolen, or swapped away in battle
 #define ITEM_IS_EX_CRYSTAL(item) ((item) >= ITEM_STAR_CRYSTAL && (item) <= ITEM_METAL_CRYSTAL)
-#define ITEM_CANT_BE_REMOVED(item) (ITEM_IS_EX_CRYSTAL(item) || (item) == ITEM_SOLID_RAGE)
+// Solid Rage can't be knocked off, stolen, or swapped away in battle (the EX crystals can)
+#define ITEM_CANT_BE_REMOVED(item) ((item) == ITEM_SOLID_RAGE)
 
 #endif  // GUARD_CONSTANTS_ITEMS_H

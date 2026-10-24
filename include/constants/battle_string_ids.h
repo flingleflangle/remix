@@ -428,8 +428,9 @@
 #define STRINGID_PKMNPULLEDINTOBLACKHOLE    428
 #define STRINGID_PKMNCANTUSEMOVEBLACKHOLE   429
 #define STRINGID_PKMNDRAWINGINDARKNESS      430
+#define STRINGID_PKMNSNIFFEDOUTNEXTMON      431
 
-#define BATTLESTRINGS_COUNT                 431
+#define BATTLESTRINGS_COUNT                 432
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,

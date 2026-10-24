@@ -136,6 +136,7 @@
 #define VARIOUS_PIERCE_SUBSTITUTE               55
 #define VARIOUS_CHAKRA_SURGE                    56
 #define VARIOUS_BLACK_HOLE_ACTIVE               57
+#define VARIOUS_ODOR_SLEUTH_NEXT_MON            58
 
 // EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
 // They last for the move that set them (gExMoveFlags)

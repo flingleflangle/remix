@@ -2856,9 +2856,17 @@ BattleScript_EffectForesight::
 	printstring STRINGID_PKMNIDENTIFIED
 	waitmessage B_WAIT_TIME_LONG
 	@ Foresight (not Odor Sleuth) also makes the user's next damaging move a guaranteed critical hit
-	jumpifnotmove MOVE_FORESIGHT, BattleScript_MoveEnd
+	jumpifnotmove MOVE_FORESIGHT, BattleScript_OdorSleuthNextMon
 	various BS_ATTACKER, VARIOUS_SET_SURE_CRIT
 	printstring STRINGID_PKMNAIMEDNEXTATTACK
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ Odor Sleuth instead sniffs out a trainer's next Pokémon in line, which Roar will then drag out
+BattleScript_OdorSleuthNextMon:
+	various BS_TARGET, VARIOUS_ODOR_SLEUTH_NEXT_MON
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, 0, BattleScript_MoveEnd
+	printstring STRINGID_PKMNSNIFFEDOUTNEXTMON
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 

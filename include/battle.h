@@ -668,6 +668,7 @@ extern u16 gBattleExUpgradedFrom;
 extern u8 gBattleExBonusPending;
 extern u8 gExHealReplacementSides;
 extern u8 gSureCritBattlers;
+extern u8 gOdorSleuthNextMon[MAX_BATTLERS_COUNT];
 extern u8 gThisMoveSureCrit;
 
 // gBattleExAnimPending values. Sent with the move animation, see DoMoveAnim

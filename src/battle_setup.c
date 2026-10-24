@@ -37,6 +37,7 @@
 #include "mirage_tower.h"
 #include "field_screen_effect.h"
 #include "data.h"
+#include "wild_encounter.h"
 // Start vs_seeker branch
 #include "vs_seeker.h"
 #include "item.h"
@@ -603,10 +604,18 @@ void StartRegiBattle(void)
     TryUpdateGymLeaderRematchFromWild();
 }
 
+// Odor Sleuth's trail in the field goes cold when the player runs from a battle
+static void TryEndOdorSleuthTrail(void)
+{
+    if (gBattleOutcome == B_OUTCOME_RAN || gBattleOutcome == B_OUTCOME_PLAYER_TELEPORTED)
+        EndOdorSleuthTrail();
+}
+
 static void CB2_EndWildBattle(void)
 {
     CpuFill16(0, (void *)(BG_PLTT), BG_PLTT_SIZE);
     ResetOamRange(0, 128);
+    TryEndOdorSleuthTrail();
 
     if (IsPlayerDefeated(gBattleOutcome) == TRUE && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE && !InBattlePike())
     {
@@ -623,6 +632,7 @@ static void CB2_EndScriptedWildBattle(void)
 {
     CpuFill16(0, (void *)(BG_PLTT), BG_PLTT_SIZE);
     ResetOamRange(0, 128);
+    TryEndOdorSleuthTrail();
 
     if (IsPlayerDefeated(gBattleOutcome) == TRUE)
     {

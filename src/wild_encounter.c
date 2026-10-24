@@ -472,6 +472,118 @@ static u16 GenerateFishingWildMon(const struct WildPokemonInfo *wildMonInfo, u8 
     return wildMonInfo->wildPokemon[wildMonIndex].species;
 }
 
+// Odor Sleuth's field effect. The last wild Pokémon met on a map with wild Pokémon is remembered (VAR_ODOR_SLEUTH_*).
+// Using Odor Sleuth on the map it was met on picks up its trail: every encounter of the same kind there (grass, water,
+// Rock Smash or fishing) is that species again, rerolled, until the player runs from a battle (see battle_setup.c)
+// or meets a Pokémon of another kind or on another map. Roamers leave no trail
+#define ODOR_SLEUTH_AREA_MASK    0x3 // WILD_AREA_*
+#define ODOR_SLEUTH_ROAMER       (1 << 2)
+#define ODOR_SLEUTH_TRAIL_ACTIVE (1 << 3)
+#define ODOR_SLEUTH_LEVEL_SHIFT  8
+
+#define CURRENT_MAP_ID ((gSaveBlock1Ptr->location.mapGroup << 8) | gSaveBlock1Ptr->location.mapNum)
+
+static const u8 sWildAreaMonCounts[] =
+{
+    [WILD_AREA_LAND]    = LAND_WILD_COUNT,
+    [WILD_AREA_WATER]   = WATER_WILD_COUNT,
+    [WILD_AREA_ROCKS]   = ROCK_WILD_COUNT,
+    [WILD_AREA_FISHING] = FISH_WILD_COUNT,
+};
+
+// The fishing slots each rod can hook (see ChooseWildMonIndex_Fishing)
+static const u8 sFishingRodSlots[][2] =
+{
+    [OLD_ROD]   = {0, 2},
+    [GOOD_ROD]  = {2, 3},
+    [SUPER_ROD] = {5, 5},
+};
+
+static bool8 IsOnOdorSleuthTrail(u8 area)
+{
+    u16 state = VarGet(VAR_ODOR_SLEUTH_STATE);
+
+    return (state & ODOR_SLEUTH_TRAIL_ACTIVE)
+        && (state & ODOR_SLEUTH_AREA_MASK) == area
+        && VarGet(VAR_ODOR_SLEUTH_MAP) == CURRENT_MAP_ID;
+}
+
+// Remembers the wild Pokémon just created in gEnemyParty[0]
+static void RecordWildMonForOdorSleuth(u8 area, bool8 isRoamer)
+{
+    // Meeting a Pokémon anywhere other than where the trail leads ends it
+    u16 state = IsOnOdorSleuthTrail(area) ? ODOR_SLEUTH_TRAIL_ACTIVE : 0;
+
+    state |= area;
+    if (isRoamer)
+        state |= ODOR_SLEUTH_ROAMER;
+    state |= GetMonData(&gEnemyParty[0], MON_DATA_LEVEL) << ODOR_SLEUTH_LEVEL_SHIFT;
+    VarSet(VAR_ODOR_SLEUTH_SPECIES, GetMonData(&gEnemyParty[0], MON_DATA_SPECIES));
+    VarSet(VAR_ODOR_SLEUTH_MAP, CURRENT_MAP_ID);
+    VarSet(VAR_ODOR_SLEUTH_STATE, state);
+}
+
+// Creates the Pokémon Odor Sleuth's trail leads to, at the level of one of the given slots it's in,
+// or the level it was last met at if it isn't in any (e.g. it came from a mass outbreak)
+static bool8 TryGenerateOdorSleuthTrailMon(const struct WildPokemonInfo *wildMonInfo, u8 firstSlot, u8 numSlots, u8 flags)
+{
+    u16 species = VarGet(VAR_ODOR_SLEUTH_SPECIES);
+    u8 slots[LAND_WILD_COUNT];
+    u8 i, count = 0;
+    u8 level;
+
+    for (i = firstSlot; i < firstSlot + numSlots; i++)
+    {
+        if (wildMonInfo->wildPokemon[i].species == species)
+            slots[count++] = i;
+    }
+    if (count != 0)
+        level = ChooseWildMonLevel(&wildMonInfo->wildPokemon[slots[Random() % count]]);
+    else
+        level = VarGet(VAR_ODOR_SLEUTH_STATE) >> ODOR_SLEUTH_LEVEL_SHIFT;
+
+    if (flags & WILD_CHECK_REPEL && !IsWildLevelAllowedByRepel(level))
+        return FALSE;
+    if (flags & WILD_CHECK_KEEN_EYE && !IsAbilityAllowingEncounter(level))
+        return FALSE;
+
+    CreateWildMon(species, level);
+    return TRUE;
+}
+
+// A regular wild encounter on a map with wild Pokémon, which follows Odor Sleuth's trail if it's on one here
+static bool8 TryGenerateLocalWildMon(const struct WildPokemonInfo *wildMonInfo, u8 area, u8 flags)
+{
+    bool8 generated;
+
+    if (IsOnOdorSleuthTrail(area))
+        generated = TryGenerateOdorSleuthTrailMon(wildMonInfo, 0, sWildAreaMonCounts[area], flags);
+    else
+        generated = TryGenerateWildMon(wildMonInfo, area, flags);
+
+    if (generated)
+        RecordWildMonForOdorSleuth(area, FALSE);
+    return generated;
+}
+
+// Odor Sleuth used in the field: the species whose trail it would pick up here, or SPECIES_NONE
+u16 GetOdorSleuthScentHere(void)
+{
+    if (VarGet(VAR_ODOR_SLEUTH_MAP) != CURRENT_MAP_ID || (VarGet(VAR_ODOR_SLEUTH_STATE) & ODOR_SLEUTH_ROAMER))
+        return SPECIES_NONE;
+    return VarGet(VAR_ODOR_SLEUTH_SPECIES);
+}
+
+void StartOdorSleuthTrail(void)
+{
+    VarSet(VAR_ODOR_SLEUTH_STATE, VarGet(VAR_ODOR_SLEUTH_STATE) | ODOR_SLEUTH_TRAIL_ACTIVE);
+}
+
+void EndOdorSleuthTrail(void)
+{
+    VarSet(VAR_ODOR_SLEUTH_STATE, VarGet(VAR_ODOR_SLEUTH_STATE) & ~ODOR_SLEUTH_TRAIL_ACTIVE);
+}
+
 static bool8 SetUpMassOutbreakEncounter(u8 flags)
 {
     u16 i;
@@ -610,25 +722,29 @@ bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
             else if (WildEncounterCheck(gWildMonHeaders[headerId].landMonsInfo->encounterRate, FALSE) != TRUE)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            // Roamers and mass outbreaks don't turn up on Odor Sleuth's trail
+            if (!IsOnOdorSleuthTrail(WILD_AREA_LAND) && TryStartRoamerEncounter() == TRUE)
             {
                 roamer = &gSaveBlock1Ptr->roamer;
                 if (!IsWildLevelAllowedByRepel(roamer->level))
                     return FALSE;
 
+                RecordWildMonForOdorSleuth(WILD_AREA_LAND, TRUE);
                 BattleSetup_StartRoamerBattle();
                 return TRUE;
             }
             else
             {
-                if (DoMassOutbreakEncounterTest() == TRUE && SetUpMassOutbreakEncounter(WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
+                if (!IsOnOdorSleuthTrail(WILD_AREA_LAND) && DoMassOutbreakEncounterTest() == TRUE
+                 && SetUpMassOutbreakEncounter(WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
                 {
+                    RecordWildMonForOdorSleuth(WILD_AREA_LAND, FALSE);
                     BattleSetup_StartWildBattle();
                     return TRUE;
                 }
 
                 // try a regular wild land encounter
-                if (TryGenerateWildMon(gWildMonHeaders[headerId].landMonsInfo, WILD_AREA_LAND, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
+                if (TryGenerateLocalWildMon(gWildMonHeaders[headerId].landMonsInfo, WILD_AREA_LAND, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
                 {
                     BattleSetup_StartWildBattle();
                     return TRUE;
@@ -649,18 +765,19 @@ bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
             else if (WildEncounterCheck(gWildMonHeaders[headerId].waterMonsInfo->encounterRate, FALSE) != TRUE)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (!IsOnOdorSleuthTrail(WILD_AREA_WATER) && TryStartRoamerEncounter() == TRUE)
             {
                 roamer = &gSaveBlock1Ptr->roamer;
                 if (!IsWildLevelAllowedByRepel(roamer->level))
                     return FALSE;
 
+                RecordWildMonForOdorSleuth(WILD_AREA_WATER, TRUE);
                 BattleSetup_StartRoamerBattle();
                 return TRUE;
             }
             else // try a regular surfing encounter
             {
-                if (TryGenerateWildMon(gWildMonHeaders[headerId].waterMonsInfo, WILD_AREA_WATER, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
+                if (TryGenerateLocalWildMon(gWildMonHeaders[headerId].waterMonsInfo, WILD_AREA_WATER, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
                 {
                     BattleSetup_StartWildBattle();
                     return TRUE;
@@ -687,7 +804,7 @@ void RockSmashWildEncounter(void)
             gSpecialVar_Result = FALSE;
         }
         else if (WildEncounterCheck(wildPokemonInfo->encounterRate, TRUE) == TRUE
-         && TryGenerateWildMon(wildPokemonInfo, WILD_AREA_ROCKS, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
+         && TryGenerateLocalWildMon(wildPokemonInfo, WILD_AREA_ROCKS, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
         {
             BattleSetup_StartWildBattle();
             gSpecialVar_Result = TRUE;
@@ -740,16 +857,22 @@ bool8 SweetScentWildEncounter(void)
             if (gWildMonHeaders[headerId].landMonsInfo == NULL)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (!IsOnOdorSleuthTrail(WILD_AREA_LAND) && TryStartRoamerEncounter() == TRUE)
             {
+                RecordWildMonForOdorSleuth(WILD_AREA_LAND, TRUE);
                 BattleSetup_StartRoamerBattle();
                 return TRUE;
             }
 
-            if (DoMassOutbreakEncounterTest() == TRUE)
+            if (!IsOnOdorSleuthTrail(WILD_AREA_LAND) && DoMassOutbreakEncounterTest() == TRUE)
+            {
                 SetUpMassOutbreakEncounter(0);
+                RecordWildMonForOdorSleuth(WILD_AREA_LAND, FALSE);
+            }
             else
-                TryGenerateWildMon(gWildMonHeaders[headerId].landMonsInfo, WILD_AREA_LAND, 0);
+            {
+                TryGenerateLocalWildMon(gWildMonHeaders[headerId].landMonsInfo, WILD_AREA_LAND, 0);
+            }
 
             BattleSetup_StartWildBattle();
             return TRUE;
@@ -761,13 +884,14 @@ bool8 SweetScentWildEncounter(void)
             if (gWildMonHeaders[headerId].waterMonsInfo == NULL)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (!IsOnOdorSleuthTrail(WILD_AREA_WATER) && TryStartRoamerEncounter() == TRUE)
             {
+                RecordWildMonForOdorSleuth(WILD_AREA_WATER, TRUE);
                 BattleSetup_StartRoamerBattle();
                 return TRUE;
             }
 
-            TryGenerateWildMon(gWildMonHeaders[headerId].waterMonsInfo, WILD_AREA_WATER, 0);
+            TryGenerateLocalWildMon(gWildMonHeaders[headerId].waterMonsInfo, WILD_AREA_WATER, 0);
             BattleSetup_StartWildBattle();
             return TRUE;
         }
@@ -789,8 +913,14 @@ bool8 DoesCurrentMapHaveFishingMons(void)
 void FishingWildEncounter(u8 rod)
 {
     u16 species;
+    const struct WildPokemonInfo *fishingMonsInfo = gWildMonHeaders[GetCurrentMapWildMonHeaderId()].fishingMonsInfo;
 
-    if (CheckFeebas() == TRUE)
+    if (IsOnOdorSleuthTrail(WILD_AREA_FISHING))
+    {
+        TryGenerateOdorSleuthTrailMon(fishingMonsInfo, sFishingRodSlots[rod][0], sFishingRodSlots[rod][1], 0);
+        species = VarGet(VAR_ODOR_SLEUTH_SPECIES);
+    }
+    else if (CheckFeebas() == TRUE)
     {
         u8 level = ChooseWildMonLevel(&sWildFeebas);
 
@@ -799,8 +929,9 @@ void FishingWildEncounter(u8 rod)
     }
     else
     {
-        species = GenerateFishingWildMon(gWildMonHeaders[GetCurrentMapWildMonHeaderId()].fishingMonsInfo, rod);
+        species = GenerateFishingWildMon(fishingMonsInfo, rod);
     }
+    RecordWildMonForOdorSleuth(WILD_AREA_FISHING, FALSE);
     IncrementGameStat(GAME_STAT_FISHING_ENCOUNTERS);
     SetPokemonAnglerSpecies(species);
     BattleSetup_StartWildBattle();

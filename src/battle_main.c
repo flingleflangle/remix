@@ -187,6 +187,7 @@ EWRAM_DATA u16 gBattleExUpgradedFrom = 0; // The chosen move, if it became a str
 EWRAM_DATA u8 gBattleExBonusPending = 0; // The move gets an EX bonus at its attackstring
 EWRAM_DATA u8 gExHealReplacementSides = 0; // Sides whose next Pokémon to switch in gets its HP restored (EX_BONUS_HEAL_REPLACEMENT)
 EWRAM_DATA u8 gSureCritBattlers = 0; // Battlers whose next damaging move is a guaranteed critical hit (Foresight)
+EWRAM_DATA u8 gOdorSleuthNextMon[MAX_BATTLERS_COUNT] = {0}; // Each battler's next Pokémon in line that Odor Sleuth sniffed out, for Roar to drag out, or PARTY_SIZE
 EWRAM_DATA u8 gThisMoveSureCrit = 0; // The current move is that guaranteed critical hit
 EWRAM_DATA u32 gExMoveFlags = 0;       // EX_FLAG_* for the current move (see exmove in data/ex_battle_scripts.s)
 EWRAM_DATA u8 gExExtraMoveEffect = 0;  // The current move's extra move effect (struct ExMove), with MOVE_EFFECT_CERTAIN, or 0
@@ -3209,6 +3210,7 @@ static void BattleStartClearSetData(void)
     SpecialStatusesClear();
     gExHealReplacementSides = 0;
     gSureCritBattlers = 0;
+    memset(gOdorSleuthNextMon, PARTY_SIZE, sizeof(gOdorSleuthNextMon));
     gExCalmRampageBattlers = 0;
     memset(gExLeechSeedTurns, 0, sizeof(gExLeechSeedTurns));
     gExLockOnTrapBattlers = 0;

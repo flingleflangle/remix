@@ -63,6 +63,7 @@
 #include "tm_case.h"
 #include "trade.h"
 #include "union_room.h"
+#include "wild_encounter.h"
 #include "window.h"
 #include "constants/battle.h"
 #include "constants/battle_frontier.h"
@@ -135,6 +136,7 @@ enum {
     FIELD_MOVE_MILK_DRINK,
     FIELD_MOVE_SOFT_BOILED,
     FIELD_MOVE_SWEET_SCENT,
+    FIELD_MOVE_ODOR_SLEUTH,
     FIELD_MOVES_COUNT
 };
 
@@ -491,6 +493,8 @@ static bool8 SetUpFieldMove_Surf(void);
 static bool8 SetUpFieldMove_Fly(void);
 static bool8 SetUpFieldMove_Waterfall(void);
 static bool8 SetUpFieldMove_Dive(void);
+static bool8 SetUpFieldMove_OdorSleuth(void);
+static void UseOdorSleuthInField(u8);
 
 // static const data
 #include "data/pokemon/tutor_learnsets.h"
@@ -2658,7 +2662,7 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
     // Add field moves to action list
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        for (j = 0; sFieldMoves[j] != FIELD_MOVES_COUNT; j++)
+        for (j = 0; j < FIELD_MOVES_COUNT; j++)
         {
             if (GetMonData(&mons[slotId], i + MON_DATA_MOVE1) == sFieldMoves[j])
             {
@@ -3847,6 +3851,9 @@ static void CursorCb_FieldMove(u8 taskId)
                 gPartyMenu.exitCallback = CB2_OpenFlyMap;
                 Task_ClosePartyMenu(taskId);
                 break;
+            case FIELD_MOVE_ODOR_SLEUTH:
+                UseOdorSleuthInField(taskId);
+                break;
             default:
                 gPartyMenu.exitCallback = CB2_ReturnToField;
                 Task_ClosePartyMenu(taskId);
@@ -3871,6 +3878,32 @@ static void CursorCb_FieldMove(u8 taskId)
             gTasks[taskId].func = Task_CancelAfterAorBPress;
         }
     }
+}
+
+// There's nothing to set up beforehand; whether there's a scent to follow is told in UseOdorSleuthInField
+static bool8 SetUpFieldMove_OdorSleuth(void)
+{
+    return TRUE;
+}
+
+// Odor Sleuth picks up the trail of the last wild Pokémon met on this map, if there is one (see wild_encounter.c)
+static void UseOdorSleuthInField(u8 taskId)
+{
+    u16 species = GetOdorSleuthScentHere();
+
+    GetMonNickname(&gPlayerParty[gPartyMenu.slotId], gStringVar1);
+    if (species != SPECIES_NONE)
+    {
+        StartOdorSleuthTrail();
+        StringCopy(gStringVar2, gSpeciesNames[species]);
+        StringExpandPlaceholders(gStringVar4, gText_PkmnPickedUpScent);
+    }
+    else
+    {
+        StringExpandPlaceholders(gStringVar4, gText_PkmnFoundNoScent);
+    }
+    DisplayPartyMenuMessage(gStringVar4, TRUE);
+    gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
 }
 
 static void DisplayFieldMoveExitAreaMessage(u8 taskId)
