@@ -7438,6 +7438,43 @@ static void Cmd_various(void)
         if (IsBattlerInBlackHole(gActiveBattler))
             gMoveResultFlags |= MOVE_RESULT_FAILED;
         break;
+    case VARIOUS_EVOLVED_MID_BATTLE:
+        // A Pokémon that evolved mid-battle is cured of its status problems (but keeps Ignite), confusion, infatuation,
+        // Nightmare, Curse, Leech Seed and being trapped, and gets pumped up like Focus Energy.
+        // Sets gBattleCommunication[0] to whether it was cured of anything, [1] to whether it got pumped up.
+        // See BattleScript_EvolvedMidBattle
+    {
+        const u32 status2Cured = STATUS2_CONFUSION | STATUS2_INFATUATION | STATUS2_NIGHTMARE | STATUS2_CURSED
+                               | STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION;
+
+        gBattleCommunication[0] = FALSE;
+        gBattleCommunication[1] = FALSE;
+        if (gBattleMons[gActiveBattler].status1 & ~STATUS1_IGNITE)
+        {
+            gBattleMons[gActiveBattler].status1 &= STATUS1_IGNITE;
+            BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+            MarkBattlerForControllerExec(gActiveBattler);
+            gBattleCommunication[0] = TRUE;
+        }
+        if (gBattleMons[gActiveBattler].status2 & status2Cured)
+        {
+            gBattleMons[gActiveBattler].status2 &= ~status2Cured;
+            gExLockOnTrapBattlers &= ~gBitTable[gActiveBattler];
+            gBattleCommunication[0] = TRUE;
+        }
+        if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED)
+        {
+            gStatuses3[gActiveBattler] &= ~(STATUS3_LEECHSEED | STATUS3_LEECHSEED_BATTLER);
+            gExLeechSeedTurns[gActiveBattler] = 0;
+            gBattleCommunication[0] = TRUE;
+        }
+        if (!(gBattleMons[gActiveBattler].status2 & STATUS2_FOCUS_ENERGY))
+        {
+            gBattleMons[gActiveBattler].status2 |= STATUS2_FOCUS_ENERGY;
+            gBattleCommunication[1] = TRUE;
+        }
+        break;
+    }
     case VARIOUS_EX_NO_SWITCH_THIS_TURN:
         // EX_FLAG_NO_SWITCH_THIS_TURN (EX Pursuit): the battler can't switch out for the rest of the turn
         gExNoSwitchBattlers |= gBitTable[gActiveBattler];
@@ -9240,15 +9277,16 @@ static void Cmd_mirrorcoatdamagecalculator(void)
 static void Cmd_disablelastusedattack(void)
 {
     s32 i;
-    u16 lastMove = gLastResultingMoves[gBattlerAttacker];
 
-    if (lastMove == MOVE_YOGA_LOOP || MOVE_SERENADE || MOVE_COSMIC_FLARE) {
+    // Yoga Loop and Serenade disable themselves (the user's move being used) when they miss. Disable itself, and
+    // everything else, disables the target's last move
+    if (gCurrentMove == MOVE_YOGA_LOOP || gCurrentMove == MOVE_SERENADE) {
         for (i = 0; i < MAX_MON_MOVES; i++)
         {
-            if (gBattleMons[gBattlerAttacker].moves[i] == gLastMoves[gBattlerAttacker])
+            if (gBattleMons[gBattlerAttacker].moves[i] == gCurrentMove)
                 break;
         }
-        if (gDisableStructs[gBattlerTarget].disabledMove == MOVE_NONE
+        if (gDisableStructs[gBattlerAttacker].disabledMove == MOVE_NONE
             && i != MAX_MON_MOVES)
         {
             gDisableStructs[gBattlerAttacker].disabledMove = gBattleMons[gBattlerAttacker].moves[i];

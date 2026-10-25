@@ -6822,6 +6822,24 @@ BattleScript_FlushMessageBox::
 	printstring STRINGID_EMPTYSTRING3
 	return
 
+@ A Pokémon that evolved mid-battle (attacker) is cured of its status problems, except Ignite, and gets pumped up
+@ like Focus Energy. Runs as the battle resumes after the evolution (see WaitForEvolutionThenTryAnother)
+BattleScript_EvolvedMidBattle::
+	various BS_ATTACKER, VARIOUS_EVOLVED_MID_BATTLE
+	waitstate
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_EvolvedMidBattleTryPumped
+	updatestatusicon BS_ATTACKER
+	printstring STRINGID_PKMNEVOLUTIONCUREDSTATUS
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_EvolvedMidBattleTryPumped:
+	jumpifbyte CMP_EQUAL, gBattleCommunication + 1, FALSE, BattleScript_EvolvedMidBattleEnd
+	printstring STRINGID_PKMNGETTINGPUMPED
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_EvolvedMidBattleEnd:
+	setbyte gBattleCommunication, 0 @ These are each battler's action state at the start of the turn
+	setbyte gBattleCommunication + 1, 0
+	end2
+
 BattleScript_PalacePrintFlavorText::
 	setbyte gBattleCommunication + 1, 0
 BattleScript_PalaceTryBattlerFlavorText::

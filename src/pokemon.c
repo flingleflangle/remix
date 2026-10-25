@@ -7211,19 +7211,23 @@ u16 GetBattleBGM(void)
 
         switch (trainerClass)
         {
+        case TRAINER_CLASS_DRAGON_TAMER:
+        case TRAINER_CLASS_EXPERT:
+        case TRAINER_CLASS_OLD_COUPLE:  
+            return MUS_TROMBE;
         case TRAINER_CLASS_BUG_MANIAC:
         case TRAINER_CLASS_COLLECTOR:
         case TRAINER_CLASS_POKEMANIAC:
-        case TRAINER_CLASS_DRAGON_TAMER:
             return MUS_RG_VS_TRAINER;
         case TRAINER_CLASS_WINSTRATE:
             return MUS_RG_VS_GYM_LEADER;
         case TRAINER_CLASS_BEAUTY:
         case TRAINER_CLASS_RICH_BOY:
         case TRAINER_CLASS_GUITARIST:
+        case TRAINER_CLASS_TRIATHLETE:
+            return MUS_DD_MUSEUM;
         case TRAINER_CLASS_COOLTRAINER:
         case TRAINER_CLASS_COOLTRAINER_2:
-            return MUS_DD_MUSEUM;
         case TRAINER_CLASS_BLACK_BELT:
         case TRAINER_CLASS_BATTLE_GIRL:
         case TRAINER_CLASS_PSYCHIC:

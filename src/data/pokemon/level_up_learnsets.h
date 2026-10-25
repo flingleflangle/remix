@@ -920,6 +920,7 @@ static const u16 sPoliwrathLevelUpLearnset[] = {
 
 static const u16 sAbraLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_TELEPORT),
+    LEVEL_UP_MOVE( 8, MOVE_PSYWAVE),
     LEVEL_UP_END
 };
 
@@ -928,6 +929,7 @@ static const u16 sKadabraLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_TELEPORT),
     LEVEL_UP_MOVE( 1, MOVE_KINESIS),
     LEVEL_UP_MOVE( 1, MOVE_CONFUSION),
+    LEVEL_UP_MOVE( 8, MOVE_PSYWAVE),
     LEVEL_UP_MOVE(16, MOVE_CONFUSION),
     LEVEL_UP_MOVE(18, MOVE_DISABLE),
     LEVEL_UP_MOVE(20, MOVE_PSYBEAM),
@@ -4353,6 +4355,7 @@ static const u16 sSilcoonLevelUpLearnset[] = {
 };
 
 static const u16 sBeautiflyLevelUpLearnset[] = {
+    LEVEL_UP_MOVE( 0, MOVE_ABSORB),
     LEVEL_UP_MOVE( 1, MOVE_ABSORB),
     LEVEL_UP_MOVE(10, MOVE_ABSORB),
     LEVEL_UP_MOVE(11, MOVE_GUST),
@@ -6538,6 +6541,7 @@ static const u16 sKirliaLevelUpLearnset[] = {
 };
 
 static const u16 sGardevoirLevelUpLearnset[] = {
+    LEVEL_UP_MOVE( 0, MOVE_BLACK_HOLE),
     LEVEL_UP_MOVE( 1, MOVE_GROWL),
     LEVEL_UP_MOVE( 1, MOVE_CONFUSION),
     LEVEL_UP_MOVE( 1, MOVE_DOUBLE_TEAM),

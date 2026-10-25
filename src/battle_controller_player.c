@@ -112,6 +112,7 @@ static void StartExMoveFlash(void);
 static bool32 IsCursorOnExMove(u8 cursorPosition);
 static void MoveSelectionUnhighlightExMove(void);
 static bool32 IsMoveExReady(u8 slot);
+static u8 GetCursorMoveTarget(void);
 static u8 GetChosenMoveSlot(void);
 static void MoveSelectionDisplayMoveNames(void);
 static void HandleMoveSwitching(void);
@@ -435,7 +436,7 @@ static void HandleInputChooseTarget(void)
             case B_POSITION_PLAYER_RIGHT:
                 if (gActiveBattler != gMultiUsePlayerCursor)
                     i++;
-                else if (gBattleMoves[GetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_MOVE1 + gMoveSelectionCursor[gActiveBattler])].target & MOVE_TARGET_USER_OR_SELECTED)
+                else if (GetCursorMoveTarget() & MOVE_TARGET_USER_OR_SELECTED)
                     i++;
                 break;
             case B_POSITION_OPPONENT_LEFT:
@@ -477,7 +478,7 @@ static void HandleInputChooseTarget(void)
             case B_POSITION_PLAYER_RIGHT:
                 if (gActiveBattler != gMultiUsePlayerCursor)
                     i++;
-                else if (gBattleMoves[GetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_MOVE1 + gMoveSelectionCursor[gActiveBattler])].target & MOVE_TARGET_USER_OR_SELECTED)
+                else if (GetCursorMoveTarget() & MOVE_TARGET_USER_OR_SELECTED)
                     i++;
                 break;
             case B_POSITION_OPPONENT_LEFT:
@@ -540,7 +541,7 @@ static void HandleInputChooseMove(void)
         }
         else
         {
-            moveTarget = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].target;
+            moveTarget = GetCursorMoveTarget();
         }
 
         if (moveTarget & MOVE_TARGET_USER)
@@ -1656,6 +1657,19 @@ static bool32 IsCursorOnExMove(u8 cursorPosition)
 static bool32 IsMoveExReady(u8 slot)
 {
     return sExModeOn && IsCursorOnExMove(slot);
+}
+
+// The targeting (MOVE_TARGET_*) of the move at the cursor. Readied as an EX move, an EX upgrade targets like the move
+// it becomes: EX Razor Leaf lets you pick a target, as it becomes Leaf Blade, but EX Rock Throw doesn't, as it becomes Rock Slide
+static u8 GetCursorMoveTarget(void)
+{
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
+    u8 slot = gMoveSelectionCursor[gActiveBattler];
+    u16 move = moveInfo->moves[slot];
+
+    if (IsMoveExReady(slot))
+        move = GetExMoveTargetingMove(gActiveBattler, move);
+    return gBattleMoves[move].target;
 }
 
 static void MoveSelectionPrintMoveName(u8 slot, bool32 asExMove)

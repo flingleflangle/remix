@@ -201,6 +201,7 @@ EWRAM_DATA u8 gTurnEndShieldedBattlers = 0;
 EWRAM_DATA u8 gTurnEndExScreenSides = 0;
 EWRAM_DATA u8 gExScreenBlockSides = 0; // EX_SCREEN_BLOCK_* of each side, which blocks physical or special moves this turn (EX_FLAG_SCREEN_BLOCK)
 EWRAM_DATA u8 gExNoSwitchBattlers = 0; // Battlers that can't switch out for the rest of the turn, after EX Pursuit hit them (EX_FLAG_NO_SWITCH_THIS_TURN)
+EWRAM_DATA u8 gEvolvedMidBattleBattlers = 0; // Battlers that just evolved mid-battle, to be cured of their status and pumped up
 EWRAM_DATA u8 gExLastingTauntBy[MAX_BATTLERS_COUNT] = {0}; // For each battler, 1 + the battler whose EX Taunt keeps it taunted, or 0 (EX_FLAG_LASTING_TAUNT)
 EWRAM_DATA u8 gExMoveChosenBits = 0;    // Battlers that chose to use their move as an EX move this turn
 EWRAM_DATA u8 gExMoveUsedSlots[MAX_BATTLERS_COUNT] = {0}; // Each battler's move slots that were used as EX moves, which can't be again
@@ -870,6 +871,7 @@ static void CB2_InitBattleInternal(void)
 
     gPlayerDoesNotWantToEvolveLeft = FALSE;
     gPlayerDoesNotWantToEvolveRight = FALSE;
+    gEvolvedMidBattleBattlers = 0;
 	
 }
 
@@ -4437,6 +4439,18 @@ static void WaitForEvolutionThenTryAnother(void)
     if (gMain.callback2 == BattleMainCB2 && !gPaletteFade.active)
     {
         gBattleMainFunc = PlayerTryEvolution;
+
+        // A Pokémon that evolved is cured of its status and gets pumped up like Focus Energy, then the next can evolve
+        if (gEvolvedMidBattleBattlers != 0)
+        {
+            u32 battler;
+
+            for (battler = 0; !(gEvolvedMidBattleBattlers & gBitTable[battler]); battler++)
+                ;
+            gEvolvedMidBattleBattlers &= ~gBitTable[battler];
+            gBattlerAttacker = battler;
+            BattleScriptExecute(BattleScript_EvolvedMidBattle);
+        }
     }
 }
 static void HandleTurnActionSelectionState(void)

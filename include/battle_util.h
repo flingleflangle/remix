@@ -113,6 +113,7 @@ void StartUsualExMoveVersion(void);
 void TrySetUpChosenExMoveOutOfTurn(u8 battler);
 const struct ExMove *GetExMove(u16 move);
 u16 GetExMoveUpgrade(u16 move);
+u16 GetExMoveTargetingMove(u8 battler, u16 move);
 bool32 CanMoveBeUsedAsEx(u16 move);
 bool32 HasExMoveBonus(u16 move);
 bool32 HasExMoveEffect(u16 move);

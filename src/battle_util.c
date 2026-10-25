@@ -159,10 +159,22 @@ void StartUsualExMoveVersion(void)
     }
 }
 
+// Whether the battler's current move will be used as an EX move: the player chose it as one, and it still can be
+static bool32 IsUsingChosenExMove(u8 battler)
+{
+    return (gExMoveChosenBits & gBitTable[battler])
+        && gCurrentMove == gChosenMoveByBattler[battler]
+        && gCurrentMove == gBattleMons[battler].moves[gCurrMovePos]
+        && gBattleMons[battler].pp[gCurrMovePos] >= 2
+        && !(gExMoveUsedSlots[battler] & gBitTable[gCurrMovePos])
+        && CanBattlerUseExMove(battler, gCurrentMove);
+}
+
 void HandleAction_UseMove(void)
 {
     u8 side;
     u8 var = 4;
+    u16 targetingMove;
 
     gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
 
@@ -237,10 +249,12 @@ void HandleAction_UseMove(void)
             gBattleResults.lastUsedMoveOpponent = gCurrentMove;
     }
 
-    // choose target
+    // choose target. A move used as an EX move that's upgraded targets like the move it becomes (e.g. EX Razor Leaf,
+    // which hits both foes, becomes Leaf Blade, which only hits the one the player picked)
+    targetingMove = IsUsingChosenExMove(gBattlerAttacker) ? GetExMoveTargetingMove(gBattlerAttacker, gCurrentMove) : gChosenMove;
     side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
     if (gSideTimers[side].followmeTimer != 0
-        && gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED
+        && gBattleMoves[targetingMove].target == MOVE_TARGET_SELECTED
         && GetBattlerSide(gBattlerAttacker) != GetBattlerSide(gSideTimers[side].followmeTarget)
         && gBattleMons[gSideTimers[side].followmeTarget].hp != 0)
     {
@@ -266,7 +280,7 @@ void HandleAction_UseMove(void)
         }
         if (var == 4)
         {
-            if (gBattleMoves[gChosenMove].target & MOVE_TARGET_RANDOM)
+            if (gBattleMoves[targetingMove].target & MOVE_TARGET_RANDOM)
             {
                 if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
                 {
@@ -311,7 +325,7 @@ void HandleAction_UseMove(void)
         }
     }
     else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-             && gBattleMoves[gChosenMove].target & MOVE_TARGET_RANDOM)
+             && gBattleMoves[targetingMove].target & MOVE_TARGET_RANDOM)
     {
         if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
         {
@@ -375,12 +389,7 @@ void HandleAction_UseMove(void)
     else
     {
         // A move the player chose to use as an EX move runs its EX script instead (see data/ex_battle_scripts.s)
-        if (gExMoveChosenBits & gBitTable[gBattlerAttacker]
-         && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker]
-         && gCurrentMove == gBattleMons[gBattlerAttacker].moves[gCurrMovePos]
-         && gBattleMons[gBattlerAttacker].pp[gCurrMovePos] >= 2
-         && !(gExMoveUsedSlots[gBattlerAttacker] & gBitTable[gCurrMovePos])
-         && CanBattlerUseExMove(gBattlerAttacker, gCurrentMove))
+        if (IsUsingChosenExMove(gBattlerAttacker))
         {
             // The species' own EX version comes first (see data/pokemon/ex_species_moves.h)
             const struct ExMove *speciesExMove = GetSpeciesExMove(gBattlerAttacker, gCurrentMove);
@@ -3667,6 +3676,18 @@ u16 GetExMoveUpgrade(u16 move)
             return gExMoveUpgrades[i].upgrade;
     }
     return MOVE_NONE;
+}
+
+// The move whose targeting the battler's move has when used as an EX move: the move it becomes, if it's an EX upgrade
+// for the battler (a species' own EX version comes first, see HandleAction_UseMove), otherwise the move itself
+u16 GetExMoveTargetingMove(u8 battler, u16 move)
+{
+    u16 upgrade;
+
+    if (GetSpeciesExMove(battler, move) != NULL)
+        return move;
+    upgrade = GetExMoveUpgrade(move);
+    return (upgrade != MOVE_NONE) ? upgrade : move;
 }
 
 // EX bonuses, which mostly status moves get before their regular effect (see gExMoveBonuses in data/ex_battle_scripts.s)

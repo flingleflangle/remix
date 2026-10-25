@@ -106,6 +106,7 @@ static const u8 sText_SerenadeMinSkip[] = _("{B_ATK_NAME_WITH_PREFIX}'s SERENADE
 static const u8 sText_PkmnDrawingInDarkness[] = _("{B_ATK_NAME_WITH_PREFIX} is\ndrawing in darkness!");
 static const u8 sText_PkmnSniffedOutNextMon[] = _("{B_ATK_NAME_WITH_PREFIX} sniffed out\n{B_BUFF1}, next in line!");
 static const u8 sText_PkmnCantSwitchThisTurn[] = _("{B_DEF_NAME_WITH_PREFIX} can't switch\nout this turn!");
+static const u8 sText_PkmnEvolutionCuredStatus[] = _("Evolving cured {B_ATK_NAME_WITH_PREFIX}'s\nstatus problems!");
 static const u8 sText_PkmnPulledIntoBlackHole[] = _("{B_DEF_NAME_WITH_PREFIX} was pulled\ninto the BLACK HOLE!");
 static const u8 sText_PkmnCantUseMoveBlackHole[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use\n{B_CURRENT_MOVE} in the BLACK HOLE!\p");
 static const u8 sText_ChakraSurged[] = _("{B_ATK_NAME_WITH_PREFIX}'s chakra\nsurged through its body!");
@@ -989,6 +990,7 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNDRAWINGINDARKNESS - BATTLESTRINGS_TABLE_START] = sText_PkmnDrawingInDarkness,
     [STRINGID_PKMNSNIFFEDOUTNEXTMON - BATTLESTRINGS_TABLE_START] = sText_PkmnSniffedOutNextMon,
     [STRINGID_PKMNCANTSWITCHTHISTURN - BATTLESTRINGS_TABLE_START] = sText_PkmnCantSwitchThisTurn,
+    [STRINGID_PKMNEVOLUTIONCUREDSTATUS - BATTLESTRINGS_TABLE_START] = sText_PkmnEvolutionCuredStatus,
 };
 
 const u16 gMissStringIds[] =
