@@ -1775,6 +1775,31 @@
     .byte SCR_OP_CHECKFOLLOWER
     .endm
 
+    @ after setfollower: in wild battles against these species (up to 4) the follower says
+    @ foundText and helps the player catch them, until the player has caught one; right after
+    @ that catch they say caughtText (see follower_parties.c). Follower scripts can check
+    @ special HelpCatchTargetCaught to change their dialogue once it's caught.
+    .macro helpcatch foundText:req, caughtText:req, species1:req, species2=SPECIES_NONE, species3=SPECIES_NONE, species4=SPECIES_NONE
+    .byte SCR_OP_HELPCATCH
+    .4byte \foundText
+    .4byte \caughtText
+    .2byte \species1
+    .2byte \species2
+    .2byte \species3
+    .2byte \species4
+    .endm
+
+    @ sets which FOLLOWER_PARTNER_* the follower battles as (see src/data/follower_parties.h)
+    .macro setfollowerpartner partnerId:req
+    setvar VAR_FOLLOWER_PARTNER, \partnerId
+    .endm
+
+    @ fills party slots 4-6 with the follower partner's party for the current flags.
+    @ VAR_RESULT is FALSE if no follower partner is set.
+    .macro loadfollowerparty
+    special LoadFollowerPartnerParty
+    .endm
+
 
 @ Supplementary
 

@@ -355,3 +355,91 @@ Route103_Text_RouteSign:
 	.string "ROUTE 103\n"
 	.string "{DOWN_ARROW} OLDALE TOWN$"
 
+
+@ Example followers (follow_me.c): talk to one to have her follow you, and again to have her leave.
+@ Each battles beside you as MAY and helps catch different Pokémon (helpcatch, follower_parties.c).
+Route103_EventScript_ExampleFollower::
+	lock
+	faceplayer
+	special IsTalkingToFollower
+	goto_if_eq VAR_RESULT, TRUE, Route103_EventScript_ExampleFollowerAskLeave
+	checkfollower
+	goto_if_eq VAR_RESULT, TRUE, Route103_EventScript_ExampleFollowerBusy
+	msgbox Route103_Text_ExampleFollowerJoin, MSGBOX_DEFAULT
+	setfollower LOCALID_ROUTE103_EXAMPLE_FOLLOWER, FOLLOWER_FLAG_ALL
+	setfollowerpartner FOLLOWER_PARTNER_MAY
+	helpcatch Route103_Text_ExampleFollowerFoundMunchlax, Route103_Text_ExampleFollowerCaughtMunchlax, SPECIES_MUNCHLAX
+	release
+	end
+
+Route103_EventScript_ExampleFollowerShore::
+	lock
+	faceplayer
+	special IsTalkingToFollower
+	goto_if_eq VAR_RESULT, TRUE, Route103_EventScript_ExampleFollowerAskLeave
+	checkfollower
+	goto_if_eq VAR_RESULT, TRUE, Route103_EventScript_ExampleFollowerBusy
+	msgbox Route103_Text_ExampleFollowerShoreJoin, MSGBOX_DEFAULT
+	setfollower LOCALID_ROUTE103_EXAMPLE_FOLLOWER_SHORE, FOLLOWER_FLAG_ALL
+	setfollowerpartner FOLLOWER_PARTNER_MAY
+	helpcatch Route103_Text_ExampleFollowerFoundElectrike, Route103_Text_ExampleFollowerCaughtElectrike, SPECIES_ELECTRIKE
+	release
+	end
+
+Route103_EventScript_ExampleFollowerBusy::
+	msgbox Route103_Text_ExampleFollowerBusy, MSGBOX_DEFAULT
+	release
+	end
+
+Route103_EventScript_ExampleFollowerAskLeave::
+	msgbox Route103_Text_ExampleFollowerAskLeave, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route103_EventScript_ExampleFollowerStay
+	msgbox Route103_Text_ExampleFollowerBye, MSGBOX_DEFAULT
+	closemessage
+	call Common_EventScript_FollowerFlyAway
+	release
+	end
+
+Route103_EventScript_ExampleFollowerStay::
+	msgbox Route103_Text_ExampleFollowerStay, MSGBOX_DEFAULT
+	release
+	end
+
+Route103_Text_ExampleFollowerJoin:
+	.string "I'll come along with you!\p"
+	.string "If we run into a MUNCHLAX,\n"
+	.string "I'll help you catch it!$"
+
+Route103_Text_ExampleFollowerShoreJoin:
+	.string "Want some company?\p"
+	.string "Let's look for an ELECTRIKE!\n"
+	.string "I'll help you catch one.$"
+
+Route103_Text_ExampleFollowerFoundMunchlax:
+	.string "MAY: A MUNCHLAX! Leave it to me,\n"
+	.string "I'll wear it down for you!$"
+
+Route103_Text_ExampleFollowerFoundElectrike:
+	.string "MAY: There's an ELECTRIKE!\n"
+	.string "I'll go easy on it. Get ready!$"
+
+Route103_Text_ExampleFollowerCaughtMunchlax:
+	.string "MAY: Nice catch! That MUNCHLAX\n"
+	.string "is all yours now!$"
+
+Route103_Text_ExampleFollowerCaughtElectrike:
+	.string "MAY: You got the ELECTRIKE!\n"
+	.string "It's sparking with excitement!$"
+
+Route103_Text_ExampleFollowerBusy:
+	.string "Looks like you've already got\n"
+	.string "someone with you!$"
+
+Route103_Text_ExampleFollowerAskLeave:
+	.string "Should I stop following you?$"
+
+Route103_Text_ExampleFollowerBye:
+	.string "Okay, see you around!$"
+
+Route103_Text_ExampleFollowerStay:
+	.string "Alright, lead the way!$"

@@ -15,6 +15,7 @@
 #define TRAINER_LINK_OPPONENT               2048
 #define TRAINER_UNION_ROOM                  3072
 #define TRAINER_STEVEN_PARTNER              3075
+#define TRAINER_FOLLOWER_PARTNER            3076 // VAR_FOLLOWER_PARTNER picks who, see follower_parties.c
 
 #define TRAINER_PIC_HIKER                  0
 #define TRAINER_PIC_AQUA_GRUNT_M           1

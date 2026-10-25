@@ -6969,3 +6969,23 @@ BattleScript_PrintPlayerForfeitedLinkBattle::
 	endlinkbattle
 	waitmessage B_WAIT_TIME_LONG
 	end2
+
+@ A follower helping catch a wild Pokémon (follower_parties.c): their line from the map script,
+@ said once before the first turn
+BattleScript_FollowerHelpCatchLine::
+	printstring STRINGID_FOLLOWERHELPCATCHLINE
+	waitmessage B_WAIT_TIME_LONG
+	end2
+
+@ The wild Pokémon is down to 1/3 HP: the follower recalls their Pokémon (the attacker), slides in
+@ to tell the player to catch it, and sits out the rest of the battle
+BattleScript_FollowerStepsAsideForCatch::
+	returnatktoball
+	waitstate
+	trainerslidein B_POSITION_PLAYER_RIGHT
+	waitstate
+	printstring STRINGID_FOLLOWERTRYTOCATCH
+	waitmessage B_WAIT_TIME_LONG
+	trainerslideout B_POSITION_PLAYER_RIGHT
+	waitstate
+	end2

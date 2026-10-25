@@ -1,4 +1,5 @@
 #include "global.h"
+#include "follower_parties.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_ai_script_commands.h"
@@ -214,6 +215,7 @@ EWRAM_DATA u8 gBattlerFainted = 0;
 EWRAM_DATA u8 gEffectBattler = 0;
 EWRAM_DATA u8 gPotentialItemEffectBattler = 0;
 EWRAM_DATA u8 gAbsentBattlerFlags = 0;
+EWRAM_DATA bool8 gPartnerVsOneLoneFoe = FALSE; // the foe's right side started empty: its left Pokémon is centred with a single battle healthbox
 EWRAM_DATA u8 gCritMultiplier = 0;
 EWRAM_DATA u8 gMultiHitCounter = 0;
 EWRAM_DATA const u8 *gBattlescriptCurrInstr = NULL;
@@ -630,6 +632,19 @@ const struct TrainerBall gTrainerBallTable[] = {
     {0xFF, ITEM_POKE_BALL},
 };
 
+// The Poké Ball a trainer class's Pokémon come out of (gTrainerBallTable). Partner trainers use it too.
+u8 GetTrainerClassBall(u8 trainerClass)
+{
+    s32 i;
+
+    for (i = 0; gTrainerBallTable[i].classId != 0xFF; i++)
+    {
+        if (gTrainerBallTable[i].classId == trainerClass)
+            break;
+    }
+    return gTrainerBallTable[i].Ball;
+}
+
 // This is a factor in how much money you get for beating a trainer.
 const struct TrainerMoney gTrainerMoneyTable[] =
 {
@@ -753,6 +768,7 @@ void CB2_InitBattle(void)
     AllocateBattleSpritesData();
     AllocateMonSpritesGfx();
     RecordedBattle_ClearFrontierPassFlag();
+    FollowerBattle_OnBattleInit();
 
     if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
@@ -764,6 +780,11 @@ void CB2_InitBattle(void)
         {
             HandleLinkBattleSetup();
             SetMainCallback2(CB2_PreInitMultiBattle);
+        }
+        else if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+        {
+            // Wild battle beside the player's follower: skip the partner team screen
+            CB2_InitBattleInternal();
         }
         else
         {
@@ -794,7 +815,7 @@ static void CB2_InitBattleInternal(void)
 
     gBattle_WIN0H = DISPLAY_WIDTH;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && gPartnerTrainerId != TRAINER_STEVEN_PARTNER)
+    if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && !IS_STORY_PARTNER(gPartnerTrainerId))
     {
         gBattle_WIN0V = DISPLAY_HEIGHT - 1;
         gBattle_WIN1H = DISPLAY_WIDTH;
@@ -2130,6 +2151,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
     u8 fixedIV;
     s32 i, j;
     u8 monsCount;
+    u8 ball;
 
     if (trainerNum == TRAINER_SECRET_BASE)
         return 0;
@@ -2233,12 +2255,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum, bool8 fir
                 break;
             }
             }
-			for (j = 0; gTrainerBallTable[j].classId != 0xFF; j++)
-            {
-                if (gTrainerBallTable[j].classId == gTrainers[trainerNum].trainerClass)
-                    break;
-            }
-            SetMonData(&party[i], MON_DATA_POKEBALL, &gTrainerBallTable[j].Ball);
+            ball = GetTrainerClassBall(gTrainers[trainerNum].trainerClass);
+            SetMonData(&party[i], MON_DATA_POKEBALL, &ball);
         }
 
         gBattleTypeFlags |= gTrainers[trainerNum].doubleBattle;
@@ -3191,6 +3209,9 @@ void BeginBattleIntroDummy(void)
 void BeginBattleIntro(void)
 {
     BattleStartClearSetData();
+    // A lone trainer with one usable Pokémon against the player and a partner: the right side starts empty
+    if (gPartnerVsOneLoneFoe) // set by SetPartnerVsOneOpponentPartyIds
+        gAbsentBattlerFlags |= gBitTable[B_POSITION_OPPONENT_RIGHT];
     gBattleCommunication[1] = 0;
     gBattleMainFunc = BattleIntroGetMonsData;
 }
@@ -3665,7 +3686,8 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
         }
         else
         {
-            if (GetBattlerSide(gActiveBattler) == B_SIDE_OPPONENT)
+            // (a wild Pokémon against the player and a partner leaves the right side empty)
+            if (GetBattlerSide(gActiveBattler) == B_SIDE_OPPONENT && !(gAbsentBattlerFlags & gBitTable[gActiveBattler]))
             {
                 if (!(gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER
                                       | BATTLE_TYPE_FRONTIER
@@ -3684,7 +3706,7 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
         if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
         {
             if (GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
-             || GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_RIGHT)
+             || (GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_RIGHT && !IS_PARTNER_VS_ONE()))
             {
                 BtlController_EmitDrawTrainerPic(B_COMM_TO_CONTROLLER);
                 MarkBattlerForControllerExec(gActiveBattler);
@@ -3912,7 +3934,7 @@ static void BattleIntroOpponent1SendsOutMonAnimation(void)
         {
             BtlController_EmitIntroTrainerBallThrow(B_COMM_TO_CONTROLLER);
             MarkBattlerForControllerExec(gActiveBattler);
-            if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
+            if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS) && !IS_PARTNER_VS_ONE())
             {
                 gBattleMainFunc = BattleIntroOpponent2SendsOutMonAnimation;
                 return;
@@ -4132,6 +4154,12 @@ static void TryDoEventsBeforeFirstTurn(void)
 
         if (effect != 0)
             return;
+    }
+    // A follower helping catch this wild Pokémon says so
+    if (FollowerBattle_TakeHelpCatchLine())
+    {
+        BattleScriptExecute(BattleScript_FollowerHelpCatchLine);
+        return;
     }
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
     {

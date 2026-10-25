@@ -1,4 +1,5 @@
 #include "global.h"
+#include "follower_parties.h"
 #include "battle.h"
 #include "battle_message.h"
 #include "battle_anim.h"
@@ -4129,7 +4130,8 @@ static void Cmd_checkteamslost(void)
     if (gBattleControllerExecFlags)
         return;
 
-    for (i = 0; i < PARTY_SIZE; i++)
+    // (once a follower has stepped aside for the player to catch a Pokémon, only the player's half counts)
+    for (i = 0; i < (FollowerBattle_HasSteppedAside() ? MULTI_PARTY_SIZE : PARTY_SIZE); i++)
     {
         if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG)
             && (!(gBattleTypeFlags & BATTLE_TYPE_ARENA) || !(gBattleStruct->arenaLostPlayerMons & gBitTable[i])))
@@ -5321,7 +5323,7 @@ static void Cmd_jumpifcantswitch(void)
     {
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+    else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && !IS_PARTNER_VS_ONE_FOE(gActiveBattler))
     {
         if (GetBattlerSide(gActiveBattler) == B_SIDE_OPPONENT)
             party = gEnemyParty;
@@ -5346,7 +5348,7 @@ static void Cmd_jumpifcantswitch(void)
         else
             gBattlescriptCurrInstr += 6;
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+    else if (gBattleTypeFlags & BATTLE_TYPE_MULTI && !IS_PARTNER_VS_ONE_FOE(gActiveBattler))
     {
         if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
         {
@@ -7026,7 +7028,7 @@ static u8 GetOpposingTrainerNextMonInLine(u8 battler)
     s32 i, firstMonId, monsCount;
     u8 partnerMonId = gBattlerPartyIndexes[battler];
 
-    if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS))
+    if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS) && !IS_PARTNER_VS_ONE_FOE(battler))
     {
         firstMonId = ((battler & BIT_FLANK) != B_FLANK_LEFT) ? PARTY_SIZE / 2 : 0;
         monsCount = PARTY_SIZE / 2;
@@ -8343,7 +8345,7 @@ static void Cmd_forcerandomswitch(void)
 
         if ((gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER && gBattleTypeFlags & BATTLE_TYPE_LINK)
             || (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER && gBattleTypeFlags & BATTLE_TYPE_RECORDED_LINK)
-            || (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
+            || (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && !IS_PARTNER_VS_ONE_FOE(gBattlerTarget)))
         {
             if ((gBattlerTarget & BIT_FLANK) != B_FLANK_LEFT)
             {
@@ -11614,7 +11616,8 @@ static void Cmd_handleballthrow(void)
 
 static void Cmd_givecaughtmon(void)
 {
-    if (GiveMonToPlayer(&gEnemyParty[gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)]]) != MON_GIVEN_TO_PARTY)
+    if (!FollowerBattle_TryGiveCaughtMon(&gEnemyParty[gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)]])
+     && GiveMonToPlayer(&gEnemyParty[gBattlerPartyIndexes[BATTLE_OPPOSITE(gBattlerAttacker)]]) != MON_GIVEN_TO_PARTY)
     {
         if (!ShouldShowBoxWasFullMessage())
         {

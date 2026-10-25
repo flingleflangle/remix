@@ -1,6 +1,7 @@
 #include "global.h"
 #include "reshow_battle_screen.h"
 #include "battle.h"
+#include "util.h"
 #include "palette.h"
 #include "pokemon.h"
 #include "main.h"
@@ -207,7 +208,8 @@ static bool8 LoadBattlerSpriteGfx(u8 battler)
 
 static void CreateBattlerSprite(u8 battler)
 {
-    if (battler < gBattlersCount)
+    // (an absent battler can still have HP: a follower who recalled their Pokémon to let the player catch one)
+    if (battler < gBattlersCount && !(gAbsentBattlerFlags & gBitTable[battler]))
     {
         u8 posY;
 
@@ -309,7 +311,8 @@ static void CreateHealthboxSprite(u8 battler)
         }
         else if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
         {
-            if (GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_HP) == 0)
+            if (GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_HP) == 0
+             || (gAbsentBattlerFlags & gBitTable[battler]))
                 SetHealthboxSpriteInvisible(healthboxSpriteId);
         }
     }

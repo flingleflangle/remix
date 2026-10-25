@@ -24,6 +24,7 @@
 #include "constants/items.h"
 #include "constants/battle_frontier.h"
 
+static void CB2_ReturnFromChooseHalfPartyKeepMusic(void);
 static void CB2_ReturnFromChooseHalfParty(void);
 static void CB2_ReturnFromChooseBattleFrontierParty(void);
 
@@ -221,6 +222,21 @@ static void CB2_ReturnFromChooseHalfParty(void)
     }
 
     SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+}
+
+// Same as ChooseHalfPartyForBattle, but keeps the trainer encounter music playing for a
+// follower multi battle (see EventScript_TryPrepareFollowerBattle).
+void ChooseHalfPartyForFollowerBattle(void)
+{
+    gMain.savedCallback = CB2_ReturnFromChooseHalfPartyKeepMusic;
+    VarSet(VAR_FRONTIER_FACILITY, FACILITY_MULTI_OR_EREADER);
+    InitChooseHalfPartyForBattle(0);
+}
+
+static void CB2_ReturnFromChooseHalfPartyKeepMusic(void)
+{
+    gSpecialVar_Result = (gSelectedOrderFromParty[0] != 0);
+    SetMainCallback2(CB2_ReturnToFieldContinueScript);
 }
 
 void ChoosePartyForBattleFrontier(void)

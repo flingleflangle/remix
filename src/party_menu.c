@@ -1238,7 +1238,9 @@ static void DrawCancelConfirmButtons(void)
 
 bool8 IsMultiBattle(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleTypeFlags & BATTLE_TYPE_TRAINER && gMain.inBattle)
+    // (an in-game partner can also be with the player in a wild battle: their follower)
+    if (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+     && gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_INGAME_PARTNER) && gMain.inBattle)
         return TRUE;
     else
         return FALSE;
@@ -6088,6 +6090,9 @@ void ChooseMonForInBattleItem(void)
 
 static u8 GetPartyMenuActionsTypeInBattle(struct Pokemon *mon)
 {
+    // In a multi battle, slots 1, 4, and 5 are the partner's Pokémon: they can't be shifted in
+    if (IsMultiBattle() == TRUE && (gPartyMenu.slotId == 1 || gPartyMenu.slotId == 4 || gPartyMenu.slotId == 5))
+        return ACTIONS_SUMMARY_ONLY;
     if (GetMonData(&gPlayerParty[1], MON_DATA_SPECIES) != SPECIES_NONE && GetMonData(mon, MON_DATA_IS_EGG) == FALSE)
     {
         if (gPartyMenu.action == PARTY_ACTION_SEND_OUT)
@@ -6465,7 +6470,7 @@ static void Task_WaitAfterMultiPartnerPartySlideIn(u8 taskId)
     s16 *data = gTasks[taskId].data;
 
     // data[0] used as a timer afterwards rather than the x pos
-    if (++data[0] == 256)
+    if (++data[0] == 128) // halved from 256
         Task_ClosePartyMenu(taskId);
 }
 

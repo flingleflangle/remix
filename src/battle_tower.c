@@ -1,4 +1,6 @@
 #include "global.h"
+#include "follower_parties.h"
+#include "battle_main.h"
 #include "battle_tower.h"
 #include "apprentice.h"
 #include "event_data.h"
@@ -1450,6 +1452,11 @@ u8 GetFrontierOpponentClass(u16 trainerId)
     {
         trainerClass = gTrainers[TRAINER_STEVEN].trainerClass;
     }
+    else if (trainerId == TRAINER_FOLLOWER_PARTNER)
+    {
+        if (GetFollowerPartner() != NULL)
+            trainerClass = GetFollowerPartner()->trainerClass;
+    }
     else if (trainerId < FRONTIER_TRAINERS_COUNT)
     {
         trainerClass = gFacilityClassToTrainerClass[gFacilityTrainers[trainerId].facilityClass];
@@ -1530,6 +1537,14 @@ void GetFrontierTrainerName(u8 *dst, u16 trainerId)
     {
         for (i = 0; i < PLAYER_NAME_LENGTH; i++)
             dst[i] = gTrainers[TRAINER_STEVEN].trainerName[i];
+    }
+    else if (trainerId == TRAINER_FOLLOWER_PARTNER)
+    {
+        if (GetFollowerPartner() != NULL)
+            StringCopy(dst, GetFollowerPartner()->name);
+        else
+            dst[0] = EOS;
+        return;
     }
     else if (trainerId < FRONTIER_TRAINERS_COUNT)
     {
@@ -2992,6 +3007,8 @@ static void FillPartnerParty(u16 trainerId)
             SetMonData(&gPlayerParty[MULTI_PARTY_SIZE + i], MON_DATA_OT_NAME, gTrainers[TRAINER_STEVEN].trainerName);
             j = MALE;
             SetMonData(&gPlayerParty[MULTI_PARTY_SIZE + i], MON_DATA_OT_GENDER, &j);
+            j = GetTrainerClassBall(gTrainers[TRAINER_STEVEN].trainerClass);
+            SetMonData(&gPlayerParty[MULTI_PARTY_SIZE + i], MON_DATA_POKEBALL, &j);
             CalculateMonStats(&gPlayerParty[MULTI_PARTY_SIZE + i]);
         }
     }

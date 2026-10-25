@@ -1383,6 +1383,13 @@ bool8 FollowerComingThroughDoor(void)
 void SetUpFollowerSprite(u8 localId, u16 flags)
 {
     TurnNPCIntoFollower(localId, flags);
+    if (!gSaveBlock2Ptr->follower.inProgress)
+        return;
+
+    // Start from the NPC's own (on-foot) sprite, not whatever the last follower ended on,
+    // then match the player: get on a bike if they're riding one
+    gSaveBlock2Ptr->follower.currentSprite = FOLLOWER_SPRITE_INDEX_NORMAL;
+    FollowMe_HandleBike();
 }
 
 //@Details: Ends the follow me feature.
@@ -1390,6 +1397,13 @@ void DestroyFollower(void)
 {
     if (gSaveBlock2Ptr->follower.inProgress)
     {
+        // A surfing follower (e.g. flying away from the water) takes their surf blob with them
+        if (gSaveBlock2Ptr->follower.createSurfBlob == 2 || gSaveBlock2Ptr->follower.createSurfBlob == 3)
+        {
+            DestroySprite(&gSprites[gObjectEvents[GetFollowerMapObjId()].fieldEffectSpriteId]);
+            gObjectEvents[GetFollowerMapObjId()].fieldEffectSpriteId = 0;
+            gSaveBlock2Ptr->follower.createSurfBlob = 0;
+        }
         RemoveObjectEvent(&gObjectEvents[gSaveBlock2Ptr->follower.objId]);
         FlagSet(gSaveBlock2Ptr->follower.flag);
         gSaveBlock2Ptr->follower.inProgress = FALSE;
@@ -1443,3 +1457,125 @@ void CheckPlayerHasFollower(void)
 }
 
 
+// ---------------------------------------------------------------------------
+// Follower stops: map spots the follower won't go past (coord events, see
+// data/scripts/follower_stop.inc). The map's script asks whether the follower should leave;
+// these build the movements for "no" (the player steps back) and "yes" (the follower walks or
+// bikes away). Both read the direction from VAR_0x8004 and put the follower's local id in
+// VAR_0x8005 for applymovement.
+
+#define FOLLOWER_LEAVE_STEPS 10
+
+EWRAM_DATA u8 gFollowerStopFollowerMovement[FOLLOWER_LEAVE_STEPS + 1] = {0};
+EWRAM_DATA u8 gFollowerStopPlayerMovement[2] = {0};
+
+static const u8 sPerpendicularDirs[][2] =
+{
+    [DIR_SOUTH] = {DIR_WEST, DIR_EAST},
+    [DIR_NORTH] = {DIR_WEST, DIR_EAST},
+    [DIR_WEST]  = {DIR_NORTH, DIR_SOUTH},
+    [DIR_EAST]  = {DIR_NORTH, DIR_SOUTH},
+};
+
+static bool8 CanFollowerStepTo(struct ObjectEvent *follower, s16 x, s16 y, u8 dir)
+{
+    s16 nx = x, ny = y;
+
+    MoveCoords(dir, &nx, &ny);
+    return GetCollisionAtCoords(follower, nx, ny, dir) == COLLISION_NONE;
+}
+
+static u8 GetFollowerStepAction(u8 dir)
+{
+    // On their bike (the player is biking), they ride off; otherwise they walk
+    if (gSaveBlock2Ptr->follower.currentSprite == FOLLOWER_SPRITE_INDEX_MACH_BIKE
+     || gSaveBlock2Ptr->follower.currentSprite == FOLLOWER_SPRITE_INDEX_ACRO_BIKE)
+        return GetWalkFastMovementAction(dir);
+    return GetWalkNormalMovementAction(dir);
+}
+
+// special FollowerStop_PrepareStepBack: the player steps back a tile in direction VAR_0x8004,
+// after the follower moves out of that tile if they're standing on it.
+void FollowerStop_PrepareStepBack(void)
+{
+    struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *follower = &gObjectEvents[GetFollowerMapObjId()];
+    u8 dir = gSpecialVar_0x8004;
+    s16 backX = player->currentCoords.x, backY = player->currentCoords.y;
+    bool8 clear = TRUE;
+
+    gSpecialVar_0x8005 = GetFollowerLocalId();
+    gFollowerStopFollowerMovement[0] = MOVEMENT_ACTION_STEP_END;
+    MoveCoords(dir, &backX, &backY);
+
+    if (gSaveBlock2Ptr->follower.inProgress
+     && follower->currentCoords.x == backX && follower->currentCoords.y == backY)
+    {
+        u8 tryDirs[3] = {dir, sPerpendicularDirs[dir][0], sPerpendicularDirs[dir][1]};
+        u8 i;
+
+        clear = FALSE;
+        for (i = 0; i < ARRAY_COUNT(tryDirs); i++)
+        {
+            if (CanFollowerStepTo(follower, backX, backY, tryDirs[i]))
+            {
+                gFollowerStopFollowerMovement[0] = GetWalkNormalMovementAction(tryDirs[i]);
+                gFollowerStopFollowerMovement[1] = MOVEMENT_ACTION_STEP_END;
+                clear = TRUE;
+                break;
+            }
+        }
+    }
+
+    // (if the follower is boxed in, the player just turns back instead)
+    gFollowerStopPlayerMovement[0] = clear ? GetWalkNormalMovementAction(dir) : GetFaceDirectionMovementAction(dir);
+    gFollowerStopPlayerMovement[1] = MOVEMENT_ACTION_STEP_END;
+}
+
+// special GetFollowerLocalIdForScript: VAR_0x8005 = the follower's local id (for applymovement)
+void GetFollowerLocalIdForScript(void)
+{
+    gSpecialVar_0x8005 = GetFollowerLocalId();
+}
+
+// special FollowerStop_PrepareLeave: the follower walks (or bikes) away in direction VAR_0x8004,
+// going around anything in the way, for up to FOLLOWER_LEAVE_STEPS steps.
+// VAR_RESULT is FALSE if they can't take a single step (Common_EventScript_FollowerStopLeave
+// has them fly away instead).
+void FollowerStop_PrepareLeave(void)
+{
+    struct ObjectEvent *follower = &gObjectEvents[GetFollowerMapObjId()];
+    u8 dir = gSpecialVar_0x8004;
+    s16 x = follower->currentCoords.x, y = follower->currentCoords.y;
+    u8 steps = 0, lastSide = DIR_NONE;
+
+    gSpecialVar_0x8005 = GetFollowerLocalId();
+    while (gSaveBlock2Ptr->follower.inProgress && steps < FOLLOWER_LEAVE_STEPS)
+    {
+        u8 step = DIR_NONE, i;
+
+        if (CanFollowerStepTo(follower, x, y, dir))
+        {
+            step = dir;
+            lastSide = DIR_NONE;
+        }
+        else
+        {
+            // Sidestep, keeping to one side once started so they don't go back and forth
+            for (i = 0; i < 2 && step == DIR_NONE; i++)
+            {
+                u8 side = sPerpendicularDirs[dir][i];
+
+                if ((lastSide == DIR_NONE || side == lastSide) && CanFollowerStepTo(follower, x, y, side))
+                    step = side;
+            }
+            lastSide = step;
+        }
+        if (step == DIR_NONE)
+            break;
+        gFollowerStopFollowerMovement[steps++] = GetFollowerStepAction(step);
+        MoveCoords(step, &x, &y);
+    }
+    gFollowerStopFollowerMovement[steps] = MOVEMENT_ACTION_STEP_END;
+    gSpecialVar_Result = (steps != 0);
+}

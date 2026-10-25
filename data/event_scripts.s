@@ -55,6 +55,7 @@
 #include "constants/vars.h"
 #include "constants/weather.h"
 #include "constants/follow_me.h"
+#include "constants/follower_parties.h"
 	.include "asm/macros.inc"
 	.include "asm/macros/event.inc"
 	.include "constants/constants.inc"
@@ -576,6 +577,7 @@ gStdScripts_End::
 
 	.include "data/scripts/std_msgbox.inc"
 	.include "data/scripts/trainer_battle.inc"
+	.include "data/scripts/follower_stop.inc"
 	.include "data/scripts/new_game.inc"
 	.include "data/scripts/hall_of_fame.inc"
 

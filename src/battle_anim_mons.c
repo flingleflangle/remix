@@ -51,6 +51,15 @@ static const struct UCoords8 sBattlerCoords[][MAX_BATTLERS_COUNT] =
     },
 };
 
+// Which sBattlerCoords layout a battler uses. A foe facing the player and a partner alone
+// (a wild Pokémon, or a trainer with one Pokémon) stands in the centre like in a single battle.
+static u8 GetBattlerCoordsLayout(u8 battler)
+{
+    if (gPartnerVsOneLoneFoe && !IsContest() && GetBattlerPosition(battler) == B_POSITION_OPPONENT_LEFT)
+        return 0;
+    return IS_DOUBLE_BATTLE();
+}
+
 // One entry for each of the four Castform forms.
 const struct MonCoords gCastformFrontSpriteCoords[NUM_CASTFORM_FORMS] =
 {
@@ -125,10 +134,10 @@ u8 GetBattlerSpriteCoord(u8 battler, u8 coordType)
     {
     case BATTLER_COORD_X:
     case BATTLER_COORD_X_2:
-        retVal = sBattlerCoords[IS_DOUBLE_BATTLE()][GetBattlerPosition(battler)].x;
+        retVal = sBattlerCoords[GetBattlerCoordsLayout(battler)][GetBattlerPosition(battler)].x;
         break;
     case BATTLER_COORD_Y:
-        retVal = sBattlerCoords[IS_DOUBLE_BATTLE()][GetBattlerPosition(battler)].y;
+        retVal = sBattlerCoords[GetBattlerCoordsLayout(battler)][GetBattlerPosition(battler)].y;
         break;
     case BATTLER_COORD_Y_PIC_OFFSET:
     case BATTLER_COORD_Y_PIC_OFFSET_DEFAULT:
@@ -280,7 +289,7 @@ u8 GetBattlerSpriteFinal_Y(u8 battler, u16 species, bool8 a3)
         offset = GetBattlerYDelta(battler, species);
         offset -= GetBattlerElevation(battler, species);
     }
-    y = offset + sBattlerCoords[IS_DOUBLE_BATTLE()][GetBattlerPosition(battler)].y;
+    y = offset + sBattlerCoords[GetBattlerCoordsLayout(battler)][GetBattlerPosition(battler)].y;
     if (a3)
     {
         if (GetBattlerSide(battler) == B_SIDE_PLAYER)
@@ -882,6 +891,11 @@ bool8 IsBattlerSpritePresent(u8 battler)
     else
     {
         if (gBattlerPositions[battler] == 0xff)
+        {
+            return FALSE;
+        }
+        // (an absent battler can still have HP: a follower who recalled their Pokémon to let the player catch one)
+        else if (gAbsentBattlerFlags & gBitTable[battler])
         {
             return FALSE;
         }

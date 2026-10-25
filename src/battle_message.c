@@ -1,8 +1,10 @@
 #include "global.h"
+#include "follower_parties.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"
 #include "battle_message.h"
+#include "util.h"
 #include "battle_setup.h"
 #include "battle_tower.h"
 #include "data.h"
@@ -107,6 +109,8 @@ static const u8 sText_PkmnDrawingInDarkness[] = _("{B_ATK_NAME_WITH_PREFIX} is\n
 static const u8 sText_PkmnSniffedOutNextMon[] = _("{B_ATK_NAME_WITH_PREFIX} sniffed out\n{B_BUFF1}, next in line!");
 static const u8 sText_PkmnCantSwitchThisTurn[] = _("{B_DEF_NAME_WITH_PREFIX} can't switch\nout this turn!");
 static const u8 sText_PkmnEvolutionCuredStatus[] = _("Evolving cured {B_ATK_NAME_WITH_PREFIX}'s\nstatus problems!");
+static const u8 sText_FollowerHelpCatchLine[] = _("{B_PARTNER_LINE}");
+static const u8 sText_FollowerTryToCatch[] = _("{B_PARTNER_NAME}: That's it!\nTry to catch it, now!");
 static const u8 sText_PkmnPulledIntoBlackHole[] = _("{B_DEF_NAME_WITH_PREFIX} was pulled\ninto the BLACK HOLE!");
 static const u8 sText_PkmnCantUseMoveBlackHole[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use\n{B_CURRENT_MOVE} in the BLACK HOLE!\p");
 static const u8 sText_ChakraSurged[] = _("{B_ATK_NAME_WITH_PREFIX}'s chakra\nsurged through its body!");
@@ -991,6 +995,8 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNSNIFFEDOUTNEXTMON - BATTLESTRINGS_TABLE_START] = sText_PkmnSniffedOutNextMon,
     [STRINGID_PKMNCANTSWITCHTHISTURN - BATTLESTRINGS_TABLE_START] = sText_PkmnCantSwitchThisTurn,
     [STRINGID_PKMNEVOLUTIONCUREDSTATUS - BATTLESTRINGS_TABLE_START] = sText_PkmnEvolutionCuredStatus,
+    [STRINGID_FOLLOWERHELPCATCHLINE - BATTLESTRINGS_TABLE_START] = sText_FollowerHelpCatchLine,
+    [STRINGID_FOLLOWERTRYTOCATCH - BATTLESTRINGS_TABLE_START] = sText_FollowerTryToCatch,
 };
 
 const u16 gMissStringIds[] =
@@ -2165,7 +2171,9 @@ void BufferStringBattle(u16 stringID)
             }
             else
             {
-                if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+                if (IS_PARTNER_VS_ONE())
+                    stringPtr = sText_Trainer1WantsToBattle;
+                else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
                     stringPtr = sText_TwoTrainersWantToBattle;
                 else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
                     stringPtr = sText_TwoTrainersWantToBattle;
@@ -2177,6 +2185,8 @@ void BufferStringBattle(u16 stringID)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_LEGENDARY)
                 stringPtr = sText_LegendaryPkmnAppeared;
+            else if (IS_PARTNER_VS_ONE())
+                stringPtr = sText_WildPkmnAppeared;
             else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) // interesting, looks like they had something planned for wild double battles
                 stringPtr = sText_TwoWildPkmnAppeared;
             else if (gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL)
@@ -2208,7 +2218,9 @@ void BufferStringBattle(u16 stringID)
         {
             if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
             {
-                if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+                if (IS_PARTNER_VS_ONE())
+                    stringPtr = (gAbsentBattlerFlags & gBitTable[B_POSITION_OPPONENT_RIGHT]) ? sText_Trainer1SentOutPkmn : sText_Trainer1SentOutTwoPkmn;
+                else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
                     stringPtr = sText_TwoTrainersSentPkmn;
                 else if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
                     stringPtr = sText_TwoTrainersSentPkmn;
@@ -2885,6 +2897,11 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
             case B_TXT_PARTNER_NAME:
                 GetFrontierTrainerName(text, gPartnerTrainerId);
                 toCpy = text;
+                break;
+            case B_TXT_PARTNER_LINE:
+                toCpy = FollowerBattle_GetHelpCatchLine();
+                if (toCpy == NULL)
+                    toCpy = gText_EmptyString3;
                 break;
             }
 

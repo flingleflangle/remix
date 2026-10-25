@@ -1091,7 +1091,10 @@ void InitBattlerHealthboxCoords(u8 battler)
             x = 171, y = 101;
             break;
         case B_POSITION_OPPONENT_LEFT:
-            x = 44, y = 19;
+            if (gPartnerVsOneLoneFoe) // single battle box, where a single battle has it
+                x = 44, y = 30;
+            else
+                x = 44, y = 19;
             break;
         case B_POSITION_OPPONENT_RIGHT:
             x = 32, y = 44;
@@ -1846,7 +1849,7 @@ u8 CreatePartyStatusSummarySprites(u8 battler, struct HpAndStatus *partyInfo, bo
     }
     else
     {
-        if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
+        if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS) && !IS_PARTNER_VS_ONE())
         {
             for (var = PARTY_SIZE - 1, i = 0; i < PARTY_SIZE; i++)
             {

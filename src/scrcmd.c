@@ -1,4 +1,5 @@
 #include "global.h"
+#include "follower_parties.h"
 #include "frontier_util.h"
 #include "battle_setup.h"
 #include "berry.h"
@@ -2329,7 +2330,24 @@ bool8 ScrCmd_setfollower(struct ScriptContext *ctx)
     u8 localId = ScriptReadByte(ctx);
     u16 flags = ScriptReadHalfword(ctx);
     
+    // (ignored while someone's already following, so it mustn't touch their helpcatch then)
+    if (PlayerHasFollower())
+        return FALSE;
+    FollowerBattle_SetHelpCatch(NULL, NULL, NULL); // a new follower doesn't keep the last one's helpcatch
     SetUpFollowerSprite(localId, flags);
+    return FALSE;
+}
+
+bool8 ScrCmd_helpcatch(struct ScriptContext *ctx)
+{
+    const u8 *foundText = (const u8 *)ScriptReadWord(ctx);
+    const u8 *caughtText = (const u8 *)ScriptReadWord(ctx);
+    u16 species[4];
+    u8 i;
+
+    for (i = 0; i < ARRAY_COUNT(species); i++)
+        species[i] = ScriptReadHalfword(ctx);
+    FollowerBattle_SetHelpCatch(foundText, caughtText, species);
     return FALSE;
 }
 

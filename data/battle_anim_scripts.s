@@ -6745,6 +6745,7 @@ LeechLife:
 	blendoff
 	end
 LeechLifeEX:
+	call EXMove
 	loadspritegfx ANIM_TAG_NEEDLE
 	loadspritegfx ANIM_TAG_ORBS
 	delay 1

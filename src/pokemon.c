@@ -1,4 +1,5 @@
 #include "global.h"
+#include "follower_parties.h"
 #include "malloc.h"
 #include "apprentice.h"
 #include "battle.h"
@@ -4808,6 +4809,10 @@ u8 GetMonsStateToDoubles(void)
     s32 i;
     CalculatePlayerPartyCount();
 
+    // A follower who battles beside the player makes up the second Pokémon
+    if (FollowerBattle_PartnerCanJoin())
+        return PLAYER_HAS_TWO_USABLE_MONS;
+
     if (gPlayerPartyCount == 1)
         return gPlayerPartyCount; // PLAYER_HAS_ONE_MON
 
@@ -4826,6 +4831,10 @@ u8 GetMonsStateToDoubles_2(void)
 {
     s32 aliveCount = 0;
     s32 i;
+
+    // A follower who battles beside the player makes up the second Pokémon
+    if (FollowerBattle_PartnerCanJoin())
+        return PLAYER_HAS_TWO_USABLE_MONS;
 
     for (i = 0; i < PARTY_SIZE; i++)
     {
@@ -7538,6 +7547,10 @@ const u8 *GetTrainerPartnerName(void)
         {
             return gTrainers[TRAINER_STEVEN].trainerName;
         }
+        else if (gPartnerTrainerId == TRAINER_FOLLOWER_PARTNER && GetFollowerPartner() != NULL)
+        {
+            return GetFollowerPartner()->name;
+        }
         else
         {
             GetFrontierTrainerName(gStringVar1, gPartnerTrainerId);
@@ -7792,6 +7805,8 @@ u16 PlayerGenderToFrontTrainerPicId(u8 playerGender)
 void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality)
 {
     u8 getFlagCaseId = (caseId == FLAG_SET_SEEN) ? FLAG_GET_SEEN : FLAG_GET_CAUGHT;
+    if (nationalNum == 0) // empty battler slot
+        return;
     if (!GetSetPokedexFlag(nationalNum, getFlagCaseId)) // don't set if it's already set
     {
         GetSetPokedexFlag(nationalNum, caseId);

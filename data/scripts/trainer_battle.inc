@@ -47,6 +47,7 @@ EventScript_DoNoIntroTrainerBattle::
 	applymovement VAR_LAST_TALKED, Movement_RevealTrainer
 	waitmovement 0
 	special PlayTrainerEncounterMusic
+	call EventScript_TryPrepareFollowerBattle
 	dotrainerbattle
 	gotopostbattlescript
 
@@ -59,6 +60,7 @@ EventScript_TryDoRematchBattle::
 	special ShowTrainerIntroSpeech
 	waitmessage
 	waitbuttonpress
+	call EventScript_TryPrepareFollowerBattle
 	special BattleSetup_StartRematchBattle
 	waitstate
 	releaseall
@@ -77,6 +79,7 @@ EventScript_TryDoDoubleRematchBattle::
 	special ShowTrainerIntroSpeech
 	waitmessage
 	waitbuttonpress
+	call EventScript_TryPrepareFollowerBattle
 	special BattleSetup_StartRematchBattle
 	waitstate
 	releaseall
@@ -91,6 +94,22 @@ EventScript_NotEnoughMonsForDoubleRematchBattle::
 	waitbuttonpress
 	release
 	end
+
+@ With a follower that has a partner party (VAR_FOLLOWER_PARTNER), every trainer battle is a
+@ multi battle beside them. The player brings up to 3 Pokémon; their party is put back afterwards.
+EventScript_TryPrepareFollowerBattle::
+	special FollowerBattle_Prepare
+	goto_if_eq VAR_RESULT, FOLLOWER_BATTLE_CHOOSE, EventScript_ChooseFollowerBattleParty
+	return
+
+EventScript_ChooseFollowerBattleParty::
+	fadescreen FADE_TO_BLACK
+	special ChooseHalfPartyForFollowerBattle
+	waitstate
+	goto_if_eq VAR_RESULT, FALSE, EventScript_ChooseFollowerBattleParty
+	special FollowerBattle_ApplyChosenParty
+	goto_if_eq VAR_RESULT, FALSE, EventScript_ChooseFollowerBattleParty
+	return
 
 EventScript_RevealTrainer::
 	applymovement VAR_LAST_TALKED, Movement_RevealTrainer
@@ -110,6 +129,7 @@ EventScript_ShowTrainerIntroMsg::
 	goto EventScript_DoTrainerBattle
 
 EventScript_DoTrainerBattle::
+	call EventScript_TryPrepareFollowerBattle
 	dotrainerbattle
 	@ Below battle mode check only needed in FRLG
 	specialvar VAR_RESULT, GetTrainerBattleMode

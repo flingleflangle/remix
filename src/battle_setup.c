@@ -41,6 +41,7 @@
 // Start vs_seeker branch
 #include "vs_seeker.h"
 #include "item.h"
+#include "follower_parties.h"
 // End vs_seeker branch
 #include "constants/battle_frontier.h"
 #include "constants/battle_setup.h"
@@ -406,17 +407,25 @@ void BattleSetup_StartBattlePikeWildBattle(void)
 
 static void DoStandardWildBattle(void)
 {
+    u8 transition;
+
     LockPlayerFieldControls();
     FreezeObjectEvents();
     StopPlayerAvatar();
     gMain.savedCallback = CB2_EndWildBattle;
     gBattleTypeFlags = 0;
+    // Before a follower battle boosts the wild Pokémon's level, so it gets the usual transition
+    transition = GetWildBattleTransition();
     if (CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE)
     {
         VarSet(VAR_TEMP_PLAYING_PYRAMID_MUSIC, 0);
         gBattleTypeFlags |= BATTLE_TYPE_PYRAMID;
     }
-    CreateBattleStartTask(GetWildBattleTransition(), 0);
+    else
+    {
+        FollowerBattle_TryStartWild();
+    }
+    CreateBattleStartTask(transition, 0);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
     IncrementDailyWildBattles();
@@ -613,6 +622,9 @@ static void TryEndOdorSleuthTrail(void)
 
 static void CB2_EndWildBattle(void)
 {
+    bool8 followerAcknowledgesCatch = FollowerBattle_ShouldAcknowledgeCatch();
+
+    FollowerBattle_RestoreParty();
     CpuFill16(0, (void *)(BG_PLTT), BG_PLTT_SIZE);
     ResetOamRange(0, 128);
     TryEndOdorSleuthTrail();
@@ -620,6 +632,13 @@ static void CB2_EndWildBattle(void)
     if (IsPlayerDefeated(gBattleOutcome) == TRUE && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE && !InBattlePike())
     {
         SetMainCallback2(CB2_WhiteOut);
+    }
+    else if (followerAcknowledgesCatch)
+    {
+        // The follower says their line about the Pokémon they helped catch, once back on the field
+        ScriptContext_SetupScript(EventScript_FollowerCaughtHelpCatch);
+        ScriptContext_Stop();
+        SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
     }
     else
     {
@@ -1340,6 +1359,7 @@ void BattleSetup_StartTrainerBattle(void)
 
 static void CB2_EndTrainerBattle(void)
 {
+    FollowerBattle_RestoreParty();
     if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
     {
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
@@ -1364,6 +1384,7 @@ static void CB2_EndTrainerBattle(void)
 
 static void CB2_EndRematchBattle(void)
 {
+    FollowerBattle_RestoreParty();
     if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
     {
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);

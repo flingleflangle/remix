@@ -1,4 +1,5 @@
 #include "global.h"
+#include "follower_parties.h"
 #include "battle.h"
 #include "battle_ai_script_commands.h"
 #include "battle_anim.h"
@@ -1298,9 +1299,9 @@ static void PlayerPartnerHandleDrawTrainerPic(void)
     s16 xPos, yPos;
     u32 trainerPicId;
 
-    if (gPartnerTrainerId == TRAINER_STEVEN_PARTNER)
+    if (IS_STORY_PARTNER(gPartnerTrainerId))
     {
-        trainerPicId = TRAINER_BACK_PIC_STEVEN;
+        trainerPicId = GetStoryPartnerBackPic();
         xPos = 90;
         yPos = (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80;
     }
@@ -1311,8 +1312,8 @@ static void PlayerPartnerHandleDrawTrainerPic(void)
         yPos = (8 - gTrainerFrontPicCoords[trainerPicId].size) * 4 + 80;
     }
 
-    // Use back pic only if the partner is Steven
-    if (gPartnerTrainerId == TRAINER_STEVEN_PARTNER)
+    // Use back pic only if the partner is Steven or the player's follower
+    if (IS_STORY_PARTNER(gPartnerTrainerId))
     {
         DecompressTrainerBackPic(trainerPicId, gActiveBattler);
         SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
@@ -1343,9 +1344,29 @@ static void PlayerPartnerHandleDrawTrainerPic(void)
 
 #undef sSpeedX
 
+// Mid-battle, after the partner's Pokémon is recalled (a story partner's back pic, sliding in from
+// the left, where it went after throwing its ball, to where it stood at the start of the battle)
 static void PlayerPartnerHandleTrainerSlide(void)
 {
-    PlayerPartnerBufferExecCompleted();
+    u32 trainerPicId;
+
+    if (!IS_STORY_PARTNER(gPartnerTrainerId))
+    {
+        PlayerPartnerBufferExecCompleted();
+        return;
+    }
+
+    trainerPicId = GetStoryPartnerBackPic();
+    DecompressTrainerBackPic(trainerPicId, gActiveBattler);
+    SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
+    gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate, 90, (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80, 30);
+
+    gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
+    gSprites[gBattlerSpriteIds[gActiveBattler]].x2 = -128;
+    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 4; // sSpeedX for SpriteCB_TrainerSlideIn
+    gSprites[gBattlerSpriteIds[gActiveBattler]].callback = SpriteCB_TrainerSlideIn;
+
+    gBattlerControllerFuncs[gActiveBattler] = CompleteOnBattlerSpriteCallbackDummy;
 }
 
 static void PlayerPartnerHandleTrainerSlideBack(void)
@@ -1515,8 +1536,17 @@ static void PlayerPartnerHandleChooseMove(void)
     u8 chosenMoveId;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[gActiveBattler][4]);
 
-    BattleAI_SetupAIData(ALL_MOVES_MASK);
-    chosenMoveId = BattleAI_ChooseMoveOrAction();
+    if (FollowerBattle_IsHoldingBack())
+    {
+        // Helping the player catch the wild Pokémon: go easy on it
+        chosenMoveId = FollowerBattle_ChooseHoldBackMove(gActiveBattler, moveInfo->moves, moveInfo->currentPp);
+        gBattlerTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+    }
+    else
+    {
+        BattleAI_SetupAIData(ALL_MOVES_MASK);
+        chosenMoveId = BattleAI_ChooseMoveOrAction();
+    }
 
     if (gBattleMoves[moveInfo->moves[chosenMoveId]].target & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_SELECTED))
         gBattlerTarget = gActiveBattler;
@@ -1791,9 +1821,9 @@ static void PlayerPartnerHandleIntroTrainerBallThrow(void)
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[gActiveBattler]], 1);
 
     paletteNum = AllocSpritePalette(0xD6F9);
-    if (gPartnerTrainerId == TRAINER_STEVEN_PARTNER)
+    if (IS_STORY_PARTNER(gPartnerTrainerId))
     {
-        u8 spriteId = TRAINER_BACK_PIC_STEVEN;
+        u8 spriteId = GetStoryPartnerBackPic();
         LoadCompressedPalette(gTrainerBackPicPaletteTable[spriteId].data, OBJ_PLTT_ID(paletteNum), PLTT_SIZE_4BPP);
     }
     else

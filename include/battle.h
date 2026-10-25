@@ -16,6 +16,14 @@
 #define GET_BATTLER_SIDE(battler)         (GetBattlerPosition(battler) & BIT_SIDE)
 #define GET_BATTLER_SIDE2(battler)        (gBattlerPositions[battler] & BIT_SIDE)
 
+// The player and an in-game partner against one trainer (the follower multi battle).
+// The player's side splits its party into halves like a multi battle; the opponent's side
+// shares one party like a normal double battle.
+#define IS_PARTNER_VS_ONE() ((gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) && !(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
+#define IS_PARTNER_VS_ONE_FOE(battler) (IS_PARTNER_VS_ONE() && GetBattlerSide(battler) == B_SIDE_OPPONENT)
+// Steven, or the player's follower: in-game partners that use a trainer back pic.
+#define IS_STORY_PARTNER(trainerId) ((trainerId) == TRAINER_STEVEN_PARTNER || (trainerId) == TRAINER_FOLLOWER_PARTNER)
+
 // Used to exclude moves learned temporarily by Transform or Mimic
 #define MOVE_IS_PERMANENT(battler, moveSlot)                        \
    (!(gBattleMons[battler].status2 & STATUS2_TRANSFORMED)           \
@@ -701,6 +709,7 @@ extern u8 gBattlerFainted;
 extern u8 gEffectBattler;
 extern u8 gPotentialItemEffectBattler;
 extern u8 gAbsentBattlerFlags;
+extern bool8 gPartnerVsOneLoneFoe;
 extern u8 gCritMultiplier;
 extern u8 gMultiHitCounter;
 extern const u8 *gBattlescriptCurrInstr;

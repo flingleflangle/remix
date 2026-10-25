@@ -628,6 +628,150 @@
       "var": "VAR_REGISTER_BIRCH_STATE",
       "var_value": "1",
       "script": "Route110_EventScript_BirchScene4"
+    },
+    {
+      "type": "trigger",
+      "x": 11,
+      "y": 4,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopNorth"
+    },
+    {
+      "type": "trigger",
+      "x": 12,
+      "y": 4,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopNorth"
+    },
+    {
+      "type": "trigger",
+      "x": 13,
+      "y": 4,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopNorth"
+    },
+    {
+      "type": "trigger",
+      "x": 14,
+      "y": 4,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopNorth"
+    },
+    {
+      "type": "trigger",
+      "x": 15,
+      "y": 4,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopNorth"
+    },
+    {
+      "type": "trigger",
+      "x": 16,
+      "y": 4,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopNorth"
+    },
+    {
+      "type": "trigger",
+      "x": 13,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 14,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 15,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 16,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 17,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 18,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 19,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 20,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 21,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
+    },
+    {
+      "type": "trigger",
+      "x": 22,
+      "y": 98,
+      "elevation": 3,
+      "var": "VAR_ROUTE110_MAY_FOLLOWER",
+      "var_value": "1",
+      "script": "Route110_EventScript_MayStopSouth"
     }
   ],
   "bg_events": [

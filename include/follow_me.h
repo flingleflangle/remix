@@ -50,6 +50,12 @@ bool8 CheckFollowerFlag(u16 flag);
 void FollowerPositionFix(u8 offset);
 void SetFollowerSprite(u8 spriteIndex);
 bool8 PlayerHasFollower(void);
+void FollowerStop_PrepareStepBack(void);
+void FollowerStop_PrepareLeave(void);
+void GetFollowerLocalIdForScript(void);
+
+extern u8 gFollowerStopFollowerMovement[];
+extern u8 gFollowerStopPlayerMovement[];
 
 // moved from field_screen_effect.c
 void Task_DoDoorWarp(u8 taskId);

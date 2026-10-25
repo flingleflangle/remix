@@ -1,4 +1,5 @@
 #include "global.h"
+#include "follower_parties.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_arena.h"
@@ -601,7 +602,9 @@ bool8 TryRunFromBattle(u8 battler)
     }
     else
     {
-        if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+        // (a wild battle beside the player's follower is a double battle, but against one wild
+        // Pokémon, so it's escaped like a single battle; BATTLE_OPPOSITE of the player is that Pokémon)
+        if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) || IS_PARTNER_VS_ONE())
         {
             if (CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE)
             {
@@ -1391,6 +1394,7 @@ enum
     ENDTURN_SANDSTORM,
     ENDTURN_SUN,
     ENDTURN_HAIL,
+    ENDTURN_FOLLOWER_STEP_ASIDE,
     ENDTURN_FIELD_COUNT,
 };
 
@@ -1641,6 +1645,15 @@ u8 DoFieldEndTurnEffects(void)
                 gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
                 gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HAIL;
                 BattleScriptExecute(gBattlescriptCurrInstr);
+                effect++;
+            }
+            gBattleStruct->turnCountersTracker++;
+            break;
+        case ENDTURN_FOLLOWER_STEP_ASIDE:
+            // A follower helping catch the wild Pokémon recalls theirs once it's weak enough
+            if (FollowerBattle_TryStepAside())
+            {
+                BattleScriptExecute(BattleScript_FollowerStepsAsideForCatch);
                 effect++;
             }
             gBattleStruct->turnCountersTracker++;
@@ -2581,7 +2594,12 @@ bool8 HasNoMonsToSwitch(u8 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2)
     if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
         return FALSE;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+    // A follower who recalled their Pokémon to let the player catch one stays out of the battle
+    // (otherwise HandleFaintedMonActions brings them back, since their party still has Pokémon)
+    if (FollowerBattle_HasSteppedAside() && GetBattlerPosition(battler) == B_POSITION_PLAYER_RIGHT)
+        return TRUE;
+
+    if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && !IS_PARTNER_VS_ONE_FOE(battler))
     {
         if (GetBattlerSide(battler) == B_SIDE_PLAYER)
             party = gPlayerParty;
@@ -2598,7 +2616,7 @@ bool8 HasNoMonsToSwitch(u8 battler, u8 partyIdBattlerOn1, u8 partyIdBattlerOn2)
         }
         return (i == playerId * MULTI_PARTY_SIZE + MULTI_PARTY_SIZE);
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+    else if (gBattleTypeFlags & BATTLE_TYPE_MULTI && !IS_PARTNER_VS_ONE_FOE(battler))
     {
         if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
         {

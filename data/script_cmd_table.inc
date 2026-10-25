@@ -246,6 +246,7 @@ gScriptCmdTable::
 	script_cmd_table_entry SCR_OP_DESTROYFOLLOWER               ScrCmd_destroyfollower                @ 0xe4
 	script_cmd_table_entry SCR_OP_FACEFOLLOWER                  ScrCmd_facefollower                   @ 0xe5
 	script_cmd_table_entry SCR_OP_CHECKFOLLOWER                 ScrCmd_checkfollower                  @ 0xe6
+	script_cmd_table_entry SCR_OP_HELPCATCH                     ScrCmd_helpcatch                      @ 0xe7
 
 	.if ALLOCATE_SCRIPT_CMD_TABLE
 gScriptCmdTableEnd::

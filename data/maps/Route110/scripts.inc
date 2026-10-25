@@ -426,7 +426,134 @@ Route110_EventScript_MayDefeated::
 	msgbox Route110_Text_MayTakeThis, MSGBOX_DEFAULT
 	call Route110_EventScript_GiveItemfinder
 	msgbox Route110_Text_MayExplainItemfinder, MSGBOX_DEFAULT
+	checkfollower
+	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_RivalExit @ someone's already following the player
+	msgbox Route110_Text_MayAskMunchlax, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, YES, Route110_EventScript_MayStartsFollowing
+	msgbox Route110_Text_MayLookOnMyOwn, MSGBOX_DEFAULT
 	goto Route110_EventScript_RivalExit
+	end
+
+@ MAY follows the player around Route 110 looking for a MUNCHLAX, until they reach a stop
+@ (Route110_EventScript_MayStopNorth/South) and she leaves
+Route110_EventScript_MayStartsFollowing::
+	msgbox Route110_Text_MayLetsLook, MSGBOX_DEFAULT
+	closemessage
+	loadword 0, Route110_EventScript_MayFollowerTalk
+	setfollower LOCALID_ROUTE110_RIVAL, FOLLOWER_FLAG_ALL | FOLLOWER_FLAG_CUSTOM_FOLLOW_SCRIPT
+	setfollowerpartner FOLLOWER_PARTNER_MAY
+	helpcatch Route110_Text_MayFoundMunchlax, Route110_Text_MayCaughtMunchlax, SPECIES_MUNCHLAX
+	setflag FLAG_HIDE_ROUTE_110_RIVAL
+	setvar VAR_ROUTE110_MAY_FOLLOWER, 1
+	setvar VAR_ROUTE110_STATE, 1
+	savebgm MUS_DUMMY
+	fadedefaultbgm
+	releaseall
+	end
+
+Route110_EventScript_MayFollowerTalk::
+	lock
+	facefollower
+	special HelpCatchTargetCaught
+	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_MayFollowerTalkCaught
+	msgbox Route110_Text_MayFollowerTalk, MSGBOX_DEFAULT
+	release
+	end
+
+Route110_EventScript_MayFollowerTalkCaught::
+	msgbox Route110_Text_MayFollowerTalkCaught, MSGBOX_DEFAULT
+	release
+	end
+
+@ Toward MAUVILLE CITY: she won't go past here
+Route110_EventScript_MayStopNorth::
+	lockall
+	checkfollower
+	goto_if_eq VAR_RESULT, FALSE, Route110_EventScript_MayStopNoFollower
+	goto_if_ne VAR_FOLLOWER_PARTNER, FOLLOWER_PARTNER_MAY, Route110_EventScript_MayStopNoFollower
+	facefollower
+	special HelpCatchTargetCaught
+	copyvar VAR_0x8006, VAR_RESULT @ (the yes/no box below overwrites VAR_RESULT)
+	call_if_eq VAR_0x8006, FALSE, Route110_EventScript_MayAskReadyToMoveOn
+	call_if_eq VAR_0x8006, TRUE, Route110_EventScript_MayAskReadyToMoveOnCaught
+	goto_if_eq VAR_RESULT, NO, Route110_EventScript_MayStopNorthStay
+	msgbox Route110_Text_MayPartWaysHere, MSGBOX_DEFAULT
+	closemessage
+	setvar VAR_0x8004, DIR_NORTH @ on ahead to MAUVILLE CITY
+	goto Route110_EventScript_MayLeaves
+	end
+
+Route110_EventScript_MayStopNorthStay::
+	call Route110_EventScript_MaySayStaying
+	closemessage
+	setvar VAR_0x8004, DIR_SOUTH
+	call Common_EventScript_FollowerStopStepBack
+	releaseall
+	end
+
+@ Toward SLATEPORT CITY: she won't go past here
+Route110_EventScript_MayStopSouth::
+	lockall
+	checkfollower
+	goto_if_eq VAR_RESULT, FALSE, Route110_EventScript_MayStopNoFollower
+	goto_if_ne VAR_FOLLOWER_PARTNER, FOLLOWER_PARTNER_MAY, Route110_EventScript_MayStopNoFollower
+	facefollower
+	special HelpCatchTargetCaught
+	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_MayStopSouthCaught
+	msgbox Route110_Text_MayBoredOfLooking, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route110_EventScript_MayStopSouthStay
+	msgbox Route110_Text_MayKeepLookingAlone, MSGBOX_DEFAULT
+	closemessage
+	setvar VAR_0x8004, DIR_NORTH
+	goto Route110_EventScript_MayLeaves
+	end
+
+Route110_EventScript_MayStopSouthStay::
+	call Route110_EventScript_MaySayStaying
+	closemessage
+	setvar VAR_0x8004, DIR_NORTH
+	call Common_EventScript_FollowerStopStepBack
+	releaseall
+	end
+
+@ Once the player has caught a MUNCHLAX, SLATEPORT CITY's way: she heads to MAUVILLE instead
+Route110_EventScript_MayStopSouthCaught::
+	msgbox Route110_Text_MayHeadingToSlateport, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route110_EventScript_MayStopSouthStay
+	msgbox Route110_Text_MayOffToMauville, MSGBOX_DEFAULT
+	closemessage
+	setvar VAR_0x8004, DIR_NORTH
+	goto Route110_EventScript_MayLeaves
+	end
+
+Route110_EventScript_MayAskReadyToMoveOn::
+	msgbox Route110_Text_MayReadyToMoveOn, MSGBOX_YESNO
+	return
+
+Route110_EventScript_MayAskReadyToMoveOnCaught::
+	msgbox Route110_Text_MayReadyToMoveOnCaught, MSGBOX_YESNO
+	return
+
+Route110_EventScript_MaySayStaying::
+	special HelpCatchTargetCaught
+	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_MaySayStayingCaught
+	msgbox Route110_Text_MayLetsKeepLooking, MSGBOX_DEFAULT
+	return
+
+Route110_EventScript_MaySayStayingCaught::
+	msgbox Route110_Text_MayLetsLookAround, MSGBOX_DEFAULT
+	return
+
+Route110_EventScript_MayLeaves::
+	call Common_EventScript_FollowerStopLeave
+	setvar VAR_ROUTE110_MAY_FOLLOWER, 0
+	releaseall
+	end
+
+@ She stopped following some other way (e.g. the player whited out)
+Route110_EventScript_MayStopNoFollower::
+	setvar VAR_ROUTE110_MAY_FOLLOWER, 0
+	releaseall
 	end
 
 Route110_EventScript_BrendanBattle::
@@ -783,6 +910,81 @@ Route110_Text_MayExplainItemfinder:
 	.string "I know it's a little silly coming from\n"
 	.string "me, but I think you should train a lot\l"
 	.string "harder for the next time.$"
+
+Route110_Text_MayAskMunchlax:
+	.string "MAY: Oh, before I go!\p"
+	.string "I heard a MUNCHLAX has been seen\n"
+	.string "around this route.\p"
+	.string "I've been wanting to see one up close.\n"
+	.string "Do you want to look for it together?$"
+
+Route110_Text_MayLookOnMyOwn:
+	.string "MAY: That's okay!\n"
+	.string "I'll keep an eye out on my own.$"
+
+Route110_Text_MayLetsLook:
+	.string "MAY: Yay! Let's go!\p"
+	.string "If we find one, I'll go easy on it\n"
+	.string "so you can catch it!$"
+
+Route110_Text_MayFollowerTalk:
+	.string "MAY: MUNCHLAX love to eat, so they\n"
+	.string "could be hiding anywhere in the grass.$"
+
+Route110_Text_MayFoundMunchlax:
+	.string "MAY: It's a MUNCHLAX! Don't worry,\n"
+	.string "I'll hold back. You catch it!$"
+
+Route110_Text_MayReadyToMoveOn:
+	.string "MAY: MAUVILLE CITY's just ahead.\p"
+	.string "Are you ready to stop looking\n"
+	.string "and move on?$"
+
+Route110_Text_MayPartWaysHere:
+	.string "MAY: Then this is where we part ways!\p"
+	.string "I've got some errands to run in\n"
+	.string "MAUVILLE, so I'll go on ahead.\p"
+	.string "Thanks for looking with me,\n"
+	.string "{PLAYER}{KUN}. See you!$"
+
+Route110_Text_MayBoredOfLooking:
+	.string "MAY: Hey, are you getting bored\n"
+	.string "of looking for MUNCHLAX?$"
+
+Route110_Text_MayKeepLookingAlone:
+	.string "MAY: That's okay! I'll keep looking\n"
+	.string "around here by myself.\p"
+	.string "See you around, {PLAYER}{KUN}!$"
+
+Route110_Text_MayLetsKeepLooking:
+	.string "MAY: Great! Let's keep looking!$"
+
+Route110_Text_MayCaughtMunchlax:
+	.string "MAY: You caught the MUNCHLAX!\n"
+	.string "We did it, {PLAYER}{KUN}!\p"
+	.string "Make sure you keep it well fed!$"
+
+Route110_Text_MayFollowerTalkCaught:
+	.string "MAY: Your MUNCHLAX looks so happy!\n"
+	.string "I bet it's already hungry again.$"
+
+Route110_Text_MayReadyToMoveOnCaught:
+	.string "MAY: MAUVILLE CITY's just ahead.\p"
+	.string "Now that you've got a MUNCHLAX,\n"
+	.string "are you ready to move on?$"
+
+Route110_Text_MayHeadingToSlateport:
+	.string "MAY: Are you heading back toward\n"
+	.string "SLATEPORT with your new MUNCHLAX?$"
+
+Route110_Text_MayOffToMauville:
+	.string "MAY: Then I'll head on to MAUVILLE.\p"
+	.string "Thanks for looking with me,\n"
+	.string "{PLAYER}{KUN}. See you!$"
+
+Route110_Text_MayLetsLookAround:
+	.string "MAY: Okay! Let's look around\n"
+	.string "a little more, then.$"
 
 Route110_Text_BrendanLetsBattle:
 	.string "BRENDAN: Hey, {PLAYER}.\n"

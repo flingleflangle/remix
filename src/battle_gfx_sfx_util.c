@@ -772,7 +772,10 @@ void BattleLoadAllHealthBoxesGfxAtOnce(void)
     {
         LoadCompressedSpriteSheet(&sSpriteSheets_DoublesPlayerHealthbox[0]);
         LoadCompressedSpriteSheet(&sSpriteSheets_DoublesPlayerHealthbox[1]);
-        LoadCompressedSpriteSheet(&sSpriteSheets_DoublesOpponentHealthbox[0]);
+        if (gPartnerVsOneLoneFoe) // a lone foe facing the player and a partner gets the single battle box
+            LoadCompressedSpriteSheet(&sSpriteSheet_SinglesOpponentHealthbox);
+        else
+            LoadCompressedSpriteSheet(&sSpriteSheets_DoublesOpponentHealthbox[0]);
         LoadCompressedSpriteSheet(&sSpriteSheets_DoublesOpponentHealthbox[1]);
         numberOfBattlers = MAX_BATTLERS_COUNT;
     }
@@ -823,6 +826,8 @@ bool8 BattleLoadAllHealthBoxesGfx(u8 state)
                 LoadCompressedSpriteSheet(&sSpriteSheets_DoublesPlayerHealthbox[0]);
             else if (state == 3)
                 LoadCompressedSpriteSheet(&sSpriteSheets_DoublesPlayerHealthbox[1]);
+            else if (state == 4 && gPartnerVsOneLoneFoe) // a lone foe facing the player and a partner gets the single battle box
+                LoadCompressedSpriteSheet(&sSpriteSheet_SinglesOpponentHealthbox);
             else if (state == 4)
                 LoadCompressedSpriteSheet(&sSpriteSheets_DoublesOpponentHealthbox[0]);
             else if (state == 5)

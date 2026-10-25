@@ -341,6 +341,7 @@ SECTIONS {
         src/international_string_util.o(.text);
         src/tm_case.o(.text);
         src/follow_me.o(.text);
+        src/follower_parties.o(.text);
     } > ROM =0
 
     script_data :
@@ -704,6 +705,7 @@ SECTIONS {
         src/m4a_tables.o(.rodata);
         data/sound_data.o(.rodata);
         src/follow_me.o(.rodata);
+        src/follower_parties.o(.rodata);
     } > ROM =0
 
     song_data :

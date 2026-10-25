@@ -73,6 +73,7 @@ void InitBattleControllers(void)
 {
     s32 i;
 
+    gPartnerVsOneLoneFoe = FALSE;
     if (!(gBattleTypeFlags & BATTLE_TYPE_RECORDED))
         RecordedBattle_Init(B_RECORD_MODE_RECORDING);
     else
@@ -99,6 +100,34 @@ void InitBattleControllers(void)
 
     for (i = 0; i < sizeof(gBattleStruct->tv); i++)
         *((u8 *)(&gBattleStruct->tv) + i) = 0;
+}
+
+// One trainer against the player and a partner: the trainer's first two usable Pokémon go out
+// together from one shared party. With only one, the right side gets an empty slot and
+// BeginBattleIntro marks it absent.
+static void SetPartnerVsOneOpponentPartyIds(void)
+{
+    s32 i, found = 0, emptySlot = -1;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES_OR_EGG) == SPECIES_NONE
+         || GetMonData(&gEnemyParty[i], MON_DATA_SPECIES_OR_EGG) == SPECIES_EGG
+         || GetMonData(&gEnemyParty[i], MON_DATA_HP) == 0)
+        {
+            if (emptySlot < 0 && GetMonData(&gEnemyParty[i], MON_DATA_SPECIES) == SPECIES_NONE)
+                emptySlot = i;
+            continue;
+        }
+        if (found == 0)
+            gBattlerPartyIndexes[B_POSITION_OPPONENT_LEFT] = i;
+        else
+            gBattlerPartyIndexes[B_POSITION_OPPONENT_RIGHT] = i;
+        if (++found == 2)
+            return;
+    }
+    gBattlerPartyIndexes[B_POSITION_OPPONENT_RIGHT] = (emptySlot < 0) ? PARTY_SIZE - 1 : emptySlot;
+    gPartnerVsOneLoneFoe = TRUE;
 }
 
 static void InitSinglePlayerBtlControllers(void)
@@ -149,6 +178,9 @@ static void InitSinglePlayerBtlControllers(void)
         gBattlerPartyIndexes[1] = 0;
         gBattlerPartyIndexes[2] = 3;
         gBattlerPartyIndexes[3] = 3;
+
+        if (IS_PARTNER_VS_ONE())
+            SetPartnerVsOneOpponentPartyIds();
     }
     else if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
     {
