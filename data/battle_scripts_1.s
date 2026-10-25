@@ -312,6 +312,8 @@ BattleScript_HitTrySetWeather::
 	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_SET_WEATHER, BattleScript_ExWeatherAfterHit
 BattleScript_HitTryLockOn::
 	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_LOCK_ON, BattleScript_ExLockOnAfterHit
+BattleScript_HitTryNoSwitch::
+	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_NO_SWITCH_THIS_TURN, BattleScript_ExNoSwitchAfterHit
 BattleScript_HitTryForceSwitch::
 	jumpifword CMP_COMMON_BITS, gExMoveFlags, EX_FLAG_FORCE_SWITCH, BattleScript_ExForceSwitchAfterHit
 BattleScript_MoveEnd::
@@ -5153,6 +5155,10 @@ BattleScript_PursuitSwitchDmgLoop::
 	trysetdestinybondtohappen
 	call BattleScript_PursuitDmgOnSwitchOut
 	swapattackerwithtarget
+	@ EX Pursuit stops the switch, if the Pokémon's still standing (see BattleScript_ExNoSwitchAfterHit)
+	jumpifhasnohp BS_ATTACKER, BattleScript_DoSwitchOut
+	various BS_ATTACKER, VARIOUS_EX_IS_NO_SWITCH_THIS_TURN
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, FALSE, BattleScript_SwitchBlockedCantEscape
 BattleScript_DoSwitchOut::
 	decrementmultihit BattleScript_PursuitSwitchDmgLoop
 	switchoutabilities BS_ATTACKER
@@ -5228,6 +5234,11 @@ BattleScript_PursuitDmgOnSwitchOut::
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_NO_SWITCH_THIS_TURN, BattleScript_PursuitDmgOnSwitchOutMoveEnd
+	jumpifmovehadnoeffect BattleScript_PursuitDmgOnSwitchOutMoveEnd
+	jumpifhasnohp BS_TARGET, BattleScript_PursuitDmgOnSwitchOutMoveEnd
+	various BS_TARGET, VARIOUS_EX_NO_SWITCH_THIS_TURN
+BattleScript_PursuitDmgOnSwitchOutMoveEnd:
 	moveendfromto MOVEEND_ON_DAMAGE_ABILITIES, MOVEEND_CHOICE_MOVE
 	getbattlerfainted BS_TARGET
 	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_PursuitDmgOnSwitchOutRet

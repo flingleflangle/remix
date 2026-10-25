@@ -137,6 +137,8 @@
 #define VARIOUS_CHAKRA_SURGE                    56
 #define VARIOUS_BLACK_HOLE_ACTIVE               57
 #define VARIOUS_ODOR_SLEUTH_NEXT_MON            58
+#define VARIOUS_EX_NO_SWITCH_THIS_TURN          59
+#define VARIOUS_EX_IS_NO_SWITCH_THIS_TURN       60
 
 // EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
 // They last for the move that set them (gExMoveFlags)
@@ -167,6 +169,8 @@
 #define EX_FLAG_FORCE_OUT_DAMAGE    (1 << 24) // When it forces the target out, the target takes a fixed 30 damage first
 #define EX_FLAG_LASTING_TAUNT       (1 << 25) // Its Taunt lasts until the user switches out or faints (gExLastingTauntBy)
 #define EX_FLAG_CHARGE_USER         (1 << 26) // After it hits, the user is charged like after Charge (BattleScript_EffectThunderCrash)
+#define EX_FLAG_NO_SWITCH_THIS_TURN (1 << 27) // After it hits, the target can't switch out for the rest of the turn, even mid-switch when Pursuit catches it (gExNoSwitchBattlers)
+#define EX_FLAG_WEAKNESS_CALL       (1 << 28) // Metronome calls one of gExMetronomeMoves that a foe is weak to, instead of any move (see Cmd_metronome)
 
 // EX move bonuses, which status moves get before their effect when used as EX moves (see gExMoveBonuses in data/ex_battle_scripts.s)
 #define EX_BONUS_STAT_UP          0 // Raises one of the user's stats

@@ -200,6 +200,7 @@ EWRAM_DATA u8 gExLockOnTrapBattlers = 0; // Battlers trapped by an EX_FLAG_TRAP_
 EWRAM_DATA u8 gTurnEndShieldedBattlers = 0;
 EWRAM_DATA u8 gTurnEndExScreenSides = 0;
 EWRAM_DATA u8 gExScreenBlockSides = 0; // EX_SCREEN_BLOCK_* of each side, which blocks physical or special moves this turn (EX_FLAG_SCREEN_BLOCK)
+EWRAM_DATA u8 gExNoSwitchBattlers = 0; // Battlers that can't switch out for the rest of the turn, after EX Pursuit hit them (EX_FLAG_NO_SWITCH_THIS_TURN)
 EWRAM_DATA u8 gExLastingTauntBy[MAX_BATTLERS_COUNT] = {0}; // For each battler, 1 + the battler whose EX Taunt keeps it taunted, or 0 (EX_FLAG_LASTING_TAUNT)
 EWRAM_DATA u8 gExMoveChosenBits = 0;    // Battlers that chose to use their move as an EX move this turn
 EWRAM_DATA u8 gExMoveUsedSlots[MAX_BATTLERS_COUNT] = {0}; // Each battler's move slots that were used as EX moves, which can't be again
@@ -3358,6 +3359,7 @@ void SwitchInClearSetData(void)
     gExCalmRampageBattlers &= ~gBitTable[gActiveBattler];
     EndExLastingTaunts(gActiveBattler);
     gExLockOnTrapBattlers &= ~gBitTable[gActiveBattler];
+    gExNoSwitchBattlers &= ~gBitTable[gActiveBattler];
 
     if (gBattleMoves[gCurrentMove].effect != EFFECT_BATON_PASS)
     {
@@ -5206,6 +5208,7 @@ static void TurnValuesCleanUp(bool8 var0)
         }
     }
     gExScreenBlockSides = 0; // Only lasts for the turn, like Protect
+    gExNoSwitchBattlers = 0;
 
     for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
     {

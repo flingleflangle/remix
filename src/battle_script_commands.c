@@ -5310,7 +5310,12 @@ static void Cmd_jumpifcantswitch(void)
 
     gActiveBattler = GetBattlerForBattleScript(gBattlescriptCurrInstr[1] & ~SWITCH_IGNORE_ESCAPE_PREVENTION);
 
-    if (!(gBattlescriptCurrInstr[1] & SWITCH_IGNORE_ESCAPE_PREVENTION)
+    // After EX Pursuit hits, not even Baton Pass can switch out for the rest of the turn (gExNoSwitchBattlers)
+    if ((gExNoSwitchBattlers & gBitTable[gActiveBattler]) && gBattleMons[gActiveBattler].hp != 0)
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+    }
+    else if (!(gBattlescriptCurrInstr[1] & SWITCH_IGNORE_ESCAPE_PREVENTION)
         && ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
             || (gStatuses3[gActiveBattler] & STATUS3_ROOTED)))
     {
@@ -7433,6 +7438,14 @@ static void Cmd_various(void)
         if (IsBattlerInBlackHole(gActiveBattler))
             gMoveResultFlags |= MOVE_RESULT_FAILED;
         break;
+    case VARIOUS_EX_NO_SWITCH_THIS_TURN:
+        // EX_FLAG_NO_SWITCH_THIS_TURN (EX Pursuit): the battler can't switch out for the rest of the turn
+        gExNoSwitchBattlers |= gBitTable[gActiveBattler];
+        break;
+    case VARIOUS_EX_IS_NO_SWITCH_THIS_TURN:
+        // Sets gBattleCommunication[0] to whether the battler can't switch out this turn (see above)
+        gBattleCommunication[0] = (gExNoSwitchBattlers & gBitTable[gActiveBattler]) != 0;
+        break;
     case VARIOUS_ODOR_SLEUTH_NEXT_MON:
         // Odor Sleuth: against a trainer, sniffs out the next Pokémon in line behind the battler, which Roar will drag out.
         // Sets MULTISTRING_CHOOSER to 1 and buffers its species if there is one, otherwise 0
@@ -9052,8 +9065,73 @@ static void Cmd_mimicattackcopy(void)
     }
 }
 
+extern const u16 gExMetronomeMoves[];
+
+// Whether the move would be super effective against the battler, which also has no ability that absorbs it
+static bool32 IsBattlerWeakToMove(u8 battler, u16 move)
+{
+    u8 type = gBattleMoves[move].type;
+    u8 ability = gBattleMons[battler].ability;
+    u16 currentMove = gCurrentMove;
+    s32 damage = gBattleMoveDamage;
+    u8 flags;
+
+    if ((ability == ABILITY_VOLT_ABSORB && type == TYPE_ELECTRIC)
+     || (ability == ABILITY_WATER_ABSORB && type == TYPE_WATER)
+     || (ability == ABILITY_FLASH_FIRE && type == TYPE_FIRE))
+        return FALSE;
+
+    gCurrentMove = move; // For TypeCalc's special cases, like Strength against Rock types
+    flags = TypeCalc(move, gBattlerAttacker, battler);
+    gCurrentMove = currentMove;
+    gBattleMoveDamage = damage;
+
+    return (flags & MOVE_RESULT_SUPER_EFFECTIVE)
+        && !(flags & (MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE));
+}
+
+// EX Metronome: calls a random one of gExMetronomeMoves (in data/ex_battle_scripts.s) that a foe is weak to, at that foe.
+// FALSE if no foe is weak to any of them
+static bool32 TryCallExMetronomeMove(void)
+{
+    u16 move = MOVE_NONE;
+    u8 target = 0;
+    u32 i, battler, count = 0;
+
+    for (battler = 0; battler < gBattlersCount; battler++)
+    {
+        if (GetBattlerSide(battler) == GetBattlerSide(gBattlerAttacker)
+         || gBattleMons[battler].hp == 0
+         || (gAbsentBattlerFlags & gBitTable[battler]))
+            continue;
+
+        for (i = 0; gExMetronomeMoves[i] != MOVE_NONE; i++)
+        {
+            // Each move a foe is weak to is as likely to be picked
+            if (IsBattlerWeakToMove(battler, gExMetronomeMoves[i]) && Random() % ++count == 0)
+            {
+                move = gExMetronomeMoves[i];
+                target = battler;
+            }
+        }
+    }
+    if (count == 0)
+        return FALSE;
+
+    gCurrentMove = move;
+    gHitMarker &= ~HITMARKER_ATTACKSTRING_PRINTED;
+    gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+    gBattlerTarget = GetMoveTarget(gCurrentMove, NO_TARGET_OVERRIDE);
+    if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED || gBattleMoves[gCurrentMove].target == MOVE_TARGET_RANDOM)
+        gBattlerTarget = target;
+    return TRUE;
+}
+
 static void Cmd_metronome(void)
 {
+    if ((gExMoveFlags & EX_FLAG_WEAKNESS_CALL) && TryCallExMetronomeMove())
+        return;
+
     while (TRUE)
     {
         s32 i;
@@ -10050,6 +10128,7 @@ static void Cmd_jumpifnopursuitswitchdmg(void)
 
         gCurrentMove = MOVE_PURSUIT;
         gCurrMovePos = gChosenMovePos = *(gBattleStruct->chosenMovePositions + gBattlerTarget);
+        TrySetUpChosenExMoveOutOfTurn(gBattlerTarget); // EX Pursuit stops the switch (EX_FLAG_NO_SWITCH_THIS_TURN)
         gBattlescriptCurrInstr += 5;
         gBattleScripting.animTurn = 1;
         gHitMarker &= ~HITMARKER_ATTACKSTRING_PRINTED;

@@ -95,6 +95,39 @@ static void StartExMoveVersion(const struct ExMove *exMove)
         gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 }
 
+// For a battler's chosen move used outside its turn, when Pursuit hits a Pokémon switching out: makes it an EX move
+// if the battler chose to use it as one and can, as in HandleAction_UseMove. Only its EX flags and the EX damage boost
+// apply, not an EX script, upgrade or bonus. gCurrentMove and gCurrMovePos must be the chosen move's
+void TrySetUpChosenExMoveOutOfTurn(u8 battler)
+{
+    const struct ExMove *exMove;
+
+    gBattleMoveIsEx = FALSE;
+    gBattleExAnimPending = EX_ANIM_NONE;
+    gExMoveFlags = 0;
+    gExExtraMoveEffect = 0;
+    if (!(gExMoveChosenBits & gBitTable[battler])
+     || gCurrentMove != gBattleMons[battler].moves[gCurrMovePos]
+     || gBattleMons[battler].pp[gCurrMovePos] < 2
+     || (gExMoveUsedSlots[battler] & gBitTable[gCurrMovePos])
+     || !CanBattlerUseExMove(battler, gCurrentMove))
+        return;
+
+    exMove = GetSpeciesExMove(battler, gCurrentMove);
+    if (exMove == NULL)
+        exMove = GetExMove(gCurrentMove);
+    gBattleMoveIsEx = TRUE;
+    if (exMove != NULL)
+    {
+        gExMoveFlags = exMove->flags;
+        gBattleExAnimPending = EX_ANIM_EX_MOVE;
+    }
+    else
+    {
+        gBattleExAnimPending = EX_ANIM_FLASH_ONLY;
+    }
+}
+
 // Runs the current move as its EX version for everyone: its own (gExMoves), an upgrade, a bonus, or just the
 // EX damage boost. A species' own EX version can fall back to this with VARIOUS_EX_USE_USUAL_VERSION
 void StartUsualExMoveVersion(void)

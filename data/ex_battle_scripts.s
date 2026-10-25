@@ -118,6 +118,8 @@ gExMoves::
 	exmove MOVE_LIGHT_SCREEN, flags=EX_FLAG_SCREEN_BLOCK
 	exmove MOVE_COUNTER, flags=EX_FLAG_COUNTER_SHIELD @ See IsShieldedByExCounter
 	exmove MOVE_MIRROR_COAT, flags=EX_FLAG_COUNTER_SHIELD
+	exmove MOVE_PURSUIT, flags=EX_FLAG_NO_SWITCH_THIS_TURN @ Also stops a switch it catches, see BattleScript_ActionSwitch
+	exmove MOVE_METRONOME, flags=EX_FLAG_WEAKNESS_CALL @ See gExMetronomeMoves below
 	exmove MOVE_NONE @ End of list, keep this last
 
 @ EX upgrades. Instead of an EX script, these moves become a stronger, closely related move when
@@ -171,6 +173,58 @@ gExMoveUpgrades::
 	exupgrade MOVE_SELF_DESTRUCT, MOVE_EXPLOSION
 	exupgrade MOVE_NONE, MOVE_NONE @ End of list, keep this last
 
+@ EX Metronome (EX_FLAG_WEAKNESS_CALL) calls a random one of these moves that a foe is weak to, at that foe:
+@ super effective against its types, counting its ability (Levitate, Volt Absorb, Water Absorb, Flash Fire).
+@ Each move a foe is weak to is as likely to be picked. If no foe is weak to any of them, it calls any move as usual.
+@ The move that's called is used as an EX move (1.2x damage), and the 2 PP come off Metronome.
+@ DRAFT, pending review: every move with 80+ power, minus ones that fail or backfire when called.
+	.align 1
+gExMetronomeMoves::
+	@ Normal
+	.2byte MOVE_EXPLOSION
+	@ Fighting
+	.2byte MOVE_CLOSE_COMBAT, MOVE_HI_JUMP_KICK, MOVE_MEGA_KICK, MOVE_SUPERPOWER, MOVE_CROSS_CHOP, MOVE_DYNAMIC_PUNCH
+	.2byte MOVE_AURA_SPHERE, MOVE_JUMP_KICK, MOVE_MEGA_PUNCH, MOVE_SKY_UPPERCUT, MOVE_SUBMISSION
+	@ Flying
+	.2byte MOVE_BRAVE_BIRD, MOVE_AEROBLAST, MOVE_DRILL_PECK
+	@ Poison
+	.2byte MOVE_SLUDGE_BOMB, MOVE_POISON_TAIL
+	@ Ground
+	.2byte MOVE_EARTHQUAKE, MOVE_GEYSER
+	@ Rock
+	.2byte MOVE_TOMBSTONER, MOVE_ROCK_SLIDE
+	@ Bug
+	.2byte MOVE_MEGAHORN, MOVE_SCISSOR_KICK, MOVE_SIGNAL_BEAM
+	@ Ghost
+	.2byte MOVE_SHADOW_BALL, MOVE_SPIRIT_PURGE
+	@ Steel
+	.2byte MOVE_IRON_TAIL, MOVE_METEOR_MASH
+	@ Blade
+	.2byte MOVE_RAZOR_WIND, MOVE_TRIPLE_SLASH
+	@ Fire
+	.2byte MOVE_BLAST_BURN, MOVE_OVERHEAT, MOVE_FIRE_BLAST, MOVE_HEAT_WAVE, MOVE_SACRED_FIRE
+	.2byte MOVE_FLAMETHROWER, MOVE_BLAZE_KICK
+	@ Water
+	.2byte MOVE_HYDRO_CANNON, MOVE_WATER_SPOUT, MOVE_HYDRO_PUMP, MOVE_CRABHAMMER, MOVE_MUDDY_WATER, MOVE_SURF
+	.2byte MOVE_DIVE, MOVE_SCALD, MOVE_WATERFALL
+	@ Grass
+	.2byte MOVE_FRENZY_PLANT, MOVE_PETAL_DANCE, MOVE_SOLAR_BEAM, MOVE_EGG_BOMB
+	@ Electric
+	.2byte MOVE_VOLT_TACKLE, MOVE_THUNDERBOLT
+	@ Psychic
+	.2byte MOVE_LUSTER_PURGE, MOVE_PSYCHIC, MOVE_EXTRASENSORY
+	@ Ice
+	.2byte MOVE_BLIZZARD, MOVE_ICE_BEAM, MOVE_ICE_SLASHER
+	@ Dragon
+	.2byte MOVE_OUTRAGE, MOVE_DRAGON_CLAW, MOVE_DRAGON_LASH
+	@ Dark
+	.2byte MOVE_CRUNCH
+	@ Astral
+	.2byte MOVE_COSMIC_FLARE
+	@ Sound
+	.2byte MOVE_HYPER_VOICE, MOVE_SERENADE
+	.2byte MOVE_NONE @ End of list, keep this last
+
 @ EX bonuses, mostly for status moves, ported from pokeemerald-expansion's Z-Move effects.
 @ When used as an EX move, these moves first get a bonus for the user, then their regular effect.
 @ The bonus comes right after "X used Y!", along with the EXMove flash. See TryStartExMoveBonus.
@@ -213,7 +267,7 @@ gExMoveBonuses::
 	exstatup MOVE_TAIL_WHIP, STAT_ATK, 1
 	exstatup MOVE_WILL_O_WISP, STAT_ATK, 1
 	exbonus MOVE_MIRROR_MOVE, EX_BONUS_COPY_STATS
-	exstatsup MOVE_SPLASH, BIT_ATK | BIT_SPATK | BIT_SPEED, 1 @ Attack +3 in expansion, spread out as Splash has 40 PP
+	exstatsup MOVE_SPLASH, STAT_ATK, 3
 	exstatup MOVE_BLOCK, STAT_DEF, 1
 	exstatup MOVE_CHARM, STAT_DEF, 1
 	exstatup MOVE_FEATHER_DANCE, STAT_DEF, 1
@@ -240,7 +294,7 @@ gExMoveBonuses::
 	exbonus MOVE_NIGHTMARE, EX_BONUS_DEEPER_SLEEP
 	exbonus MOVE_DREAM_EATER, EX_BONUS_DEEPER_SLEEP
 	exstatup MOVE_SWEET_KISS, STAT_SPATK, 1
-	exstatup MOVE_TEETER_DANCE, STAT_SPATK, 1
+	exstatup MOVE_TEETER_DANCE, BIT_ATK | BIT_SPATK | BIT_SPEED, 1
 	exstatup MOVE_COSMIC_POWER, STAT_SPDEF, 1
 	exbonus MOVE_FLATTER, EX_BONUS_TAUNT
 	exstatup MOVE_GLARE, STAT_SPDEF, 1
@@ -566,7 +620,7 @@ BattleScript_ExFuryCutter::
 
 @ 4x damage. Leech Life's power is low to make up for it
 BattleScript_ExLeechLife::
-	setbyte sDMG_MULTIPLIER, 4
+	setbyte sDMG_MULTIPLIER, 3
 	goto BattleScript_EffectAbsorb
 
 @ Always lowers the target's Sp. Def
@@ -614,10 +668,21 @@ BattleScript_ExRollout::
 @ After an EX_FLAG_LOCK_ON move hits (from BattleScript_HitFromAtkAnimation), the user takes aim at the
 @ target like Lock-On, so its next move against it can't miss
 BattleScript_ExLockOnAfterHit::
-	jumpifmovehadnoeffect BattleScript_HitTryForceSwitch
-	jumpifhasnohp BS_TARGET, BattleScript_HitTryForceSwitch
+	jumpifmovehadnoeffect BattleScript_HitTryNoSwitch
+	jumpifhasnohp BS_TARGET, BattleScript_HitTryNoSwitch
 	setalwayshitflag
 	printstring STRINGID_PKMNTOOKAIM
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_HitTryNoSwitch
+
+@ After an EX_FLAG_NO_SWITCH_THIS_TURN move hits (from BattleScript_HitFromAtkAnimation), the target can't switch out
+@ for the rest of the turn (gExNoSwitchBattlers): Baton Pass, U-turn and the like fail (see Cmd_jumpifcantswitch).
+@ When EX Pursuit catches a Pokémon switching out, the switch is stopped instead (see BattleScript_ActionSwitch)
+BattleScript_ExNoSwitchAfterHit::
+	jumpifmovehadnoeffect BattleScript_HitTryForceSwitch
+	jumpifhasnohp BS_TARGET, BattleScript_HitTryForceSwitch
+	various BS_TARGET, VARIOUS_EX_NO_SWITCH_THIS_TURN
+	printstring STRINGID_PKMNCANTSWITCHTHISTURN
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_HitTryForceSwitch
 

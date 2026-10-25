@@ -110,6 +110,7 @@ STATIC_ASSERT(sizeof(struct ExMove) == 12, ExMoveSize); // The size the exmove m
 bool32 IsExMove(u16 move);
 bool32 IsShieldedByExCounter(u8 battler, u8 moveType);
 void StartUsualExMoveVersion(void);
+void TrySetUpChosenExMoveOutOfTurn(u8 battler);
 const struct ExMove *GetExMove(u16 move);
 u16 GetExMoveUpgrade(u16 move);
 bool32 CanMoveBeUsedAsEx(u16 move);
