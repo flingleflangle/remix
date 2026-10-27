@@ -146,6 +146,8 @@ struct SpecialStatus
     u32 restoredBattlerSprite: 1;
     u32 intimidatedMon:1;
     u32 traced:1;
+    u32 downloaded:1;
+    u32 forecastRead:1; // Forecast has read the foe and set the weather this switch-in
     u32 ppNotAffectedByPressure:1;
     u32 faintedHasReplacement:1;
     u32 focusBanded:1;
@@ -368,7 +370,7 @@ struct BattleStruct
 {
     u8 turnEffectsTracker;
     u8 turnEffectsBattlerId;
-    u8 unused_0;
+    u8 itemsConsumedThisTurn; // Bitfield of battlers whose held item was used up this turn, for Pickup
     u8 turnCountersTracker;
     u8 wrappedMove[MAX_BATTLERS_COUNT * 2]; // Leftover from Ruby's ewram access.
     u8 moveTarget[MAX_BATTLERS_COUNT];

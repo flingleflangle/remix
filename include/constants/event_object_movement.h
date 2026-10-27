@@ -284,6 +284,11 @@
 #define ANIM_RUN_NORTH (ANIM_STD_COUNT + 1)
 #define ANIM_RUN_WEST  (ANIM_STD_COUNT + 2)
 #define ANIM_RUN_EAST  (ANIM_STD_COUNT + 3)
+// Running with Speed Boost in the party or a Run Away lead Pokémon: same frames, timed for 6-frame steps (MOVE_SPEED_FAST_2)
+#define ANIM_RUN_FAST_SOUTH (ANIM_STD_COUNT + 4)
+#define ANIM_RUN_FAST_NORTH (ANIM_STD_COUNT + 5)
+#define ANIM_RUN_FAST_WEST  (ANIM_STD_COUNT + 6)
+#define ANIM_RUN_FAST_EAST  (ANIM_STD_COUNT + 7)
 
 #define ANIM_BUNNY_HOP_BACK_WHEEL_SOUTH         (ANIM_STD_COUNT + 0)
 #define ANIM_BUNNY_HOP_BACK_WHEEL_NORTH         (ANIM_STD_COUNT + 1)

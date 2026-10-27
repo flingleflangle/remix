@@ -142,6 +142,8 @@
 #define VARIOUS_EVOLVED_MID_BATTLE              61
 #define VARIOUS_CAPTIVATE_CHECK                 62
 #define VARIOUS_TRY_SPREAD_ABSORB               63
+#define VARIOUS_NATURAL_GIFT                    64
+#define VARIOUS_FEINT_BREAK_PROTECT             65
 
 // EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
 // They last for the move that set them (gExMoveFlags)

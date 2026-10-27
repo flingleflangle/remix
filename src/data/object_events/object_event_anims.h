@@ -386,6 +386,44 @@ static const union AnimCmd sAnim_RunEast[] =
     ANIMCMD_JUMP(0),
 };
 
+// The run anims above last 8 frames per stride, one per 8-frame step. Speed Boost/Run Away running takes 6 frames a step,
+// which would end each step still on the first stride frame, so it never alternated. These fit 6 frames.
+static const union AnimCmd sAnim_RunFastSouth[] =
+{
+    ANIMCMD_FRAME(12, 3),
+    ANIMCMD_FRAME(9, 3),
+    ANIMCMD_FRAME(13, 3),
+    ANIMCMD_FRAME(9, 3),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sAnim_RunFastNorth[] =
+{
+    ANIMCMD_FRAME(14, 3),
+    ANIMCMD_FRAME(10, 3),
+    ANIMCMD_FRAME(15, 3),
+    ANIMCMD_FRAME(10, 3),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sAnim_RunFastWest[] =
+{
+    ANIMCMD_FRAME(16, 3),
+    ANIMCMD_FRAME(11, 3),
+    ANIMCMD_FRAME(17, 3),
+    ANIMCMD_FRAME(11, 3),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sAnim_RunFastEast[] =
+{
+    ANIMCMD_FRAME(16, 3, .hFlip = TRUE),
+    ANIMCMD_FRAME(11, 3, .hFlip = TRUE),
+    ANIMCMD_FRAME(17, 3, .hFlip = TRUE),
+    ANIMCMD_FRAME(11, 3, .hFlip = TRUE),
+    ANIMCMD_JUMP(0),
+};
+
 static const union AnimCmd sAnim_FieldMove[] =
 {
     ANIMCMD_FRAME(0, 4),
@@ -1009,6 +1047,10 @@ static const union AnimCmd *const sAnimTable_BrendanMayNormal[] = {
     [ANIM_RUN_NORTH] = sAnim_RunNorth,
     [ANIM_RUN_WEST] = sAnim_RunWest,
     [ANIM_RUN_EAST] = sAnim_RunEast,
+    [ANIM_RUN_FAST_SOUTH] = sAnim_RunFastSouth,
+    [ANIM_RUN_FAST_NORTH] = sAnim_RunFastNorth,
+    [ANIM_RUN_FAST_WEST] = sAnim_RunFastWest,
+    [ANIM_RUN_FAST_EAST] = sAnim_RunFastEast,
 };
 
 static const union AnimCmd *const sAnimTable_AcroBike[] = {

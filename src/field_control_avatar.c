@@ -20,6 +20,7 @@
 #include "metatile_behavior.h"
 #include "overworld.h"
 #include "pokemon.h"
+#include "constants/abilities.h"
 #include "safari_zone.h"
 #include "script.h"
 #include "secret_base.h"
@@ -74,6 +75,7 @@ static bool8 TryStartWarpEventScript(struct MapPosition *, u16);
 static bool8 TryStartMiscWalkingScripts(u16);
 static bool8 TryStartStepCountScript(u16);
 static void UpdateFriendshipStepCounter(void);
+static void TryCureStatusWhileWalking(void);
 static bool8 UpdatePoisonStepCounter(void);
 
 static u8 GetDirectionFromBitfield(u8 bitfield)
@@ -624,6 +626,7 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
 
     IncrementRematchStepCounter();
     UpdateFriendshipStepCounter();
+    TryCureStatusWhileWalking();
     UpdateFarawayIslandStepCounter();
 
     if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED_MOVE) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
@@ -698,6 +701,32 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
 static void UNUSED ClearFriendshipStepCounter(void)
 {
     VarSet(VAR_FRIENDSHIP_STEP_COUNTER, 0);
+}
+
+// Natural Cure and Shed Skin cure their own status every 64 steps. Uses the friendship step counter,
+// which UpdateFriendshipStepCounter has just advanced.
+static void TryCureStatusWhileWalking(void)
+{
+    u32 i;
+    u32 status = 0;
+
+    if (*GetVarPointer(VAR_FRIENDSHIP_STEP_COUNTER) % 64 != 0)
+        return;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        u16 ability;
+
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) == SPECIES_NONE
+         || GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG)
+         || GetMonData(&gPlayerParty[i], MON_DATA_HP) == 0
+         || GetMonData(&gPlayerParty[i], MON_DATA_STATUS) == 0)
+            continue;
+
+        ability = GetMonAbility(&gPlayerParty[i]);
+        if (ability == ABILITY_NATURAL_CURE || ability == ABILITY_SHED_SKIN)
+            SetMonData(&gPlayerParty[i], MON_DATA_STATUS, &status);
+    }
 }
 
 static void UpdateFriendshipStepCounter(void)

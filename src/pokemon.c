@@ -3212,6 +3212,30 @@ bool8 DoesScarfMatchMoveContestCategory(u16 item, u16 move)
     return contestMove->contestCategory == category;
 }
 
+// For overworld ability effects that work from anywhere in the party (Swift Swim, Speed Boost)
+bool8 IsAbilityInPlayerParty(u16 ability)
+{
+    u32 i;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) != SPECIES_NONE
+         && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG)
+         && GetMonAbility(&gPlayerParty[i]) == ability)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+// For overworld ability effects that only work from the first party slot (Run Away)
+bool8 IsLeadMonAbility(u16 ability)
+{
+    if (GetMonData(&gPlayerParty[0], MON_DATA_SPECIES) == SPECIES_NONE
+     || GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG))
+        return FALSE;
+    return GetMonAbility(&gPlayerParty[0]) == ability;
+}
+
 s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u32 move, u16 sideStatus, u16 powerOverride, u8 typeOverride, u8 battlerIdAtk, u8 battlerIdDef)
 {
     u32 i;
@@ -3229,6 +3253,10 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         gBattleMovePower = gBattleMoves[move].power;
     else
         gBattleMovePower = powerOverride;
+
+    // Technician checks the move's power before anything else modifies it
+    if (attacker->ability == ABILITY_TECHNICIAN && gBattleMovePower <= 60)
+        gBattleMovePower = (150 * gBattleMovePower) / 100;
 
     if (!typeOverride)
         type = gBattleMoves[move].type;
@@ -3264,8 +3292,10 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         defenderHoldEffectParam = GetItemHoldEffectParam(defender->item);
     }
 
-    if (attacker->ability == ABILITY_HUGE_POWER || attacker->ability == ABILITY_PURE_POWER)
+    if (attacker->ability == ABILITY_HUGE_POWER)
         attack *= 2;
+    if (attacker->ability == ABILITY_PURE_POWER) // Doubles Sp. Atk, unlike Huge Power
+        spAttack *= 2;
 
     if (ShouldGetStatBadgeBoost(FLAG_BADGE01_GET, battlerIdAtk))
         attack = (115 * attack) / 100;
@@ -3443,32 +3473,78 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     // Apply abilities / field sports
     if (defender->ability == ABILITY_THICK_FAT && (type == TYPE_FIRE || type == TYPE_ICE))
         spAttack /= 2;
+    if (defender->ability == ABILITY_MAGMA_ARMOR && (type == TYPE_WATER || type == TYPE_ICE))
+        spAttack /= 2;
+    if (defender->ability == ABILITY_WATER_VEIL && type == TYPE_FIRE)
+        spAttack /= 2;
+    if (defender->ability == ABILITY_IMMUNITY && type == TYPE_POISON)
+        attack /= 2;
+    // Battle Armor takes 20% less from physical moves, Shell Armor 20% less from special ones
+    if (defender->ability == ABILITY_BATTLE_ARMOR)
+        attack = (80 * attack) / 100;
+    if (defender->ability == ABILITY_SHELL_ARMOR)
+        spAttack = (80 * spAttack) / 100;
     if (attacker->ability == ABILITY_HUSTLE)
         attack = (150 * attack) / 100;
     if (attacker->ability == ABILITY_HEARTBROKEN)
         spAttack /= 2;
-    if (attacker->ability == ABILITY_PLUS && ABILITY_ON_FIELD2(ABILITY_MINUS))
-        spAttack = (200 * spAttack) / 100;
-    if (attacker->ability == ABILITY_MINUS && ABILITY_ON_FIELD2(ABILITY_PLUS))
+    // Plus and Minus activate alongside any other Plus or Minus Pokémon (Gen 5+)
+    if ((attacker->ability == ABILITY_PLUS || attacker->ability == ABILITY_MINUS)
+     && (AbilityBattleEffects(ABILITYEFFECT_COUNT_ON_FIELD, battlerIdAtk, ABILITY_PLUS, 0, 0)
+      || AbilityBattleEffects(ABILITYEFFECT_COUNT_ON_FIELD, battlerIdAtk, ABILITY_MINUS, 0, 0)))
         spAttack = (200 * spAttack) / 100;
     if (attacker->ability == ABILITY_GUTS && attacker->status1)
         attack = (150 * attack) / 100;
+    if (attacker->ability == ABILITY_VITAL_SPIRIT && attacker->status1) // Guts, but for Sp. Atk
+        spAttack = (150 * spAttack) / 100;
     if (defender->ability == ABILITY_MARVEL_SCALE && defender->status1)
         defense = (150 * defense) / 100;
+    if (defender->ability == ABILITY_FILTER_SCALE && defender->status1)
+        spDefense = (150 * spDefense) / 100;
     if (WEATHER_HAS_EFFECT2 && attacker->ability == ABILITY_PRISM_SCALE && (gBattleWeather & B_WEATHER_ANY))
         spAttack = (130 * spAttack) / 100;
     if (type == TYPE_ELECTRIC && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, ABILITYEFFECT_MUD_SPORT, 0))
         gBattleMovePower /= 2;
     if (type == TYPE_FIRE && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, ABILITYEFFECT_WATER_SPORT, 0))
         gBattleMovePower /= 2;
-    if (type == TYPE_GRASS && attacker->ability == ABILITY_OVERGROW && attacker->hp <= (attacker->maxHP / 3))
+    if (type == TYPE_GRASS && attacker->ability == ABILITY_OVERGROW && attacker->hp <= (attacker->maxHP / 2))
         gBattleMovePower = (150 * gBattleMovePower) / 100;
-    if (type == TYPE_FIRE && attacker->ability == ABILITY_BLAZE && attacker->hp <= (attacker->maxHP / 3))
+    if (type == TYPE_FIRE && attacker->ability == ABILITY_BLAZE && attacker->hp <= (attacker->maxHP / 2))
         gBattleMovePower = (150 * gBattleMovePower) / 100;
-    if (type == TYPE_WATER && attacker->ability == ABILITY_TORRENT && attacker->hp <= (attacker->maxHP / 3))
+    if (type == TYPE_WATER && attacker->ability == ABILITY_TORRENT && attacker->hp <= (attacker->maxHP / 2))
         gBattleMovePower = (150 * gBattleMovePower) / 100;
-    if (type == TYPE_BUG && attacker->ability == ABILITY_SWARM && attacker->hp <= (attacker->maxHP / 3))
+    if (type == TYPE_BUG && attacker->ability == ABILITY_SWARM && attacker->hp <= (attacker->maxHP / 2))
         gBattleMovePower = (150 * gBattleMovePower) / 100;
+    if (type == TYPE_FIRE && defender->ability == ABILITY_DRY_SKIN)
+        gBattleMovePower = (125 * gBattleMovePower) / 100;
+    // A Damp Pokémon on the field halves the power of every Fire move, like a permanent Water Sport
+    if (type == TYPE_FIRE)
+    {
+        for (i = 0; i < gBattlersCount; i++)
+        {
+            if (gBattleMons[i].ability == ABILITY_DAMP && gBattleMons[i].hp != 0)
+            {
+                gBattleMovePower /= 2;
+                break;
+            }
+        }
+    }
+    // An Air Lock Pokémon on the field halves the power of every Electric move, like a permanent Mud Sport
+    if (type == TYPE_ELECTRIC)
+    {
+        for (i = 0; i < gBattlersCount; i++)
+        {
+            if (gBattleMons[i].ability == ABILITY_AIR_LOCK && gBattleMons[i].hp != 0)
+            {
+                gBattleMovePower /= 2;
+                break;
+            }
+        }
+    }
+    // Rock Head powers up the moves it ignores the recoil of
+    if (attacker->ability == ABILITY_ROCK_HEAD && move != MOVE_STRUGGLE
+     && (gBattleMoves[move].effect == EFFECT_RECOIL || gBattleMoves[move].effect == EFFECT_DOUBLE_EDGE))
+        gBattleMovePower = (120 * gBattleMovePower) / 100;
 
         // Are effects of weather negated with cloud nine or air lock
     if (WEATHER_HAS_EFFECT2)
@@ -3547,7 +3623,8 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         damage /= 50;
 
         // Burn cuts attack in half
-        if ((attacker->status1 & STATUS1_BURN) && attacker->ability != ABILITY_GUTS && attacker->ability != ABILITY_HYPER_CUTTER)
+        if ((attacker->status1 & STATUS1_BURN) && attacker->ability != ABILITY_GUTS && attacker->ability != ABILITY_HYPER_CUTTER
+         && attacker->ability != ABILITY_SCRAPPY && attacker->ability != ABILITY_TINTED_LENS)
             damage /= 2;
 
         // Ignite doubles attack
@@ -3594,6 +3671,12 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         // Ignite doubles special attack, too
         if (attacker->status1 & STATUS1_IGNITE)
             damage *= 2;
+
+        // Regular poison (not Toxic) halves special damage, like burn does for physical
+        if ((attacker->status1 & STATUS1_POISON)
+         && attacker->ability != ABILITY_VITAL_SPIRIT && attacker->ability != ABILITY_CACOPHONY
+         && attacker->ability != ABILITY_TINTED_LENS && attacker->ability != ABILITY_POISON_HEAL)
+            damage /= 2;
 
         if (gCritMultiplier == 2)
         {

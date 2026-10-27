@@ -665,8 +665,8 @@ static void PlayerNotOnBikeMoving(u8 direction, u16 heldKeys)
 
     if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
     {
-        // same speed as running
-        if (heldKeys & B_BUTTON)
+        // same speed as running. Holding B surfs faster, if a party member has Swift Swim
+        if ((heldKeys & B_BUTTON) && IsAbilityInPlayerParty(ABILITY_SWIFT_SWIM))
             PlayerWalkFaster(direction);
         else
             PlayerWalkFast(direction);

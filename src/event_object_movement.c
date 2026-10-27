@@ -1,5 +1,7 @@
 #include "global.h"
 #include "malloc.h"
+#include "pokemon.h"
+#include "constants/abilities.h"
 #include "battle_pyramid.h"
 #include "berry.h"
 #include "decoration.h"
@@ -5122,8 +5124,17 @@ static void InitMovementNormal(struct ObjectEvent *objectEvent, struct Sprite *s
 
 static void StartRunningAnim(struct ObjectEvent *objectEvent, struct Sprite *sprite, u8 direction)
 {
-    InitNpcForMovement(objectEvent, sprite, direction, MOVE_SPEED_FAST_1);
-    SetStepAnimHandleAlternation(objectEvent, sprite, GetRunningDirectionAnimNum(objectEvent->facingDirection));
+    // Speed Boost anywhere in the party, or Run Away on the lead Pokémon, makes the player (and follower) run faster, with a run anim timed to match
+    if ((IsAbilityInPlayerParty(ABILITY_SPEED_BOOST) || IsLeadMonAbility(ABILITY_RUN_AWAY)))
+    {
+        InitNpcForMovement(objectEvent, sprite, direction, MOVE_SPEED_FAST_2);
+        SetStepAnimHandleAlternation(objectEvent, sprite, GetRunningDirectionAnimNum(objectEvent->facingDirection) + (ANIM_RUN_FAST_SOUTH - ANIM_RUN_SOUTH));
+    }
+    else
+    {
+        InitNpcForMovement(objectEvent, sprite, direction, MOVE_SPEED_FAST_1);
+        SetStepAnimHandleAlternation(objectEvent, sprite, GetRunningDirectionAnimNum(objectEvent->facingDirection));
+    }
 }
 
 static bool8 UpdateMovementNormal(struct ObjectEvent *objectEvent, struct Sprite *sprite)

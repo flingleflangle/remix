@@ -433,8 +433,17 @@
 #define STRINGID_PKMNEVOLUTIONCUREDSTATUS   433
 #define STRINGID_FOLLOWERHELPCATCHLINE      434
 #define STRINGID_FOLLOWERTRYTOCATCH         435
+#define STRINGID_PKMNFELLFORFEINT           436
+#define STRINGID_PKMNVANISHEDINSTANTLY      437
+#define STRINGID_PKMNANGERPOINTMAXEDATK     438
+#define STRINGID_PKMNABILITYRAISEDSTAT      439
+#define STRINGID_PKMNPICKEDUPITEM           440
+#define STRINGID_PKMNCUTSACCURACYWITH       441
+#define STRINGID_LIQUIDOOZESLOWED           442
+#define STRINGID_STICKYHOLDTRAPPED          443
+#define STRINGID_FORECASTCLEAREDSKIES       444
 
-#define BATTLESTRINGS_COUNT                 436
+#define BATTLESTRINGS_COUNT                 445
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,
@@ -488,6 +497,7 @@
 #define B_MSG_TURN1_DIG         5
 #define B_MSG_TURN1_DIVE        6
 #define B_MSG_TURN1_BOUNCE      7
+#define B_MSG_TURN1_SHADOW_FORCE 8
 
 // gMoveWeatherChangeStringIds
 #define B_MSG_STARTED_RAIN      0

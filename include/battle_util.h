@@ -78,6 +78,7 @@ void BattleScriptPop(void);
 u8 TrySetCantSelectMoveBattleScript(void);
 bool32 IsBattlerInBlackHole(u8 battler);
 bool32 IsMoveBlockedByBlackHole(u8 battler, u16 move);
+s8 GetBattlerMovePriority(u8 battler, u16 move);
 u8 CheckMoveLimitations(u8 battler, u8 unusableMoves, u8 check);
 bool8 AreAllMovesUnusable(void);
 u8 GetImprisonedMovesCount(u8 battler, u16 move);

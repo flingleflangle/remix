@@ -10,6 +10,8 @@ static void AnimUnusedHumanoidFoot(struct Sprite *);
 static void AnimSlideHandOrFootToTarget(struct Sprite *);
 static void AnimJumpKick(struct Sprite *);
 static void AnimBasicFistOrFoot(struct Sprite *);
+static void AnimFeintSwipe(struct Sprite *);
+static void AnimFeintZoom(struct Sprite *);
 static void AnimFistOrFootRandomPos(struct Sprite *);
 static void AnimFistOrFootRandomPos_Step(struct Sprite *);
 static void AnimCrossChopHand(struct Sprite *);
@@ -88,6 +90,42 @@ static const union AnimCmd *const sAnims_HandsAndFeet[] =
     sAnim_FootTall,
     sAnim_HandLeft,
     sAnim_HandRight,
+};
+
+static const union AffineAnimCmd sAffineAnim_FeintZoom[] =
+{
+    AFFINEANIMCMD_FRAME(0x200, 0x200, 0, 0),
+    AFFINEANIMCMD_FRAME(-30, -30, 0, 10),
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAffineAnims_FeintZoom[] =
+{
+    sAffineAnim_FeintZoom,
+};
+
+// Feint: a fist that swipes past the target and back. arg 0: x offset, arg 1: y offset, arg 2: duration of each pass
+const struct SpriteTemplate gFeintSwipeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HANDS_AND_FEET,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_HandsAndFeet,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimFeintSwipe,
+};
+
+// Feint: the fist zooming in on the target. args 0, 1: x/y offset
+const struct SpriteTemplate gFeintZoomSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HANDS_AND_FEET,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = sAnims_HandsAndFeet,
+    .images = NULL,
+    .affineAnims = sAffineAnims_FeintZoom,
+    .callback = AnimFeintZoom,
 };
 
 // Assurance's palm strike
@@ -484,6 +522,54 @@ static void AnimBasicFistOrFoot(struct Sprite *sprite)
     sprite->data[0] = gBattleAnimArgs[2];
     sprite->callback = WaitAnimForDuration;
     StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+static void AnimFeintSwipe_Step(struct Sprite *sprite)
+{
+    switch (sprite->data[5])
+    {
+    case 0:
+        if (AnimTranslateLinear(sprite))
+        {
+            sprite->x2 = 0;
+            sprite->x += 64;
+            sprite->data[5]++;
+            sprite->data[0] = sprite->data[6];
+            sprite->data[1] = sprite->x;
+            sprite->data[2] = sprite->x - 64;
+            sprite->data[3] = sprite->y;
+            sprite->data[4] = sprite->y;
+            InitAnimLinearTranslation(sprite);
+        }
+        break;
+    case 1:
+        if (AnimTranslateLinear(sprite))
+            DestroyAnimSprite(sprite);
+        break;
+    }
+}
+
+static void AnimFeintSwipe(struct Sprite *sprite)
+{
+    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
+        gBattleAnimArgs[0] = -gBattleAnimArgs[0];
+    InitSpritePosToAnimTarget(sprite, TRUE);
+    sprite->data[0] = gBattleAnimArgs[2];
+    sprite->data[6] = gBattleAnimArgs[2];
+    sprite->data[1] = sprite->x;
+    sprite->data[2] = sprite->x + 64;
+    sprite->data[3] = sprite->y;
+    sprite->data[4] = sprite->y;
+    sprite->data[5] = 0;
+    InitAnimLinearTranslation(sprite);
+    sprite->callback = AnimFeintSwipe_Step;
+}
+
+static void AnimFeintZoom(struct Sprite *sprite)
+{
+    InitSpritePosToAnimTarget(sprite, TRUE);
+    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+    sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
 }
 
 static void AnimFistOrFootRandomPos(struct Sprite *sprite)

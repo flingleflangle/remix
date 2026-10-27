@@ -22,9 +22,11 @@
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
 #include "constants/songs.h"
+#include "pokemon.h"
 #include "constants/map_types.h"
 #include "constants/field_effects.h"
 #include "constants/metatile_behaviors.h"
+#include "constants/abilities.h"
 /*
     -FollowMe_StairsMoveHook ?
     -FollowMe_WarpStairsEndHook ?
@@ -472,6 +474,9 @@ static u8 DetermineFollowerState(struct ObjectEvent* follower, u8 state, u8 dire
         //Running frames
         if (gSaveBlock2Ptr->follower.flags & FOLLOWER_FLAG_HAS_RUNNING_FRAMES)
             RETURN_STATE(MOVEMENT_ACTION_PLAYER_RUN_DOWN, direction);
+        // Without running frames, walk at the player's running pace (faster with Speed Boost or Run Away)
+        if ((IsAbilityInPlayerParty(ABILITY_SPEED_BOOST) || IsLeadMonAbility(ABILITY_RUN_AWAY)))
+            RETURN_STATE(MOVEMENT_ACTION_RIDE_WATER_CURRENT_DOWN, direction);
 
         RETURN_STATE(MOVEMENT_ACTION_WALK_FAST_DOWN, direction);
     case MOVEMENT_ACTION_JUMP_SPECIAL_DOWN ... MOVEMENT_ACTION_JUMP_SPECIAL_RIGHT:

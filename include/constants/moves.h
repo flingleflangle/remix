@@ -436,9 +436,13 @@
 #define MOVE_DISCHARGE 432
 #define MOVE_ASSURANCE 433
 #define MOVE_CAPTIVATE 434
+#define MOVE_FEINT 435
+#define MOVE_SHADOW_FORCE 436
+#define MOVE_HEART_SWAP 437
+#define MOVE_NATURAL_GIFT 438
 
 
-#define MOVES_COUNT 435
+#define MOVES_COUNT 439
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

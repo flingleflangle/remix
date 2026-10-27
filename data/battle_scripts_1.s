@@ -275,6 +275,7 @@ gBattleScriptsForMoveEffects::
 	
 
 BattleScript_EffectHit::
+	jumpifmove MOVE_FEINT, BattleScript_Feint
 	jumpifnotmove MOVE_SURF, BattleScript_HitFromAtkCanceler
 	jumpifnostatus3 BS_TARGET, STATUS3_UNDERWATER, BattleScript_HitFromAtkCanceler
 	orword gHitMarker, HITMARKER_IGNORE_UNDERWATER
@@ -574,6 +575,7 @@ BattleScript_SpreadMoveAbsorbed::
 	pause B_WAIT_TIME_SHORT
 	jumpifbyte CMP_EQUAL, gBattleCommunication, 2, BattleScript_SpreadMoveAbsorbedFullHP
 	jumpifbyte CMP_EQUAL, gBattleCommunication, 3, BattleScript_SpreadMoveAbsorbedFlashFire
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 4, BattleScript_SpreadMoveAbsorbedSpAtk
 	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
 	healthbarupdate BS_TARGET
 	datahpupdate BS_TARGET
@@ -587,6 +589,11 @@ BattleScript_SpreadMoveAbsorbedFullHP:
 	return
 BattleScript_SpreadMoveAbsorbedFlashFire:
 	printfromtable gFlashFireStringIds
+	waitmessage B_WAIT_TIME_LONG
+	return
+BattleScript_SpreadMoveAbsorbedSpAtk:
+	playanimation BS_SCRIPTING, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printstring STRINGID_PKMNABILITYRAISEDSTAT
 	waitmessage B_WAIT_TIME_LONG
 	return
 
@@ -1272,6 +1279,7 @@ BattleScript_MoveMissedDoDamage::
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	jumpifbyte CMP_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_DOESNT_AFFECT_FOE, BattleScript_MoveEnd
+	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_MoveEnd
 	printstring STRINGID_PKMNCRASHED
 	waitmessage B_WAIT_TIME_LONG
 	damagecalc
@@ -3454,6 +3462,7 @@ BattleScript_EffectMoonlight::
 	goto BattleScript_PresentHealTarget
 
 BattleScript_EffectHiddenPower::
+	jumpifmove MOVE_NATURAL_GIFT, BattleScript_NaturalGift
 	hiddenpowercalc
 	goto BattleScript_EffectHit
 
@@ -3696,6 +3705,7 @@ BattleScript_EffectHotwire::
 	goto BattleScript_MoveEnd
 
 BattleScript_EffectPsychUp::
+	jumpifmove MOVE_HEART_SWAP, BattleScript_HeartSwap
 	attackcanceler
 	attackstring
 	ppreduce
@@ -3789,6 +3799,44 @@ BattleScript_DischargeMissed::
 	moveendto MOVEEND_NEXT_TARGET
 	jumpifnexttargetvalid BattleScript_DischargeLoop
 	end
+
+@ Feint hits through Protect and Detect, and lifts them
+BattleScript_Feint::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+@ Shadow Force's second turn comes here too
+BattleScript_TryFeintThenHit::
+	various BS_TARGET, VARIOUS_FEINT_BREAK_PROTECT
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_HitFromAtkString
+	attackstring
+	ppreduce
+	printstring STRINGID_PKMNFELLFORFEINT
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_HitFromCritCalc
+
+@ Heart Swap swaps all stat changes with the target, like EX Skill Swap's EX_BONUS_SWAP_STATS
+BattleScript_HeartSwap::
+	attackcanceler
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	various BS_ATTACKER, VARIOUS_EX_SWAP_STATS
+	printstring STRINGID_EXSWAPPEDSTATS
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
+@ Natural Gift takes its type and power from the user's Berry, and uses it up. It fails without one
+BattleScript_NaturalGift::
+	attackcanceler
+	various BS_ATTACKER, VARIOUS_NATURAL_GIFT
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, FALSE, BattleScript_NaturalGiftFailed
+	removeitem BS_ATTACKER
+	goto BattleScript_HitFromAccCheck
+BattleScript_NaturalGiftFailed:
+	attackstring
+	ppreduce
+	goto BattleScript_ButItFailed
 
 BattleScript_EffectEarthquake::
 	attackcanceler
@@ -3937,11 +3985,16 @@ BattleScript_EffectSemiInvulnerable::
 	jumpifmove MOVE_DIVE, BattleScript_FirstTurnDive
 	jumpifmove MOVE_BOUNCE, BattleScript_FirstTurnBounce
 	jumpifmove MOVE_STAR_BARRAGE, BattleScript_FirstTurnFly
+	jumpifmove MOVE_SHADOW_FORCE, BattleScript_FirstTurnShadowForce
 	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_DIG
 	goto BattleScript_FirstTurnSemiInvulnerable
 
 BattleScript_FirstTurnBounce::
 	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_BOUNCE
+	goto BattleScript_FirstTurnSemiInvulnerable
+
+BattleScript_FirstTurnShadowForce::
+	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_SHADOW_FORCE
 	goto BattleScript_FirstTurnSemiInvulnerable
 
 BattleScript_FirstTurnDive::
@@ -3967,6 +4020,7 @@ BattleScript_SemiInvulnerableTryHit::
 	accuracycheck BattleScript_SemiInvulnerableMiss, ACC_CURR_MOVE
 	clearsemiinvulnerablebit
 	jumpifmove MOVE_STAR_BARRAGE, StarBarrageTurn2
+	jumpifmove MOVE_SHADOW_FORCE, BattleScript_TryFeintThenHit
 	goto BattleScript_HitFromAtkString
 
 BattleScript_SemiInvulnerableMiss::
@@ -4370,6 +4424,7 @@ BattleScript_EffectTaunt::
 	attackstring
 	ppreduce
 	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
+	jumpifability BS_TARGET, ABILITY_OBLIVIOUS, BattleScript_NotAffected @ Gen 6+
 	settaunt BattleScript_ButItFailed
 	attackanimation
 	waitanimation
@@ -4516,7 +4571,6 @@ BattleScript_EffectYawn::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifability BS_TARGET, ABILITY_VITAL_SPIRIT, BattleScript_PrintBankAbilityMadeIneffective
 	jumpifability BS_TARGET, ABILITY_INSOMNIA, BattleScript_PrintBankAbilityMadeIneffective
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_ButItFailed
 	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_SafeguardProtected
@@ -6095,11 +6149,18 @@ BattleScript_BurnTurnDmg::
 	goto BattleScript_DoStatusTurnDmg
 
 BattleScript_IgniteTurnDmg::
+	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_IgniteTurnMagicGuard
 	printstring STRINGID_PKMNONFIRE
 	waitmessage B_WAIT_TIME_LONG
 	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
 	seteffectprimary
 	goto BattleScript_DoStatusTurnDmg
+
+@ Magic Guard takes no Ignite damage, but is still trapped
+BattleScript_IgniteTurnMagicGuard::
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffectprimary
+	end2
 
 BattleScript_MoveUsedIsFrozen::
 	printstring STRINGID_PKMNISFROZEN
@@ -6318,6 +6379,7 @@ BattleScript_MoveEffectConfusion::
 	return
 
 BattleScript_MoveEffectRecoil::
+	jumpifability BS_ATTACKER, ABILITY_MAGIC_GUARD, BattleScript_RecoilEnd
 	jumpifmove MOVE_STRUGGLE, BattleScript_DoRecoil
 	jumpifability BS_ATTACKER, ABILITY_ROCK_HEAD, BattleScript_RecoilEnd
 BattleScript_DoRecoil::
@@ -6369,11 +6431,60 @@ BattleScript_RainDishActivates::
 	datahpupdate BS_ATTACKER
 	end3
 
+@ Run from the end-of-turn poison step instead of the poison damage
+BattleScript_AngerPointRaises::
+	playanimation BS_SCRIPTING, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printstring STRINGID_PKMNABILITYRAISEDSTAT
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_PoisonHealActivates::
+	printstring STRINGID_PKMNSXRESTOREDHPALITTLE2
+	waitmessage B_WAIT_TIME_LONG
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	end2
+
+@ gBattleTextBuff1 holds the ability name: "X is hurt by DRY SKIN!"
+BattleScript_DrySkinSunDmg::
+	printstring STRINGID_PKMNHURTBY
+	waitmessage B_WAIT_TIME_LONG
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_PASSIVE_HP_UPDATE
+	healthbarupdate BS_ATTACKER
+	datahpupdate BS_ATTACKER
+	tryfaintmon BS_ATTACKER
+	end3
+
+BattleScript_PickupActivates::
+	printstring STRINGID_PKMNPICKEDUPITEM
+	waitmessage B_WAIT_TIME_LONG
+	end3
+
+BattleScript_DownloadActivates::
+	playanimation BS_SCRIPTING, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printstring STRINGID_PKMNABILITYRAISEDSTAT
+	waitmessage B_WAIT_TIME_LONG
+	end3
+
+BattleScript_AngerPointActivates::
+	playanimation BS_SCRIPTING, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printstring STRINGID_PKMNANGERPOINTMAXEDATK
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_SandstreamActivates::
 	pause B_WAIT_TIME_SHORT
 	printstring STRINGID_PKMNSXWHIPPEDUPSANDSTORM
 	waitstate
 	playanimation BS_BATTLER_0, B_ANIM_SANDSTORM_CONTINUES
+	call BattleScript_WeatherFormChanges
+	end3
+
+BattleScript_ForecastClearsSkies::
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_FORECASTCLEAREDSKIES
+	waitmessage B_WAIT_TIME_LONG
 	call BattleScript_WeatherFormChanges
 	end3
 
@@ -6425,6 +6536,11 @@ BattleScript_IntimidateActivatesLoop:
 	jumpifability BS_TARGET, ABILITY_CLEAR_BODY, BattleScript_IntimidatePrevented
 	jumpifability BS_TARGET, ABILITY_HYPER_CUTTER, BattleScript_IntimidatePrevented
 	jumpifability BS_TARGET, ABILITY_WHITE_SMOKE, BattleScript_IntimidatePrevented
+	@ Gen 8+ Intimidate immunities
+	jumpifability BS_TARGET, ABILITY_OBLIVIOUS, BattleScript_IntimidatePrevented
+	jumpifability BS_TARGET, ABILITY_OWN_TEMPO, BattleScript_IntimidatePrevented
+	jumpifability BS_TARGET, ABILITY_INNER_FOCUS, BattleScript_IntimidatePrevented
+	jumpifability BS_TARGET, ABILITY_SCRAPPY, BattleScript_IntimidatePrevented
 	statbuffchange STAT_CHANGE_NOT_PROTECT_AFFECTED | STAT_CHANGE_ALLOW_PTR, BattleScript_IntimidateActivatesLoopIncrement
 	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, 1, BattleScript_IntimidateActivatesLoopIncrement
 	setgraphicalstatchangevalues
@@ -6441,6 +6557,39 @@ BattleScript_IntimidatePrevented:
 	printstring STRINGID_PREVENTEDFROMWORKING
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_IntimidateActivatesLoopIncrement
+
+@ Illuminate works like Intimidate, but lowers each foe's accuracy
+BattleScript_IlluminateActivatesEnd3::
+	call BattleScript_PauseIlluminateActivates
+	end3
+
+BattleScript_PauseIlluminateActivates:
+	pause B_WAIT_TIME_SHORT
+BattleScript_IlluminateActivates::
+	setbyte gBattlerTarget, 0
+	setstatchanger STAT_ACC, 1, TRUE
+BattleScript_IlluminateActivatesLoop:
+	trygetintimidatetarget BattleScript_IlluminateActivatesReturn
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_IlluminateActivatesLoopIncrement
+	jumpifability BS_TARGET, ABILITY_CLEAR_BODY, BattleScript_IlluminatePrevented
+	jumpifability BS_TARGET, ABILITY_WHITE_SMOKE, BattleScript_IlluminatePrevented
+	jumpifability BS_TARGET, ABILITY_KEEN_EYE, BattleScript_IlluminatePrevented
+	statbuffchange STAT_CHANGE_NOT_PROTECT_AFFECTED | STAT_CHANGE_ALLOW_PTR, BattleScript_IlluminateActivatesLoopIncrement
+	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, 1, BattleScript_IlluminateActivatesLoopIncrement
+	setgraphicalstatchangevalues
+	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printstring STRINGID_PKMNCUTSACCURACYWITH
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_IlluminateActivatesLoopIncrement:
+	addbyte gBattlerTarget, 1
+	goto BattleScript_IlluminateActivatesLoop
+BattleScript_IlluminateActivatesReturn:
+	return
+BattleScript_IlluminatePrevented:
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_PREVENTEDFROMWORKING
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_IlluminateActivatesLoopIncrement
 
 @ First Sight works like Intimidate: on switch-in, each foe of the opposite gender falls in love
 @ with the ability's holder. Oblivious and Heartbroken prevent it.
@@ -6558,6 +6707,17 @@ BattleScript_MonMadeMoveUseless::
 	orbyte gMoveResultFlags, MOVE_RESULT_DOESNT_AFFECT_FOE
 	goto BattleScript_MoveEnd
 
+BattleScript_AbilityAbsorbRaisesSpAtk_PPLoss::
+	ppreduce
+BattleScript_AbilityAbsorbRaisesSpAtk::
+	attackstring
+	pause B_WAIT_TIME_SHORT
+	playanimation BS_SCRIPTING, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printstring STRINGID_PKMNABILITYRAISEDSTAT
+	waitmessage B_WAIT_TIME_LONG
+	orbyte gMoveResultFlags, MOVE_RESULT_DOESNT_AFFECT_FOE
+	goto BattleScript_MoveEnd
+
 BattleScript_FlashFireBoost_PPLoss::
 	ppreduce
 BattleScript_FlashFireBoost::
@@ -6659,6 +6819,23 @@ BattleScript_CuteCharmActivates::
 BattleScript_NorthStarActivates::
 	printstring STRINGID_NORTHSTARPERISH
 	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_StickyHoldTraps::
+	printstring STRINGID_STICKYHOLDTRAPPED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+@ Liquid Ooze lowers the Speed of a Pokémon that touches it
+BattleScript_LiquidOozeSlows::
+	setstatchanger STAT_SPEED, 1, TRUE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_NOT_PROTECT_AFFECTED | STAT_CHANGE_ALLOW_PTR, BattleScript_LiquidOozeSlowsEnd
+	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, 1, BattleScript_LiquidOozeSlowsEnd
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printstring STRINGID_LIQUIDOOZESLOWED
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_LiquidOozeSlowsEnd:
 	return
 
 BattleScript_ApplySecondaryEffect::

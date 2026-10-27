@@ -53,11 +53,7 @@ static bool8 IsWildLevelAllowedByRepel(u8 level);
 static void ApplyFluteEncounterRateMod(u32 *encRate);
 static void ApplyCleanseTagEncounterRateMod(u32 *encRate);
 static void ApplySafariBallEncounterRateMod(u32 *encRate);
-#ifdef BUGFIX
-static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon *wildMon, u8 type, u8 ability, u8 *monIndex, u32 size);
-#else
-static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon *wildMon, u8 type, u8 ability, u8 *monIndex);
-#endif
+static bool8 TryGetTypeBiasedWildMonIndex(const struct WildPokemon *wildMon, u8 *monIndex, u32 size);
 static bool8 IsAbilityAllowingEncounter(u8 level);
 
 EWRAM_DATA static u8 sWildEncountersDisabled = 0;
@@ -374,8 +370,7 @@ static u8 PickWildMonNature(void)
     }
     // check synchronize for a Pokémon with the same ability
     if (!GetMonData(&gPlayerParty[0], MON_DATA_SANITY_IS_EGG)
-        && GetMonAbility(&gPlayerParty[0]) == ABILITY_SYNCHRONIZE
-        && Random() % 2 == 0)
+        && GetMonAbility(&gPlayerParty[0]) == ABILITY_SYNCHRONIZE) // Always works (Gen 8+)
     {
         return GetMonData(&gPlayerParty[0], MON_DATA_PERSONALITY) % NUM_NATURES;
     }
@@ -421,11 +416,6 @@ static void CreateWildMon(u16 species, u8 level)
 
     CreateMonWithNature(&gEnemyParty[0], species, level, USE_RANDOM_IVS, PickWildMonNature());
 }
-#ifdef BUGFIX
-#define TRY_GET_ABILITY_INFLUENCED_WILD_MON_INDEX(wildPokemon, type, ability, ptr, count) TryGetAbilityInfluencedWildMonIndex(wildPokemon, type, ability, ptr, count)
-#else
-#define TRY_GET_ABILITY_INFLUENCED_WILD_MON_INDEX(wildPokemon, type, ability, ptr, count) TryGetAbilityInfluencedWildMonIndex(wildPokemon, type, ability, ptr)
-#endif
 
 static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, u8 area, u8 flags)
 {
@@ -435,15 +425,13 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, u8 ar
     switch (area)
     {
     case WILD_AREA_LAND:
-        if (TRY_GET_ABILITY_INFLUENCED_WILD_MON_INDEX(wildMonInfo->wildPokemon, TYPE_STEEL, ABILITY_MAGNET_PULL, &wildMonIndex, LAND_WILD_COUNT))
-            break;
-        if (TRY_GET_ABILITY_INFLUENCED_WILD_MON_INDEX(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_STATIC, &wildMonIndex, LAND_WILD_COUNT))
+        if (TryGetTypeBiasedWildMonIndex(wildMonInfo->wildPokemon, &wildMonIndex, LAND_WILD_COUNT))
             break;
 
         wildMonIndex = ChooseWildMonIndex_Land();
         break;
     case WILD_AREA_WATER:
-        if (TRY_GET_ABILITY_INFLUENCED_WILD_MON_INDEX(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_STATIC, &wildMonIndex, WATER_WILD_COUNT))
+        if (TryGetTypeBiasedWildMonIndex(wildMonInfo->wildPokemon, &wildMonIndex, WATER_WILD_COUNT))
             break;
 
         wildMonIndex = ChooseWildMonIndex_WaterRock();
@@ -643,6 +631,10 @@ static bool8 WildEncounterCheck(u32 encounterRate, bool8 ignoreAbility)
             encounterRate *= 2;
         else if (ability == ABILITY_SAND_VEIL && gSaveBlock1Ptr->weather == WEATHER_SANDSTORM)
             encounterRate /= 2;
+        else if (ability == ABILITY_SNOW_CLOAK && gSaveBlock1Ptr->weather == WEATHER_SNOW)
+            encounterRate /= 2;
+        else if (ability == ABILITY_NO_GUARD)
+            encounterRate = encounterRate * 3 / 2;
     }
     if (encounterRate > MAX_ENCOUNTER_RATE)
         encounterRate = MAX_ENCOUNTER_RATE;
@@ -1052,7 +1044,7 @@ static bool8 IsAbilityAllowingEncounter(u8 level)
     return TRUE;
 }
 
-static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon *wildMon, u8 type, u8 numMon, u8 *monIndex)
+static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon *wildMon, u8 type, u8 type2, u8 numMon, u8 *monIndex)
 {
     u8 validIndexes[numMon]; // variable length array, an interesting feature
     u8 i, validMonCount;
@@ -1062,7 +1054,8 @@ static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon *wildMon, u
 
     for (validMonCount = 0, i = 0; i < numMon; i++)
     {
-        if (gSpeciesInfo[wildMon[i].species].types[0] == type || gSpeciesInfo[wildMon[i].species].types[1] == type)
+        if (gSpeciesInfo[wildMon[i].species].types[0] == type || gSpeciesInfo[wildMon[i].species].types[1] == type
+         || gSpeciesInfo[wildMon[i].species].types[0] == type2 || gSpeciesInfo[wildMon[i].species].types[1] == type2)
             validIndexes[validMonCount++] = i;
     }
 
@@ -1072,24 +1065,50 @@ static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon *wildMon, u
     *monIndex = validIndexes[Random() % validMonCount];
     return TRUE;
 }
-#ifdef BUGFIX
-static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon *wildMon, u8 type, u8 ability, u8 *monIndex, u32 size)
-#else
-static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon *wildMon, u8 type, u8 ability, u8 *monIndex)
-#endif
+// A lead Pokémon with one of these abilities makes wild Pokémon of the matching type(s) appear more often (half
+// the time, if the area has any). Vanilla only had Magnet Pull and Static.
+static const u8 sTypeBiasAbilities[][3] =
 {
+    {ABILITY_MAGNET_PULL,   TYPE_STEEL,    TYPE_STEEL},
+    {ABILITY_STATIC,        TYPE_ELECTRIC, TYPE_ELECTRIC},
+    {ABILITY_LIGHTNING_ROD, TYPE_ELECTRIC, TYPE_ELECTRIC},
+    {ABILITY_FLASH_FIRE,    TYPE_FIRE,     TYPE_FIRE},
+    {ABILITY_BLAZE,         TYPE_FIRE,     TYPE_FIRE},
+    {ABILITY_DROUGHT,       TYPE_FIRE,     TYPE_FIRE},
+    {ABILITY_STORM_DRAIN,   TYPE_WATER,    TYPE_WATER},
+    {ABILITY_TORRENT,       TYPE_WATER,    TYPE_WATER},
+    {ABILITY_WATER_VEIL,    TYPE_WATER,    TYPE_WATER},
+    {ABILITY_OVERGROW,      TYPE_GRASS,    TYPE_GRASS},
+    {ABILITY_CHLOROPHYLL,   TYPE_GRASS,    TYPE_GRASS},
+    {ABILITY_SWARM,         TYPE_BUG,      TYPE_BUG},
+    {ABILITY_LIQUID_OOZE,   TYPE_POISON,   TYPE_POISON},
+    {ABILITY_SAND_STREAM,   TYPE_ROCK,     TYPE_GROUND},
+    {ABILITY_SNOW_WARNING,  TYPE_ICE,      TYPE_ICE},
+    {ABILITY_GUTS,          TYPE_FIGHTING, TYPE_FIGHTING},
+    {ABILITY_EARLY_BIRD,    TYPE_FLYING,   TYPE_FLYING},
+};
+
+// size is the number of slots in the encounter table (the vanilla version always read LAND_WILD_COUNT slots,
+// even for the smaller water table)
+static bool8 TryGetTypeBiasedWildMonIndex(const struct WildPokemon *wildMon, u8 *monIndex, u32 size)
+{
+    u32 i;
+    u16 ability;
+
     if (GetMonData(&gPlayerParty[0], MON_DATA_SANITY_IS_EGG))
         return FALSE;
-    else if (GetMonAbility(&gPlayerParty[0]) != ability)
-        return FALSE;
-    else if (Random() % 2 != 0)
-        return FALSE;
 
-#ifdef BUGFIX
-    return TryGetRandomWildMonIndexByType(wildMon, type, size, monIndex);
-#else
-    return TryGetRandomWildMonIndexByType(wildMon, type, LAND_WILD_COUNT, monIndex);
-#endif
+    ability = GetMonAbility(&gPlayerParty[0]);
+    for (i = 0; i < ARRAY_COUNT(sTypeBiasAbilities); i++)
+    {
+        if (sTypeBiasAbilities[i][0] == ability)
+        {
+            if (Random() % 2 != 0)
+                return FALSE;
+            return TryGetRandomWildMonIndexByType(wildMon, sTypeBiasAbilities[i][1], sTypeBiasAbilities[i][2], size, monIndex);
+        }
+    }
+    return FALSE;
 }
 
 static void ApplyFluteEncounterRateMod(u32 *encRate)

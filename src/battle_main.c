@@ -4234,6 +4234,7 @@ void BattleTurnPassed(void)
         if (DoBattlerEndTurnEffects())
             return;
     }
+    gBattleStruct->itemsConsumedThisTurn = 0; // Pickup only finds items used up this turn
     if (HandleFaintedMonActions())
         return;
     gBattleStruct->faintedActionsState = 0;
@@ -4595,19 +4596,22 @@ static void HandleTurnActionSelectionState(void)
                     break;
                 case B_ACTION_SWITCH:
                     *(gBattleStruct->battlerPartyIndexes + gActiveBattler) = gBattlerPartyIndexes[gActiveBattler];
-                    if (gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)
+                    // Run Away can always switch out, unless it rooted itself with Ingrain
+                    if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)
+                         && gBattleMons[gActiveBattler].ability != ABILITY_RUN_AWAY)
                         || gBattleTypeFlags & BATTLE_TYPE_ARENA
                         || gStatuses3[gActiveBattler] & STATUS3_ROOTED)
                     {
                         BtlController_EmitChoosePokemon(B_COMM_TO_CONTROLLER, PARTY_ACTION_CANT_SWITCH, PARTY_SIZE, ABILITY_NONE, gBattleStruct->battlerPartyOrders[gActiveBattler]);
                     }
-                    else if ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOW_TAG))
+                    else if (gBattleMons[gActiveBattler].ability != ABILITY_RUN_AWAY
+                          && ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOW_TAG))
                              || ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENA_TRAP))
                                  && !IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_FLYING)
                                  && gBattleMons[gActiveBattler].ability != ABILITY_LEVITATE
                                  && !IsBattlerFloatingOnAirBalloon(gActiveBattler))
                              || ((i = AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BATTLER, gActiveBattler, ABILITY_MAGNET_PULL, 0, 0))
-                                 && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_STEEL)))
+                                 && IS_BATTLER_OF_TYPE(gActiveBattler, TYPE_STEEL))))
                     {
                         BtlController_EmitChoosePokemon(B_COMM_TO_CONTROLLER, ((i - 1) << 4) | PARTY_ACTION_ABILITY_PREVENTS, PARTY_SIZE, gLastUsedAbility, gBattleStruct->battlerPartyOrders[gActiveBattler]);
                     }
@@ -4966,6 +4970,7 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     u8 holdEffect = 0;
     u8 holdEffectParam = 0;
     u16 moveBattler1 = 0, moveBattler2 = 0;
+    s8 priorityBattler1, priorityBattler2;
 
     if (WEATHER_HAS_EFFECT)
     {
@@ -4986,6 +4991,12 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
         speedMultiplierBattler1 = 1;
         speedMultiplierBattler2 = 1;
     }
+
+    // Limber doubles Speed, like Swift Swim without needing rain
+    if (gBattleMons[battler1].ability == ABILITY_LIMBER)
+        speedMultiplierBattler1 *= 2;
+    if (gBattleMons[battler2].ability == ABILITY_LIMBER)
+        speedMultiplierBattler2 *= 2;
 
     speedBattler1 = (gBattleMons[battler1].speed * speedMultiplierBattler1)
                 * (gStatStageRatios[gBattleMons[battler1].statStages[STAT_SPEED]][0])
@@ -5099,11 +5110,14 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
         }
     }
 
+    priorityBattler1 = GetBattlerMovePriority(battler1, moveBattler1);
+    priorityBattler2 = GetBattlerMovePriority(battler2, moveBattler2);
+
     // both move priorities are different than 0
-    if (gBattleMoves[moveBattler1].priority != 0 || gBattleMoves[moveBattler2].priority != 0)
+    if (priorityBattler1 != 0 || priorityBattler2 != 0)
     {
         // both priorities are the same
-        if (gBattleMoves[moveBattler1].priority == gBattleMoves[moveBattler2].priority)
+        if (priorityBattler1 == priorityBattler2)
         {
             if (speedBattler1 == speedBattler2 && Random() & 1)
                 strikesFirst = 2; // same speeds, same priorities
@@ -5112,7 +5126,7 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
 
             // else battler1 has more speed
         }
-        else if (gBattleMoves[moveBattler1].priority < gBattleMoves[moveBattler2].priority)
+        else if (priorityBattler1 < priorityBattler2)
         {
             strikesFirst = 1; // battler2's move has greater priority
         }

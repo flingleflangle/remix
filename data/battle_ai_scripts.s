@@ -59,6 +59,9 @@ AI_CBM_CheckIfNegatesType:
 	get_ability AI_TARGET
 	if_equal ABILITY_VOLT_ABSORB, CheckIfVoltAbsorbCancelsElectric
 	if_equal ABILITY_WATER_ABSORB, CheckIfWaterAbsorbCancelsWater
+	if_equal ABILITY_DRY_SKIN, CheckIfWaterAbsorbCancelsWater
+	if_equal ABILITY_STORM_DRAIN, CheckIfWaterAbsorbCancelsWater
+	if_equal ABILITY_LIGHTNING_ROD, CheckIfVoltAbsorbCancelsElectric
 	if_equal ABILITY_FLASH_FIRE, CheckIfFlashFireCancelsFire
 	if_equal ABILITY_WONDER_GUARD, CheckIfWonderGuardCancelsMove
 	if_equal ABILITY_LEVITATE, CheckIfLevitateCancelsGroundMove
@@ -222,7 +225,6 @@ AI_CheckBadMove_CheckEffect:
 AI_CBM_Sleep:
 	get_ability AI_TARGET
 	if_equal ABILITY_INSOMNIA, Score_Minus10
-	if_equal ABILITY_VITAL_SPIRIT, Score_Minus10
 	if_status AI_TARGET, STATUS1_ANY, Score_Minus10
 	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10
 	end
@@ -311,6 +313,7 @@ AI_CBM_DefenseDown:
 AI_CBM_SpeedDown:
 	if_stat_level_equal AI_TARGET, STAT_SPEED, MIN_STAT_STAGE, Score_Minus10
 	if_ability AI_TARGET, ABILITY_SPEED_BOOST, Score_Minus10
+	if_ability AI_TARGET, ABILITY_OWN_TEMPO, Score_Minus10
 	goto CheckIfAbilityBlocksStatChange
 
 AI_CBM_SpAtkDown:
@@ -584,6 +587,7 @@ AI_CBM_HelpingHand:
 AI_CBM_TrickAndKnockOff:
 	get_ability AI_TARGET
 	if_equal ABILITY_STICKY_HOLD, Score_Minus10
+	if_equal ABILITY_SUCTION_CUPS, Score_Minus10
 	end
 
 AI_CBM_Ingrain:

@@ -177,7 +177,8 @@ enum BattlerId
 #define STATUS3_INTIMIDATE_POKES        (1 << 19)
 #define STATUS3_TRACE                   (1 << 20)
 #define STATUS3_DODGING                 (1 << 21) // Dodge: evades moves that check accuracy until the end of the turn
-#define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER)
+#define STATUS3_PHANTOM_FORCE           (1 << 22) // Vanished by Shadow Force; nothing can hit it
+#define STATUS3_SEMI_INVULNERABLE       (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER | STATUS3_PHANTOM_FORCE)
 
 // What a Substitute looks like and how it breaks. Stone Wall and Ice Wall are Substitutes.
 #define SUBSTITUTE_WALL_NONE  0

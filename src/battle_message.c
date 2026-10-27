@@ -255,6 +255,15 @@ static const u8 sText_PkmnMasteredStat[] = _("{B_BUFF1} honed its {B_BUFF2}\nto 
 static const u8 sText_NorthStarPerish[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_LAST_ABILITY}\nset {B_DEF_NAME_WITH_PREFIX}'s\lPERISH count!");
 static const u8 sText_PkmnMaxedFriendship[] = _("{B_BUFF1}'s bond with you\nmade it become {B_BUFF3}{EX}!");
 static const u8 sText_ExDeeperSleep[] = _("{B_DEF_NAME_WITH_PREFIX} fell into\na deeper sleep!");
+static const u8 sText_PkmnFellForFeint[] = _("{B_DEF_NAME_WITH_PREFIX} fell for\nthe feint!");
+static const u8 sText_PkmnVanishedInstantly[] = _("{B_ATK_NAME_WITH_PREFIX} vanished\ninstantly!");
+static const u8 sText_PkmnAngerPointMaxedAtk[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nmaxed its ATTACK!");
+static const u8 sText_PkmnAbilityRaisedStat[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nraised its {B_BUFF1}!");
+static const u8 sText_PkmnPickedUpItem[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} found\none {B_LAST_ITEM}!");
+static const u8 sText_PkmnCutsAccuracyWith[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncuts {B_DEF_NAME_WITH_PREFIX}'s ACCURACY!");
+static const u8 sText_LiquidOozeSlowed[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nslowed {B_ATK_NAME_WITH_PREFIX}!");
+static const u8 sText_StickyHoldTrapped[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\ntrapped {B_DEF_NAME_WITH_PREFIX}!");
+static const u8 sText_ForecastClearedSkies[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncleared the skies!");
 static const u8 sText_ExSwappedStats[] = _("{B_ATK_NAME_WITH_PREFIX} switched stat\nchanges with {B_DEF_NAME_WITH_PREFIX}!");
 static const u8 sText_PkmnLostHpLifeOrb[] = _("{B_ATK_NAME_WITH_PREFIX} lost some\nof its HP!");
 static const u8 sText_PkmnHidBehindPokeDoll[] = _("{B_ATK_NAME_WITH_PREFIX} hid behind\nthe POKé DOLL!");
@@ -980,6 +989,15 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNMAXEDFRIENDSHIP - BATTLESTRINGS_TABLE_START] = sText_PkmnMaxedFriendship,
     [STRINGID_EXDEEPERSLEEP - BATTLESTRINGS_TABLE_START] = sText_ExDeeperSleep,
     [STRINGID_EXSWAPPEDSTATS - BATTLESTRINGS_TABLE_START] = sText_ExSwappedStats,
+    [STRINGID_PKMNFELLFORFEINT - BATTLESTRINGS_TABLE_START] = sText_PkmnFellForFeint,
+    [STRINGID_PKMNVANISHEDINSTANTLY - BATTLESTRINGS_TABLE_START] = sText_PkmnVanishedInstantly,
+    [STRINGID_PKMNANGERPOINTMAXEDATK - BATTLESTRINGS_TABLE_START] = sText_PkmnAngerPointMaxedAtk,
+    [STRINGID_PKMNABILITYRAISEDSTAT - BATTLESTRINGS_TABLE_START] = sText_PkmnAbilityRaisedStat,
+    [STRINGID_PKMNPICKEDUPITEM - BATTLESTRINGS_TABLE_START] = sText_PkmnPickedUpItem,
+    [STRINGID_PKMNCUTSACCURACYWITH - BATTLESTRINGS_TABLE_START] = sText_PkmnCutsAccuracyWith,
+    [STRINGID_LIQUIDOOZESLOWED - BATTLESTRINGS_TABLE_START] = sText_LiquidOozeSlowed,
+    [STRINGID_STICKYHOLDTRAPPED - BATTLESTRINGS_TABLE_START] = sText_StickyHoldTrapped,
+    [STRINGID_FORECASTCLEAREDSKIES - BATTLESTRINGS_TABLE_START] = sText_ForecastClearedSkies,
     [STRINGID_PKMNLOSTHPLIFEORB - BATTLESTRINGS_TABLE_START] = sText_PkmnLostHpLifeOrb,
     [STRINGID_PKMNHIDBEHINDPOKEDOLL - BATTLESTRINGS_TABLE_START] = sText_PkmnHidBehindPokeDoll,
     [STRINGID_SOLIDRAGEACTIVATES - BATTLESTRINGS_TABLE_START] = sText_SolidRageActivates,
@@ -1145,6 +1163,7 @@ const u16 gFirstTurnOfTwoStringIds[] =
     [B_MSG_TURN1_DIG]        = STRINGID_PKMNDUGHOLE,
     [B_MSG_TURN1_DIVE]       = STRINGID_PKMNHIDUNDERWATER,
     [B_MSG_TURN1_BOUNCE]     = STRINGID_PKMNSPRANGUP,
+    [B_MSG_TURN1_SHADOW_FORCE] = STRINGID_PKMNVANISHEDINSTANTLY,
 };
 
 // Index copied from move's index in gTrappingMoves

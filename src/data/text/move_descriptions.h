@@ -1737,6 +1737,22 @@ static const u8 sCaptivateDescription[] = _(
     "Charms a foe of the other\n"
     "gender, cutting its SP. ATK.");
 
+static const u8 sFeintDescription[] = _(
+    "Hits through PROTECT and\n"
+    "DETECT, lifting them.");
+
+static const u8 sShadowForceDescription[] = _(
+    "Vanishes, then strikes the\n"
+    "next turn. Ignores PROTECT.");
+
+static const u8 sHeartSwapDescription[] = _(
+    "Swaps stat changes with\n"
+    "the foe using psychic power.");
+
+static const u8 sNaturalGiftDescription[] = _(
+    "Uses up a held BERRY to\n"
+    "attack. Its type varies.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -2174,4 +2190,8 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_DISCHARGE - 1] = sDischargeDescription,
     [MOVE_ASSURANCE - 1] = sAssuranceDescription,
     [MOVE_CAPTIVATE - 1] = sCaptivateDescription,
+    [MOVE_FEINT - 1] = sFeintDescription,
+    [MOVE_SHADOW_FORCE - 1] = sShadowForceDescription,
+    [MOVE_HEART_SWAP - 1] = sHeartSwapDescription,
+    [MOVE_NATURAL_GIFT - 1] = sNaturalGiftDescription,
 };
