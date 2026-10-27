@@ -20,6 +20,7 @@ static void AnimHitSplatBasic(struct Sprite *);
 static void AnimHitSplatPersistent(struct Sprite *);
 static void AnimHitSplatHandleInvert(struct Sprite *);
 static void AnimHitSplatRandom(struct Sprite *);
+static void AnimHitSplatRandomOnBattler(struct Sprite *);
 static void AnimHitSplatOnMonEdge(struct Sprite *);
 static void AnimCrossImpact(struct Sprite *);
 static void AnimFlashingHitSplat(struct Sprite *);
@@ -207,6 +208,18 @@ const struct SpriteTemplate gRandomPosHitSplatSpriteTemplate =
     .images = NULL,
     .affineAnims = sAffineAnims_HitSplat,
     .callback = AnimHitSplatRandom,
+};
+
+// Like gRandomPosHitSplatSpriteTemplate, but arg 0 can also be ANIM_DEF_PARTNER or ANIM_ATK_PARTNER
+const struct SpriteTemplate gRandomPosHitSplatOnBattlerSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_IMPACT,
+    .paletteTag = ANIM_TAG_IMPACT,
+    .oam = &gOamData_AffineNormal_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HitSplat,
+    .callback = AnimHitSplatRandomOnBattler,
 };
 
 const struct SpriteTemplate gMonEdgeHitSplatSpriteTemplate =
@@ -987,6 +1000,30 @@ static void AnimHitSplatRandom(struct Sprite *sprite)
         InitSpritePosToAnimAttacker(sprite, FALSE);
     else
         InitSpritePosToAnimTarget(sprite, FALSE);
+
+    sprite->x2 += (Random2() % 48) - 24;
+    sprite->y2 += (Random2() % 24) - 12;
+
+    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+    sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
+}
+
+static void AnimHitSplatRandomOnBattler(struct Sprite *sprite)
+{
+    u8 animBattler = gBattleAnimArgs[0];
+
+    if (GetAnimBattlerSpriteId(animBattler) == SPRITE_NONE)
+    {
+        DestroyAnimSprite(sprite);
+        return;
+    }
+    if (gBattleAnimArgs[1] == -1)
+        gBattleAnimArgs[1] = Random2() & 3;
+
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[1]);
+    gBattleAnimArgs[0] = 0;
+    gBattleAnimArgs[1] = 0;
+    InitSpritePosToAnimBattler(animBattler, sprite);
 
     sprite->x2 += (Random2() % 48) - 24;
     sprite->y2 += (Random2() % 24) - 12;

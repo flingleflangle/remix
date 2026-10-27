@@ -18,6 +18,7 @@ static void AnimThunderboltOrb_Step(struct Sprite *);
 static void AnimSparkElectricityFlashing(struct Sprite *);
 static void AnimSparkElectricityFlashing_Step(struct Sprite *);
 static void AnimElectricity(struct Sprite *);
+static void AnimElectricityOnBattler(struct Sprite *);
 static void AnimTask_ElectricBolt_Step(u8 taskId);
 static void AnimElectricBoltSegment(struct Sprite *);
 static void AnimThunderWave(struct Sprite *);
@@ -217,6 +218,18 @@ const struct SpriteTemplate gElectricitySpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimElectricity,
+};
+
+// Like gElectricitySpriteTemplate, with arg 4 picking the battler (ANIM_TARGET, ANIM_DEF_PARTNER, ANIM_ATK_PARTNER)
+const struct SpriteTemplate gElectricityOnBattlerSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SPARK_2,
+    .paletteTag = ANIM_TAG_SPARK_2,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimElectricityOnBattler,
 };
 
 const struct SpriteTemplate gElectricBoltSegmentSpriteTemplate =
@@ -669,6 +682,26 @@ static void AnimSparkElectricityFlashing_Step(struct Sprite *sprite)
 static void AnimElectricity(struct Sprite *sprite)
 {
     InitSpritePosToAnimTarget(sprite, FALSE);
+    sprite->oam.tileNum += gBattleAnimArgs[3] * 4;
+
+    if (gBattleAnimArgs[3] == 1)
+        sprite->oam.matrixNum = ST_OAM_HFLIP;
+    else if (gBattleAnimArgs[3] == 2)
+        sprite->oam.matrixNum = ST_OAM_VFLIP;
+
+    sprite->data[0] = gBattleAnimArgs[2];
+    sprite->callback = WaitAnimForDuration;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+static void AnimElectricityOnBattler(struct Sprite *sprite)
+{
+    if (GetAnimBattlerSpriteId(gBattleAnimArgs[4]) == SPRITE_NONE)
+    {
+        DestroyAnimSprite(sprite);
+        return;
+    }
+    InitSpritePosToAnimBattler(gBattleAnimArgs[4], sprite);
     sprite->oam.tileNum += gBattleAnimArgs[3] * 4;
 
     if (gBattleAnimArgs[3] == 1)

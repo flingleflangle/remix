@@ -266,7 +266,8 @@ void HandleAction_UseMove(void)
              && (gBattleMoves[gCurrentMove].power != 0
                  || gBattleMoves[gCurrentMove].target != MOVE_TARGET_USER)
              && gBattleMons[*(gBattleStruct->moveTarget + gBattlerAttacker)].ability != (ABILITY_LIGHTNING_ROD)
-             && gBattleMoves[gCurrentMove].type == TYPE_ELECTRIC)
+             && gBattleMoves[gCurrentMove].type == TYPE_ELECTRIC
+             && !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_FOES_AND_ALLY)))
     {
         side = GetBattlerSide(gBattlerAttacker);
         for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)

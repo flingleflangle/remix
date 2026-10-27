@@ -419,6 +419,9 @@ const u32 gMonFrontPic_Chingling[] = INCBIN_U32("graphics/pokemon/chingling/anim
 const u32 gMonFrontPic_Giratina[] = INCBIN_U32("graphics/pokemon/giratina/anim_front.4bpp.lz");
 const u32 gMonFrontPic_Phione[] = INCBIN_U32("graphics/pokemon/phione/anim_front.4bpp.lz");
 const u32 gMonFrontPic_Manaphy[] = INCBIN_U32("graphics/pokemon/manaphy/anim_front.4bpp.lz");
+const u32 gMonFrontPic_Shinx[] = INCBIN_U32("graphics/pokemon/shinx/anim_front.4bpp.lz");
+const u32 gMonFrontPic_Luxio[] = INCBIN_U32("graphics/pokemon/luxio/anim_front.4bpp.lz");
+const u32 gMonFrontPic_Luxray[] = INCBIN_U32("graphics/pokemon/luxray/anim_front.4bpp.lz");
 const u32 gMonFrontPic_Lucario[] = INCBIN_U32("graphics/pokemon/lucario/anim_front.4bpp.lz");
 const u32 gMonFrontPic_Leviatic[] = INCBIN_U32("graphics/pokemon/milotic2/anim_front.4bpp.lz");
 

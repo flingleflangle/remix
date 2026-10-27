@@ -2037,6 +2037,18 @@ Cry_Phione::
 	.align 2
 Cry_Manaphy::
 	.incbin "sound/direct_sound_samples/cries/manaphy.bin"
+
+	.align 2
+Cry_Shinx::
+	.incbin "sound/direct_sound_samples/cries/shinx.bin"
+
+	.align 2
+Cry_Luxio::
+	.incbin "sound/direct_sound_samples/cries/luxio.bin"
+
+	.align 2
+Cry_Luxray::
+	.incbin "sound/direct_sound_samples/cries/luxray.bin"
 	
 
 	.align 2

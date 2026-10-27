@@ -2445,6 +2445,24 @@ const u8 gGiratinaPokedexText[] = _(
     "on the reverse side of ours, where\n"
     "common knowledge is distorted and\n"
     "strange.");
+
+const u8 gShinxPokedexText[] = _(
+    "It rapidly contracts and relaxes its\n"
+    "muscles to generate electricity. Its\n"
+    "body shines if endangered. It flees\n"
+    "while the foe is momentarily blinded.");
+
+const u8 gLuxioPokedexText[] = _(
+    "Strong electricity courses through the\n"
+    "tips of its sharp claws. A light scratch\n"
+    "has enough amperage to cause fainting\n"
+    "in foes.");
+
+const u8 gLuxrayPokedexText[] = _(
+    "It has eyes which can see through\n"
+    "anything. LUXRAY's ability to see\n"
+    "through objects comes in handy when\n"
+    "it's scouting for danger.");
 	
 const u8 gMunchlaxPokedexText[] = _(
     "Stuffing itself with vast amounts of\n"

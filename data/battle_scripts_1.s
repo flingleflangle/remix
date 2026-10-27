@@ -79,7 +79,7 @@ gBattleScriptsForMoveEffects::
 	.4byte BattleScript_EffectAttackDown2            @ EFFECT_ATTACK_DOWN_2
 	.4byte BattleScript_EffectDefenseDown2           @ EFFECT_DEFENSE_DOWN_2
 	.4byte BattleScript_EffectSpeedDown2             @ EFFECT_SPEED_DOWN_2
-	.4byte BattleScript_EffectHit                    @ EFFECT_SPECIAL_ATTACK_DOWN_2
+	.4byte BattleScript_EffectSpecialAttackDown2   @ EFFECT_SPECIAL_ATTACK_DOWN_2
 	.4byte BattleScript_EffectSpecialDefenseDown2    @ EFFECT_SPECIAL_DEFENSE_DOWN_2
 	.4byte BattleScript_EffectHit                    @ EFFECT_ACCURACY_DOWN_2
 	.4byte BattleScript_EffectHit                    @ EFFECT_EVASION_DOWN_2
@@ -445,6 +445,7 @@ AlwaysHitInHail:
 
 
 BattleScript_EffectParalyzeHit::
+	jumpifmove MOVE_DISCHARGE, BattleScript_Discharge
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	jumpifmove MOVE_SPARK, SparkCurlCheck
 	goto BattleScript_EffectHit
@@ -529,6 +530,8 @@ BattleScript_GloryBlazeDoAnimStartLoop:
 	attackanimation
 	waitanimation
 BattleScript_GloryBlazeLoop:
+	various BS_TARGET, VARIOUS_TRY_SPREAD_ABSORB
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, 0, BattleScript_GloryBlazeAbsorbed
 	critcalc
 	damagecalc
 	typecalc
@@ -550,6 +553,12 @@ BattleScript_GloryBlazeLoop:
 	jumpifnexttargetvalid BattleScript_GloryBlazeLoop
 	tryfaintmon BS_ATTACKER
 	end
+BattleScript_GloryBlazeAbsorbed:
+	call BattleScript_SpreadMoveAbsorbed
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_GloryBlazeLoop
+	tryfaintmon BS_ATTACKER
+	end
 BattleScript_GloryBlazeMissed:
 	effectivenesssound
 	resultmessage
@@ -558,6 +567,28 @@ BattleScript_GloryBlazeMissed:
 	jumpifnexttargetvalid BattleScript_GloryBlazeLoop
 	tryfaintmon BS_ATTACKER
 	end
+
+@ A target of a move that hits everyone around the user absorbed it (see VARIOUS_TRY_SPREAD_ABSORB).
+@ Like BattleScript_MoveHPDrain / MonMadeMoveUseless / FlashFireBoost, but returns so the move goes on.
+BattleScript_SpreadMoveAbsorbed::
+	pause B_WAIT_TIME_SHORT
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 2, BattleScript_SpreadMoveAbsorbedFullHP
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 3, BattleScript_SpreadMoveAbsorbedFlashFire
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	bicword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	printstring STRINGID_PKMNRESTOREDHPUSING
+	waitmessage B_WAIT_TIME_LONG
+	return
+BattleScript_SpreadMoveAbsorbedFullHP:
+	printstring STRINGID_PKMNSXMADEYUSELESS
+	waitmessage B_WAIT_TIME_LONG
+	return
+BattleScript_SpreadMoveAbsorbedFlashFire:
+	printfromtable gFlashFireStringIds
+	waitmessage B_WAIT_TIME_LONG
+	return
 
 BattleScript_PreserveMissedBitDoMoveAnim::
 	bicbyte gMoveResultFlags, MOVE_RESULT_MISSED
@@ -689,6 +720,7 @@ BattleScript_EffectStatDown::
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
+BattleScript_StatDownFromStatChange::
 	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_StatDownEnd
 	jumpifbyte CMP_LESS_THAN, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_DECREASE, BattleScript_StatDownDoAnim
 	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_FELL_EMPTY, BattleScript_StatDownEnd
@@ -2061,6 +2093,20 @@ BattleScript_EffectSpeedDown2::
 BattleScript_EffectSpecialDefenseDown2::
 	setstatchanger STAT_SPDEF, 2, TRUE
 	goto BattleScript_EffectStatDown
+
+BattleScript_EffectSpecialAttackDown2::
+	setstatchanger STAT_SPATK, 2, TRUE
+	jumpifnotmove MOVE_CAPTIVATE, BattleScript_EffectStatDown
+@ Captivate only works on a target of the opposite gender, and Oblivious/Heartbroken block it
+	attackcanceler
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_FailedFromAtkString
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	various BS_TARGET, VARIOUS_CAPTIVATE_CHECK
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 1, BattleScript_ButItFailed
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 2, BattleScript_ObliviousPreventsAttraction
+	goto BattleScript_StatDownFromStatChange
 
 BattleScript_EffectReflect::
 	attackcanceler
@@ -3693,6 +3739,56 @@ BattleScript_EffectTwister::
 BattleScript_FlinchEffect::
 	setmoveeffect MOVE_EFFECT_FLINCH
 	goto BattleScript_EffectHit
+
+@ Discharge hits everyone around the user. Like Earthquake, it goes through each target in turn,
+@ so one that's immune (like a Ground type) doesn't stop it hitting the others.
+BattleScript_Discharge::
+	attackcanceler
+	attackstring
+	ppreduce
+	selectfirstvalidtarget
+BattleScript_DischargeLoop::
+	movevaluescleanup
+	various BS_TARGET, VARIOUS_TRY_SPREAD_ABSORB
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, 0, BattleScript_DischargeAbsorbed
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	accuracycheck BattleScript_DischargeMissed, ACC_CURR_MOVE
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
+	tryfaintmon BS_TARGET
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_DischargeLoop
+	end
+BattleScript_DischargeAbsorbed::
+	call BattleScript_SpreadMoveAbsorbed
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_DischargeLoop
+	end
+BattleScript_DischargeMissed::
+	pause B_WAIT_TIME_SHORT
+	typecalc
+	effectivenesssound
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_DischargeLoop
+	end
 
 BattleScript_EffectEarthquake::
 	attackcanceler

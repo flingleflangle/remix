@@ -4895,6 +4895,42 @@ const struct PokedexEntry gPokedexEntries[] =
         .trainerScale = 614,
         .trainerOffset = 13,
     },
+
+    [NATIONAL_DEX_SHINX] =
+    {
+        .categoryName = _("FLASH"),
+        .height = 5,
+        .weight = 95,
+        .description = gShinxPokedexText,
+        .pokemonScale = 432,
+        .pokemonOffset = 17,
+        .trainerScale = 256,
+        .trainerOffset = 0,
+    },
+
+    [NATIONAL_DEX_LUXIO] =
+    {
+        .categoryName = _("SPARK"),
+        .height = 9,
+        .weight = 305,
+        .description = gLuxioPokedexText,
+        .pokemonScale = 338,
+        .pokemonOffset = 10,
+        .trainerScale = 256,
+        .trainerOffset = 0,
+    },
+
+    [NATIONAL_DEX_LUXRAY] =
+    {
+        .categoryName = _("GLEAM EYES"),
+        .height = 14,
+        .weight = 420,
+        .description = gLuxrayPokedexText,
+        .pokemonScale = 265,
+        .pokemonOffset = 2,
+        .trainerScale = 262,
+        .trainerOffset = 0,
+    },
 	
 	[NATIONAL_DEX_MUNCHLAX] =
     {

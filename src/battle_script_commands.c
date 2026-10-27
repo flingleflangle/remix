@@ -7440,6 +7440,81 @@ static void Cmd_various(void)
         if (IsBattlerInBlackHole(gActiveBattler))
             gMoveResultFlags |= MOVE_RESULT_FAILED;
         break;
+    case VARIOUS_TRY_SPREAD_ABSORB:
+    {
+        // For moves that loop over every battler around the user (Discharge, Glory Blaze). Volt Absorb, Water Absorb
+        // and Flash Fire are normally handled in accuracycheck, which then ends the whole move. This handles them
+        // for just this target, so the move goes on to the others. Protect and Fly/Dig/etc. are left to accuracycheck.
+        // Sets gBattleCommunication[0] to 0 if not absorbed, 1 if it heals, 2 if it's at full HP, 3 for Flash Fire
+        u8 moveType;
+        u8 ability = gBattleMons[gActiveBattler].ability;
+
+        GET_MOVE_TYPE(gCurrentMove, moveType);
+        gBattleCommunication[0] = 0;
+        if (DEFENDER_IS_PROTECTED || gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE)
+            break;
+
+        if ((ability == ABILITY_VOLT_ABSORB && moveType == TYPE_ELECTRIC)
+         || (ability == ABILITY_WATER_ABSORB && moveType == TYPE_WATER))
+        {
+            if (gBattleMons[gActiveBattler].hp == gBattleMons[gActiveBattler].maxHP)
+            {
+                gBattleCommunication[0] = 2;
+            }
+            else
+            {
+                gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 4;
+                if (gBattleMoveDamage == 0)
+                    gBattleMoveDamage = 1;
+                gBattleMoveDamage *= -1;
+                gBattleCommunication[0] = 1;
+            }
+        }
+        else if (ability == ABILITY_FLASH_FIRE && moveType == TYPE_FIRE && !(gBattleMons[gActiveBattler].status1 & STATUS1_FREEZE))
+        {
+            if (!(gBattleResources->flags->flags[gActiveBattler] & RESOURCE_FLAG_FLASH_FIRE))
+            {
+                gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FLASH_FIRE_BOOST;
+                gBattleResources->flags->flags[gActiveBattler] |= RESOURCE_FLAG_FLASH_FIRE;
+            }
+            else
+            {
+                gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_FLASH_FIRE_NO_BOOST;
+            }
+            gBattleCommunication[0] = 3;
+        }
+
+        if (gBattleCommunication[0] != 0)
+        {
+            gLastUsedAbility = ability;
+            RecordAbilityBattle(gActiveBattler, ability);
+        }
+        break;
+    }
+    case VARIOUS_CAPTIVATE_CHECK:
+    {
+        // Captivate only works on a target of the opposite gender. Oblivious and Heartbroken block it, like Attract.
+        // Sets gBattleCommunication[0] to 0 if it works, 1 if it fails, 2 if the target's ability blocks it
+        u8 attackerGender = GetGenderFromSpeciesAndPersonality(gBattleMons[gBattlerAttacker].species, gBattleMons[gBattlerAttacker].personality);
+        u8 targetGender = GetGenderFromSpeciesAndPersonality(gBattleMons[gActiveBattler].species, gBattleMons[gActiveBattler].personality);
+
+        if (attackerGender == MON_GENDERLESS || targetGender == MON_GENDERLESS || attackerGender == targetGender)
+        {
+            gBattleCommunication[0] = 1;
+        }
+        else if (gBattleMons[gActiveBattler].ability == ABILITY_OBLIVIOUS
+              || gBattleMons[gActiveBattler].ability == ABILITY_HEARTBROKEN)
+        {
+            gLastUsedAbility = gBattleMons[gActiveBattler].ability;
+            RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
+            gBattleCommunication[0] = 2;
+        }
+        else
+        {
+            gBattleCommunication[0] = 0;
+        }
+        break;
+    }
     case VARIOUS_EVOLVED_MID_BATTLE:
         // A Pokémon that evolved mid-battle is cured of its status problems (but keeps Ignite), confusion, infatuation,
         // Nightmare, Curse, Leech Seed and being trapped, and gets pumped up like Focus Energy.
@@ -10868,7 +10943,13 @@ static void Cmd_trysetroots(void)
 
 static void Cmd_doubledamagedealtifdamaged(void)
 {
-    if ((gProtectStructs[gBattlerAttacker].physicalDmg != 0
+    // Assurance doubles if the target has already been hit this turn, by anyone
+    if (gCurrentMove == MOVE_ASSURANCE)
+    {
+        if (gProtectStructs[gBattlerTarget].physicalDmg != 0 || gProtectStructs[gBattlerTarget].specialDmg != 0)
+            gBattleScripting.dmgMultiplier = 2;
+    }
+    else if ((gProtectStructs[gBattlerAttacker].physicalDmg != 0
          && gProtectStructs[gBattlerAttacker].physicalBattlerId == gBattlerTarget)
         || (gProtectStructs[gBattlerAttacker].specialDmg != 0
             && gProtectStructs[gBattlerAttacker].specialBattlerId == gBattlerTarget))

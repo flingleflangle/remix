@@ -140,6 +140,8 @@
 #define VARIOUS_EX_NO_SWITCH_THIS_TURN          59
 #define VARIOUS_EX_IS_NO_SWITCH_THIS_TURN       60
 #define VARIOUS_EVOLVED_MID_BATTLE              61
+#define VARIOUS_CAPTIVATE_CHECK                 62
+#define VARIOUS_TRY_SPREAD_ABSORB               63
 
 // EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
 // They last for the move that set them (gExMoveFlags)

@@ -187,6 +187,18 @@ const struct SpriteTemplate gOverheatFlameSpriteTemplate =
     .callback = AnimOverheatFlame,
 };
 
+// Dragon Pulse: stands in for the expansion's own pulse sprite
+const struct SpriteTemplate gDragonPulseSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BLUE_RING,
+    .paletteTag = ANIM_TAG_BLUE_RING,
+    .oam = &gOamData_AffineOff_ObjNormal_16x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = TranslateAnimSpriteToTargetMonLocation,
+};
+
 static void AnimOutrageFlame(struct Sprite *sprite)
 {
     sprite->x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X_2);

@@ -90,6 +90,18 @@ static const union AnimCmd *const sAnims_HandsAndFeet[] =
     sAnim_HandRight,
 };
 
+// Assurance's palm strike
+const struct SpriteTemplate gPalmSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PURPLE_HAND_OUTLINE,
+    .paletteTag = ANIM_TAG_PURPLE_HAND_OUTLINE,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_HandsAndFeet,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimBasicFistOrFoot,
+};
+
 const struct SpriteTemplate gKarateChopSpriteTemplate =
 {
     .tileTag = ANIM_TAG_HANDS_AND_FEET,

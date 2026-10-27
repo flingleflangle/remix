@@ -413,6 +413,9 @@ gCryTable::
 	cry Cry_Phione
 	cry Cry_Manaphy
 	cry Cry_Lucario
+	cry Cry_Shinx
+	cry Cry_Luxio
+	cry Cry_Luxray
 
 	.align 2
 gCryTable_Reverse::
@@ -829,3 +832,6 @@ gCryTable_Reverse::
 	cry_reverse Cry_Phione
 	cry_reverse Cry_Manaphy
 	cry_reverse Cry_Lucario
+	cry_reverse Cry_Shinx
+	cry_reverse Cry_Luxio
+	cry_reverse Cry_Luxray

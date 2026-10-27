@@ -4768,6 +4768,31 @@ static const union AnimCmd sAnim_Giratina_1[] =
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_Shinx_1[] =
+{
+    ANIMCMD_FRAME(0, 20),
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Luxio_1[] =
+{
+    ANIMCMD_FRAME(1, 40),
+    ANIMCMD_FRAME(0, 20),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd sAnim_Luxray_1[] =
+{
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 20),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_FRAME(1, 20),
+    ANIMCMD_FRAME(0, 15),
+    ANIMCMD_END,
+};
+
 static const union AnimCmd sAnim_Deoxys_2[] =
 {
     ANIMCMD_FRAME(0, 20),
@@ -5487,6 +5512,9 @@ DOUBLE_ANIMATION(Deoxys);
 SINGLE_ANIMATION(Phione);
 SINGLE_ANIMATION(Manaphy);
 SINGLE_ANIMATION(Giratina);
+SINGLE_ANIMATION(Shinx);
+SINGLE_ANIMATION(Luxio);
+SINGLE_ANIMATION(Luxray);
 SINGLE_ANIMATION(Chingling);
 SINGLE_ANIMATION(Chimecho);
 SINGLE_ANIMATION(Munchlax);
@@ -5929,6 +5957,9 @@ const union AnimCmd *const *const gMonFrontAnimsPtrTable[] =
     [SPECIES_PHIONE]      = sAnims_Phione,
     [SPECIES_MANAPHY]     = sAnims_Manaphy,
     [SPECIES_GIRATINA]    = sAnims_Giratina,
+    [SPECIES_SHINX]   = sAnims_Shinx,
+    [SPECIES_LUXIO]   = sAnims_Luxio,
+    [SPECIES_LUXRAY]  = sAnims_Luxray,
     [SPECIES_CHINGLING]   = sAnims_Chingling,
     [SPECIES_CHIMECHO]    = sAnims_Chimecho,
     [SPECIES_MUNCHLAX]    = sAnims_Munchlax,

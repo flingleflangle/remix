@@ -1705,6 +1705,38 @@ static const u8 sHeartbreakerDescription[] = _(
     "A brutal attack that only\n"
     "hits an infatuated foe.");
 
+static const u8 sAquaJetDescription[] = _(
+    "Lunges at the foe at\n"
+    "blinding speed. Goes first.");
+
+static const u8 sLeafStormDescription[] = _(
+    "A storm of leaves. Sharply\n"
+    "lowers the user's SP. ATK.");
+
+static const u8 sAirSlashDescription[] = _(
+    "Attacks with a blade of air.\n"
+    "May cause flinching.");
+
+static const u8 sDragonPulseDescription[] = _(
+    "Generates a shock wave to\n"
+    "damage the foe.");
+
+static const u8 sPoisonJabDescription[] = _(
+    "Stabs the foe with a toxic\n"
+    "spike. May poison.");
+
+static const u8 sDischargeDescription[] = _(
+    "Zaps everything around it.\n"
+    "May cause paralysis.");
+
+static const u8 sAssuranceDescription[] = _(
+    "An attack that gains power\n"
+    "if the foe was already hit.");
+
+static const u8 sCaptivateDescription[] = _(
+    "Charms a foe of the other\n"
+    "gender, cutting its SP. ATK.");
+
 // MOVE_NONE is ignored in this table. Make sure to always subtract 1 before getting the right pointer.
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
 {
@@ -2134,4 +2166,12 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_STONE_WALL - 1] = sStoneWallDescription,
     [MOVE_ICE_WALL - 1] = sIceWallDescription,
     [MOVE_HEARTBREAKER - 1] = sHeartbreakerDescription,
+    [MOVE_AQUA_JET - 1] = sAquaJetDescription,
+    [MOVE_LEAF_STORM - 1] = sLeafStormDescription,
+    [MOVE_AIR_SLASH - 1] = sAirSlashDescription,
+    [MOVE_DRAGON_PULSE - 1] = sDragonPulseDescription,
+    [MOVE_POISON_JAB - 1] = sPoisonJabDescription,
+    [MOVE_DISCHARGE - 1] = sDischargeDescription,
+    [MOVE_ASSURANCE - 1] = sAssuranceDescription,
+    [MOVE_CAPTIVATE - 1] = sCaptivateDescription,
 };

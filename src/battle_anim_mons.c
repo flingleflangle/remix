@@ -839,6 +839,33 @@ void InitSpritePosToAnimTarget(struct Sprite *sprite, bool8 respectMonPicOffsets
     sprite->y += gBattleAnimArgs[1];
 }
 
+// Battler ID for an ANIM_* battler, partners included
+u8 GetAnimBattlerId(u8 animBattler)
+{
+    switch (animBattler)
+    {
+    case ANIM_ATTACKER:
+        return gBattleAnimAttacker;
+    case ANIM_TARGET:
+        return gBattleAnimTarget;
+    case ANIM_ATK_PARTNER:
+        return BATTLE_PARTNER(gBattleAnimAttacker);
+    default:
+        return BATTLE_PARTNER(gBattleAnimTarget);
+    }
+}
+
+// Like InitSpritePosToAnimTarget, but for any ANIM_* battler (args 0 and 1 are the x/y offsets)
+void InitSpritePosToAnimBattler(u8 animBattler, struct Sprite *sprite)
+{
+    u8 battler = GetAnimBattlerId(animBattler);
+
+    sprite->x = GetBattlerSpriteCoord2(battler, BATTLER_COORD_X);
+    sprite->y = GetBattlerSpriteCoord2(battler, BATTLER_COORD_Y);
+    SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
+    sprite->y += gBattleAnimArgs[1];
+}
+
 void InitSpritePosToAnimAttacker(struct Sprite *sprite, bool8 respectMonPicOffsets)
 {
     if (!respectMonPicOffsets)

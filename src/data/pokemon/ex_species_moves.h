@@ -456,6 +456,9 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_PHIONE]       = { .exMoves = { MOVE_NONE } }, // 480: 1 EX slot
     [SPECIES_MANAPHY]      = { .exMoves = { MOVE_NONE } }, // 600: 1 EX slot
     [SPECIES_GIRATINA]     = { .exMoves = { MOVE_NONE } }, // 680: 1 EX slot
+    [SPECIES_SHINX]        = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 263: 3 EX slots
+    [SPECIES_LUXIO]        = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 363: 3 EX slots
+    [SPECIES_LUXRAY]       = { .exMoves = { MOVE_NONE } }, // 523: 1 EX slot
     [SPECIES_CHINGLING]    = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 285: 3 EX slots
     [SPECIES_CHIMECHO]     = { .exMoves = { MOVE_NONE, MOVE_NONE } }, // 455: 2 EX slots
     [SPECIES_LUCARIO]      = { .exMoves = { MOVE_AURA_SPHERE } }, // 525: 1 EX slot

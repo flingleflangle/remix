@@ -2868,6 +2868,27 @@ const u32 gMonShinyPalette_Giratina[] = INCBIN_U32("graphics/pokemon/giratina/sh
 const u8 gMonIcon_Giratina[] = INCBIN_U8("graphics/pokemon/giratina/icon.4bpp");
 const u8 gMonFootprint_Giratina[] = INCBIN_U8("graphics/pokemon/giratina/footprint.1bpp");
 
+const u32 gMonStillFrontPic_Shinx[] = INCBIN_U32("graphics/pokemon/shinx/front.4bpp.lz");
+const u32 gMonPalette_Shinx[] = INCBIN_U32("graphics/pokemon/shinx/normal.gbapal.lz");
+const u32 gMonBackPic_Shinx[] = INCBIN_U32("graphics/pokemon/shinx/back.4bpp.lz");
+const u32 gMonShinyPalette_Shinx[] = INCBIN_U32("graphics/pokemon/shinx/shiny.gbapal.lz");
+const u8 gMonIcon_Shinx[] = INCBIN_U8("graphics/pokemon/shinx/icon.4bpp");
+const u8 gMonFootprint_Shinx[] = INCBIN_U8("graphics/pokemon/shinx/footprint.1bpp");
+
+const u32 gMonStillFrontPic_Luxio[] = INCBIN_U32("graphics/pokemon/luxio/front.4bpp.lz");
+const u32 gMonPalette_Luxio[] = INCBIN_U32("graphics/pokemon/luxio/normal.gbapal.lz");
+const u32 gMonBackPic_Luxio[] = INCBIN_U32("graphics/pokemon/luxio/back.4bpp.lz");
+const u32 gMonShinyPalette_Luxio[] = INCBIN_U32("graphics/pokemon/luxio/shiny.gbapal.lz");
+const u8 gMonIcon_Luxio[] = INCBIN_U8("graphics/pokemon/luxio/icon.4bpp");
+const u8 gMonFootprint_Luxio[] = INCBIN_U8("graphics/pokemon/luxio/footprint.1bpp");
+
+const u32 gMonStillFrontPic_Luxray[] = INCBIN_U32("graphics/pokemon/luxray/front.4bpp.lz");
+const u32 gMonPalette_Luxray[] = INCBIN_U32("graphics/pokemon/luxray/normal.gbapal.lz");
+const u32 gMonBackPic_Luxray[] = INCBIN_U32("graphics/pokemon/luxray/back.4bpp.lz");
+const u32 gMonShinyPalette_Luxray[] = INCBIN_U32("graphics/pokemon/luxray/shiny.gbapal.lz");
+const u8 gMonIcon_Luxray[] = INCBIN_U8("graphics/pokemon/luxray/icon.4bpp");
+const u8 gMonFootprint_Luxray[] = INCBIN_U8("graphics/pokemon/luxray/footprint.1bpp");
+
 const u32 gMonStillFrontPic_Phione[] = INCBIN_U32("graphics/pokemon/phione/front.4bpp.lz");
 const u32 gMonPalette_Phione[] = INCBIN_U32("graphics/pokemon/phione/normal.gbapal.lz");
 const u32 gMonBackPic_Phione[] = INCBIN_U32("graphics/pokemon/phione/back.4bpp.lz");

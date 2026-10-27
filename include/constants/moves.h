@@ -428,9 +428,17 @@
 #define MOVE_STONE_WALL 424
 #define MOVE_ICE_WALL 425
 #define MOVE_HEARTBREAKER 426
+#define MOVE_AQUA_JET 427
+#define MOVE_LEAF_STORM 428
+#define MOVE_AIR_SLASH 429
+#define MOVE_DRAGON_PULSE 430
+#define MOVE_POISON_JAB 431
+#define MOVE_DISCHARGE 432
+#define MOVE_ASSURANCE 433
+#define MOVE_CAPTIVATE 434
 
 
-#define MOVES_COUNT 427
+#define MOVES_COUNT 435
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

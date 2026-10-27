@@ -72,6 +72,7 @@ static void AnimTrickBag_Step3(struct Sprite *);
 static void AnimFlyingParticle(struct Sprite *);
 static void AnimFlyingParticle_Step(struct Sprite *);
 static void AnimNeedleArmSpike(struct Sprite *);
+static void AnimPoisonJabProjectile(struct Sprite *);
 static void AnimNeedleArmSpike_Step(struct Sprite *);
 static void AnimSlidingHit(struct Sprite *);
 static void AnimWhipHit(struct Sprite *);
@@ -585,6 +586,32 @@ const union AnimCmd *const gRazorLeafParticleAnimTable[] =
 {
     gRazorLeafParticleAnimCmds1,
     gRazorLeafParticleAnimCmds2,
+};
+
+extern const union AffineAnimCmd *const gAffineAnims_PoisonProjectile[];
+
+// Leaf Storm: leaves bursting outward from the target
+const struct SpriteTemplate gLeafStormBurstSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_LEAF,
+    .paletteTag = ANIM_TAG_LEAF,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gRazorLeafParticleAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_PoisonProjectile,
+    .callback = AnimNeedleArmSpike,
+};
+
+// Poison Jab: Megahorn's horn, tinted purple by the anim script (stands in for the expansion's purple jab sprite)
+const struct SpriteTemplate gPoisonJabProjectileSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HORN_HIT_2,
+    .paletteTag = ANIM_TAG_HORN_HIT_2,
+    .oam = &gOamData_AffineDouble_ObjBlend_32x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimPoisonJabProjectile,
 };
 
 const struct SpriteTemplate gRazorLeafParticleSpriteTemplate =
@@ -3793,6 +3820,24 @@ void AnimTask_CycleMagicalLeafPal(u8 taskId)
 
     if (gBattleAnimArgs[7] == -1)
         DestroyAnimVisualTask(taskId);
+}
+
+// Flies from the given offset (args 0, 1) into the target, pointed at it. arg 2: duration
+static void AnimPoisonJabProjectile(struct Sprite *sprite)
+{
+    s16 targetXPos, targetYPos;
+    u16 rotation;
+
+    InitSpritePosToAnimTarget(sprite, TRUE);
+    targetXPos = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+    targetYPos = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    rotation = ArcTan2Neg(targetXPos - sprite->x, targetYPos - sprite->y);
+    TrySetSpriteRotScale(sprite, FALSE, 0x100, 0x100, rotation);
+    sprite->data[0] = gBattleAnimArgs[2];
+    sprite->data[2] = targetXPos;
+    sprite->data[4] = targetYPos;
+    sprite->callback = StartAnimLinearTranslation;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
 static void AnimNeedleArmSpike(struct Sprite *sprite)
