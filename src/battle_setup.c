@@ -623,6 +623,7 @@ static void TryEndOdorSleuthTrail(void)
 static void CB2_EndWildBattle(void)
 {
     bool8 followerAcknowledgesCatch = FollowerBattle_ShouldAcknowledgeCatch();
+    bool8 followerCaughtIt = FollowerBattle_PartnerCaughtIt();
 
     FollowerBattle_RestoreParty();
     CpuFill16(0, (void *)(BG_PLTT), BG_PLTT_SIZE);
@@ -632,6 +633,13 @@ static void CB2_EndWildBattle(void)
     if (IsPlayerDefeated(gBattleOutcome) == TRUE && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE && !InBattlePike())
     {
         SetMainCallback2(CB2_WhiteOut);
+    }
+    else if (followerCaughtIt)
+    {
+        // The follower caught the wild Pokémon themselves (partnercatch)
+        ScriptContext_SetupScript(EventScript_FollowerPartnerCaughtWildMon);
+        ScriptContext_Stop();
+        SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
     }
     else if (followerAcknowledgesCatch)
     {

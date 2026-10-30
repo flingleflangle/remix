@@ -5,8 +5,16 @@
 // Stored in VAR_FOLLOWER_PARTNER; parties are in src/data/follower_parties.h.
 #define FOLLOWER_PARTNER_NONE   0
 #define FOLLOWER_PARTNER_MAY    1
+#define FOLLOWER_PARTNER_BRENDAN 2
+#define FOLLOWER_PARTNER_WALLY  3
 
-#define FOLLOWER_PARTNERS_COUNT 2
+#define FOLLOWER_PARTNERS_COUNT 4
+
+// Use as a party mon's .species for the rival's own starter (the one they picked to beat the
+// player's, as in their real battles), at that evolution stage. Leave .moves out for these.
+#define FOLLOWER_RIVAL_STARTER_1 0xFFFD // Treecko / Torchic / Mudkip
+#define FOLLOWER_RIVAL_STARTER_2 0xFFFE // Grovyle / Combusken / Marshtomp
+#define FOLLOWER_RIVAL_STARTER_3 0xFFFF // Sceptile / Blaziken / Swampert
 
 // Max flags a single party variant can require (all must be set).
 #define FOLLOWER_PARTY_MAX_FLAGS 4

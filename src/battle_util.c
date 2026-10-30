@@ -1675,10 +1675,15 @@ u8 DoFieldEndTurnEffects(void)
             break;
         case ENDTURN_FOLLOWER_STEP_ASIDE:
             // A follower helping catch the wild Pokémon recalls theirs once it's weak enough
-            if (FollowerBattle_TryStepAside())
+            // (or, if they want it themselves, recalls both sides' and throws a ball)
             {
-                BattleScriptExecute(BattleScript_FollowerStepsAsideForCatch);
-                effect++;
+                const u8 *stepAsideScript = FollowerBattle_TryStepAside();
+
+                if (stepAsideScript != NULL)
+                {
+                    BattleScriptExecute(stepAsideScript);
+                    effect++;
+                }
             }
             gBattleStruct->turnCountersTracker++;
             break;
@@ -3861,7 +3866,7 @@ enum
     if (gBattleMons[battler].hp <= gBattleMons[battler].maxHP / 2 && !moveTurn)         \
     {                                                                                       \
         PREPARE_FLAVOR_BUFFER(gBattleTextBuff1, flavor);                                    \
-        gBattleMoveDamage = gBattleMons[battler].maxHP / battlerHoldEffectParam;          \
+        gBattleMoveDamage = (gBattleMons[battler].maxHP * battlerHoldEffectParam) / 100;  \
         if (gBattleMoveDamage == 0)                                                         \
             gBattleMoveDamage = 1;                                                          \
         if (gBattleMons[battler].hp + gBattleMoveDamage > gBattleMons[battler].maxHP)   \

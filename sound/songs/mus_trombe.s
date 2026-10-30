@@ -1,10 +1,11 @@
 @ "Trombe!" from Super Robot Taisen: Original Generation (song 0x1E), ported from sound/import.
 @ Track numbers match the original. Tracks 2 (10 trumpet notes) and 12 (a quiet doubling layer) were cut to fit Emerald's 10 tracks and 5 sampled channels.
 @ Track 11 is shifted down an octave because Emerald's waves repeat twice.
+@ Track 11 plays the soft bass (slot 109) in the intro, where the held saw notes buzzed, then the saw bass (slot 108) from the loop point on.
 @ Track 5 uses the tuba (slot 58) instead of slot 61, whose Emerald trumpet can't play its low notes.
 @ Track 5 also uses the tubular bells (slot 14, like the start of Slateport) instead of the electric piano (slot 100), which sounded harsh on long notes.
 @ Track 3 (the trumpet lead) is louder than the original (72 instead of 49) to stand out in the mix.
-@ Track 3 plays the trumpet (slot 28, volume 82) in the intro, then the french horn (slot 60, volume 72)
+@ Track 3 plays the trumpet (slot 28, volume 82) in the intro, then the french horn (slot 60, volume 82)
 @ from the loop point on. The lead rests from the loop point until the everything-quiet pause at tick 2243-2268. The bells in track 5 are quieter than the original (40 instead of 57).
 
 	.include "MPlayDef.s"
@@ -29,7 +30,7 @@ mus_trombe_1:
 	.byte		TEMPO , 240*mus_trombe_tbs/2
 	.byte	W01
 	.byte		VOICE , 119
-	.byte		VOL   , 66*mus_trombe_mvl/mxv
+	.byte		VOL   , 48*mus_trombe_mvl/mxv
 	.byte	W01
 	.byte		PAN   , c_v+0
 	.byte	W01
@@ -467,7 +468,7 @@ mus_trombe_3:
 	.byte	W96
 mus_trombe_3_000:
 	.byte		VOICE , 60
-	.byte		VOL   , 72*mus_trombe_mvl/mxv
+	.byte		VOL   , 82*mus_trombe_mvl/mxv
 	.byte	W96
 	.byte	W96
 	.byte	W96
@@ -827,7 +828,7 @@ mus_trombe_4_000:
 	.byte	W01
 	.byte	W30
 	.byte		VOICE , 61
-	.byte		VOL   , 68*mus_trombe_mvl/mxv
+	.byte		VOL   , 84*mus_trombe_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W02
 	.byte		BEND  , c_v+0
@@ -3612,8 +3613,8 @@ mus_trombe_10_004:
 mus_trombe_11:
 	.byte		KEYSH , mus_trombe_key-12
 	.byte	W01
-	.byte		VOICE , 108
-	.byte		VOL   , 66*mus_trombe_mvl/mxv
+	.byte		VOICE , 109
+	.byte		VOL   , 44*mus_trombe_mvl/mxv
 	.byte	W01
 	.byte		PAN   , c_v+0
 	.byte	W01
@@ -3635,6 +3636,7 @@ mus_trombe_11:
 	.byte		        Cn1
 	.byte	W96
 	.byte	W96
+	.byte		VOICE , 108
 mus_trombe_11_000:
 	.byte		N07   , Bn1 , v120
 	.byte	W12

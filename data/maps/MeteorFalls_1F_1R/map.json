@@ -244,7 +244,31 @@
       "y": 32,
       "elevation": 0,
       "item": "ITEM_SHINY_STONE",
-      "flag": "FLAG_TEMP_1"
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_1R_SHINY_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 19,
+      "y": 18,
+      "elevation": 0,
+      "item": "ITEM_SUN_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_1R_SUN_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 9,
+      "y": 27,
+      "elevation": 0,
+      "item": "ITEM_DAWN_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_1R_DAWN_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 13,
+      "y": 38,
+      "elevation": 0,
+      "item": "ITEM_DUSK_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_1R_DUSK_STONE"
     }
   ]
 }

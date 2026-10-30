@@ -228,6 +228,7 @@ EventScript_UseDive::
 	setfieldeffectargument 1, 1
 	msgbox Text_WantToDive, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, EventScript_EndDive
+	call Route126_EventScript_RivalBeforeDive
 	msgbox Text_MonUsedDive, MSGBOX_DEFAULT
 	call FollowerIntoPlayerScript
 	callnative HideFollower

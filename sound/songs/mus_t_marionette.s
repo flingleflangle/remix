@@ -5,13 +5,32 @@
 @ Tracks 7 and 8 (the drums) are the original game's drum tracks, from mus_marionette_messiah (with its 24-tick
 @ delay removed too), in place of a static-y noise track. The orchestra hits are an octave lower to match
 @ the original, and the lead tracks reset their pitch bend at the loop point.
+@ Track 3's french horn no longer has a strong vibrato (MOD 20) on its first note at bar 46, which made it sound sour going into the loop.
+@ Track 6's accented D at about 24s (bar 14) plays on the triangle (slot 87, written Dn3) instead of slot 89 (written Dn4), at the same pitch.
+@ Track 6's other slot 89 notes (soft high notes at about 7-18s and 79-81s, on the buzzy wave 15) were removed. Their gaps hold a new
+@ harmony line on the bass triangle (slot 87) that moves with the horn: same rhythm, a third below each horn note (G minor).
+@ Master volume (mus_t_marionette_mvl) is 110, up from 90, to sit closer to the vanilla battle themes. Every VOL scales with it,
+@ including the drums (90*mvl/mxv, which was a fixed 64 before: the same at the old master volume).
+@
+@ Instruments by track (slot numbers in voicegroups/t_marionette.inc):
+@   Track 1: lead. The intro guitar (distortion guitar, slot 30), then the trumpet (slot 56) from bar 11 (the loop starts at bar 6).
+@            Its last note before the loop (bar 46) is an orchestra hit (slot 14).
+@   Track 2: rhythm/backing. Clean guitar (nylon guitar, slot 24) alternating with strings (slot 48), with orchestra hits
+@            (slot 14) at bars 4 and 7, then the overdrive guitar (slot 29) from bar 37 to the end of the loop.
+@   Track 3: french horn (slot 60), switching to orchestra hits (slot 14) and tubular bells (slot 4, VOL 80) from bar 16 to bar 46.
+@   Track 4: square wave (channel 1), switching between a thin plucked square (slot 85, 12.5% duty) and a fuller one (slot 80, 25% duty).
+@   Track 5: square wave (channel 2), switching between a hollow square (slot 83, 75% duty) and a thin plucked one (slot 82, 12.5% duty).
+@   Track 6: wave bass on the smooth triangle (slot 87), which also plays a third below the horn, in its rhythm, in the bass's gaps
+@            (about 7-18s and 79-81s), in place of the removed slot 89 notes.
+@   Track 7: rock drums (slot 126), from mus_marionette_messiah.
+@   Track 8: rock drums (slot 125), from mus_marionette_messiah.
 
 	.include "MPlayDef.s"
 
 	.equ	mus_t_marionette_grp, voicegroup_t_marionette
 	.equ	mus_t_marionette_pri, 1
 	.equ	mus_t_marionette_rev, reverb_set+50
-	.equ	mus_t_marionette_mvl, 90
+	.equ	mus_t_marionette_mvl, 110
 	.equ	mus_t_marionette_key, 0
 	.equ	mus_t_marionette_tbs, 1
 	.equ	mus_t_marionette_exg, 1
@@ -31,7 +50,7 @@ mus_t_marionette_1:
 	.byte		VOL   , 94*mus_t_marionette_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte		BEND  , c_v+0
-	.byte	TEMPO , 140*mus_t_marionette_tbs/2
+	.byte	TEMPO , 138*mus_t_marionette_tbs/2
 	.byte		N78   , Gn2 , v127
 	.byte	W72
 @ 001   ----------------------------------------
@@ -156,7 +175,7 @@ mus_t_marionette_1_B1:
 @ 011   ----------------------------------------
 	.byte	W18
 	.byte		VOICE , 56
-	.byte		VOL   , 92*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 112*mus_t_marionette_mvl/mxv
 	.byte	W01
 	.byte		BEND  , c_v+0
 	.byte	W05
@@ -748,7 +767,7 @@ mus_t_marionette_2_B1:
 	.byte		BEND  , c_v+0
 	.byte	W18
 	.byte		VOICE , 48
-	.byte		VOL   , 77*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 66*mus_t_marionette_mvl/mxv
 	.byte	W01
 	.byte		BEND  , c_v+0
 	.byte	W05
@@ -982,7 +1001,7 @@ mus_t_marionette_2_013:
 	.byte	W04
 	.byte		VOICE , 48
 	.byte	W01
-	.byte		VOL   , 77*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 66*mus_t_marionette_mvl/mxv
 	.byte	W01
 	.byte		N23   , Ds4 , v112
 	.byte	W24
@@ -1062,7 +1081,7 @@ mus_t_marionette_2_013:
 	.byte	W04
 	.byte		VOICE , 48
 	.byte	W01
-	.byte		VOL   , 77*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 66*mus_t_marionette_mvl/mxv
 	.byte	W01
 	.byte		N23   , Cn4 , v112
 	.byte	W24
@@ -1242,7 +1261,7 @@ mus_t_marionette_2_013:
 @ 037   ----------------------------------------
 	.byte	W42
 	.byte		VOICE , 29
-	.byte		VOL   , 92*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 52*mus_t_marionette_mvl/mxv
 	.byte	W01
 	.byte		BEND  , c_v+0
 	.byte	W03
@@ -1882,19 +1901,19 @@ mus_t_marionette_3_B1:
 @ 018   ----------------------------------------
 	.byte	W42
 	.byte		VOICE , 4
-	.byte		VOL   , 88*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 80*mus_t_marionette_mvl/mxv
 	.byte	W01
 	.byte		PAN   , c_v+0
 	.byte	W05
-	.byte		N23   , Dn5 , v104
+	.byte		N23   , Dn4 , v104
 	.byte	W24
-	.byte		        Gn4 , v100
+	.byte		        Gn3 , v100
 	.byte	W24
 @ 019   ----------------------------------------
 	.byte	W48
-	.byte		        As4 , v104
+	.byte		        As3 , v104
 	.byte	W24
-	.byte		        Dn4 , v100
+	.byte		        Dn3 , v100
 	.byte	W24
 @ 020   ----------------------------------------
 	.byte	W96
@@ -1902,50 +1921,51 @@ mus_t_marionette_3_B1:
 	.byte	W96
 @ 022   ----------------------------------------
 	.byte	W60
-	.byte		N06   , Fn4 , v092
+	.byte		N06   , Fn3 , v092
 	.byte	W07
-	.byte		N04   , Gn4 
+	.byte		N04   , Gn3 
 	.byte	W05
-	.byte		N23   , As4 , v104
+	.byte		N23   , As3 , v104
 	.byte	W24
 @ 023   ----------------------------------------
 	.byte	W12
-	.byte		N06   , An4 , v092
+	.byte		N06   , An3 , v092
 	.byte	W07
-	.byte		N04   , As4 
+	.byte		N04   , As3 
 	.byte	W05
-	.byte		N23   , Dn5 , v100
+	.byte		N23   , Dn4 , v100
 	.byte	W24
-	.byte		        As4 , v104
+	.byte		        As3 , v104
 	.byte	W24
-	.byte		        Gn5 , v100
+	.byte		        Gn4 , v100
 	.byte	W24
 @ 024   ----------------------------------------
-	.byte		        Fn5 
+	.byte		        Fn4 
 	.byte	W24
-	.byte		N11   , Ds5 , v092
+	.byte		N11   , Ds4 , v092
 	.byte	W72
 @ 025   ----------------------------------------
 	.byte	W96
 @ 026   ----------------------------------------
 	.byte	W60
-	.byte		N06   , Ds5 , v100
+	.byte		N06   , Ds4 , v100
 	.byte	W07
-	.byte		N04   , Fn5 
+	.byte		N04   , Fn4 
 	.byte	W05
-	.byte		N23   , Gn5 , v108
+	.byte		N23   , Gn4 , v108
 	.byte	W24
 @ 027   ----------------------------------------
 	.byte	W12
-	.byte		N06   , An5 , v100
+	.byte		N06   , An4 , v100
 	.byte	W07
-	.byte		N04   , Gn5 
+	.byte		N04   , Gn4 
 	.byte	W05
-	.byte		N23   , Fs5 , v108
+	.byte		N23   , Fs4 , v108
 	.byte	W72
 @ 028   ----------------------------------------
 	.byte	W24
 	.byte		VOICE , 14
+	.byte		VOL   , 88*mus_t_marionette_mvl/mxv
 	.byte		N09   , Dn3 , v124
 	.byte	W12
 	.byte		N09   
@@ -1975,22 +1995,23 @@ mus_t_marionette_3_B1:
 @ 036   ----------------------------------------
 	.byte	W36
 	.byte		VOICE , 4
-	.byte		N11   , Dn5 , v100
+	.byte		VOL   , 80*mus_t_marionette_mvl/mxv
+	.byte		N11   , Dn4 , v100
 	.byte	W12
-	.byte		        En5 
+	.byte		        En4 
 	.byte	W12
-	.byte		        Fs5 
+	.byte		        Fs4 
 	.byte	W12
-	.byte		        An5 
+	.byte		        An4 
 	.byte	W12
-	.byte		        Dn5 
+	.byte		        Dn4 
 	.byte	W12
 @ 037   ----------------------------------------
-	.byte		        Dn6 
+	.byte		        Dn5 
 	.byte	W12
-	.byte		        An5 
+	.byte		        An4 
 	.byte	W12
-	.byte		N23   , Gn5 
+	.byte		N23   , Gn4 
 	.byte	W72
 @ 038   ----------------------------------------
 	.byte	W96
@@ -2001,6 +2022,7 @@ mus_t_marionette_3_B1:
 @ 041   ----------------------------------------
 	.byte	W48
 	.byte		VOICE , 14
+	.byte		VOL   , 97*mus_t_marionette_mvl/mxv
 	.byte		N44   , Gn3 , v124, gtp1
 	.byte	W48
 @ 042   ----------------------------------------
@@ -2026,10 +2048,9 @@ mus_t_marionette_3_B1:
 	.byte	W01
 	.byte		PAN   , c_v+0
 	.byte	W05
-	.byte		MOD   , 20
+	.byte		MOD   , 2
 	.byte		N16   , Gn3 , v127
 	.byte	W16
-	.byte		MOD   , 0
 	.byte	W08
 	.byte		N16   , Dn4 
 	.byte	W24
@@ -3822,7 +3843,7 @@ mus_t_marionette_6:
 	.byte	KEYSH , mus_t_marionette_key+0
 @ 000   ----------------------------------------
 	.byte		VOICE , 87
-	.byte		VOL   , 50*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 25*mus_t_marionette_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte		BEND  , c_v+0
 	.byte		N90   , Gn1 , v124
@@ -3850,122 +3871,122 @@ mus_t_marionette_6:
 	.byte	W12
 	.byte		N11   
 	.byte	W11
-	.byte		VOICE , 89
+	.byte		VOICE , 87
 	.byte	W01
-	.byte		N16   , As4 , v060
+	.byte		N16   , As2 , v100
 	.byte	W24
-	.byte		N06   , An4 
+	.byte		N06   , An2
 	.byte	W06
 	.byte		VOICE , 87
 	.byte	W01
-	.byte		N04   , Dn1 , v124
+	.byte		N04   , Dn0 , v124
 	.byte	W05
-	.byte		N10   , Dn2 
+	.byte		N10   , Dn1 
 	.byte	W12
 @ 005   ----------------------------------------
 mus_t_marionette_6_005:
-	.byte		N06   , Cn2 , v124
-	.byte	W07
-	.byte		N04   , Dn2 
-	.byte	W05
-	.byte		N06   , An1 
-	.byte	W07
-	.byte		N04   , Fn1 
-	.byte	W05
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N11   
-	.byte	W11
-	.byte		VOICE , 89
-	.byte	W01
-	.byte		N16   , Gn4 , v060
-	.byte	W24
-	.byte		VOICE , 87
-	.byte		N06   , Fn1 , v124
+	.byte		N06   , Cn1 , v124
 	.byte	W07
 	.byte		N04   , Dn1 
 	.byte	W05
-	.byte		N06   , Fn1 
+	.byte		N06   , An0 
 	.byte	W07
-	.byte		N04   , Gn1 
+	.byte		N04   , Fn0 
+	.byte	W05
+	.byte		N06   , Gn0 
+	.byte	W12
+	.byte		N11   
+	.byte	W11
+	.byte		VOICE , 87
+	.byte	W01
+	.byte		N16   , Cn3 , v100
+	.byte	W24
+	.byte		VOICE , 87
+	.byte		N06   , Fn0 , v124
+	.byte	W07
+	.byte		N04   , Dn0 
+	.byte	W05
+	.byte		N06   , Fn0 
+	.byte	W07
+	.byte		N04   , Gn0 
 	.byte	W05
 	.byte	PEND
 @ 006   ----------------------------------------
 mus_t_marionette_6_006:
 	.byte	W07
-	.byte		N04   , Fn1 , v124
+	.byte		N04   , Fn0 , v124
 	.byte	W05
-	.byte		N10   , As1 
+	.byte		N10   , As0 
 	.byte	W12
 	.byte	PEND
 mus_t_marionette_6_B1:
 	.byte		BEND  , c_v+0
-	.byte		N06   , Gn1 , v124
+	.byte		N06   , Gn0 , v124
 	.byte	W12
 	.byte		N11   
 	.byte	W11
-	.byte		VOICE , 89
+	.byte		VOICE , 87
 	.byte	W01
-	.byte		N16   , As4 , v060
+	.byte		N16   , As2 , v100
 	.byte	W24
-	.byte		N06   , An4 
+	.byte		N06   , An2
 	.byte	W06
 	.byte		VOICE , 87
 	.byte	W01
-	.byte		N04   , Dn1 , v124
+	.byte		N04   , Dn0 , v124
 	.byte	W05
-	.byte		N10   , Dn2 
+	.byte		N10   , Dn1 
 	.byte	W12
 @ 007   ----------------------------------------
-	.byte		N06   , Cn2 
-	.byte	W07
-	.byte		N04   , Dn2 
-	.byte	W05
-	.byte		N06   , An1 
-	.byte	W07
-	.byte		N04   , Fn1 
-	.byte	W05
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N11   
-	.byte	W11
-	.byte		VOICE , 89
-	.byte	W01
-	.byte		N06   , As4 , v060
-	.byte	W12
-	.byte		        Cn5 
-	.byte	W12
-	.byte		VOICE , 87
-	.byte		N06   , Fn1 , v124
+	.byte		N06   , Cn1 
 	.byte	W07
 	.byte		N04   , Dn1 
 	.byte	W05
-	.byte		N06   , Fn1 
+	.byte		N06   , An0 
 	.byte	W07
-	.byte		N04   , Gn1 
+	.byte		N04   , Fn0 
+	.byte	W05
+	.byte		N06   , Gn0 
+	.byte	W12
+	.byte		N11   
+	.byte	W11
+	.byte		VOICE , 87
+	.byte	W01
+	.byte		N06   , Cn3 , v100
+	.byte	W12
+	.byte		N06   , Dn3
+	.byte	W12
+	.byte		VOICE , 87
+	.byte		N06   , Fn0 , v124
+	.byte	W07
+	.byte		N04   , Dn0 
+	.byte	W05
+	.byte		N06   , Fn0 
+	.byte	W07
+	.byte		N04   , Gn0 
 	.byte	W05
 @ 008   ----------------------------------------
 mus_t_marionette_6_008:
 	.byte	W07
-	.byte		N04   , Fn1 , v124
+	.byte		N04   , Fn0 , v124
 	.byte	W05
-	.byte		N10   , As1 
+	.byte		N10   , As0 
 	.byte	W12
-	.byte		N06   , Gn1 
+	.byte		N06   , Gn0 
 	.byte	W12
 	.byte		N11   
 	.byte	W11
-	.byte		VOICE , 89
+	.byte		VOICE , 87
 	.byte	W01
-	.byte		N16   , Gn4 , v060
+	.byte		N16   , As2 , v100
 	.byte	W24
-	.byte		N06   , Fn4 
+	.byte		N06   , An2
 	.byte	W06
 	.byte		VOICE , 87
 	.byte	W01
-	.byte		N04   , Dn1 , v124
+	.byte		N04   , Dn0 , v124
 	.byte	W05
-	.byte		N10   , Dn2 
+	.byte		N10   , Dn1 
 	.byte	W12
 	.byte	PEND
 @ 009   ----------------------------------------
@@ -3975,6 +3996,7 @@ mus_t_marionette_6_008:
 	.byte	PATT
 	 .word	mus_t_marionette_6_008
 @ 011   ----------------------------------------
+	.byte		VOL   , 50*mus_t_marionette_mvl/mxv
 	.byte		N06   , Cn2 , v124
 	.byte	W07
 	.byte		N04   , Dn2 
@@ -4037,9 +4059,9 @@ mus_t_marionette_6_013:
 	.byte	W12
 	.byte		N11   
 	.byte	W12
-	.byte		VOICE , 89
+	.byte		VOICE , 87
 	.byte		PAN   , c_v+63
-	.byte		N21   , Dn4 , v108
+	.byte		N21   , Dn3 , v108
 	.byte	W23
 	.byte		VOICE , 87
 	.byte	W01
@@ -4488,17 +4510,18 @@ mus_t_marionette_6_036:
 	.byte	W12
 	.byte		N11   
 	.byte	W11
-	.byte		VOICE , 89
+	.byte		VOICE , 87
+	.byte		VOL   , 25*mus_t_marionette_mvl/mxv
 	.byte	W01
-	.byte		N16   , Gn4 , v060
+	.byte		N16   , As2 , v100
 	.byte	W24
-	.byte		N06   , Fn4 
+	.byte		N06   , An2
 	.byte	W06
 	.byte		VOICE , 87
 	.byte	W01
-	.byte		N04   , Dn1 , v124
+	.byte		N04   , Dn0 , v124
 	.byte	W05
-	.byte		N10   , Dn2 
+	.byte		N10   , Dn1 
 	.byte	W12
 @ 047   ----------------------------------------
 	.byte	PATT
@@ -4516,7 +4539,7 @@ mus_t_marionette_6_B2:
 mus_t_marionette_7:
 	.byte		KEYSH , mus_t_marionette_key+0
 	.byte		VOICE , 126
-	.byte		VOL   , 64
+	.byte		VOL   , 90*mus_t_marionette_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte		BEND  , c_v+0
 	.byte	W96
@@ -5363,7 +5386,7 @@ mus_t_marionette_7_004:
 mus_t_marionette_8:
 	.byte		KEYSH , mus_t_marionette_key+0
 	.byte		VOICE , 125
-	.byte		VOL   , 64
+	.byte		VOL   , 90*mus_t_marionette_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte		BEND  , c_v+0
 	.byte		N11   , Bn0 , v112

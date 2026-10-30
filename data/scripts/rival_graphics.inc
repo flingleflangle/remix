@@ -26,6 +26,17 @@ EventScript_SetupRivalOnBikeGfxIdMale::
 	setvar VAR_OBJ_GFX_ID_3, OBJ_EVENT_GFX_RIVAL_BRENDAN_MACH_BIKE
 	return
 
+@ The rival on the water (Route 126), in VAR_OBJ_GFX_ID_1
+Common_EventScript_SetupRivalSurfingGfxId::
+	checkplayergender
+	goto_if_eq VAR_RESULT, FEMALE, EventScript_SetupRivalSurfingGfxIdMale
+	setvar VAR_OBJ_GFX_ID_1, OBJ_EVENT_GFX_RIVAL_MAY_SURFING
+	return
+
+EventScript_SetupRivalSurfingGfxIdMale::
+	setvar VAR_OBJ_GFX_ID_1, OBJ_EVENT_GFX_RIVAL_BRENDAN_SURFING
+	return
+
 @ Unused
 Common_EventScript_SetupRivalGfxIdSameGender::
 	checkplayergender

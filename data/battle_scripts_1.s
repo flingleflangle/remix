@@ -7284,3 +7284,25 @@ BattleScript_FollowerStepsAsideForCatch::
 	trainerslideout B_POSITION_PLAYER_RIGHT
 	waitstate
 	end2
+
+@ partnercatch: the partner wants this one themselves. Both sides' Pokémon are recalled (the player's
+@ first, as the attacker, then the partner's, from gBattlerTarget), the partner slides in and throws a
+@ ball that always catches it, and it's theirs (FollowerBattle_PartnerThrowsBall in Cmd_handleballthrow).
+BattleScript_FollowerCatchesWildMon::
+	returnatktoball
+	waitstate
+	copybyte gBattlerAttacker, gBattlerTarget
+BattleScript_FollowerCatchesWildMonAlone::
+	returnatktoball
+	waitstate
+	trainerslidein B_POSITION_PLAYER_RIGHT
+	waitstate
+	printstring STRINGID_FOLLOWERTHREWBALL
+	waitmessage B_WAIT_TIME_LONG
+	handleballthrow
+
+BattleScript_FollowerBallThrow::
+	printstring STRINGID_FOLLOWERCAUGHTWILDMON
+	waitmessage B_WAIT_TIME_LONG
+	setbyte gBattleOutcome, B_OUTCOME_CAUGHT
+	end2

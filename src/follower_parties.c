@@ -8,6 +8,7 @@
 #include "battle_anim.h"
 #include "util.h"
 #include "battle_setup.h"
+#include "battle_scripts.h"
 #include "event_data.h"
 #include "follow_me.h"
 #include "party_menu.h"
@@ -27,8 +28,33 @@
 #include "constants/vars.h"
 
 static const u8 sText_FollowerMay[] = _("MAY");
+static const u8 sText_FollowerBrendan[] = _("BRENDAN");
+static const u8 sText_FollowerWally[] = _("WALLY");
 
 #include "data/follower_parties.h"
+
+// The rival's starter line for each of the player's starters (VAR_STARTER_MON), matching the
+// teams they use in their real battles (Route 103, 110, 119 and Lilycove City)
+static const u16 sRivalStarterLines[][3] =
+{
+    {SPECIES_TREECKO, SPECIES_GROVYLE, SPECIES_SCEPTILE},
+    {SPECIES_TORCHIC, SPECIES_COMBUSKEN, SPECIES_BLAZIKEN},
+    {SPECIES_MUDKIP, SPECIES_MARSHTOMP, SPECIES_SWAMPERT},
+};
+
+static const u8 sRivalStarterLineByPlayerStarter[] = {0, 1, 2, 0, 2};
+
+static u16 GetFollowerPartyMonSpecies(u16 species)
+{
+    u16 starter;
+
+    if (species < FOLLOWER_RIVAL_STARTER_1)
+        return species;
+    starter = VarGet(VAR_STARTER_MON);
+    if (starter >= ARRAY_COUNT(sRivalStarterLineByPlayerStarter))
+        starter = 0;
+    return sRivalStarterLines[sRivalStarterLineByPlayerStarter[starter]][species - FOLLOWER_RIVAL_STARTER_1];
+}
 
 static u8 CountBadges(void)
 {
@@ -150,7 +176,7 @@ bool8 FillFollowerPartnerParty(u16 partnerId)
             personality = Random32();
         } while (IsShinyOtIdPersonality(partner->otId, personality) || GetNatureFromPersonality(personality) != partyMon->nature);
 
-        CreateMon(mon, partyMon->species, partyMon->level, partyMon->fixedIV, TRUE, personality, OT_ID_PRESET, partner->otId);
+        CreateMon(mon, GetFollowerPartyMonSpecies(partyMon->species), partyMon->level, partyMon->fixedIV, TRUE, personality, OT_ID_PRESET, partner->otId);
         SetMonData(mon, MON_DATA_HELD_ITEM, &partyMon->heldItem);
         for (j = 0; j < NUM_STATS; j++)
             SetMonData(mon, MON_DATA_HP_EV + j, &partyMon->evs[j]);
@@ -425,6 +451,8 @@ static const u16 sHelpCatchSpeciesVars[HELPCATCH_SPECIES_COUNT] =
 
 EWRAM_DATA static bool8 sHoldingBack = FALSE;    // this battle's wild Pokémon is one to help catch
 EWRAM_DATA static bool8 sSteppedAside = FALSE;   // the partner has recalled their Pokémon for the player to catch it
+EWRAM_DATA static bool8 sPartnerCatches = FALSE; // FLAG_FOLLOWER_PARTNER_CATCHES: the partner throws the ball themselves
+EWRAM_DATA static bool8 sPartnerCaughtIt = FALSE; // ...and just caught it
 EWRAM_DATA static bool8 sHelpCatchLineDue = FALSE;
 
 // Script command helpcatch (see asm/macros/event.inc). Also called with NULL/none by setfollower.
@@ -438,6 +466,7 @@ void FollowerBattle_SetHelpCatch(const u8 *foundText, const u8 *caughtText, cons
     VarSet(VAR_FOLLOWER_HELPCATCH_TEXT_HI, (u32)foundText >> 16);
     VarSet(VAR_FOLLOWER_HELPCATCH_CAUGHT_TEXT_LO, (u32)caughtText & 0xFFFF);
     VarSet(VAR_FOLLOWER_HELPCATCH_CAUGHT_TEXT_HI, (u32)caughtText >> 16);
+    FlagClear(FLAG_FOLLOWER_PARTNER_CATCHES); // partnercatch sets it again
 }
 
 // The helpcatch lines are ROM addresses kept in the save, so a follower set up before the ROM
@@ -471,10 +500,30 @@ static bool8 ShouldHelpCatch(u16 species)
     return FALSE;
 }
 
+// The partner wants to catch this one themselves (partnercatch): it counts even if the player has
+// already caught one of their own
+static bool8 ShouldPartnerCatch(u16 species)
+{
+    u8 i;
+
+    if (!FlagGet(FLAG_FOLLOWER_PARTNER_CATCHES))
+        return FALSE;
+    for (i = 0; i < HELPCATCH_SPECIES_COUNT; i++)
+    {
+        if (species != SPECIES_NONE && VarGet(sHelpCatchSpeciesVars[i]) == species)
+            return TRUE;
+    }
+    return FALSE;
+}
+
 static void InitHelpCatch(bool8 isWild)
 {
+    u16 species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES);
+
     sSteppedAside = FALSE;
-    sHoldingBack = isWild && ShouldHelpCatch(GetMonData(&gEnemyParty[0], MON_DATA_SPECIES));
+    sPartnerCaughtIt = FALSE;
+    sPartnerCatches = isWild && ShouldPartnerCatch(species);
+    sHoldingBack = isWild && (sPartnerCatches || ShouldHelpCatch(species));
     sHelpCatchLineDue = sHoldingBack && FollowerBattle_GetHelpCatchLine() != NULL;
 }
 
@@ -500,21 +549,53 @@ bool8 FollowerBattle_TakeHelpCatchLine(void)
 }
 
 // End of turn: if the wild Pokémon is down to 1/3 of its HP, the partner recalls their Pokémon
-// (BattleScript_FollowerStepsAsideForCatch) and is absent from then on.
-bool8 FollowerBattle_TryStepAside(void)
+// (BattleScript_FollowerStepsAsideForCatch) and is absent from then on. With partnercatch, both sides'
+// Pokémon are recalled instead and the partner throws a ball that always catches it
+// (BattleScript_FollowerCatchesWildMon, Cmd_handleballthrow).
+const u8 *FollowerBattle_TryStepAside(void)
 {
     u8 partner = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+    u8 player = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
     u8 wild = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 
     if (!FollowerBattle_IsHoldingBack()
      || (gAbsentBattlerFlags & gBitTable[partner]) || gBattleMons[partner].hp == 0
      || gBattleMons[wild].hp == 0 || gBattleMons[wild].hp * 3 > gBattleMons[wild].maxHP)
-        return FALSE;
+        return NULL;
 
     sSteppedAside = TRUE;
-    gAbsentBattlerFlags |= gBitTable[partner];
     gBattlerAttacker = partner;
-    return TRUE;
+    if (sPartnerCatches)
+    {
+        gLastUsedItem = ITEM_POKE_BALL;
+        if ((gAbsentBattlerFlags & gBitTable[player]) || gBattleMons[player].hp == 0)
+            return BattleScript_FollowerCatchesWildMonAlone;
+        // The player's Pokémon goes back first (as the attacker), then the partner's (kept in gBattlerTarget)
+        gBattlerAttacker = player;
+        gBattlerTarget = partner;
+        return BattleScript_FollowerCatchesWildMon;
+    }
+    gAbsentBattlerFlags |= gBitTable[partner];
+    return BattleScript_FollowerStepsAsideForCatch;
+}
+
+// The partner is throwing the ball themselves (Cmd_handleballthrow)
+bool8 FollowerBattle_PartnerThrowsBall(void)
+{
+    return sFollowerBattleActive && sPartnerCatches && sSteppedAside;
+}
+
+// The partner's ball caught it: the Pokémon is theirs, not the player's
+void FollowerBattle_SetPartnerCaughtIt(void)
+{
+    sPartnerCaughtIt = TRUE;
+}
+
+// As a wild battle ends: TRUE if the partner caught the Pokémon themselves
+// (EventScript_FollowerPartnerCaughtWildMon runs on returning to the field)
+bool8 FollowerBattle_PartnerCaughtIt(void)
+{
+    return sFollowerBattleActive && sPartnerCaughtIt && gBattleOutcome == B_OUTCOME_CAUGHT;
 }
 
 // Damage-over-time and similar effects that could knock out the Pokémon the player wants.
@@ -611,7 +692,7 @@ void IsTalkingToFollower(void)
 // (EventScript_FollowerCaughtHelpCatch runs on returning to the field).
 bool8 FollowerBattle_ShouldAcknowledgeCatch(void)
 {
-    return sFollowerBattleActive && sHoldingBack && gBattleOutcome == B_OUTCOME_CAUGHT
+    return sFollowerBattleActive && sHoldingBack && !sPartnerCaughtIt && gBattleOutcome == B_OUTCOME_CAUGHT
         && GetTextFromVars(VAR_FOLLOWER_HELPCATCH_CAUGHT_TEXT_LO, VAR_FOLLOWER_HELPCATCH_CAUGHT_TEXT_HI) != NULL;
 }
 

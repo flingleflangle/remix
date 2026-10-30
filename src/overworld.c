@@ -790,6 +790,28 @@ bool8 SetDiveWarpDive(u16 x, u16 y)
     return SetDiveWarp(CONNECTION_DIVE, x, y);
 }
 
+
+// Once the player's heard WALLY's speech in WANDA's house (FLAG_WALLY_SPEECH), he slips off on his own
+// the next time they leave VERDANTURF TOWN (the town or a building in it) once RUSTURF TUNNEL is open,
+// so his family can tell them he left (and he can be found on Route 116). Beating FLANNERY makes him
+// leave too, tunnel or not (by then he'd have found a way around).
+static void TryWallyLeaveVerdanturf(void)
+{
+    u8 group = gSaveBlock1Ptr->location.mapGroup, num = gSaveBlock1Ptr->location.mapNum;
+
+    if (!FlagGet(FLAG_WALLY_SPEECH) || FlagGet(FLAG_WALLY_LEFT_VERDANTURF))
+        return;
+    // No way out to Route 116 until a rock in RUSTURF TUNNEL is smashed (FLAG_RUSTURF_TUNNEL_OPENED itself
+    // is only set later, by WANDA's reunion scene)
+    if (!FlagGet(FLAG_RUSTURF_TUNNEL_OPENED) && !FlagGet(FLAG_HIDE_RUSTURF_TUNNEL_ROCK_1) && !FlagGet(FLAG_HIDE_RUSTURF_TUNNEL_ROCK_2))
+        return;
+    if ((group == MAP_GROUP(MAP_VERDANTURF_TOWN) && num == MAP_NUM(MAP_VERDANTURF_TOWN))
+     || group == MAP_GROUP(MAP_VERDANTURF_TOWN_WANDAS_HOUSE)) // VERDANTURF's buildings are their own map group
+        return;
+    FlagSet(FLAG_WALLY_LEFT_VERDANTURF);
+    FlagSet(FLAG_HIDE_VERDANTURF_TOWN_WANDAS_HOUSE_WALLY);
+}
+
 void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
 {
     s32 paletteIndex;
@@ -814,6 +836,7 @@ void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
     ChooseAmbientCrySpecies();
     SetDefaultFlashLevel();
     Overworld_ClearSavedMusic();
+    TryWallyLeaveVerdanturf();
     RunOnTransitionMapScript();
     InitMap();
     CopySecondaryTilesetToVramUsingHeap(gMapHeader.mapLayout);
@@ -868,6 +891,7 @@ static void LoadMapFromWarp(bool32 a1)
         FlagClear(FLAG_SYS_USE_FLASH);
     SetDefaultFlashLevel();
     Overworld_ClearSavedMusic();
+    TryWallyLeaveVerdanturf();
     RunOnTransitionMapScript();
     UpdateLocationHistoryForRoamer();
     RoamerMoveToOtherLocationSet();

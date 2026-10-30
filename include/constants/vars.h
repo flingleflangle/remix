@@ -237,7 +237,7 @@
 #define VAR_HAS_TALKED_TO_SEAFLOOR_CAVERN_ENTRANCE_GRUNT 0x40D9
 #define VAR_REGISTER_BIRCH_STATE                         0x40DA
 #define VAR_FOLLOWER_HELPCATCH_CAUGHT_TEXT_HI            0x40DB // helpcatch line for a catch (ROM address, high half)
-#define VAR_UNUSED_0x40DC                                0x40DC // Unused Var
+#define VAR_ROUTE112_RIVAL                               0x40DC // rival tagging along on Route 112: 0 not met, 1 about to catch up, 2 following, 3 done
 #define VAR_GIFT_PICHU_SLOT                              0x40DD
 #define VAR_GIFT_UNUSED_1                                0x40DE // Var is written to, but never read
 #define VAR_GIFT_UNUSED_2                                0x40DF // Var is written to, but never read
@@ -246,7 +246,7 @@
 #define VAR_GIFT_UNUSED_5                                0x40E2 // Var is written to, but never read
 #define VAR_GIFT_UNUSED_6                                0x40E3 // Var is written to, but never read
 #define VAR_GIFT_UNUSED_7                                0x40E4 // var is written to, but never read
-#define VAR_UNUSED_0x40E5                                0x40E5 // Unused Var
+#define VAR_ROUTE119_RIVAL                               0x40E5 // rival tagging along on Route 119 / the Weather Institute (same states)
 #define VAR_DAILY_SLOTS                                  0x40E6
 #define VAR_DAILY_WILDS                                  0x40E7
 #define VAR_DAILY_BLENDER                                0x40E8
@@ -264,8 +264,8 @@
 #define VAR_ROXANNE_CALL_STEP_COUNTER                    0x40F4
 #define VAR_SCOTT_BF_CALL_STEP_COUNTER                   0x40F5
 #define VAR_RIVAL_RAYQUAZA_CALL_STEP_COUNTER             0x40F6
-#define VAR_UNUSED_0x40F7                                0x40F7 // Unused Var
-#define VAR_UNUSED_0x40F8                                0x40F8 // Unused Var
+#define VAR_ROUTE126_RIVAL                               0x40F7 // rival tagging along to Sootopolis during the crisis (same states)
+#define VAR_WALLY_FOLLOWER                               0x40F8 // which WALLY section he's following the player in: 1 Route 116, 2 NEW MAUVILLE, 3 METEOR FALLS
 #define VAR_ODOR_SLEUTH_SPECIES                          0x40F9 // Last wild Pokémon met, for Odor Sleuth (see wild_encounter.c)
 #define VAR_ODOR_SLEUTH_MAP                              0x40FA // Map it was met on
 #define VAR_ODOR_SLEUTH_STATE                            0x40FB // Its level, encounter area and Odor Sleuth trail state

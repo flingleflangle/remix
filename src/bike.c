@@ -985,8 +985,8 @@ void GetOnOffBike(u8 transitionFlags)
     {
         SetPlayerAvatarTransitionFlags(transitionFlags);
         // TEMP: testing MUS_T_MESSENGER. Change both back to MUS_CYCLING
-        Overworld_SetSavedMusic(MUS_CYCLING);
-        Overworld_ChangeMusicTo(MUS_CYCLING);
+        Overworld_SetSavedMusic(MUS_T_MARIONETTE);
+        Overworld_ChangeMusicTo(MUS_T_MARIONETTE);
     }
 }
 

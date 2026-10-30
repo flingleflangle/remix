@@ -53,7 +53,10 @@ const u8 *FollowerBattle_GetHelpCatchLine(void);
 bool8 FollowerBattle_IsHoldingBack(void);
 bool8 FollowerBattle_HasSteppedAside(void);
 bool8 FollowerBattle_TakeHelpCatchLine(void);
-bool8 FollowerBattle_TryStepAside(void);
+const u8 *FollowerBattle_TryStepAside(void);
+bool8 FollowerBattle_PartnerThrowsBall(void);
+void FollowerBattle_SetPartnerCaughtIt(void);
+bool8 FollowerBattle_PartnerCaughtIt(void);
 u8 FollowerBattle_ChooseHoldBackMove(u8 battler, const u16 *moves, const u8 *pp);
 void FollowerBattle_RestoreParty(void);
 

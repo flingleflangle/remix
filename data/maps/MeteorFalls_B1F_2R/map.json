@@ -38,5 +38,30 @@
     }
   ],
   "coord_events": [],
-  "bg_events": []
+  "bg_events": [
+    {
+      "type": "hidden_item",
+      "x": 6,
+      "y": 14,
+      "elevation": 0,
+      "item": "ITEM_MOON_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_2R_MOON_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 4,
+      "y": 14,
+      "elevation": 0,
+      "item": "ITEM_DAWN_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_2R_DAWN_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 6,
+      "y": 4,
+      "elevation": 0,
+      "item": "ITEM_SHINY_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_2R_SHINY_STONE"
+    }
+  ]
 }

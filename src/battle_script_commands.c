@@ -11926,6 +11926,17 @@ static void Cmd_handleballthrow(void)
         MarkBattlerForControllerExec(gActiveBattler);
         gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
     }
+    else if (FollowerBattle_PartnerThrowsBall())
+    {
+        // The follower partner catching the wild Pokémon themselves (partnercatch): it always works,
+        // and it's theirs, so it skips the dex/nickname/give steps of BattleScript_SuccessBallThrow
+        gBattlerTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+        gBallShakesBData.shakes = BALL_3_SHAKES_SUCCESS;
+        BtlController_EmitBallThrowAnim(B_COMM_TO_CONTROLLER, BALL_3_SHAKES_SUCCESS);
+        MarkBattlerForControllerExec(gActiveBattler);
+        FollowerBattle_SetPartnerCaughtIt();
+        gBattlescriptCurrInstr = BattleScript_FollowerBallThrow;
+    }
     else if (gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL)
     {
         gBallShakesBData.shakes = CalcNextShakeFromOdds(gBallShakesBData.odds);

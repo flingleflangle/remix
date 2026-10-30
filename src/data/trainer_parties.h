@@ -6774,6 +6774,12 @@ static const struct TrainerMonNoItemCustomMoves sParty_WallyVR1[] = {
     .moves = {MOVE_SUPERSONIC, MOVE_THUNDERBOLT, MOVE_TRI_ATTACK, MOVE_SCREECH}
     },
     {
+    .iv = 150,
+    .lvl = 42,
+    .species = SPECIES_AZUMARILL,
+    .moves = {MOVE_SURF, MOVE_ROLLOUT, MOVE_DOUBLE_EDGE, MOVE_RAIN_DANCE}
+    },
+    {
     .iv = 250,
     .lvl = 45,
     .species = SPECIES_GARDEVOIR,
@@ -8777,6 +8783,12 @@ static const struct TrainerMonNoItemCustomMoves sParty_WallyVR2[] = {
     .moves = {MOVE_SUPERSONIC, MOVE_THUNDERBOLT, MOVE_TRI_ATTACK, MOVE_SCREECH}
     },
     {
+    .iv = 150,
+    .lvl = 45,
+    .species = SPECIES_AZUMARILL,
+    .moves = {MOVE_SURF, MOVE_ROLLOUT, MOVE_DOUBLE_EDGE, MOVE_RAIN_DANCE}
+    },
+    {
     .iv = 250,
     .lvl = 48,
     .species = SPECIES_GARDEVOIR,
@@ -8808,6 +8820,12 @@ static const struct TrainerMonNoItemCustomMoves sParty_WallyVR3[] = {
     .lvl = 47,
     .species = SPECIES_MAGNETON,
     .moves = {MOVE_SUPERSONIC, MOVE_THUNDERBOLT, MOVE_TRI_ATTACK, MOVE_SCREECH}
+    },
+    {
+    .iv = 150,
+    .lvl = 48,
+    .species = SPECIES_AZUMARILL,
+    .moves = {MOVE_SURF, MOVE_ROLLOUT, MOVE_DOUBLE_EDGE, MOVE_RAIN_DANCE}
     },
     {
     .iv = 250,
@@ -8843,6 +8861,12 @@ static const struct TrainerMonNoItemCustomMoves sParty_WallyVR4[] = {
     .moves = {MOVE_SUPERSONIC, MOVE_THUNDERBOLT, MOVE_TRI_ATTACK, MOVE_SCREECH}
     },
     {
+    .iv = 150,
+    .lvl = 51,
+    .species = SPECIES_AZUMARILL,
+    .moves = {MOVE_SURF, MOVE_ROLLOUT, MOVE_DOUBLE_EDGE, MOVE_RAIN_DANCE}
+    },
+    {
     .iv = 250,
     .lvl = 54,
     .species = SPECIES_GARDEVOIR,
@@ -8874,6 +8898,12 @@ static const struct TrainerMonNoItemCustomMoves sParty_WallyVR5[] = {
     .lvl = 53,
     .species = SPECIES_MAGNETON,
     .moves = {MOVE_SUPERSONIC, MOVE_THUNDERBOLT, MOVE_TRI_ATTACK, MOVE_SCREECH}
+    },
+    {
+    .iv = 150,
+    .lvl = 54,
+    .species = SPECIES_AZUMARILL,
+    .moves = {MOVE_SURF, MOVE_ROLLOUT, MOVE_DOUBLE_EDGE, MOVE_RAIN_DANCE}
     },
     {
     .iv = 250,

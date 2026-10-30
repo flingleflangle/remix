@@ -1,10 +1,44 @@
 FieryPath_MapScripts::
 	map_script MAP_SCRIPT_ON_TRANSITION, FieryPath_OnTransition
+	map_script MAP_SCRIPT_ON_FRAME_TABLE, FieryPath_OnFrame
+	map_script MAP_SCRIPT_ON_RESUME, FieryPath_OnResume
 	.byte 0
+
+FieryPath_OnResume:
+	call Route112_EventScript_TryRefreshRivalHelpCatch
+	end
 
 FieryPath_OnTransition:
 	call_if_unset FLAG_LANDMARK_FIERY_PATH, FieryPath_EventScript_MoveScottToFallarbor
 	setflag FLAG_LANDMARK_FIERY_PATH
+	call_if_eq VAR_ROUTE112_RIVAL, 2, FieryPath_EventScript_TryArmRivalTorkoal
+	end
+
+FieryPath_OnFrame:
+	map_script_2 VAR_TEMP_1, 1, FieryPath_EventScript_RivalPointOutTorkoal
+	.2byte 0
+
+FieryPath_EventScript_TryArmRivalTorkoal::
+	goto_if_set FLAG_ROUTE112_RIVAL_TORKOAL, Common_EventScript_NopReturn
+	setvar VAR_TEMP_1, 1
+	return
+
+@ The rival tagging along from Route 112 (see Route112_EventScript_RivalCatchUp), the first time in:
+@ they come out beside the player and point out TORKOAL, then help them catch one
+FieryPath_EventScript_RivalPointOutTorkoal::
+	lockall
+	setvar VAR_TEMP_1, 0
+	call Common_EventScript_CheckRivalFollower
+	goto_if_eq VAR_RESULT, FALSE, FieryPath_EventScript_RivalPointOutEnd
+	special FollowerAppearBesidePlayer
+	goto_if_eq VAR_RESULT, FALSE, FieryPath_EventScript_RivalPointOutEnd
+	facefollower
+	rivalmsgbox Route112_Text_MayPointOutTorkoal, Route112_Text_BrendanPointOutTorkoal
+	closemessage
+	setflag FLAG_ROUTE112_RIVAL_TORKOAL
+	call Route112_EventScript_RivalHelpCatchTorkoal
+FieryPath_EventScript_RivalPointOutEnd::
+	releaseall
 	end
 
 FieryPath_EventScript_MoveScottToFallarbor::

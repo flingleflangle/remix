@@ -1790,6 +1790,15 @@
     .endm
 
     @ sets which FOLLOWER_PARTNER_* the follower battles as (see src/data/follower_parties.h)
+    @ like helpcatch, but the follower catches the Pokémon themselves: once it's weak, both sides'
+    @ Pokémon are recalled and the partner throws a ball that always catches it (theirs, not the
+    @ player's; EventScript_FollowerPartnerCaughtWildMon runs after). If the player catches one
+    @ first, the follower says playerCaughtText after the battle.
+    .macro partnercatch foundText:req, playerCaughtText:req, species1:req, species2=SPECIES_NONE, species3=SPECIES_NONE, species4=SPECIES_NONE
+    helpcatch \foundText, \playerCaughtText, \species1, \species2, \species3, \species4
+    setflag FLAG_FOLLOWER_PARTNER_CATCHES
+    .endm
+
     .macro setfollowerpartner partnerId:req
     setvar VAR_FOLLOWER_PARTNER, \partnerId
     .endm
@@ -1798,6 +1807,18 @@
     @ VAR_RESULT is FALSE if no follower partner is set.
     .macro loadfollowerparty
     special LoadFollowerPartnerParty
+    .endm
+
+    @ msgbox with the rival's line: mayText for a male player (MAY), brendanText for a female
+    @ player (BRENDAN). Overwrites VAR_RESULT (with the answer, for MSGBOX_YESNO).
+    .macro rivalmsgbox mayText:req, brendanText:req, type=MSGBOX_DEFAULT
+    checkplayergender
+    goto_if_eq VAR_RESULT, FEMALE, .Lrivalmsgbox_brendan_\@
+    msgbox \mayText, \type
+    goto .Lrivalmsgbox_end_\@
+.Lrivalmsgbox_brendan_\@:
+    msgbox \brendanText, \type
+.Lrivalmsgbox_end_\@:
     .endm
 
 

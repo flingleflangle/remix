@@ -554,3 +554,6 @@ gSpecials::
 	def_special BufferHelpCatchCaughtLine
 	def_special HelpCatchTargetCaught
 	def_special GetFollowerLocalIdForScript
+	def_special RivalApproach_Prepare
+	def_special GetCurrentMapForScript
+	def_special FollowerAppearBesidePlayer

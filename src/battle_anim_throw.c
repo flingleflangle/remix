@@ -21,6 +21,7 @@
 #include "data.h"
 #include "constants/items.h"
 #include "constants/moves.h"
+#include "follower_parties.h"
 #include "constants/songs.h"
 #include "constants/flags.h"
 #include "constants/rgb.h"
@@ -801,7 +802,8 @@ void AnimTask_ThrowBall_StandingTrainer(u8 taskId)
     u8 subpriority;
     u8 spriteId;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL)
+    // WALLY throws from the middle of his side: in his tutorial, or as a follower catching one himself
+    if ((gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL) || FollowerBattle_PartnerThrowsBall())
     {
         x = 32;
         y = 11;
@@ -819,14 +821,14 @@ void AnimTask_ThrowBall_StandingTrainer(u8 taskId)
     gSprites[spriteId].sTargetX = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
     gSprites[spriteId].sTargetY = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) - 16;
     gSprites[spriteId].callback = SpriteCallbackDummy;
-    gSprites[gBattlerSpriteIds[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]].callback = SpriteCB_TrainerThrowObject;
+    gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].callback = SpriteCB_TrainerThrowObject; // the trainer throwing
     gTasks[taskId].tSpriteId = spriteId;
     gTasks[taskId].func = AnimTask_ThrowBall_StandingTrainer_Step;
 }
 
 static void AnimTask_ThrowBall_StandingTrainer_Step(u8 taskId)
 {
-    if (gSprites[gBattlerSpriteIds[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]].animCmdIndex == 1)
+    if (gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].animCmdIndex == 1)
     {
         PlaySE12WithPanning(SE_BALL_THROW, 0);
         gSprites[gTasks[taskId].tSpriteId].callback = SpriteCB_Ball_Throw;
@@ -843,9 +845,9 @@ static void AnimTask_ThrowBall_StandingTrainer_Step(u8 taskId)
 
 static void Task_PlayerThrow_Wait(u8 taskId)
 {
-    if (gSprites[gBattlerSpriteIds[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]].animEnded)
+    if (gSprites[gBattlerSpriteIds[gBattleAnimAttacker]].animEnded)
     {
-        StartSpriteAnim(&gSprites[gBattlerSpriteIds[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]], 0);
+        StartSpriteAnim(&gSprites[gBattlerSpriteIds[gBattleAnimAttacker]], 0);
         DestroyTask(taskId);
     }
 }

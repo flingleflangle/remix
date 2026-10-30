@@ -46,3 +46,71 @@ EventScript_FollowerCaughtHelpCatch::
 	msgbox gStringVar4, MSGBOX_DEFAULT
 	releaseall
 	end
+
+@ The rival as a follower (MAY for a male player, BRENDAN for a female one) on Routes 110, 112,
+@ 119 and 126.
+
+@ VAR_RESULT = TRUE if the rival is the one following the player
+Common_EventScript_CheckRivalFollower::
+	checkfollower
+	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_NopReturn
+	goto_if_eq VAR_FOLLOWER_PARTNER, FOLLOWER_PARTNER_MAY, Common_EventScript_NopReturn
+	goto_if_eq VAR_FOLLOWER_PARTNER, FOLLOWER_PARTNER_BRENDAN, Common_EventScript_NopReturn
+	setvar VAR_RESULT, FALSE
+	return
+
+@ The rival battles beside the player while following (src/data/follower_parties.h)
+Common_EventScript_SetRivalFollowerPartner::
+	checkplayergender
+	goto_if_eq VAR_RESULT, FEMALE, Common_EventScript_SetBrendanFollowerPartner
+	setfollowerpartner FOLLOWER_PARTNER_MAY
+	return
+
+Common_EventScript_SetBrendanFollowerPartner::
+	setfollowerpartner FOLLOWER_PARTNER_BRENDAN
+	return
+
+Common_EventScript_PlayRivalEncounterMusic::
+	checkplayergender
+	goto_if_eq VAR_RESULT, FEMALE, Common_EventScript_PlayBrendanEncounterMusic
+	playbgm MUS_ENCOUNTER_MAY, TRUE
+	return
+
+Common_EventScript_PlayBrendanEncounterMusic::
+	playbgm MUS_ENCOUNTER_BRENDAN, TRUE
+	return
+
+@ The rival catching up to the player: after RivalApproach_Prepare, setobjectxyperm/addobject
+@ and setfollower for the rival, they walk up and the player turns to face them.
+@ VAR_0x8008 = the direction they came from (for Common_EventScript_RivalDeclinedLeave).
+Common_EventScript_RivalWalkUp::
+	copyvar VAR_0x8008, VAR_0x8006
+	special GetFollowerLocalIdForScript
+	applymovement VAR_0x8005, gRivalApproachMovement
+	applymovement OBJ_EVENT_ID_PLAYER, gRivalApproachPlayerMovement
+	waitmovement 0
+	return
+
+@ The player said no: the rival heads back the way they came
+Common_EventScript_RivalDeclinedLeave::
+	closemessage
+	copyvar VAR_0x8004, VAR_0x8008
+	call Common_EventScript_FollowerStopLeave
+	savebgm MUS_DUMMY
+	fadedefaultbgm
+	return
+
+@ The rival's joined: battle partner set, the encounter music fades back to the route's
+Common_EventScript_RivalJoined::
+	closemessage
+	call Common_EventScript_SetRivalFollowerPartner
+	savebgm MUS_DUMMY
+	fadedefaultbgm
+	return
+
+@ After a wild battle where the follower caught their partnercatch Pokémon themselves
+EventScript_FollowerPartnerCaughtWildMon::
+	lockall
+	goto_if_eq VAR_WALLY_FOLLOWER, 1, Route116_EventScript_WallyCaughtSkitty
+	releaseall
+	end

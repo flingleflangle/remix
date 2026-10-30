@@ -14,6 +14,11 @@
 #define FOLLOWER_FLAG_ALL_WATER             (FOLLOWER_FLAG_CAN_SURF | FOLLOWER_FLAG_CAN_WATERFALL | FOLLOWER_FLAG_CAN_DIVE)
 #define FOLLOWER_FLAG_ALL_LAND              (FOLLOWER_FLAG_HAS_RUNNING_FRAMES | FOLLOWER_FLAG_CAN_BIKE | FOLLOWER_FLAG_CAN_LEAVE_ROUTE)
 #define FOLLOWER_FLAG_ALL                   (FOLLOWER_FLAG_ALL_WATER | FOLLOWER_FLAG_ALL_LAND | FOLLOWER_FLAG_CLEAR_ON_WHITE_OUT)
+// The rival tagging along on a route: everything but Fly/Teleport/Dig/Escape Rope, so the player
+// has to walk them to one of the route's stops
+#define FOLLOWER_FLAG_RIVAL                 (FOLLOWER_FLAG_ALL_WATER | FOLLOWER_FLAG_HAS_RUNNING_FRAMES | FOLLOWER_FLAG_CAN_BIKE | FOLLOWER_FLAG_CLEAR_ON_WHITE_OUT)
+// WALLY: he runs and surfs (and climbs waterfalls on his surf sprite), but has no bike or Dive sprites
+#define FOLLOWER_FLAG_WALLY                 (FOLLOWER_FLAG_HAS_RUNNING_FRAMES | FOLLOWER_FLAG_CAN_SURF | FOLLOWER_FLAG_CAN_WATERFALL | FOLLOWER_FLAG_CLEAR_ON_WHITE_OUT)
 
 
 #endif // GUARD_CONSTANTS_FOLLOW_ME_H

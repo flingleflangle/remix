@@ -1,5 +1,6 @@
 Route116_MapScripts::
 	map_script MAP_SCRIPT_ON_TRANSITION, Route116_OnTransition
+	map_script MAP_SCRIPT_ON_RESUME, Route116_OnResume
 	map_script MAP_SCRIPT_ON_LOAD, Route116_OnLoad
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, Route116_OnFrame
 	.byte 0
@@ -9,11 +10,133 @@ Route116_OnTransition:
 	call_if_eq VAR_SHOULD_END_ABNORMAL_WEATHER, 1, AbnormalWeather_EventScript_HideMapNamePopup
 	call_if_eq VAR_ABNORMAL_WEATHER_LOCATION, ABNORMAL_WEATHER_ROUTE_116_NORTH, AbnormalWeather_StartGroudonWeather
 	call_if_eq VAR_ABNORMAL_WEATHER_LOCATION, ABNORMAL_WEATHER_ROUTE_116_SOUTH, AbnormalWeather_StartGroudonWeather
+	call Route116_EventScript_TryShowWally
+	end
+
+@ WALLY (once his family in VERDANTURF has said he left, until the player's 5th badge) is trying to
+@ catch a SKITTY. He can tag along, and in a battle with a SKITTY he catches it himself
+@ (partnercatch). That finishes this section (FLAG_WALLY_ROUTE116_DONE), one of the three for the
+@ secret path. Stops: toward RUSTBORO, toward VERDANTURF and in front of RUSTURF TUNNEL, where he
+@ stays to keep looking (he's back next visit). VAR_WALLY_FOLLOWER is 1 while he's following here.
+Route116_EventScript_TryShowWally::
+	setflag FLAG_HIDE_ROUTE_116_WALLY
+	checkfollower
+	call_if_eq VAR_RESULT, FALSE, Route116_EventScript_ResetWallyFollower @ e.g. after a white out
+	goto_if_unset FLAG_WALLY_FAMILY_TOLD, Common_EventScript_NopReturn
+	goto_if_set FLAG_WALLY_ROUTE116_DONE, Common_EventScript_NopReturn
+	goto_if_set FLAG_BADGE05_GET, Common_EventScript_NopReturn
+	goto_if_ne VAR_WALLY_FOLLOWER, 0, Common_EventScript_NopReturn
+	clearflag FLAG_HIDE_ROUTE_116_WALLY
+	return
+
+Route116_EventScript_ResetWallyFollower::
+	setvar VAR_WALLY_FOLLOWER, 0
+	return
+
+Route116_EventScript_Wally::
+	special IsTalkingToFollower
+	goto_if_eq VAR_RESULT, TRUE, Route116_EventScript_WallyFollowerTalk
+	lock
+	faceplayer
+	checkfollower
+	goto_if_eq VAR_RESULT, TRUE, Route116_EventScript_WallyBusy
+	msgbox Route116_Text_WallyAskHelp, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route116_EventScript_WallyDeclined
+	msgbox Route116_Text_WallyLetsGo, MSGBOX_DEFAULT
+	closemessage
+	setfollower LOCALID_ROUTE116_WALLY, FOLLOWER_FLAG_WALLY
+	setfollowerpartner FOLLOWER_PARTNER_WALLY
+	call Route116_EventScript_WallyPartnerCatchSkitty
+	setvar VAR_WALLY_FOLLOWER, 1
+	release
+	end
+
+Route116_EventScript_WallyPartnerCatchSkitty::
+	partnercatch Route116_Text_WallyFoundSkitty, Route116_Text_WallyPlayerCaughtSkitty, SPECIES_SKITTY
+	return
+
+Route116_EventScript_WallyDeclined::
+	msgbox Route116_Text_WallyDeclined, MSGBOX_DEFAULT
+	release
+	end
+
+Route116_EventScript_WallyBusy::
+	msgbox Route116_Text_WallyBusy, MSGBOX_DEFAULT
+	release
+	end
+
+Route116_EventScript_WallyFollowerTalk::
+	lock
+	facefollower
+	msgbox Route116_Text_WallyFollowerTalk, MSGBOX_DEFAULT
+	release
+	end
+
+@ From EventScript_FollowerPartnerCaughtWildMon: WALLY caught his SKITTY
+Route116_EventScript_WallyCaughtSkitty::
+	facefollower
+	msgbox Route116_Text_WallyCaughtSkitty, MSGBOX_DEFAULT
+	closemessage
+	setflag FLAG_WALLY_ROUTE116_DONE
+	setvar VAR_WALLY_FOLLOWER, 0
+	setvar VAR_0x8004, DIR_WEST
+	call Common_EventScript_FollowerStopLeave
+	releaseall
+	end
+
+Route116_EventScript_WallyStopWest::
+	setvar VAR_0x8007, DIR_EAST
+	goto Route116_EventScript_WallyStop
+	end
+
+Route116_EventScript_WallyStopSouth::
+	setvar VAR_0x8007, DIR_NORTH
+	goto Route116_EventScript_WallyStop
+	end
+
+Route116_EventScript_WallyStopTunnel::
+	setvar VAR_0x8007, DIR_SOUTH
+	goto Route116_EventScript_WallyStop
+	end
+
+@ VAR_0x8007 = the way back onto the route (the player steps back that way, or WALLY heads off that way)
+Route116_EventScript_WallyStop::
+	lockall
+	checkfollower
+	goto_if_eq VAR_RESULT, FALSE, Route116_EventScript_WallyStopNoFollower
+	goto_if_ne VAR_FOLLOWER_PARTNER, FOLLOWER_PARTNER_WALLY, Route116_EventScript_WallyStopNoFollower
+	facefollower
+	msgbox Route116_Text_WallyAskLeaving, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route116_EventScript_WallyStay
+	msgbox Route116_Text_WallyKeepLooking, MSGBOX_DEFAULT
+	closemessage
+	copyvar VAR_0x8004, VAR_0x8007
+	call Common_EventScript_FollowerStopLeave
+	setvar VAR_WALLY_FOLLOWER, 0
+	releaseall
+	end
+
+Route116_EventScript_WallyStay::
+	msgbox Route116_Text_WallyStaying, MSGBOX_DEFAULT
+	closemessage
+	copyvar VAR_0x8004, VAR_0x8007
+	call Common_EventScript_FollowerStopStepBack
+	releaseall
+	end
+
+@ He stopped following some other way (e.g. the player whited out): he's back on the route next time
+Route116_EventScript_WallyStopNoFollower::
+	setvar VAR_WALLY_FOLLOWER, 0
+	releaseall
 	end
 
 Route116_EventScript_SetWandasBoyfriendPos::
 	setobjectxyperm LOCALID_ROUTE116_WANDAS_BF, 38, 10
 	return
+
+Route116_OnResume:
+	call_if_eq VAR_WALLY_FOLLOWER, 1, Route116_EventScript_WallyPartnerCatchSkitty @ helpcatch lines are ROM addresses: refresh them
+	end
 
 Route116_OnLoad:
 	call_if_eq VAR_ABNORMAL_WEATHER_LOCATION, ABNORMAL_WEATHER_ROUTE_116_NORTH, AbnormalWeather_EventScript_PlaceTilesRoute116North
@@ -468,3 +591,65 @@ Route116_Text_TrainerTipsBagHasPockets:
 	.string "No TRAINER can afford to be without\n"
 	.string "a BAG of their own.$"
 
+Route116_Text_WallyAskHelp:
+	.string "WALLY: Huh?! {PLAYER}!\n"
+	.string "What are you doing here?\p"
+	.string "Oh… Did my uncle tell you I left?\n"
+	.string "I didn't think anyone would come\l"
+	.string "looking for me…\p"
+	.string "I'm trying to catch a SKITTY.\n"
+	.string "But they keep running away from me…\p"
+	.string "Um… {PLAYER}? Would you help me?\p"
+	.string "I want to be the one to catch it,\n"
+	.string "though. Is that okay?$"
+
+Route116_Text_WallyDeclined:
+	.string "WALLY: Oh… Okay.\n"
+	.string "I'll keep trying on my own.$"
+
+Route116_Text_WallyLetsGo:
+	.string "WALLY: Really? Thank you!\p"
+	.string "SKITTY live in the tall grass here.\n"
+	.string "Let's find one together!$"
+
+Route116_Text_WallyBusy:
+	.string "WALLY: Oh, {PLAYER}…\n"
+	.string "You look busy right now.\p"
+	.string "That's okay! I'll keep trying to\n"
+	.string "catch a SKITTY on my own.\p"
+	.string "Maybe I'll run into you again!\n"
+	.string "See you next time!$"
+
+Route116_Text_WallyFollowerTalk:
+	.string "WALLY: SKITTY chase things that move.\n"
+	.string "If we keep walking through the grass,\l"
+	.string "we're sure to find one!$"
+
+Route116_Text_WallyFoundSkitty:
+	.string "WALLY: A SKITTY!\n"
+	.string "Let me catch it this time, {PLAYER}!$"
+
+Route116_Text_WallyPlayerCaughtSkitty:
+	.string "WALLY: Hey! That one was mine…\p"
+	.string "…Oh, it's okay.\n"
+	.string "There has to be more around here…$"
+
+Route116_Text_WallyCaughtSkitty:
+	.string "WALLY: I… I did it!\n"
+	.string "I caught a SKITTY all by myself!\p"
+	.string "Well… not all by myself.\n"
+	.string "Thank you, {PLAYER}!\p"
+	.string "I'm going to keep training.\n"
+	.string "Maybe I'll see you again!$"
+
+Route116_Text_WallyAskLeaving:
+	.string "WALLY: Are you leaving, {PLAYER}?$"
+
+Route116_Text_WallyKeepLooking:
+	.string "WALLY: Okay… I'll keep looking for\n"
+	.string "a SKITTY here.\p"
+	.string "Thanks for helping me, {PLAYER}!$"
+
+Route116_Text_WallyStaying:
+	.string "WALLY: Oh, good!\n"
+	.string "Let's keep looking!$"

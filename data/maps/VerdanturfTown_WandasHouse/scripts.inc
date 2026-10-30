@@ -19,12 +19,14 @@ VerdanturfTown_WandasHouse_EventScript_WallysUncle::
 	lock
 	faceplayer
 	goto_if_set FLAG_DEFEATED_WALLY_VICTORY_ROAD, VerdanturfTown_WandasHouse_EventScript_WallysUncleEverGrande
+	goto_if_set FLAG_WALLY_LEFT_VERDANTURF, VerdanturfTown_WandasHouse_EventScript_WallysUncleSlippedOff
 	goto_if_set FLAG_DEFEATED_LAVARIDGE_GYM, VerdanturfTown_WandasHouse_EventScript_WallysUncleSlippedOff
 	msgbox VerdanturfTown_WandasHouse_Text_WallysNextDoor, MSGBOX_DEFAULT
 	release
 	end
 
 VerdanturfTown_WandasHouse_EventScript_WallysUncleSlippedOff::
+	setflag FLAG_WALLY_FAMILY_TOLD
 	msgbox VerdanturfTown_WandasHouse_Text_WallySlippedOff, MSGBOX_DEFAULT
 	release
 	end
@@ -61,6 +63,7 @@ VerdanturfTown_WandasHouse_EventScript_WallysAunt::
 	lock
 	faceplayer
 	goto_if_set FLAG_DEFEATED_WALLY_VICTORY_ROAD, VerdanturfTown_WandasHouse_EventScript_WallysAuntEverGrande
+	goto_if_set FLAG_WALLY_LEFT_VERDANTURF, VerdanturfTown_WandasHouse_EventScript_WallysAuntAnythingHappened
 	goto_if_set FLAG_DEFEATED_LAVARIDGE_GYM, VerdanturfTown_WandasHouse_EventScript_WallysAuntAnythingHappened
 	goto_if_set FLAG_RUSTURF_TUNNEL_OPENED, VerdanturfTown_WandasHouse_EventScript_WallysAuntTunnelOpen
 	msgbox VerdanturfTown_WandasHouse_Text_DaughtersBoyfriendDriven, MSGBOX_DEFAULT
@@ -73,6 +76,7 @@ VerdanturfTown_WandasHouse_EventScript_WallysAuntTunnelOpen::
 	end
 
 VerdanturfTown_WandasHouse_EventScript_WallysAuntAnythingHappened::
+	setflag FLAG_WALLY_FAMILY_TOLD
 	msgbox VerdanturfTown_WandasHouse_Text_IfAnythingHappenedToWally, MSGBOX_DEFAULT
 	release
 	end

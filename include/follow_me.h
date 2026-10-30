@@ -53,9 +53,14 @@ bool8 PlayerHasFollower(void);
 void FollowerStop_PrepareStepBack(void);
 void FollowerStop_PrepareLeave(void);
 void GetFollowerLocalIdForScript(void);
+void RivalApproach_Prepare(void);
+void GetCurrentMapForScript(void);
+void FollowerAppearBesidePlayer(void);
 
 extern u8 gFollowerStopFollowerMovement[];
 extern u8 gFollowerStopPlayerMovement[];
+extern u8 gRivalApproachMovement[];
+extern u8 gRivalApproachPlayerMovement[];
 
 // moved from field_screen_effect.c
 void Task_DoDoorWarp(u8 taskId);

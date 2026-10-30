@@ -1014,8 +1014,13 @@ void PlayerWalkFaster(u8 direction)
     PlayerSetAnimId(GetWalkFasterMovementAction(direction), COPY_MOVE_WALK);
 }
 
+// Speed Boost in the party or a Run Away lead: run faster. Checked once per step here (reading party data is slow,
+// and doing it for both the player and the follower every step caused lag frames)
+bool8 gPlayerFastRun;
+
 static void PlayerRun(u8 direction)
 {
+    gPlayerFastRun = IsLeadMonAbility(ABILITY_RUN_AWAY) || IsAbilityInPlayerParty(ABILITY_SPEED_BOOST);
     PlayerSetAnimId(GetPlayerRunMovementAction(direction), COPY_MOVE_WALK);
 }
 

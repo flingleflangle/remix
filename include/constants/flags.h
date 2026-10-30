@@ -45,10 +45,10 @@
 
 #define FLAG_VS_SEEKER_CHARGING 0x20 // vs_seeker branch
 #define FLAG_RECEIVED_TM_BOULDER_DASH    0x21
-#define FLAG_UNUSED_0x022    0x22 // Unused Flag
-#define FLAG_UNUSED_0x023    0x23 // Unused Flag
-#define FLAG_UNUSED_0x024    0x24 // Unused Flag
-#define FLAG_UNUSED_0x025    0x25 // Unused Flag
+#define FLAG_HIDE_ROUTE_112_RIVAL 0x22 // set on every visit; the rival is added by script
+#define FLAG_HIDE_ROUTE_126_RIVAL 0x23 // set on every visit; the rival is added by script
+#define FLAG_ROUTE126_RIVAL_DIVE_TALK 0x24 // the rival had their say before diving to SOOTOPOLIS
+#define FLAG_ROUTE112_RIVAL_TORKOAL 0x25 // the rival pointed out TORKOAL in the FIERY PATH
 #define FLAG_UNUSED_0x026    0x26 // Unused Flag
 #define FLAG_UNUSED_0x027    0x27 // Unused Flag
 #define FLAG_UNUSED_0x028    0x28 // Unused Flag
@@ -98,8 +98,8 @@
 #define FLAG_RESCUED_BIRCH                       0x52
 #define FLAG_LEGENDARIES_IN_SOOTOPOLIS           0x53
 
-#define FLAG_UNUSED_0x054                    0x54  // Unused Flag
-#define FLAG_UNUSED_0x055                    0x55  // Unused Flag
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_1R_SUN_STONE 0x54
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_1R_DAWN_STONE 0x55
 
 #define FLAG_HIDE_CONTEST_POKE_BALL          0x56  // Always set after new game, object it hides is added directly
 #define FLAG_MET_RIVAL_MOM                   0x57
@@ -120,7 +120,7 @@
 #define FLAG_MOSSDEEP_GYM_SWITCH_3           0x66 //
 #define FLAG_MOSSDEEP_GYM_SWITCH_4           0x67 //
 
-#define FLAG_UNUSED_0x068                    0x68  // Unused Flag
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_1R_DUSK_STONE 0x68
 
 #define FLAG_OCEANIC_MUSEUM_MET_REPORTER     0x69
 #define FLAG_RECEIVED_HM_STRENGTH            0x6A
@@ -255,7 +255,7 @@
 #define FLAG_RECEIVED_TM_ROAR                0xE7
 #define FLAG_RECEIVED_TM_GIGA_DRAIN          0xE8
 
-#define FLAG_UNUSED_0x0E9                    0xE9 // Unused Flag
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_MOON_STONE 0xE9
 
 #define FLAG_RECEIVED_TM_REST                0xEA
 #define FLAG_RECEIVED_TM_ATTRACT             0xEB
@@ -460,8 +460,8 @@
 #define FLAG_REGISTERED_DRAKE                (TRAINER_REGISTERED_FLAGS_START + REMATCH_DRAKE)
 #define FLAG_REGISTERED_WALLACE              (TRAINER_REGISTERED_FLAGS_START + REMATCH_WALLACE)
 
-#define FLAG_UNUSED_0x1AA                    0x1AA // Unused Flag
-#define FLAG_UNUSED_0x1AB                    0x1AB // Unused Flag
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_SUN_STONE 0x1AA
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_DAWN_STONE 0x1AB
 
 #define FLAG_DEFEATED_DEOXYS                 0x1AC
 #define FLAG_BATTLED_DEOXYS                  0x1AD
@@ -510,7 +510,7 @@
 #define FLAG_ENABLE_TATE_AND_LIZA_MATCH_CALL 0x1D8
 #define FLAG_ENABLE_JUAN_MATCH_CALL          0x1D9
 
-#define FLAG_UNUSED_0x1DA                    0x1DA // Unused Flag
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_DUSK_STONE 0x1DA
 
 #define FLAG_SHOWN_MYSTIC_TICKET             0x1DB
 #define FLAG_DEFEATED_HO_OH                  0x1DC
@@ -519,9 +519,9 @@
 #define FLAG_MOVE_TUTOR_TAUGHT_FIRE_PUNCH    0x1DE // Unused Flag
 #define FLAG_MOVE_TUTOR_TAUGHT_ICE_PUNCH     0x1DF // Unused Flag
 #define FLAG_MOVE_TUTOR_TAUGHT_THUNDER_PUNCH 0x1E0 // Unused Flag
-#define FLAG_UNUSED_0x1E1                    0x1E1 // Unused Flag
-#define FLAG_UNUSED_0x1E2                    0x1E2 // Unused Flag
-#define FLAG_UNUSED_0x1E3                    0x1E3 // Unused Flag
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_SHINY_STONE 0x1E1
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_1R_MOON_STONE 0x1E2
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_1R_SUN_STONE 0x1E3
 
 // Mystery Gift Flags (Unknown)
 #define FLAG_MYSTERY_GIFT_DONE               0x1E4
@@ -660,21 +660,21 @@
 #define FLAG_ITEM_METEOR_FALLS_1F_1R_MOON_STONE_2                     0x265
 #define FLAG_ITEM_METEOR_FALLS_1F_1R_MOON_STONE_3                     0x266
 #define FLAG_ITEM_METEOR_FALLS_1F_1R_MOON_STONE_4                     0x267
-#define FLAG_UNUSED_0x268  0x268 // Unused Flag
-#define FLAG_UNUSED_0x269  0x269 // Unused Flag
-#define FLAG_UNUSED_0x26A  0x26A // Unused Flag
-#define FLAG_UNUSED_0x26B  0x26B // Unused Flag
-#define FLAG_UNUSED_0x26C  0x26C // Unused Flag
-#define FLAG_UNUSED_0x26D  0x26D // Unused Flag
-#define FLAG_UNUSED_0x26E  0x26E // Unused Flag
-#define FLAG_UNUSED_0x26F  0x26F // Unused Flag
-#define FLAG_UNUSED_0x270  0x270 // Unused Flag
-#define FLAG_UNUSED_0x271  0x271 // Unused Flag
-#define FLAG_UNUSED_0x272  0x272 // Unused Flag
-#define FLAG_UNUSED_0x273  0x273 // Unused Flag
-#define FLAG_UNUSED_0x274  0x274 // Unused Flag
-#define FLAG_UNUSED_0x275  0x275 // Unused Flag
-#define FLAG_UNUSED_0x276  0x276 // Unused Flag
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_1R_DUSK_STONE 0x268
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_2R_MOON_STONE 0x269
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_2R_DAWN_STONE 0x26A
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_B1F_2R_SHINY_STONE 0x26B
+#define FLAG_HIDDEN_ITEM_VICTORY_ROAD_B1F_DAWN_STONE 0x26C
+#define FLAG_HIDDEN_ITEM_MT_PYRE_2F_SHINY_STONE 0x26D
+#define FLAG_HIDDEN_ITEM_ROUTE_121_SHINY_STONE 0x26E
+#define FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_1R_SHINY_STONE 0x26F
+#define FLAG_FOLLOWER_PARTNER_CATCHES 0x270 // the follower catches their helpcatch Pokémon themselves (partnercatch)
+#define FLAG_WALLY_FAMILY_TOLD 0x271 // talked to WALLY's family in VERDANTURF after he left
+#define FLAG_WALLY_ROUTE116_DONE 0x272 // WALLY caught his SKITTY on Route 116 with the player
+#define FLAG_WALLY_NEW_MAUVILLE_DONE 0x273 // the player gave WALLY the MAGNET in NEW MAUVILLE
+#define FLAG_WALLY_METEOR_FALLS_DONE 0x274 // the player found WALLY's stones with him in METEOR FALLS
+#define FLAG_HIDE_ROUTE_116_WALLY 0x275 // set on every visit unless WALLY should be there
+#define FLAG_WALLY_LEFT_VERDANTURF 0x276 // WALLY left VERDANTURF on his own (after his speech, or when the player beat FLANNERY)
 #define FLAG_UNUSED_0x277  0x277 // Unused Flag
 #define FLAG_UNUSED_0x278  0x278 // Unused Flag
 #define FLAG_UNUSED_0x279  0x279 // Unused Flag

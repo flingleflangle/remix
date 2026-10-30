@@ -1,10 +1,16 @@
 Route119_MapScripts::
 	map_script MAP_SCRIPT_ON_RESUME, Route119_OnResume
 	map_script MAP_SCRIPT_ON_TRANSITION, Route119_OnTransition
+	map_script MAP_SCRIPT_ON_FRAME_TABLE, Route119_OnFrame
 	.byte 0
+
+Route119_OnFrame:
+	map_script_2 VAR_ROUTE119_RIVAL, 1, Route119_EventScript_RivalCatchUp
+	.2byte 0
 
 Route119_OnResume:
 	call_if_set FLAG_SYS_CTRL_OBJ_DELETE, Route119_EventScript_TryRemoveKecleon
+	call_if_eq VAR_ROUTE119_RIVAL, 2, Route119_EventScript_RivalHelpCatchTropius @ helpcatch lines are ROM addresses: refresh them
 	end
 
 Route119_EventScript_TryRemoveKecleon::
@@ -16,6 +22,7 @@ Route119_EventScript_TryRemoveKecleon::
 Route119_OnTransition:
 	call Common_EventScript_SetupRivalGfxId
 	call Common_EventScript_SetupRivalOnBikeGfxId
+	call_if_eq VAR_ROUTE119_RIVAL, 0, Route119_EventScript_TryArmRival
 	call_if_eq VAR_WEATHER_INSTITUTE_STATE, 1, Route119_EventScript_MoveInstituteWorkersDownstairs
 	special SetRoute119Weather
 	end
@@ -38,6 +45,8 @@ Route119_EventScript_RivalTrigger2::
 
 Route119_EventScript_RivalEncounter::
 	lockall
+	goto_if_eq VAR_ROUTE119_RIVAL, 2, Route119_EventScript_FollowerRivalEncounter
+	setvar VAR_TEMP_2, 0
 	addobject LOCALID_ROUTE119_RIVAL_ON_BIKE
 	checkplayergender
 	call_if_eq VAR_RESULT, MALE, Route119_EventScript_PlayMayMusic
@@ -93,7 +102,8 @@ Route119_EventScript_BattleMayMudkip::
 	end
 
 Route119_EventScript_DefeatedMay::
-	msgbox Route119_Text_MayPresentForYou, MSGBOX_DEFAULT
+	call_if_ne VAR_TEMP_2, 1, Route119_EventScript_MayPresentForYou
+	call_if_eq VAR_TEMP_2, 1, Route119_EventScript_MayJealousPresent
 	call Route119_EventScript_GiveFlyHM
 	msgbox Route119_Text_MayExplainFly, MSGBOX_DEFAULT
 	goto Route119_EventScript_RivalExitScottArrive
@@ -125,10 +135,194 @@ Route119_EventScript_BattleBrendanMudkip::
 	end
 
 Route119_EventScript_DefeatedBrendan::
-	msgbox Route119_Text_BrendanIllGiveYouThis, MSGBOX_DEFAULT
+	call_if_ne VAR_TEMP_2, 1, Route119_EventScript_BrendanIllGiveYouThis
+	call_if_eq VAR_TEMP_2, 1, Route119_EventScript_BrendanJealousPresent
 	call Route119_EventScript_GiveFlyHM
 	msgbox Route119_Text_BrendanExplainFly, MSGBOX_DEFAULT
 	goto Route119_EventScript_RivalExitScottArrive
+	end
+
+Route119_EventScript_MayPresentForYou::
+	msgbox Route119_Text_MayPresentForYou, MSGBOX_DEFAULT
+	return
+
+Route119_EventScript_MayJealousPresent::
+	msgbox Route119_Text_MayJealousPresent, MSGBOX_DEFAULT
+	return
+
+Route119_EventScript_BrendanIllGiveYouThis::
+	msgbox Route119_Text_BrendanIllGiveYouThis, MSGBOX_DEFAULT
+	return
+
+Route119_EventScript_BrendanJealousPresent::
+	msgbox Route119_Text_BrendanJealousPresent, MSGBOX_DEFAULT
+	return
+
+@ The rival (MAY, or BRENDAN for a female player) catches up to the player at the south end of Route
+@ 119 before TEAM AQUA is driven out of the WEATHER INSTITUTE, and can tag along through the INSTITUTE
+@ (battling TEAM AQUA beside them) up to the usual rival battle spot, where they battle the player,
+@ give them FLY and ride off as usual. Turning back toward Route 118 is the only other stop.
+@ VAR_ROUTE119_RIVAL: 1 = about to catch up, 2 = following, 3 = done (the usual encounter happens).
+Route119_EventScript_TryArmRival::
+	goto_if_ne VAR_WEATHER_INSTITUTE_STATE, 0, Common_EventScript_NopReturn
+	goto_if_ne VAR_ROUTE119_STATE, 0, Common_EventScript_NopReturn
+	checkfollower
+	goto_if_eq VAR_RESULT, TRUE, Common_EventScript_NopReturn
+	getplayerxy VAR_0x8004, VAR_0x8005
+	goto_if_lt VAR_0x8005, 100, Common_EventScript_NopReturn @ only coming up from Route 118
+	setvar VAR_ROUTE119_RIVAL, 1
+	return
+
+Route119_EventScript_RivalCatchUp::
+	lockall
+	setvar VAR_ROUTE119_RIVAL, 3
+	special RivalApproach_Prepare
+	goto_if_eq VAR_RESULT, FALSE, Route119_EventScript_RivalNoRoom
+	setobjectxyperm LOCALID_ROUTE119_RIVAL, VAR_0x8004, VAR_0x8005
+	addobject LOCALID_ROUTE119_RIVAL
+	call Common_EventScript_PlayRivalEncounterMusic
+	setfollower LOCALID_ROUTE119_RIVAL, FOLLOWER_FLAG_RIVAL
+	call Common_EventScript_RivalWalkUp
+	rivalmsgbox Route119_Text_MayCatchUp, Route119_Text_BrendanCatchUp, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route119_EventScript_RivalDeclined
+	rivalmsgbox Route119_Text_MayLetsGo, Route119_Text_BrendanLetsGo
+	call Common_EventScript_RivalJoined
+	call Route119_EventScript_RivalHelpCatchTropius
+	setvar VAR_ROUTE119_RIVAL, 2
+	releaseall
+	end
+
+@ Nowhere for them to walk up from: try again next time the player comes here
+Route119_EventScript_RivalNoRoom::
+	setvar VAR_ROUTE119_RIVAL, 0
+	releaseall
+	end
+
+Route119_EventScript_RivalDeclined::
+	rivalmsgbox Route119_Text_MayDeclined, Route119_Text_BrendanDeclined
+	call Common_EventScript_RivalDeclinedLeave
+	releaseall
+	end
+
+Route119_EventScript_RivalHelpCatchTropius::
+	checkplayergender
+	goto_if_eq VAR_RESULT, FEMALE, Route119_EventScript_BrendanHelpCatchTropius
+	helpcatch Route119_Text_MayFoundTropius, Route119_Text_MayCaughtTropius, SPECIES_TROPIUS
+	return
+
+Route119_EventScript_BrendanHelpCatchTropius::
+	helpcatch Route119_Text_BrendanFoundTropius, Route119_Text_BrendanCaughtTropius, SPECIES_TROPIUS
+	return
+
+Route119_EventScript_RivalFollowerTalk::
+	lock
+	facefollower
+	special HelpCatchTargetCaught
+	goto_if_eq VAR_RESULT, TRUE, Route119_EventScript_RivalFollowerTalkCaught
+	rivalmsgbox Route119_Text_MayFollowerTalk, Route119_Text_BrendanFollowerTalk
+	release
+	end
+
+Route119_EventScript_RivalFollowerTalkCaught::
+	rivalmsgbox Route119_Text_MayFollowerTalkCaught, Route119_Text_BrendanFollowerTalkCaught
+	release
+	end
+
+@ Back toward Route 118: they go on to the WEATHER INSTITUTE alone (and the usual encounter happens later)
+Route119_EventScript_RivalStopRoute118::
+	lockall
+	call Common_EventScript_CheckRivalFollower
+	goto_if_eq VAR_RESULT, FALSE, Route119_EventScript_RivalStopNoFollower
+	facefollower
+	rivalmsgbox Route119_Text_MayAskRoute118, Route119_Text_BrendanAskRoute118, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route119_EventScript_RivalStay
+	rivalmsgbox Route119_Text_MayRoute118Bye, Route119_Text_BrendanRoute118Bye
+	closemessage
+	setvar VAR_0x8004, DIR_NORTH
+	call Common_EventScript_FollowerStopLeave
+	setvar VAR_ROUTE119_RIVAL, 3
+	releaseall
+	end
+
+Route119_EventScript_RivalStay::
+	rivalmsgbox Route119_Text_MayStaying, Route119_Text_BrendanStaying
+	closemessage
+	setvar VAR_0x8004, DIR_NORTH
+	call Common_EventScript_FollowerStopStepBack
+	releaseall
+	end
+
+@ They stopped following some other way (e.g. the player whited out)
+Route119_EventScript_RivalStopNoFollower::
+	setvar VAR_ROUTE119_RIVAL, 3
+	releaseall
+	end
+
+@ At the usual battle spot with the rival following: they step out in front of the player (where they'd
+@ usually ride up to) and challenge them, having seen the gap between them in the INSTITUTE
+Route119_EventScript_FollowerRivalEncounter::
+	lockall
+	setvar VAR_ROUTE119_RIVAL, 3
+	call Common_EventScript_CheckRivalFollower
+	goto_if_eq VAR_RESULT, FALSE, Route119_EventScript_RivalEncounter
+	call_if_eq VAR_TEMP_1, 1, Route119_EventScript_SetRivalPos1
+	call_if_eq VAR_TEMP_1, 2, Route119_EventScript_SetRivalPos2
+	destroyfollower
+	setfollowerpartner FOLLOWER_PARTNER_NONE
+	addobject LOCALID_ROUTE119_RIVAL
+	applymovement LOCALID_PLAYER, Common_Movement_WalkInPlaceFasterDown
+	waitmovement 0
+	call Common_EventScript_PlayRivalEncounterMusic
+	setvar VAR_TEMP_2, 1
+	checkplayergender
+	goto_if_eq VAR_RESULT, FEMALE, Route119_EventScript_BattleBrendanJealous
+	msgbox Route119_Text_MayJealousIntro, MSGBOX_DEFAULT
+	switch VAR_STARTER_MON
+	case 0, Route119_EventScript_BattleMayMudkipJealous
+	case 1, Route119_EventScript_BattleMayTreeckoJealous
+	case 2, Route119_EventScript_BattleMayTorchicJealous
+	case 3, Route119_EventScript_BattleMayMudkipJealous
+	case 4, Route119_EventScript_BattleMayTorchicJealous
+	end
+
+Route119_EventScript_BattleMayTreeckoJealous::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_119_TREECKO, Route119_Text_MayJealousDefeat
+	goto Route119_EventScript_DefeatedMay
+	end
+
+Route119_EventScript_BattleMayTorchicJealous::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_119_TORCHIC, Route119_Text_MayJealousDefeat
+	goto Route119_EventScript_DefeatedMay
+	end
+
+Route119_EventScript_BattleMayMudkipJealous::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_119_MUDKIP, Route119_Text_MayJealousDefeat
+	goto Route119_EventScript_DefeatedMay
+	end
+
+Route119_EventScript_BattleBrendanJealous::
+	msgbox Route119_Text_BrendanJealousIntro, MSGBOX_DEFAULT
+	switch VAR_STARTER_MON
+	case 0, Route119_EventScript_BattleBrendanMudkipJealous
+	case 1, Route119_EventScript_BattleBrendanTreeckoJealous
+	case 2, Route119_EventScript_BattleBrendanTorchicJealous
+	case 3, Route119_EventScript_BattleBrendanMudkipJealous
+	case 4, Route119_EventScript_BattleBrendanTorchicJealous
+	end
+
+Route119_EventScript_BattleBrendanTreeckoJealous::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_119_TREECKO, Route119_Text_BrendanJealousDefeat
+	goto Route119_EventScript_DefeatedBrendan
+	end
+
+Route119_EventScript_BattleBrendanTorchicJealous::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_119_TORCHIC, Route119_Text_BrendanJealousDefeat
+	goto Route119_EventScript_DefeatedBrendan
+	end
+
+Route119_EventScript_BattleBrendanMudkipJealous::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_119_MUDKIP, Route119_Text_BrendanJealousDefeat
+	goto Route119_EventScript_DefeatedBrendan
 	end
 
 Route119_EventScript_GiveFlyHM::
@@ -612,3 +806,139 @@ Route119_Text_TrainerTipsDecoration:
 	.string "Pick your favorite items and create\n"
 	.string "your very own SECRET BASE exactly the\l"
 	.string "way you want.$"
+
+Route119_Text_MayCatchUp:
+	.string "MAY: {PLAYER}{KUN}! There you are!\p"
+	.string "Did you hear? TEAM AQUA's been seen\n"
+	.string "around the WEATHER INSTITUTE up ahead.\p"
+	.string "I don't know what they're after, but\n"
+	.string "I'm going to go see.\p"
+	.string "Let's go together!\n"
+	.string "Two TRAINERS are better than one!$"
+
+Route119_Text_MayLetsGo:
+	.string "MAY: Great! Let's go!\p"
+	.string "Oh, and they say TROPIUS live on this\n"
+	.string "route. If we find one, I'll go easy on\l"
+	.string "it so you can catch it!$"
+
+Route119_Text_MayDeclined:
+	.string "MAY: Oh… Okay.\n"
+	.string "I'll head up there on my own, then.$"
+
+Route119_Text_MayFollowerTalk:
+	.string "MAY: The WEATHER INSTITUTE studies\n"
+	.string "the weather all over HOENN.\p"
+	.string "Why would TEAM AQUA want to go\n"
+	.string "there?$"
+
+Route119_Text_MayFollowerTalkCaught:
+	.string "MAY: Your TROPIUS is so big!\n"
+	.string "Do you think its fruit is tasty?$"
+
+Route119_Text_MayFoundTropius:
+	.string "MAY: It's a TROPIUS!\n"
+	.string "I'll hold back. You catch it!$"
+
+Route119_Text_MayCaughtTropius:
+	.string "MAY: You caught the TROPIUS!\n"
+	.string "Wow, {PLAYER}{KUN}!$"
+
+Route119_Text_MayAskRoute118:
+	.string "MAY: Huh? Are you going back?$"
+
+Route119_Text_MayRoute118Bye:
+	.string "MAY: Okay. I'll go on ahead to the\n"
+	.string "WEATHER INSTITUTE, then.$"
+
+Route119_Text_MayStaying:
+	.string "MAY: Okay! Let's keep going!$"
+
+Route119_Text_MayJealousIntro:
+	.string "MAY: {PLAYER}{KUN}…\p"
+	.string "Back in the INSTITUTE, you took on\n"
+	.string "TEAM AQUA like it was nothing.\p"
+	.string "I was right there next to you,\n"
+	.string "and I could barely keep up.\p"
+	.string "…I have to know how far apart we\n"
+	.string "really are.\p"
+	.string "Battle me, {PLAYER}{KUN}!\n"
+	.string "Right here, right now!$"
+
+Route119_Text_MayJealousDefeat:
+	.string "…I knew it.\n"
+	.string "I'm not even close.$"
+
+Route119_Text_MayJealousPresent:
+	.string "MAY: You really are strong,\n"
+	.string "{PLAYER}{KUN}.\p"
+	.string "But I'm not giving up! I'll catch up\n"
+	.string "to you, just you watch!\p"
+	.string "…Here. I was going to give you this\n"
+	.string "anyway.$"
+
+Route119_Text_BrendanCatchUp:
+	.string "BRENDAN: {PLAYER}! Hey, wait up.\p"
+	.string "You hear? TEAM AQUA's been spotted\n"
+	.string "at the WEATHER INSTITUTE up ahead.\p"
+	.string "No idea what they want there,\n"
+	.string "but I'm going to check it out.\p"
+	.string "Want to go together?$"
+
+Route119_Text_BrendanLetsGo:
+	.string "BRENDAN: Good. Let's go.\p"
+	.string "TROPIUS live on this route, too.\n"
+	.string "If we find one, I'll take it easy.\l"
+	.string "You catch it.$"
+
+Route119_Text_BrendanDeclined:
+	.string "BRENDAN: Huh. Okay, suit yourself.\n"
+	.string "I'll head up there on my own.$"
+
+Route119_Text_BrendanFollowerTalk:
+	.string "BRENDAN: The WEATHER INSTITUTE tracks\n"
+	.string "the weather all over HOENN.\p"
+	.string "What does TEAM AQUA want with that?$"
+
+Route119_Text_BrendanFollowerTalkCaught:
+	.string "BRENDAN: Your TROPIUS grows fruit\n"
+	.string "around its neck. Kind of handy, huh?$"
+
+Route119_Text_BrendanFoundTropius:
+	.string "BRENDAN: That's a TROPIUS!\n"
+	.string "I'll take it easy. You catch it!$"
+
+Route119_Text_BrendanCaughtTropius:
+	.string "BRENDAN: You got the TROPIUS!\n"
+	.string "Not bad, {PLAYER}.$"
+
+Route119_Text_BrendanAskRoute118:
+	.string "BRENDAN: Hm? You're going back?$"
+
+Route119_Text_BrendanRoute118Bye:
+	.string "BRENDAN: All right. I'll go on ahead\n"
+	.string "to the WEATHER INSTITUTE.$"
+
+Route119_Text_BrendanStaying:
+	.string "BRENDAN: Okay, let's keep moving.$"
+
+Route119_Text_BrendanJealousIntro:
+	.string "BRENDAN: {PLAYER}.\p"
+	.string "In the INSTITUTE… you handled TEAM\n"
+	.string "AQUA like it was nothing.\p"
+	.string "I was right beside you the whole time,\n"
+	.string "and I was just trying to keep up.\p"
+	.string "…I need to know how big the gap\n"
+	.string "really is.\p"
+	.string "Battle me. Now.$"
+
+Route119_Text_BrendanJealousDefeat:
+	.string "…Yeah.\n"
+	.string "That's about what I figured.$"
+
+Route119_Text_BrendanJealousPresent:
+	.string "BRENDAN: You're the real deal,\n"
+	.string "{PLAYER}. I'll give you that.\p"
+	.string "But don't think I'm going to just sit\n"
+	.string "back and watch you pull ahead.\p"
+	.string "…Here. Take this.$"

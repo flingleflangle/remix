@@ -444,8 +444,10 @@
 #define STRINGID_FORECASTCLEAREDSKIES       444
 #define STRINGID_MIRRORSCALEREFLECTED       445
 #define STRINGID_MIRRORSCALECOPIED          446
+#define STRINGID_FOLLOWERTHREWBALL          447
+#define STRINGID_FOLLOWERCAUGHTWILDMON      448
 
-#define BATTLESTRINGS_COUNT                 447
+#define BATTLESTRINGS_COUNT                 449
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,

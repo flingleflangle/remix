@@ -1,6 +1,16 @@
 Route124_MapScripts::
 	map_script MAP_SCRIPT_ON_TRANSITION, Route124_OnTransition
+	map_script MAP_SCRIPT_ON_FRAME_TABLE, Route124_OnFrame
 	.byte 0
+
+Route124_OnFrame:
+	map_script_2 VAR_ROUTE126_RIVAL, 2, Route124_EventScript_Route126RivalTurnBack
+	.2byte 0
+
+Route124_EventScript_Route126RivalTurnBack::
+	setvar VAR_0x8004, DIR_SOUTH
+	goto Route126_EventScript_RivalTurnBack
+	end
 
 Route124_OnTransition:
 	call_if_set FLAG_SYS_WEATHER_CTRL, Common_EventScript_SetAbnormalWeather

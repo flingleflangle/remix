@@ -68,6 +68,7 @@ static void Task_BindSurfBlobToFollower(u8 taskId);
 static void SetUpSurfBlobFieldEffect(struct ObjectEvent* npc);
 static void SetSurfDismount(void);
 static void Task_FinishSurfDismount(u8 taskId);
+static void NormalizeFollowerGraphicsId(void);
 static void Task_FollowerOutOfDoor(u8 taskId);
 static void Task_FollowerHandleIndoorStairs(u8 taskId);
 static void Task_FollowerHandleEscalator(u8 taskId);
@@ -89,7 +90,23 @@ static const struct FollowerSpriteGraphics gFollowerAlternateSprites[] =
         .surfId = OBJ_EVENT_GFX_RIVAL_MAY_SURFING,
         .underwaterId = OBJ_EVENT_GFX_MAY_UNDERWATER,
     },
-    
+    [1] =
+    {
+        .normalId = OBJ_EVENT_GFX_RIVAL_BRENDAN_NORMAL,
+        .machBikeId = OBJ_EVENT_GFX_RIVAL_BRENDAN_MACH_BIKE,
+        .acroBikeId = OBJ_EVENT_GFX_RIVAL_BRENDAN_ACRO_BIKE,
+        .surfId = OBJ_EVENT_GFX_RIVAL_BRENDAN_SURFING,
+        .underwaterId = OBJ_EVENT_GFX_BRENDAN_UNDERWATER,
+    },
+    [2] =
+    {
+        // No bike or Dive sprites: follow him without FOLLOWER_FLAG_CAN_BIKE (the player gets off)
+        .normalId = OBJ_EVENT_GFX_WALLY,
+        .machBikeId = OBJ_EVENT_GFX_WALLY,
+        .acroBikeId = OBJ_EVENT_GFX_WALLY,
+        .surfId = OBJ_EVENT_GFX_WALLY_SURFING,
+        .underwaterId = OBJ_EVENT_GFX_WALLY,
+    },
 };
 
 // Functions
@@ -109,11 +126,19 @@ u8 GetFollowerLocalId(void)
     return gObjectEvents[gSaveBlock2Ptr->follower.objId].localId;
 }
 
+// The follower's talk script: the script of their object on the map they came from, looked up each time
+// (a ROM address kept in the save goes stale whenever the ROM is rebuilt). The saved one is only used if
+// that object has none (FOLLOWER_FLAG_CUSTOM_FOLLOW_SCRIPT followers).
 const u8* GetFollowerScriptPointer(void)
 {
+    const struct ObjectEventTemplate *template;
+
     if (!gSaveBlock2Ptr->follower.inProgress)
         return NULL;
 
+    template = GetObjectEventTemplateByLocalIdAndMap(gSaveBlock2Ptr->follower.map.id, gSaveBlock2Ptr->follower.map.number, gSaveBlock2Ptr->follower.map.group);
+    if (template != NULL && template->script != NULL)
+        return template->script;
     return gSaveBlock2Ptr->follower.script;
 }
 
@@ -475,7 +500,7 @@ static u8 DetermineFollowerState(struct ObjectEvent* follower, u8 state, u8 dire
         if (gSaveBlock2Ptr->follower.flags & FOLLOWER_FLAG_HAS_RUNNING_FRAMES)
             RETURN_STATE(MOVEMENT_ACTION_PLAYER_RUN_DOWN, direction);
         // Without running frames, walk at the player's running pace (faster with Speed Boost or Run Away)
-        if ((IsAbilityInPlayerParty(ABILITY_SPEED_BOOST) || IsLeadMonAbility(ABILITY_RUN_AWAY)))
+        if (gPlayerFastRun)
             RETURN_STATE(MOVEMENT_ACTION_RIDE_WATER_CURRENT_DOWN, direction);
 
         RETURN_STATE(MOVEMENT_ACTION_WALK_FAST_DOWN, direction);
@@ -1394,7 +1419,53 @@ void SetUpFollowerSprite(u8 localId, u16 flags)
     // Start from the NPC's own (on-foot) sprite, not whatever the last follower ended on,
     // then match the player: get on a bike if they're riding one
     gSaveBlock2Ptr->follower.currentSprite = FOLLOWER_SPRITE_INDEX_NORMAL;
+    NormalizeFollowerGraphicsId();
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+    {
+        // Joining on the water (e.g. the rival surfing up on Route 126): on a surf blob right away
+        struct ObjectEvent *follower;
+
+        SetFollowerSprite(FOLLOWER_SPRITE_INDEX_SURF);
+        follower = &gObjectEvents[GetFollowerMapObjId()];
+        SetUpSurfBlobFieldEffect(follower);
+        follower->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
+        SetSurfBlob_BobState(follower->fieldEffectSpriteId, 1);
+        gSaveBlock2Ptr->follower.createSurfBlob = 2;
+        return;
+    }
+    SetFollowerSprite(FOLLOWER_SPRITE_INDEX_NORMAL);
     FollowMe_HandleBike();
+}
+
+// An NPC already shown in one of a follower's other sprites (e.g. the rival on a surf blob) becomes
+// that follower with its on-foot sprite as the base, so the other sprites can be found
+static void NormalizeFollowerGraphicsId(void)
+{
+    u16 gfx = gSaveBlock2Ptr->follower.graphicsId;
+    u8 i;
+
+    for (i = 0; i < NELEMS(gFollowerAlternateSprites); i++)
+    {
+        const struct FollowerSpriteGraphics *entry = &gFollowerAlternateSprites[i];
+
+        if (gfx == entry->normalId)
+            return;
+        gSaveBlock2Ptr->follower.graphicsId = entry->normalId;
+        if (gfx == entry->machBikeId)
+            gSaveBlock2Ptr->follower.currentSprite = FOLLOWER_SPRITE_INDEX_MACH_BIKE;
+        else if (gfx == entry->acroBikeId)
+            gSaveBlock2Ptr->follower.currentSprite = FOLLOWER_SPRITE_INDEX_ACRO_BIKE;
+        else if (gfx == entry->surfId)
+            gSaveBlock2Ptr->follower.currentSprite = FOLLOWER_SPRITE_INDEX_SURF;
+        else if (gfx == entry->underwaterId)
+            gSaveBlock2Ptr->follower.currentSprite = FOLLOWER_SPRITE_INDEX_UNDERWATER;
+        else
+        {
+            gSaveBlock2Ptr->follower.graphicsId = gfx;
+            continue;
+        }
+        return;
+    }
 }
 
 //@Details: Ends the follow me feature.
@@ -1583,4 +1654,130 @@ void FollowerStop_PrepareLeave(void)
     }
     gFollowerStopFollowerMovement[steps] = MOVEMENT_ACTION_STEP_END;
     gSpecialVar_Result = (steps != 0);
+}
+
+// Someone catching up to the player (the rival on Routes 112, 119 and 126): see RivalApproach_Prepare
+EWRAM_DATA u8 gRivalApproachMovement[2] = {0};
+EWRAM_DATA u8 gRivalApproachPlayerMovement[2] = {0};
+
+static bool8 IsApproachTileFree(s16 x, s16 y, bool8 onWater, u8 elevation)
+{
+    u8 behavior = MapGridGetMetatileBehaviorAt(x, y);
+    u8 tileElevation = MapGridGetElevationAt(x, y);
+
+    if (MapGridGetCollisionAt(x, y) || GetObjectEventIdByXY(x, y) != OBJECT_EVENTS_COUNT)
+        return FALSE;
+    if (MetatileBehavior_IsJumpEast(behavior) || MetatileBehavior_IsJumpWest(behavior)
+     || MetatileBehavior_IsJumpNorth(behavior) || MetatileBehavior_IsJumpSouth(behavior))
+        return FALSE;
+    if (MetatileBehavior_IsSurfableWaterOrUnderwater(behavior) != onWater)
+        return FALSE;
+    if (tileElevation != 0 && tileElevation != 15 && elevation != 0 && elevation != 15 && tileElevation != elevation)
+        return FALSE;
+    return TRUE;
+}
+
+// special RivalApproach_Prepare: finds a free tile two steps from the player, behind them first, then
+// to either side, then ahead, for someone to appear on and walk up from (on the water if the player's
+// surfing). VAR_0x8004/VAR_0x8005 = that tile (for setobjectxyperm), VAR_0x8006 = the direction back
+// the way they came (to leave in), gRivalApproachMovement = their step up to the player and
+// gRivalApproachPlayerMovement = the player turning to face them. VAR_RESULT is FALSE if there's no room.
+void RivalApproach_Prepare(void)
+{
+    struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
+    bool8 onWater = TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING | PLAYER_AVATAR_FLAG_UNDERWATER);
+    u8 facing = player->facingDirection;
+    u8 dirs[4];
+    u8 i;
+
+    dirs[0] = GetOppositeDirection(facing);
+    dirs[1] = sPerpendicularDirs[facing][0];
+    dirs[2] = sPerpendicularDirs[facing][1];
+    dirs[3] = facing;
+    for (i = 0; i < ARRAY_COUNT(dirs); i++)
+    {
+        s16 x1 = player->currentCoords.x, y1 = player->currentCoords.y;
+        s16 x2, y2;
+
+        MoveCoords(dirs[i], &x1, &y1);
+        x2 = x1, y2 = y1;
+        MoveCoords(dirs[i], &x2, &y2);
+        if (IsApproachTileFree(x1, y1, onWater, player->currentElevation)
+         && IsApproachTileFree(x2, y2, onWater, player->currentElevation))
+        {
+            gSpecialVar_0x8004 = x2 - MAP_OFFSET;
+            gSpecialVar_0x8005 = y2 - MAP_OFFSET;
+            gSpecialVar_0x8006 = dirs[i];
+            gRivalApproachMovement[0] = GetWalkNormalMovementAction(GetOppositeDirection(dirs[i]));
+            gRivalApproachMovement[1] = MOVEMENT_ACTION_STEP_END;
+            gRivalApproachPlayerMovement[0] = GetFaceDirectionMovementAction(dirs[i]);
+            gRivalApproachPlayerMovement[1] = MOVEMENT_ACTION_STEP_END;
+            gSpecialVar_Result = TRUE;
+            return;
+        }
+    }
+    gSpecialVar_Result = FALSE;
+}
+
+// special GetCurrentMapForScript: VAR_RESULT = the current map, comparable with MAP_* constants
+void GetCurrentMapForScript(void)
+{
+    gSpecialVar_Result = gSaveBlock1Ptr->location.mapNum | (gSaveBlock1Ptr->location.mapGroup << 8);
+}
+
+// special FollowerAppearBesidePlayer: right after a warp the follower is hidden on the player's tile
+// until the player takes a step. This brings them out on a free tile next to the player (behind them
+// first) for a scene that starts straight away (the rival arriving in SOOTOPOLIS CITY).
+// VAR_RESULT is FALSE if there's no follower or no room.
+void FollowerAppearBesidePlayer(void)
+{
+    struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *follower;
+    bool8 onWater = TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING);
+    u8 facing = player->facingDirection;
+    u8 dirs[4];
+    u8 i;
+
+    gSpecialVar_Result = FALSE;
+    if (!gSaveBlock2Ptr->follower.inProgress)
+        return;
+    if (!gSaveBlock2Ptr->follower.warpEnd)
+    {
+        gSpecialVar_Result = TRUE; // already out
+        return;
+    }
+
+    dirs[0] = GetOppositeDirection(facing);
+    dirs[1] = sPerpendicularDirs[facing][0];
+    dirs[2] = sPerpendicularDirs[facing][1];
+    dirs[3] = facing;
+    for (i = 0; i < ARRAY_COUNT(dirs); i++)
+    {
+        s16 x = player->currentCoords.x, y = player->currentCoords.y;
+
+        MoveCoords(dirs[i], &x, &y);
+        if (!IsApproachTileFree(x, y, onWater, player->currentElevation))
+            continue;
+
+        if (onWater)
+            SetFollowerSprite(FOLLOWER_SPRITE_INDEX_SURF);
+        follower = &gObjectEvents[GetFollowerMapObjId()];
+        gSaveBlock2Ptr->follower.warpEnd = 0;
+        gSaveBlock2Ptr->follower.comeOutDoorStairs = 0;
+        follower->invisible = FALSE;
+        MoveObjectEventToMapCoords(follower, x, y);
+        ObjectEventTurn(follower, facing);
+        if (onWater)
+        {
+            if (follower->fieldEffectSpriteId == 0)
+            {
+                SetUpSurfBlobFieldEffect(follower);
+                follower->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
+                SetSurfBlob_BobState(follower->fieldEffectSpriteId, 1);
+            }
+            gSaveBlock2Ptr->follower.createSurfBlob = 2;
+        }
+        gSpecialVar_Result = TRUE;
+        return;
+    }
 }

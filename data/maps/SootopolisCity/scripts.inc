@@ -163,9 +163,51 @@ SootopolisCity_OnResume:
 	end
 
 SootopolisCity_OnFrame:
+	map_script_2 VAR_ROUTE126_RIVAL, 2, SootopolisCity_EventScript_RivalArrive
 	map_script_2 VAR_SOOTOPOLIS_CITY_STATE, 1, SootopolisCity_EventScript_StartLegendariesScene
+	map_script_2 VAR_ROUTE126_RIVAL, 4, SootopolisCity_EventScript_RivalAfterClash
 	map_script_2 VAR_SKY_PILLAR_STATE, 1, SootopolisCity_EventScript_StartRayquazaScene
 	.2byte 0
+
+@ The rival surfaced here with the player (see Route126_EventScript_RivalCatchUp): they come out
+@ beside them just before GROUDON and KYOGRE's clash, then go to help the city afterward
+SootopolisCity_EventScript_RivalArrive::
+	lockall
+	call Common_EventScript_CheckRivalFollower
+	goto_if_eq VAR_RESULT, FALSE, SootopolisCity_EventScript_RivalGone
+	special FollowerAppearBesidePlayer
+	goto_if_eq VAR_RESULT, FALSE, SootopolisCity_EventScript_RivalGone
+	rivalmsgbox Route126_Text_MayArrive, Route126_Text_BrendanArrive
+	closemessage
+	setvar VAR_ROUTE126_RIVAL, 4
+	releaseall
+	end
+
+SootopolisCity_EventScript_RivalAfterClash::
+	lockall
+	call Common_EventScript_CheckRivalFollower
+	goto_if_eq VAR_RESULT, FALSE, SootopolisCity_EventScript_RivalGone
+	facefollower
+	rivalmsgbox Route126_Text_MayAfterClash, Route126_Text_BrendanAfterClash
+	closemessage
+	setvar VAR_0x8004, DIR_SOUTH
+	call Common_EventScript_FollowerStopLeave
+	setvar VAR_ROUTE126_RIVAL, 3
+	releaseall
+	end
+
+@ No room for them to come out beside the player (or they're gone): they leave quietly
+SootopolisCity_EventScript_RivalGone::
+	checkfollower
+	call_if_eq VAR_RESULT, TRUE, SootopolisCity_EventScript_RemoveRival
+	setvar VAR_ROUTE126_RIVAL, 3
+	releaseall
+	end
+
+SootopolisCity_EventScript_RemoveRival::
+	destroyfollower
+	setfollowerpartner FOLLOWER_PARTNER_NONE
+	return
 
 @ If not at PokeCenter, assumed to have arrived via Dive
 SootopolisCity_EventScript_StartLegendariesScene::

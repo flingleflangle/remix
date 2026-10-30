@@ -93,6 +93,46 @@
       "elevation": 0,
       "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
       "script": "0x0"
+    },
+    {
+      "type": "hidden_item",
+      "x": 15,
+      "y": 21,
+      "elevation": 0,
+      "item": "ITEM_MOON_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_MOON_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 18,
+      "y": 28,
+      "elevation": 0,
+      "item": "ITEM_SUN_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_SUN_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 9,
+      "y": 6,
+      "elevation": 0,
+      "item": "ITEM_DAWN_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_DAWN_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 24,
+      "y": 19,
+      "elevation": 0,
+      "item": "ITEM_DUSK_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_DUSK_STONE"
+    },
+    {
+      "type": "hidden_item",
+      "x": 18,
+      "y": 3,
+      "elevation": 0,
+      "item": "ITEM_SHINY_STONE",
+      "flag": "FLAG_HIDDEN_ITEM_METEOR_FALLS_1F_2R_SHINY_STONE"
     }
   ]
 }

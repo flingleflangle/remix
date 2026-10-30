@@ -213,6 +213,20 @@
       "trainer_sight_or_berry_tree_id": "3",
       "script": "Route112_EventScript_Shayla",
       "flag": "0"
+    },
+    {
+      "local_id": "LOCALID_ROUTE112_RIVAL",
+      "graphics_id": "OBJ_EVENT_GFX_VAR_0",
+      "x": 38,
+      "y": 48,
+      "elevation": 3,
+      "movement_type": "MOVEMENT_TYPE_FACE_LEFT",
+      "movement_range_x": 0,
+      "movement_range_y": 0,
+      "trainer_type": "TRAINER_TYPE_NONE",
+      "trainer_sight_or_berry_tree_id": "0",
+      "script": "Route112_EventScript_RivalFollowerTalk",
+      "flag": "FLAG_HIDE_ROUTE_112_RIVAL"
     }
   ],
   "warp_events": [
@@ -259,7 +273,197 @@
       "dest_warp_id": "1"
     }
   ],
-  "coord_events": [],
+  "coord_events": [
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 46,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopRoute111"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 47,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopRoute111"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 48,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopRoute111"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 49,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopRoute111"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 50,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopRoute111"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 51,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopRoute111"
+    },
+    {
+      "type": "trigger",
+      "x": 0,
+      "y": 47,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopLavaridge"
+    },
+    {
+      "type": "trigger",
+      "x": 0,
+      "y": 48,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopLavaridge"
+    },
+    {
+      "type": "trigger",
+      "x": 0,
+      "y": 49,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopLavaridge"
+    },
+    {
+      "type": "trigger",
+      "x": 0,
+      "y": 50,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopLavaridge"
+    },
+    {
+      "type": "trigger",
+      "x": 0,
+      "y": 51,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopLavaridge"
+    },
+    {
+      "type": "trigger",
+      "x": 0,
+      "y": 52,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopLavaridge"
+    },
+    {
+      "type": "trigger",
+      "x": 0,
+      "y": 53,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopLavaridge"
+    },
+    {
+      "type": "trigger",
+      "x": 6,
+      "y": 47,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopMoveOn"
+    },
+    {
+      "type": "trigger",
+      "x": 7,
+      "y": 47,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopMoveOn"
+    },
+    {
+      "type": "trigger",
+      "x": 28,
+      "y": 28,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopMoveOn"
+    },
+    {
+      "type": "trigger",
+      "x": 29,
+      "y": 28,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopMoveOn"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 8,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopThroughFieryPath"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 9,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopThroughFieryPath"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 10,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopThroughFieryPath"
+    },
+    {
+      "type": "trigger",
+      "x": 39,
+      "y": 11,
+      "elevation": 0,
+      "var": "VAR_ROUTE112_RIVAL",
+      "var_value": "2",
+      "script": "Route112_EventScript_RivalStopThroughFieryPath"
+    }
+  ],
   "bg_events": [
     {
       "type": "sign",

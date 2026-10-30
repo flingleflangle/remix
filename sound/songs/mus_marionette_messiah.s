@@ -1,8 +1,20 @@
 @ "Marionette Messiah" from Super Robot Taisen: Original Generation (song 0x18), ported from sound/import.
 @ Track numbers match the original. Track 10 (a quiet doubling layer) was cut to fit Emerald's 5 sampled channels; up to 6 still overlap very briefly (0.1% of the song).
 @ Track 7 is shifted down an octave because Emerald's waves repeat twice.
-@ The synth brass slots are swapped (62 plays the french horn and 63 the trumpet here), by request.
-@ Track 1 opens with the guitar from MUS_T_MARIONETTE (slot 25) instead of slot 29.
+@ The synth brass slots are swapped from the original, by request, so track 1 plays the trumpet (slot 62) and track 4 the french horn (slot 63).
+@ Track 1 opens with the guitar from MUS_T_MARIONETTE (slot 25) instead of slot 29, with its notes an octave lower to match (slot 29's guitar sounds an octave below its written notes, slot 25's does not).
+@
+@ Instruments by track (slot numbers in voicegroups/srt_og.inc):
+@   Track 1: lead. The intro guitar from MUS_T_MARIONETTE (slot 25), then the trumpet (synth brass, slot 62).
+@   Track 2: rock drums (slot 126).
+@   Track 3: rock drums (slot 125).
+@   Track 4: french horn (synth brass, slot 63), with a bright synth (electric piano, slot 100) for one section in the middle.
+@   Track 5: orchestra hit (slot 55). Its noise "flutter" (slot 120) was removed, as in MUS_T_MARIONETTE; the rests are kept.
+@   Track 6: rhythm/backing. Clean guitar (nylon guitar, slot 27), with synth strings (slot 50) in places,
+@            then strings (slot 48), then the overdriven guitar (slot 29). Its noise flutter (slot 120, pattern 6_000) was removed too.
+@   Track 7: wave bass. Mostly saw (slot 108) with square-wave notes (slot 107) mixed in. Shifted down an octave.
+@   Track 8: square wave (channel 1), switching between duty cycles (slots 80, 81, 82) and a short plucked square (slot 90).
+@   Track 9: square wave (channel 2), switching between plucked (slots 95, 97) and held (slots 86, 87) squares.
 
 	.include "MPlayDef.s"
 
@@ -32,7 +44,7 @@ mus_marionette_messiah_1:
 	.byte		BEND  , c_v+0
 	.byte	W22
 	.byte		TEMPO , 140*mus_marionette_messiah_tbs/2
-	.byte		N78   , Gn3 , v127
+	.byte		N78   , Gn2 , v127
 	.byte	W12
 	.byte		MOD   , 2
 	.byte	W66
@@ -41,28 +53,28 @@ mus_marionette_messiah_1:
 	.byte		        c_v-64
 	.byte	W01
 	.byte		        c_v-64
-	.byte		N12   , An3
+	.byte		N12   , An2
 	.byte	W06
 	.byte		BEND  , c_v-16
 	.byte	W01
 	.byte		        c_v+0
 	.byte	W05
-	.byte		N78   , As3
+	.byte		N78   , As2
 	.byte	W78
 	.byte		BEND  , c_v+0
 	.byte	W05
 	.byte		        c_v-64
 	.byte	W01
 	.byte		        c_v-64
-	.byte		N12   , Cn4
+	.byte		N12   , Cn3
 	.byte	W06
 	.byte		BEND  , c_v-16
 	.byte	W01
 	.byte		        c_v+0
 	.byte	W05
-	.byte		N30   , Dn4
+	.byte		N30   , Dn3
 	.byte	W36
-	.byte		N10   , Cn4
+	.byte		N10   , Cn3
 	.byte	W06
 	.byte		BEND  , c_v+0
 	.byte	W01
@@ -79,7 +91,7 @@ mus_marionette_messiah_1:
 	.byte		        c_v-32
 	.byte	W01
 	.byte		        c_v-26
-	.byte		N21   , Dn4
+	.byte		N21   , Dn3
 	.byte	W01
 	.byte		BEND  , c_v-20
 	.byte	W01
@@ -91,9 +103,9 @@ mus_marionette_messiah_1:
 	.byte	W02
 	.byte		        c_v+0
 	.byte	W18
-	.byte		N30   , Ds4
+	.byte		N30   , Ds3
 	.byte	W36
-	.byte		N10   , Dn4
+	.byte		N10   , Dn3
 	.byte	W06
 	.byte		BEND  , c_v+0
 	.byte	W01
@@ -105,14 +117,14 @@ mus_marionette_messiah_1:
 	.byte	W01
 	.byte		N21
 	.byte	W24
-	.byte		        Ds4
+	.byte		        Ds3
 	.byte	W18
 	.byte		BEND  , c_v+0
 	.byte	W05
 	.byte		        c_v-64
 	.byte	W01
 	.byte		        c_v-58
-	.byte		N68   , Gn4 , v100
+	.byte		N68   , Gn3 , v100
 	.byte	W01
 	.byte		BEND  , c_v-51
 	.byte	W01
@@ -142,7 +154,7 @@ mus_marionette_messiah_1_000:
 	.byte	W96
 	.byte	W90
 	.byte		VOICE , 62
-	.byte		VOL   , 67*mus_marionette_messiah_mvl/mxv
+	.byte		VOL   , 87*mus_marionette_messiah_mvl/mxv
 	.byte	W01
 	.byte		BEND  , c_v+0
 	.byte	W05
@@ -2720,55 +2732,30 @@ mus_marionette_messiah_5:
 	.byte	W01
 	.byte		BEND  , c_v+0
 	.byte	W22
-	.byte		N02   , Dn3 , v127
 	.byte	W02
-	.byte		        Gn2
 	.byte	W02
-	.byte		        Cn2
 	.byte	W02
-	.byte		        Cs3 , v112
 	.byte	W02
-	.byte		        Fs2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Cn3 , v100
 	.byte	W02
-	.byte		        Fs2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Cn3 , v092
 	.byte	W02
-	.byte		        Fs2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Bn2 , v080
 	.byte	W02
-	.byte		        Fn2
 	.byte	W02
-	.byte		        As1
 	.byte	W02
-	.byte		        Bn2 , v072
 	.byte	W02
-	.byte		        Fn2
 	.byte	W02
-	.byte		        As1
 	.byte	W02
-	.byte		        As2 , v060
 	.byte	W02
-	.byte		        En2
 	.byte	W02
-	.byte		        An1
 	.byte	W02
-	.byte		        As2 , v052
 	.byte	W02
-	.byte		        En2
 	.byte	W02
-	.byte		        An1
 	.byte	W02
-	.byte		        An2 , v040
 	.byte	W48
 	.byte	W96
 	.byte		VOICE , 55
@@ -2841,55 +2828,30 @@ mus_marionette_messiah_5_000:
 	.byte	W01
 	.byte		VOL   , 53*mus_marionette_messiah_mvl/mxv
 	.byte	W01
-	.byte		N02   , Dn3 , v127
 	.byte	W02
-	.byte		        Gn2
 	.byte	W02
-	.byte		        Cn2
 	.byte	W02
-	.byte		        Cs3 , v112
 	.byte	W02
-	.byte		        Gn2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Cn3 , v100
 	.byte	W02
-	.byte		        Fs2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Cn3 , v092
 	.byte	W02
-	.byte		        Fs2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Bn2 , v080
 	.byte	W02
-	.byte		        Fn2
 	.byte	W02
-	.byte		        As1
 	.byte	W02
-	.byte		        Bn2 , v072
 	.byte	W02
-	.byte		        Fn2
 	.byte	W02
-	.byte		        As1
 	.byte	W02
-	.byte		        As2 , v060
 	.byte	W02
-	.byte		        En2
 	.byte	W02
-	.byte		        An1
 	.byte	W02
-	.byte		        As2 , v052
 	.byte	W02
-	.byte		        En2
 	.byte	W02
-	.byte		        An1
 	.byte	W02
-	.byte		        An2 , v040
 	.byte	W48
 	.byte	W96
 	.byte	W96
@@ -3039,55 +3001,30 @@ mus_marionette_messiah_6:
 	.byte		VOL   , 53*mus_marionette_messiah_mvl/mxv
 	.byte	W01
 mus_marionette_messiah_6_000:
-	.byte		N02   , Dn3 , v127
 	.byte	W02
-	.byte		        Gn2
 	.byte	W02
-	.byte		        Cn2
 	.byte	W02
-	.byte		        Cs3 , v112
 	.byte	W02
-	.byte		        Gn2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Cn3 , v100
 	.byte	W02
-	.byte		        Fs2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Cn3 , v092
 	.byte	W02
-	.byte		        Fs2
 	.byte	W02
-	.byte		        Bn1
 	.byte	W02
-	.byte		        Bn2 , v080
 	.byte	W02
-	.byte		        Fn2
 	.byte	W02
-	.byte		        As1
 	.byte	W02
-	.byte		        Bn2 , v072
 	.byte	W02
-	.byte		        Fn2
 	.byte	W02
-	.byte		        As1
 	.byte	W02
-	.byte		        As2 , v060
 	.byte	W02
-	.byte		        En2
 	.byte	W02
-	.byte		        An1
 	.byte	W02
-	.byte		        As2 , v052
 	.byte	W02
-	.byte		        En2
 	.byte	W02
-	.byte		        An1
 	.byte	W02
-	.byte		        An2 , v040
 	.byte	W48
 	.byte		PEND
 	.byte	W96
@@ -3981,7 +3918,7 @@ mus_marionette_messiah_7:
 	.byte		KEYSH , mus_marionette_messiah_key-12
 	.byte		VOICE , 108
 	.byte	W01
-	.byte		VOL   , 70*mus_marionette_messiah_mvl/mxv
+	.byte		VOL   , 44*mus_marionette_messiah_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W01
 	.byte		BEND  , c_v+0
@@ -4006,6 +3943,7 @@ mus_marionette_messiah_7_000:
 	.byte		N11
 	.byte	W11
 	.byte		VOICE , 107
+	.byte		VOL   , 44*mus_marionette_messiah_mvl/mxv
 	.byte	W01
 	.byte		N16   , As4 , v028
 	.byte	W24

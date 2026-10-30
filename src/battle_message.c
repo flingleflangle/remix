@@ -110,7 +110,10 @@ static const u8 sText_PkmnSniffedOutNextMon[] = _("{B_ATK_NAME_WITH_PREFIX} snif
 static const u8 sText_PkmnCantSwitchThisTurn[] = _("{B_DEF_NAME_WITH_PREFIX} can't switch\nout this turn!");
 static const u8 sText_PkmnEvolutionCuredStatus[] = _("Evolving cured {B_ATK_NAME_WITH_PREFIX}'s\nstatus problems!");
 static const u8 sText_FollowerHelpCatchLine[] = _("{B_PARTNER_LINE}");
+EWRAM_DATA static u8 sPartnerLineBuffer[200] = {0}; // a follower's helpcatch line, field placeholders expanded
 static const u8 sText_FollowerTryToCatch[] = _("{B_PARTNER_NAME}: That's it!\nTry to catch it, now!");
+static const u8 sText_FollowerThrewBall[] = _("{B_PARTNER_NAME} threw a\nPOKé BALL!");
+static const u8 sText_FollowerCaughtWildMon[] = _("Gotcha!\n{B_PARTNER_NAME} caught {B_OPPONENT_MON1_NAME}!{WAIT_SE}{PLAY_BGM MUS_CAUGHT}{PAUSE 127}");
 static const u8 sText_PkmnPulledIntoBlackHole[] = _("{B_DEF_NAME_WITH_PREFIX} was pulled\ninto the BLACK HOLE!");
 static const u8 sText_PkmnCantUseMoveBlackHole[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use\n{B_CURRENT_MOVE} in the BLACK HOLE!\p");
 static const u8 sText_ChakraSurged[] = _("{B_ATK_NAME_WITH_PREFIX}'s chakra\nsurged through its body!");
@@ -1019,6 +1022,8 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNEVOLUTIONCUREDSTATUS - BATTLESTRINGS_TABLE_START] = sText_PkmnEvolutionCuredStatus,
     [STRINGID_FOLLOWERHELPCATCHLINE - BATTLESTRINGS_TABLE_START] = sText_FollowerHelpCatchLine,
     [STRINGID_FOLLOWERTRYTOCATCH - BATTLESTRINGS_TABLE_START] = sText_FollowerTryToCatch,
+    [STRINGID_FOLLOWERTHREWBALL - BATTLESTRINGS_TABLE_START] = sText_FollowerThrewBall,
+    [STRINGID_FOLLOWERCAUGHTWILDMON - BATTLESTRINGS_TABLE_START] = sText_FollowerCaughtWildMon,
 };
 
 const u16 gMissStringIds[] =
@@ -2922,9 +2927,17 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst)
                 toCpy = text;
                 break;
             case B_TXT_PARTNER_LINE:
+                // The line is field text ({PLAYER} etc.), so expand it before it goes into the battle string
                 toCpy = FollowerBattle_GetHelpCatchLine();
                 if (toCpy == NULL)
+                {
                     toCpy = gText_EmptyString3;
+                }
+                else
+                {
+                    StringExpandPlaceholders(sPartnerLineBuffer, toCpy);
+                    toCpy = sPartnerLineBuffer;
+                }
                 break;
             }
 

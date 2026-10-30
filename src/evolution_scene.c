@@ -862,7 +862,10 @@ static void Task_EvolutionScene(u8 taskId)
             if (!(gTasks[taskId].tBits & TASK_BIT_LEARN_MOVE))
             {
                 StopMapMusic();
-                if (gMain.inBattle && gBattleOutcome == 0) PlayBattleBGM(); // If battle is still ongoing, replay battle music
+                // If the battle is still ongoing, the POKéMON theme plays after it evolved (as when it learns a
+                // move, see EVOSTATE_TRY_LEARN_MOVE), or the battle music if the evolution was stopped
+                if (gMain.inBattle && gBattleOutcome == 0 && !gTasks[taskId].tEvoWasStopped) PlayNewMapMusic(MUS_RG_TITLE);
+                else if (gMain.inBattle && gBattleOutcome == 0) PlayBattleBGM();
                 else Overworld_PlaySpecialMapMusic();
             }
             if (!gTasks[taskId].tEvoWasStopped)

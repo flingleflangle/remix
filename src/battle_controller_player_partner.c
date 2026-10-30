@@ -1359,7 +1359,9 @@ static void PlayerPartnerHandleTrainerSlide(void)
     trainerPicId = GetStoryPartnerBackPic();
     DecompressTrainerBackPic(trainerPicId, gActiveBattler);
     SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
-    gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate, 90, (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80, 30);
+    // To throw a ball (partnercatch) they stand in the middle, like a single battle (WALLY's tutorial)
+    gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate, FollowerBattle_PartnerThrowsBall() ? 80 : 90,
+                                                     (8 - gTrainerBackPicCoords[trainerPicId].size) * 4 + 80, 30);
 
     gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
     gSprites[gBattlerSpriteIds[gActiveBattler]].x2 = -128;
@@ -1419,9 +1421,21 @@ static void PlayerPartnerHandleSuccessBallThrowAnim(void)
     PlayerPartnerBufferExecCompleted();
 }
 
+static void CompleteOnPartnerSpecialAnimDone(void)
+{
+    if (!gDoingBattleAnim || !gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].specialAnimActive)
+        PlayerPartnerBufferExecCompleted();
+}
+
+// The partner throwing a ball (a follower catching the wild Pokémon themselves; see partnercatch)
 static void PlayerPartnerHandleBallThrowAnim(void)
 {
-    PlayerPartnerBufferExecCompleted();
+    u8 ballThrowCaseId = gBattleBufferA[gActiveBattler][1];
+
+    gBattleSpritesDataPtr->animationData->ballThrowCaseId = ballThrowCaseId;
+    gDoingBattleAnim = TRUE;
+    InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), B_ANIM_BALL_THROW_WITH_TRAINER);
+    gBattlerControllerFuncs[gActiveBattler] = CompleteOnPartnerSpecialAnimDone;
 }
 
 static void PlayerPartnerHandlePause(void)

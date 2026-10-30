@@ -1,11 +1,12 @@
 @ voicegroup_vs_frontier_brain, changed for MUS_T_MARIONETTE: slot 14 is the orchestra hit instead of tubular bells,
 @ and slot 87 uses a smooth triangle wave instead of a buzzy saw.
+@ Slot 4 is the tubular bells instead of the electric piano.
 voice_group t_marionette
 	voice_keysplit_all voicegroup_frlg_drumset
 	voice_keysplit voicegroup_piano_keysplit, keysplit_piano
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
-	voice_directsound 60, 0, DirectSoundWaveData_sd90_classical_detuned_ep1_low, 128, 249, 0, 188
+	voice_directsound 60, 0, DirectSoundWaveData_sc88pro_tubular_bell, 255, 165, 90, 216 @ tubular bells (like Trombe and Slateport) instead of the electric piano, which played too loudly
 	voice_directsound 60, 0, DirectSoundWaveData_sd90_classical_detuned_ep1_high, 255, 188, 103, 165
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
