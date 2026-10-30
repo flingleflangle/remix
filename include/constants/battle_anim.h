@@ -386,6 +386,7 @@
 #define B_ANIM_POKE_DOLL                27 // A POKE DOLL from the bag stands in as a Substitute
 #define B_ANIM_ECHO_RETURN              28 // Echo's sound wave bouncing back for its delayed hit
 #define B_ANIM_BLACK_HOLE_SETUP         29 // A Pokémon gathers darkness at the start of a turn it uses Black Hole
+#define B_ANIM_MIRROR_SCALE             30 // Mirror Scale reflects a stat drop (Mirror Coat's wall)
 
 // special animations table (gBattleAnims_Special)
 #define B_ANIM_LVL_UP                   0

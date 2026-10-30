@@ -6438,6 +6438,28 @@ BattleScript_AngerPointRaises::
 	waitmessage B_WAIT_TIME_LONG
 	return
 
+@ The Mirror Scale holder (sBATTLER) raises its mirror, then the reflected drop shows on the foe (gEffectBattler),
+@ unless something blocked it (sB_ANIM_ARG2 is FALSE)
+BattleScript_MirrorScaleReflects::
+	pause B_WAIT_TIME_SHORT
+	playanimation BS_SCRIPTING, B_ANIM_MIRROR_SCALE, NULL
+	waitanimation
+	jumpifbyte CMP_EQUAL, sB_ANIM_ARG2, FALSE, BattleScript_MirrorScaleReflectsMsg
+	setbyte sB_ANIM_ARG2, 0
+	playanimation BS_EFFECT_BATTLER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	waitanimation
+BattleScript_MirrorScaleReflectsMsg:
+	printstring STRINGID_MIRRORSCALEREFLECTED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+BattleScript_MirrorScaleCopies::
+	playanimation BS_SCRIPTING, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	waitanimation
+	printstring STRINGID_MIRRORSCALECOPIED
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_PoisonHealActivates::
 	printstring STRINGID_PKMNSXRESTOREDHPALITTLE2
 	waitmessage B_WAIT_TIME_LONG

@@ -434,6 +434,8 @@ struct BattleStruct
     u16 choicedMove[MAX_BATTLERS_COUNT];
     u16 changedItems[MAX_BATTLERS_COUNT];
     u8 intimidateBattler;
+    bool8 intimidateStatDrop; // An Intimidate-style ability (not the move user) is lowering stats, for Mirror Scale
+    s8 mirrorScaleCopies[MAX_BATTLERS_COUNT][NUM_BATTLE_STATS]; // Foes' self-boosts a Mirror Scale holder will copy
     u8 switchInItemsCounter;
     u8 arenaTurnCounter;
     u8 turnSideTracker;

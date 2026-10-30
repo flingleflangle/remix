@@ -14,6 +14,8 @@
 #include "strings.h"
 #include "task.h"
 #include "trainer_hill.h"
+#include "pokemon.h"
+#include "constants/abilities.h"
 #include "constants/field_poison.h"
 #include "constants/party_menu.h"
 
@@ -129,7 +131,9 @@ s32 DoPoisonFieldEffect(void)
 
     for (i = 0; i < PARTY_SIZE; i++)
     {
-        if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS)) == AILMENT_PSN)
+        // Poison Heal Pokémon take no poison damage outside of battle either
+        if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS)) == AILMENT_PSN
+         && GetMonAbility(pokemon) != ABILITY_POISON_HEAL)
         {
             // Apply poison damage
             hp = GetMonData(pokemon, MON_DATA_HP);

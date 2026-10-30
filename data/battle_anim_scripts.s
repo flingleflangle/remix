@@ -502,6 +502,7 @@ gBattleAnims_General::
 	.4byte General_PokeDoll                 @ B_ANIM_POKE_DOLL
 	.4byte General_EchoReturn               @ B_ANIM_ECHO_RETURN
 	.4byte General_BlackHoleSetUp           @ B_ANIM_BLACK_HOLE_SETUP
+	.4byte General_MirrorScale              @ B_ANIM_MIRROR_SCALE
 
 	.align 2
 gBattleAnims_Special::
@@ -14286,6 +14287,10 @@ General_DoomDesireHit:
 	end
 
 @ Gathering darkness before Black Hole: the background dims (the Pokémon don't) while it trembles, pulsing dark
+@ Mirror Scale reflecting a stat drop: the same red wall and sparkle as Mirror Coat, on the Mirror Scale holder
+General_MirrorScale:
+	goto Move_MIRROR_COAT
+
 General_BlackHoleSetUp:
 	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 2, 0, 10, RGB_BLACK
 	waitforvisualfinish

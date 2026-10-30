@@ -1,4 +1,5 @@
 #include "global.h"
+#include "constants/abilities.h"
 #include "gpu_regs.h"
 #include "bg.h"
 #include "malloc.h"
@@ -2832,6 +2833,71 @@ void CreateContestMonFromParty(u8 partyIndex)
         smart += 20;
     else if (heldItem == ITEM_YELLOW_SCARF)
         tough += 20;
+
+    // Some abilities give the same +20 as a scarf, and stack with one
+    switch (GetMonAbility(&gPlayerParty[partyIndex]))
+    {
+    case ABILITY_PRISM_SCALE:
+    case ABILITY_SPEED_BOOST:
+    case ABILITY_SWIFT_SWIM:
+    case ABILITY_CHLOROPHYLL:
+    case ABILITY_PRESSURE:
+    case ABILITY_KEEN_EYE:
+    case ABILITY_BLAZE:
+    case ABILITY_HYPER_CUTTER:
+        cool += 20;
+        break;
+    case ABILITY_ILLUMINATE:
+    case ABILITY_MARVEL_SCALE:
+    case ABILITY_NATURAL_CURE:
+    case ABILITY_SERENE_GRACE:
+    case ABILITY_WATER_VEIL:
+    case ABILITY_RAIN_DISH:
+    case ABILITY_SHIELD_DUST:
+    case ABILITY_CLOUD_NINE:
+    case ABILITY_OVERGROW:
+    case ABILITY_SNOW_CLOAK:
+        beauty += 20;
+        break;
+    case ABILITY_CUTE_CHARM:
+    case ABILITY_CHROMA_SCALE:
+    case ABILITY_PICKUP:
+    case ABILITY_RUN_AWAY:
+    case ABILITY_PLUS:
+    case ABILITY_MINUS:
+    case ABILITY_HUGE_POWER:
+    case ABILITY_EARLY_BIRD:
+    case ABILITY_OBLIVIOUS:
+    case ABILITY_FIRST_SIGHT:
+        cute += 20;
+        break;
+    case ABILITY_TECHNICIAN:
+    case ABILITY_MIRROR_SCALE:
+    case ABILITY_SYNCHRONIZE:
+    case ABILITY_TRACE:
+    case ABILITY_DOWNLOAD:
+    case ABILITY_COLOR_CHANGE:
+    case ABILITY_LEVITATE:
+    case ABILITY_MAGNET_PULL:
+    case ABILITY_PURE_POWER:
+        smart += 20;
+        break;
+    case ABILITY_INTIMIDATE:
+    case ABILITY_VITAL_SPIRIT:
+    case ABILITY_FILTER_SCALE:
+    case ABILITY_GUTS:
+    case ABILITY_STURDY:
+    case ABILITY_ROCK_HEAD:
+    case ABILITY_THICK_FAT:
+    case ABILITY_ROUGH_SKIN:
+    case ABILITY_ANGER_POINT:
+    case ABILITY_BATTLE_ARMOR:
+    case ABILITY_SHELL_ARMOR:
+    case ABILITY_TORRENT:
+        tough += 20;
+        break;
+    }
+
     if (cool > 255)
         cool = 255;
     if (beauty > 255)

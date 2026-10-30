@@ -5002,6 +5002,10 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
                 * (gStatStageRatios[gBattleMons[battler1].statStages[STAT_SPEED]][0])
                 / (gStatStageRatios[gBattleMons[battler1].statStages[STAT_SPEED]][1]);
 
+    // Chroma Scale: Speed x1.3 in any weather
+    if (gBattleMons[battler1].ability == ABILITY_CHROMA_SCALE && WEATHER_HAS_EFFECT && (gBattleWeather & B_WEATHER_ANY))
+        speedBattler1 = (speedBattler1 * 13) / 10;
+
     if (gBattleMons[battler1].item == ITEM_ENIGMA_BERRY)
     {
         holdEffect = gEnigmaBerries[battler1].holdEffect;
@@ -5042,6 +5046,10 @@ u8 GetWhoStrikesFirst(u8 battler1, u8 battler2, bool8 ignoreChosenMoves)
     speedBattler2 = (gBattleMons[battler2].speed * speedMultiplierBattler2)
                 * (gStatStageRatios[gBattleMons[battler2].statStages[STAT_SPEED]][0])
                 / (gStatStageRatios[gBattleMons[battler2].statStages[STAT_SPEED]][1]);
+
+    // Chroma Scale: Speed x1.3 in any weather
+    if (gBattleMons[battler2].ability == ABILITY_CHROMA_SCALE && WEATHER_HAS_EFFECT && (gBattleWeather & B_WEATHER_ANY))
+        speedBattler2 = (speedBattler2 * 13) / 10;
 
     if (gBattleMons[battler2].item == ITEM_ENIGMA_BERRY)
     {

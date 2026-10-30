@@ -158,6 +158,8 @@ extern const u8 BattleScript_SpeedBoostActivates[];
 extern const u8 BattleScript_TraceActivates[];
 extern const u8 BattleScript_RainDishActivates[];
 extern const u8 BattleScript_PoisonHealActivates[];
+extern const u8 BattleScript_MirrorScaleReflects[];
+extern const u8 BattleScript_MirrorScaleCopies[];
 extern const u8 BattleScript_DrySkinSunDmg[];
 extern const u8 BattleScript_DownloadActivates[];
 extern const u8 BattleScript_PickupActivates[];

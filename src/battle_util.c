@@ -4715,7 +4715,7 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                 break;
     // orbs. hopefully they work, because they were having a weird issue with saying hte opponent got the status.
             case HOLD_EFFECT_FLAME_ORB:
-             if (gBattleMons[battler].status1 != STATUS1_BURN && !moveTurn)
+             if (!(gBattleMons[battler].status1 & STATUS1_ANY) && !moveTurn) // only if it has no status already
                 {
                     gBattleMons[battler].status1 = STATUS1_BURN;
                     BattleScriptExecute(BattleScript_FlameOrb);
@@ -4724,7 +4724,9 @@ u8 ItemBattleEffects(u8 caseID, u8 battler, bool8 moveTurn)
                 }
                 break;
             case HOLD_EFFECT_TOXIC_ORB:
-             if (gBattleMons[battler].status1 != STATUS1_TOXIC_POISON && !moveTurn)
+             // Only if it has no status already. Checking for exactly STATUS1_TOXIC_POISON re-poisoned it every turn,
+             // since the Toxic counter bits made it not match, which reset the counter each turn
+             if (!(gBattleMons[battler].status1 & STATUS1_ANY) && !moveTurn)
                 {
                     gBattleMons[battler].status1 = STATUS1_TOXIC_POISON;
                     BattleScriptExecute(BattleScript_ToxicOrb);

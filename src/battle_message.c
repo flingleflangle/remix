@@ -264,6 +264,8 @@ static const u8 sText_PkmnCutsAccuracyWith[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX
 static const u8 sText_LiquidOozeSlowed[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nslowed {B_ATK_NAME_WITH_PREFIX}!");
 static const u8 sText_StickyHoldTrapped[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\ntrapped {B_DEF_NAME_WITH_PREFIX}!");
 static const u8 sText_ForecastClearedSkies[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncleared the skies!");
+static const u8 sText_MirrorScaleReflected[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nreflected the stat drop!");
+static const u8 sText_MirrorScaleCopied[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncopied the foe's boosts!");
 static const u8 sText_ExSwappedStats[] = _("{B_ATK_NAME_WITH_PREFIX} switched stat\nchanges with {B_DEF_NAME_WITH_PREFIX}!");
 static const u8 sText_PkmnLostHpLifeOrb[] = _("{B_ATK_NAME_WITH_PREFIX} lost some\nof its HP!");
 static const u8 sText_PkmnHidBehindPokeDoll[] = _("{B_ATK_NAME_WITH_PREFIX} hid behind\nthe POKé DOLL!");
@@ -998,6 +1000,8 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_LIQUIDOOZESLOWED - BATTLESTRINGS_TABLE_START] = sText_LiquidOozeSlowed,
     [STRINGID_STICKYHOLDTRAPPED - BATTLESTRINGS_TABLE_START] = sText_StickyHoldTrapped,
     [STRINGID_FORECASTCLEAREDSKIES - BATTLESTRINGS_TABLE_START] = sText_ForecastClearedSkies,
+    [STRINGID_MIRRORSCALEREFLECTED - BATTLESTRINGS_TABLE_START] = sText_MirrorScaleReflected,
+    [STRINGID_MIRRORSCALECOPIED - BATTLESTRINGS_TABLE_START] = sText_MirrorScaleCopied,
     [STRINGID_PKMNLOSTHPLIFEORB - BATTLESTRINGS_TABLE_START] = sText_PkmnLostHpLifeOrb,
     [STRINGID_PKMNHIDBEHINDPOKEDOLL - BATTLESTRINGS_TABLE_START] = sText_PkmnHidBehindPokeDoll,
     [STRINGID_SOLIDRAGEACTIVATES - BATTLESTRINGS_TABLE_START] = sText_SolidRageActivates,

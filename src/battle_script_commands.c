@@ -108,6 +108,7 @@ static u8 AttacksThisTurn(u8 battler, u16 move); // Note: returns 1 if it's a ch
 static void CheckWonderGuardAndLevitate(void);
 static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8, const u8 *BS_ptr);
 static u8 GetWhiteSmokeAlly(u8 battler);
+static bool8 TryApplyMirrorScaleCopies(void);
 static bool32 IsMonGettingExpSentOut(void);
 static void InitLevelUpBanner(void);
 static bool8 SlideInLevelUpBanner(void);
@@ -3464,6 +3465,10 @@ static void Cmd_seteffectwithchance(void)
     if (gBattleMons[gBattlerAttacker].ability == ABILITY_SERENE_GRACE
      || gBattleMons[gBattlerAttacker].ability == ABILITY_WISHMAKER) // Works like Serene Grace too
         percentChance *= 2;
+    // Chroma Scale triples added-effect chances in any weather, except flinching
+    if (gBattleMons[gBattlerAttacker].ability == ABILITY_CHROMA_SCALE && WEATHER_HAS_EFFECT && (gBattleWeather & B_WEATHER_ANY)
+     && (gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN)) != MOVE_EFFECT_FLINCH)
+        percentChance *= 3;
     // An EX move with no EX effect of its own is 1.5x as likely to get its effect (not a move used in its place)
     if (gBattleMoveIsEx && gCurrentMove == gChosenMoveByBattler[gBattlerAttacker] && !BattlerHasExMoveEffect(gBattlerAttacker, gCurrentMove))
         percentChance = percentChance * 3 / 2;
@@ -4794,6 +4799,7 @@ static void Cmd_playstatchangeanimation(void)
                         && gBattleMons[gActiveBattler].ability != ABILITY_CLEAR_BODY
                         && gBattleMons[gActiveBattler].ability != ABILITY_WHITE_SMOKE
                         && GetWhiteSmokeAlly(gActiveBattler) == MAX_BATTLERS_COUNT
+                        && gBattleMons[gActiveBattler].ability != ABILITY_MIRROR_SCALE
                         && !(gActiveBattler == gBattlerAttacker && gBattleMons[gActiveBattler].ability == ABILITY_CLEAR_BODY)
                         && !(gBattleMons[gActiveBattler].ability == ABILITY_KEEN_EYE && currStat == STAT_ACC)
                         && !(gBattleMons[gActiveBattler].ability == ABILITY_HYPER_CUTTER && currStat == STAT_ATK)
@@ -4938,6 +4944,12 @@ static void Cmd_moveend(void)
             gBattleScripting.moveendState++;
             break;
         case MOVEEND_ATTACKER_CONTACT_ABILITIES: // The attacker's abilities activating on contact (North Star, Sticky Hold)
+            // Mirror Scale copies the boosts first; this case then runs again for the contact abilities
+            if (TryApplyMirrorScaleCopies())
+            {
+                effect = TRUE;
+                break;
+            }
             if (gBattleMons[gBattlerAttacker].ability == ABILITY_NORTH_STAR
                 && gBattlerAttacker != gBattlerTarget
                 && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
@@ -8303,6 +8315,72 @@ static u8 GetWhiteSmokeAlly(u8 battler)
     return MAX_BATTLERS_COUNT;
 }
 
+// Whether a stat drop Mirror Scale bounces back can lower the source's stat. The same things that would block
+// a normal drop block it: Mist, Clear Body, White Smoke (or a White Smoke ally) and the single-stat abilities.
+static bool8 CanMirrorScaleLowerStat(u8 source, u8 statId)
+{
+    u16 ability = gBattleMons[source].ability;
+
+    if (gBattleMons[source].hp == 0 || gBattleMons[source].statStages[statId] == MIN_STAT_STAGE)
+        return FALSE;
+    if (gSideTimers[GET_BATTLER_SIDE(source)].mistTimer)
+        return FALSE;
+    if (ability == ABILITY_CLEAR_BODY || ability == ABILITY_WHITE_SMOKE || GetWhiteSmokeAlly(source) != MAX_BATTLERS_COUNT)
+        return FALSE;
+    if ((ability == ABILITY_HYPER_CUTTER && statId == STAT_ATK)
+     || (ability == ABILITY_KEEN_EYE && statId == STAT_ACC)
+     || (ability == ABILITY_OWN_TEMPO && statId == STAT_SPEED))
+        return FALSE;
+    return TRUE;
+}
+
+// Mirror Scale copies foes' boosts to themselves once the move is over. Returns TRUE if it starts a script.
+static bool8 TryApplyMirrorScaleCopies(void)
+{
+    u32 i, j;
+    u8 first = MAX_BATTLERS_COUNT;
+    u8 statsRaised = 0, lastStat = 0, biggest = 0;
+
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        for (j = 0; j < NUM_BATTLE_STATS; j++)
+        {
+            s8 change = gBattleStruct->mirrorScaleCopies[i][j];
+
+            if (change == 0)
+                continue;
+            gBattleStruct->mirrorScaleCopies[i][j] = 0;
+            if (gBattleMons[i].hp == 0 || gBattleMons[i].ability != ABILITY_MIRROR_SCALE)
+                continue;
+            gBattleMons[i].statStages[j] += change;
+            if (gBattleMons[i].statStages[j] > MAX_STAT_STAGE)
+                gBattleMons[i].statStages[j] = MAX_STAT_STAGE;
+            if (first == MAX_BATTLERS_COUNT)
+                first = i;
+            if (i == first)
+            {
+                statsRaised++;
+                lastStat = j;
+                if (change > biggest)
+                    biggest = change;
+            }
+        }
+    }
+    if (first == MAX_BATTLERS_COUNT)
+        return FALSE;
+
+    // One stat shows its own arrow; several show the multi-stat animation
+    if (statsRaised > 1)
+        gBattleScripting.animArg1 = (biggest >= 2) ? STAT_ANIM_MULTIPLE_PLUS2 : STAT_ANIM_MULTIPLE_PLUS1;
+    else
+        gBattleScripting.animArg1 = ((biggest >= 2) ? STAT_ANIM_PLUS2 : STAT_ANIM_PLUS1) + lastStat;
+    gBattleScripting.animArg2 = 0;
+    gBattleScripting.battler = first;
+    BattleScriptPushCursor();
+    gBattlescriptCurrInstr = BattleScript_MirrorScaleCopies;
+    return TRUE;
+}
+
 static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
 {
     bool8 certain = FALSE;
@@ -8334,6 +8412,33 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             if (flags == STAT_CHANGE_ALLOW_PTR)
                 gBattlescriptCurrInstr = BS_ptr;
             return STAT_CHANGE_DIDNT_WORK;
+        }
+        // Mirror Scale bounces a foe's stat drop back onto the foe (which its own stat protections can block)
+        if (gBattleMons[gActiveBattler].ability == ABILITY_MIRROR_SCALE)
+        {
+            u8 source = gBattleStruct->intimidateStatDrop ? gBattleStruct->intimidateBattler : gBattlerAttacker;
+
+            if (source != gActiveBattler && GetBattlerSide(source) != GetBattlerSide(gActiveBattler))
+            {
+                gBattleScripting.animArg2 = FALSE; // Whether the foe's drop animation plays
+                if (CanMirrorScaleLowerStat(source, statId))
+                {
+                    gBattleMons[source].statStages[statId] -= GET_STAT_BUFF_VALUE(statValue);
+                    if (gBattleMons[source].statStages[statId] < MIN_STAT_STAGE)
+                        gBattleMons[source].statStages[statId] = MIN_STAT_STAGE;
+                    gBattleScripting.animArg1 = ((GET_STAT_BUFF_VALUE(statValue) >= 2) ? STAT_ANIM_MINUS2 : STAT_ANIM_MINUS1) + statId;
+                    gBattleScripting.animArg2 = TRUE;
+                    gEffectBattler = source;
+                }
+                if (flags == STAT_CHANGE_ALLOW_PTR)
+                {
+                    BattleScriptPush(BS_ptr);
+                    gBattleScripting.battler = gActiveBattler;
+                    gBattlescriptCurrInstr = BattleScript_MirrorScaleReflects;
+                    RecordAbilityBattle(gActiveBattler, ABILITY_MIRROR_SCALE);
+                }
+                return STAT_CHANGE_DIDNT_WORK;
+            }
         }
         if (gSideTimers[GET_BATTLER_SIDE(gActiveBattler)].mistTimer
             && !certain && gCurrentMove != MOVE_CURSE)
@@ -8463,6 +8568,18 @@ static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8 *BS_ptr)
             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_STAT_WONT_INCREASE;
         else
             gBattleCommunication[MULTISTRING_CHOOSER] = (gBattlerTarget == gActiveBattler); // B_MSG_ATTACKER_STAT_ROSE or B_MSG_DEFENDER_STAT_ROSE
+
+        // A Pokémon raising its own stats gets copied by opposing Mirror Scale holders (applied at the end of the move)
+        if (gActiveBattler == gBattlerAttacker && gBattleMons[gActiveBattler].statStages[statId] < MAX_STAT_STAGE)
+        {
+            u32 i;
+            for (i = 0; i < gBattlersCount; i++)
+            {
+                if (gBattleMons[i].ability == ABILITY_MIRROR_SCALE && gBattleMons[i].hp != 0
+                 && GetBattlerSide(i) != GetBattlerSide(gActiveBattler))
+                    gBattleStruct->mirrorScaleCopies[i][statId] += statValue;
+            }
+        }
     }
 
     gBattleMons[gActiveBattler].statStages[statId] += statValue;
@@ -11376,6 +11493,7 @@ static void Cmd_trygetintimidatetarget(void)
     u8 side;
 
     gBattleScripting.battler = gBattleStruct->intimidateBattler;
+    gBattleStruct->intimidateStatDrop = TRUE;
     side = GetBattlerSide(gBattleScripting.battler);
 
     PREPARE_ABILITY_BUFFER(gBattleTextBuff1, gBattleMons[gBattleScripting.battler].ability)
@@ -11389,9 +11507,14 @@ static void Cmd_trygetintimidatetarget(void)
     }
 
     if (gBattlerTarget >= gBattlersCount)
+    {
+        gBattleStruct->intimidateStatDrop = FALSE;
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
     else
+    {
         gBattlescriptCurrInstr += 5;
+    }
 }
 
 static void Cmd_switchoutabilities(void)
