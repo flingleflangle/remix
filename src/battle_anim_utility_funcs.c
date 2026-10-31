@@ -395,7 +395,7 @@ static void AnimTask_DrawFallingWhiteLinesOnAttacker_Step(u8 taskId)
 #define aDecrease         data[0]
 #define aAnimStatId       data[1]
 #define aIsTarget         data[2]
-#define aMultipleBattlers data[3] // Always false. Changes for multiple battlers are instead run sequentially.
+#define aMultipleBattlers data[3] // Also covers the partner, for changes they get together (see VARIOUS_STAT_BATCH_ANIM)
 #define aSharply          data[4]
 
 // Task data defines for InitStatsChangeAnimation

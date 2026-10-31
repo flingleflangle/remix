@@ -1459,6 +1459,15 @@
 	jumpifword CMP_NO_COMMON_BITS, gBattleTypeFlags, \flags, \jumpptr
 	.endm
 
+@ Holds back the target's stat change (already made) to show it with the rest of the batch: one animation, then one
+@ message for the team if its partner got the change too, or its own message if not (see BattleScript_StatBatchFlush).
+@ teamStringId is the foe team version, followed by the ally team one. 0, 0 means the usual rose/fell strings
+	.macro statbatchadd stringId:req, teamStringId:req
+	various BS_TARGET, VARIOUS_STAT_BATCH_ADD
+	.2byte \stringId
+	.2byte \teamStringId
+	.endm
+
 @ EX moves (see data/ex_battle_scripts.s)
 	.macro jumpifexmove ptr:req
 	jumpifbyte CMP_NOT_EQUAL, gBattleMoveIsEx, FALSE, \ptr

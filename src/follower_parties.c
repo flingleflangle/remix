@@ -220,6 +220,7 @@ EWRAM_DATA static struct Pokemon sSavedPlayerParty[PARTY_SIZE] = {0};
 
 EWRAM_DATA static u8 sFollowerBattlePending = PENDING_NONE;
 EWRAM_DATA static bool8 sFollowerBattleActive = FALSE;
+EWRAM_DATA static bool8 sFollowerBattleChooseParty = FALSE; // see FollowerBattle_ChooseNextParty
 
 static bool8 IsMonUsableInBattle(struct Pokemon *mon)
 {
@@ -264,13 +265,24 @@ bool8 FollowerBattle_PartnerCanJoin(void)
         && CurrentBattlePyramidLocation() == PYRAMID_LOCATION_NONE && !InTrainerHillChallenge();
 }
 
+// special FollowerBattle_ChooseNextParty, through trainerbattle_single/double's choose_party=TRUE.
+// The next trainer battle beside a follower lets the player pick their 3 Pokémon, for important
+// battles like bosses. Others just take the first 3 usable ones, as wild battles do.
+void FollowerBattle_ChooseNextParty(void)
+{
+    sFollowerBattleChooseParty = TRUE;
+}
+
 // special FollowerBattle_Prepare, right before a trainer battle starts.
 // VAR_RESULT: FOLLOWER_BATTLE_NONE for a normal battle, otherwise the party is saved and
-// FOLLOWER_BATTLE_READY / FOLLOWER_BATTLE_CHOOSE.
+// FOLLOWER_BATTLE_READY (first 3 usable Pokémon fight) / FOLLOWER_BATTLE_CHOOSE (the player picks,
+// if the battle asked for it with FollowerBattle_ChooseNextParty).
 void FollowerBattle_Prepare(void)
 {
     u8 i, slots[PARTY_SIZE];
+    bool8 chooseParty = sFollowerBattleChooseParty;
 
+    sFollowerBattleChooseParty = FALSE;
     sFollowerBattlePending = PENDING_NONE;
     gSpecialVar_Result = FOLLOWER_BATTLE_NONE;
     if (!FollowerBattle_PartnerCanJoin())
@@ -283,7 +295,7 @@ void FollowerBattle_Prepare(void)
     }
     sFollowerBattlePending = PENDING_TRAINER;
 
-    if (gPlayerPartyCount > MULTI_PARTY_SIZE)
+    if (chooseParty && gPlayerPartyCount > MULTI_PARTY_SIZE)
         gSpecialVar_Result = FOLLOWER_BATTLE_CHOOSE;
     else if (SetBattlingParty(slots, PARTY_SIZE))
         gSpecialVar_Result = FOLLOWER_BATTLE_READY;

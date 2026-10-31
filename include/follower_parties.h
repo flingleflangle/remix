@@ -64,6 +64,7 @@ void FollowerBattle_RestoreParty(void);
 void LoadFollowerPartnerParty(void);
 void FollowerBattle_Prepare(void);
 void FollowerBattle_ApplyChosenParty(void);
+void FollowerBattle_ChooseNextParty(void);
 void IsTalkingToFollower(void);
 
 #endif // GUARD_FOLLOWER_PARTIES_H

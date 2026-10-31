@@ -485,7 +485,8 @@ void AnimTask_StatsChange(u8 taskId)
     s16 animStatId = 0;
     bool16 sharply = FALSE;
 
-    switch (gBattleSpritesDataPtr->animationData->animArg)
+    // The high byte is set when the battler's partner gets the same change, so they animate together
+    switch (gBattleSpritesDataPtr->animationData->animArg & 0xFF)
     {
     case STAT_ANIM_PLUS1 + STAT_ATK:     goesDown = FALSE;  animStatId = STAT_ANIM_PAL_ATK;      break;
     case STAT_ANIM_PLUS1 + STAT_DEF:     goesDown = FALSE;  animStatId = STAT_ANIM_PAL_DEF;      break;
@@ -532,7 +533,7 @@ void AnimTask_StatsChange(u8 taskId)
     gBattleAnimArgs[0] = goesDown;
     gBattleAnimArgs[1] = animStatId;
     gBattleAnimArgs[2] = FALSE; // Whether it's the target, rather than attacker
-    gBattleAnimArgs[3] = FALSE; // Whether it hits multiple battlers
+    gBattleAnimArgs[3] = (gBattleSpritesDataPtr->animationData->animArg >> 8) != 0; // Whether the partner gets it too
     gBattleAnimArgs[4] = sharply;
     gTasks[taskId].func = InitStatsChangeAnimation;
     gTasks[taskId].func(taskId);

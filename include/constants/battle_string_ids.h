@@ -446,8 +446,16 @@
 #define STRINGID_MIRRORSCALECOPIED          446
 #define STRINGID_FOLLOWERTHREWBALL          447
 #define STRINGID_FOLLOWERCAUGHTWILDMON      448
+// Each foe team string must be followed by its ally team one (see VARIOUS_STAT_BATCH_NEXT)
+#define STRINGID_FOETEAMSSTATCHANGED        449
+#define STRINGID_ALLYTEAMSSTATCHANGED       450
+#define STRINGID_PKMNCUTSFOETEAMSATTACK     451
+#define STRINGID_PKMNCUTSALLYTEAMSATTACK    452
+#define STRINGID_PKMNCUTSFOETEAMSACCURACY   453
+#define STRINGID_PKMNCUTSALLYTEAMSACCURACY  454
+#define STRINGID_ATKSXINFATUATEDDEF         455
 
-#define BATTLESTRINGS_COUNT                 449
+#define BATTLESTRINGS_COUNT                 456
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,

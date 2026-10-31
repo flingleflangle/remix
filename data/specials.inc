@@ -548,6 +548,7 @@ gSpecials::
 	def_special FollowerBattle_Prepare
 	def_special FollowerBattle_ApplyChosenParty
 	def_special ChooseHalfPartyForFollowerBattle
+	def_special FollowerBattle_ChooseNextParty
 	def_special IsTalkingToFollower
 	def_special FollowerStop_PrepareStepBack
 	def_special FollowerStop_PrepareLeave

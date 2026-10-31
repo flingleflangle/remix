@@ -107,6 +107,7 @@ static void TrySetDestinyBondToHappen(void);
 static u8 AttacksThisTurn(u8 battler, u16 move); // Note: returns 1 if it's a charging turn, otherwise 2.
 static void CheckWonderGuardAndLevitate(void);
 static u8 ChangeStatBuffs(s8 statValue, u8 statId, u8, const u8 *BS_ptr);
+static u8 GetGraphicalStatChangeValue(void);
 static u8 GetWhiteSmokeAlly(u8 battler);
 static bool8 TryApplyMirrorScaleCopies(void);
 static bool32 IsMonGettingExpSentOut(void);
@@ -4743,6 +4744,14 @@ static void Cmd_playanimation_var(void)
 
 static void Cmd_setgraphicalstatchangevalues(void)
 {
+    gBattleScripting.animArg1 = GetGraphicalStatChangeValue();
+    gBattleScripting.animArg2 = 0;
+    gBattlescriptCurrInstr++;
+}
+
+// The B_ANIM_STATS_CHANGE argument for gBattleScripting.statChanger
+static u8 GetGraphicalStatChangeValue(void)
+{
     u8 value = 0;
     switch (GET_STAT_BUFF_VALUE2(gBattleScripting.statChanger))
     {
@@ -4759,9 +4768,7 @@ static void Cmd_setgraphicalstatchangevalues(void)
         value = STAT_ANIM_MINUS2 + 1;
         break;
     }
-    gBattleScripting.animArg1 = GET_STAT_BUFF_ID(gBattleScripting.statChanger) + value - 1;
-    gBattleScripting.animArg2 = 0;
-    gBattlescriptCurrInstr++;
+    return GET_STAT_BUFF_ID(gBattleScripting.statChanger) + value - 1;
 }
 
 static void Cmd_playstatchangeanimation(void)
@@ -4868,6 +4875,79 @@ static void Cmd_playstatchangeanimation(void)
     }
 }
 
+// Static, Poison Point, Flame Body, Effect Spore and Cute Charm work when their holder makes contact too, with lower
+// chance than when it's hit (see ABILITYEFFECT_ON_DAMAGE): 20% instead of 1/3
+static bool8 TryAttackerContactStatusAbility(void)
+{
+    u8 moveEffect;
+
+    if (gBattlerAttacker == gBattlerTarget
+     || (gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+     || !TARGET_TURN_DAMAGED
+     || gBattleMons[gBattlerAttacker].hp == 0
+     || gBattleMons[gBattlerTarget].hp == 0
+     || !(gBattleMoves[gCurrentMove].flags & FLAG_MAKES_CONTACT)
+     || gProtectStructs[gBattlerAttacker].confusionSelfDmg
+     || gBattleMons[gBattlerTarget].ability == ABILITY_SHIELD_DUST)
+        return FALSE;
+
+    switch (gBattleMons[gBattlerAttacker].ability)
+    {
+    case ABILITY_EFFECT_SPORE:
+        if ((Random() % 5) != 0) // 20%
+            return FALSE;
+        // MOVE_EFFECT_SLEEP, MOVE_EFFECT_POISON or MOVE_EFFECT_PARALYSIS
+        do
+        {
+            moveEffect = Random() & 3;
+        } while (moveEffect == 0);
+        if (moveEffect == MOVE_EFFECT_BURN)
+            moveEffect = MOVE_EFFECT_PARALYSIS;
+        break;
+    case ABILITY_POISON_POINT:
+        if ((Random() % 5) != 0) // 20%
+            return FALSE;
+        moveEffect = MOVE_EFFECT_POISON;
+        break;
+    case ABILITY_STATIC:
+        if ((Random() % 5) != 0) // 20%
+            return FALSE;
+        moveEffect = MOVE_EFFECT_PARALYSIS;
+        break;
+    case ABILITY_FLAME_BODY:
+        if ((Random() % 5) != 0) // 20%
+            return FALSE;
+        moveEffect = MOVE_EFFECT_BURN;
+        break;
+    case ABILITY_CUTE_CHARM:
+    {
+        u8 atkGender = GetGenderFromSpeciesAndPersonality(gBattleMons[gBattlerAttacker].species, gBattleMons[gBattlerAttacker].personality);
+        u8 defGender = GetGenderFromSpeciesAndPersonality(gBattleMons[gBattlerTarget].species, gBattleMons[gBattlerTarget].personality);
+
+        if ((Random() % 5) != 0 // 20%
+         || gBattleMons[gBattlerTarget].ability == ABILITY_OBLIVIOUS
+         || gBattleMons[gBattlerTarget].ability == ABILITY_HEARTBROKEN
+         || gBattleMons[gBattlerTarget].status2 & STATUS2_INFATUATION
+         || atkGender == defGender || atkGender == MON_GENDERLESS || defGender == MON_GENDERLESS)
+            return FALSE;
+        gBattleMons[gBattlerTarget].status2 |= STATUS2_INFATUATED_WITH(gBattlerAttacker);
+        gLastUsedAbility = ABILITY_CUTE_CHARM;
+        RecordAbilityBattle(gBattlerAttacker, ABILITY_CUTE_CHARM);
+        BattleScriptPushCursor();
+        gBattlescriptCurrInstr = BattleScript_CuteCharmAttackerActivates;
+        return TRUE;
+    }
+    default:
+        return FALSE;
+    }
+
+    gBattleCommunication[MOVE_EFFECT_BYTE] = moveEffect;
+    BattleScriptPushCursor();
+    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+    gHitMarker |= HITMARKER_STATUS_ABILITY_EFFECT;
+    return TRUE;
+}
+
 static void Cmd_moveend(void)
 {
     s32 i;
@@ -4885,6 +4965,14 @@ static void Cmd_moveend(void)
 
     endMode = gBattlescriptCurrInstr[1];
     endState = gBattlescriptCurrInstr[2];
+
+    // Stat changes held back to be shown together get shown before the move wraps up, however it got here
+    if (gBattleStruct->statBatchBattlers != 0)
+    {
+        BattleScriptPushCursor();
+        gBattlescriptCurrInstr = BattleScript_StatBatchFlush;
+        return;
+    }
 
     if (gBattleMons[gBattlerAttacker].item == ITEM_ENIGMA_BERRY)
         holdEffectAtk = gEnigmaBerries[gBattlerAttacker].holdEffect;
@@ -4986,6 +5074,10 @@ static void Cmd_moveend(void)
                 gLastUsedAbility = ABILITY_STICKY_HOLD;
                 BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_StickyHoldTraps;
+                effect = TRUE;
+            }
+            else if (TryAttackerContactStatusAbility())
+            {
                 effect = TRUE;
             }
             gBattleScripting.moveendState++;
@@ -7562,6 +7654,118 @@ static void Cmd_various(void)
         gBattleCommunication[0] = (gProtectStructs[gActiveBattler].protected || gProtectStructs[gActiveBattler].detected);
         gProtectStructs[gActiveBattler].protected = 0;
         gProtectStructs[gActiveBattler].detected = 0;
+        break;
+    case VARIOUS_STAT_BATCH_RESET:
+        gBattleStruct->statBatchBattlers = 0;
+        break;
+    case VARIOUS_STAT_BATCH_ADD:
+    {
+        // Holds back the battler's stat change (already made) to show it with the rest of the batch: one animation, then
+        // one message for the team if its partner got it too (see BattleScript_StatBatchFlush). All of a batch share the
+        // stat change, so they share the animation, the text buffers and the strings (0 means the usual rose/fell ones)
+        u16 stringId = T2_READ_16(gBattlescriptCurrInstr + 3);
+        u16 teamStringId = T2_READ_16(gBattlescriptCurrInstr + 5);
+
+        if (stringId == 0)
+        {
+            if (gBattleScripting.statChanger & STAT_BUFF_NEGATIVE)
+                stringId = gStatDownStringIds[gBattleCommunication[MULTISTRING_CHOOSER]];
+            else
+                stringId = gStatUpStringIds[gBattleCommunication[MULTISTRING_CHOOSER]];
+        }
+        if (teamStringId == 0)
+            teamStringId = STRINGID_FOETEAMSSTATCHANGED;
+        gBattleStruct->statBatchBattlers |= gBitTable[gActiveBattler];
+        gBattleStruct->statBatchStringId = stringId;
+        gBattleStruct->statBatchTeamStringId = teamStringId;
+        gBattleStruct->statBatchAnimArg = GetGraphicalStatChangeValue();
+        memcpy(gBattleStruct->statBatchTextBuffs[0], gBattleTextBuff1, TEXT_BUFF_ARRAY_COUNT);
+        memcpy(gBattleStruct->statBatchTextBuffs[1], gBattleTextBuff2, TEXT_BUFF_ARRAY_COUNT);
+        gBattlescriptCurrInstr += 7;
+        return;
+    }
+    case VARIOUS_STAT_BATCH_ANIM:
+        // Sets up one stat change animation for the batch, on its first battler as the target. The animation covers its
+        // partner too if that's in the batch (see AnimTask_StatsChange). Sets gBattleCommunication[0] to whether there's
+        // anything to show
+        gBattleCommunication[0] = FALSE;
+        if (gBattleStruct->statBatchBattlers == 0)
+            break;
+        gBattleStruct->statBatchSavedTarget = gBattlerTarget;
+        for (i = 0; !(gBattleStruct->statBatchBattlers & gBitTable[i]); i++)
+            ;
+        gBattlerTarget = i;
+        gBattleScripting.animArg1 = gBattleStruct->statBatchAnimArg;
+        gBattleScripting.animArg2 = (gBattleStruct->statBatchBattlers & gBitTable[BATTLE_PARTNER(i)]) != 0;
+        gBattleCommunication[0] = TRUE;
+        break;
+    case VARIOUS_STAT_BATCH_NEXT:
+    {
+        // Prints the next message in the batch, with its battler as the target: one for the team if it and its partner
+        // both got the change, or its own if not. Once they've all been shown, puts the target back and sets
+        // gBattleCommunication[0] to FALSE
+        u16 stringId;
+
+        if (gBattleControllerExecFlags)
+            return;
+        if (gBattleStruct->statBatchBattlers == 0)
+        {
+            gBattlerTarget = gBattleStruct->statBatchSavedTarget;
+            gBattleCommunication[0] = FALSE;
+            break;
+        }
+        for (i = 0; !(gBattleStruct->statBatchBattlers & gBitTable[i]); i++)
+            ;
+        stringId = gBattleStruct->statBatchStringId;
+        if (gBattleStruct->statBatchBattlers & gBitTable[BATTLE_PARTNER(i)])
+        {
+            stringId = gBattleStruct->statBatchTeamStringId;
+            if (GetBattlerSide(i) == B_SIDE_PLAYER)
+                stringId++; // The ally team version
+            gBattleStruct->statBatchBattlers &= ~gBitTable[BATTLE_PARTNER(i)];
+        }
+        gBattleStruct->statBatchBattlers &= ~gBitTable[i];
+        gBattlerTarget = i;
+        memcpy(gBattleTextBuff1, gBattleStruct->statBatchTextBuffs[0], TEXT_BUFF_ARRAY_COUNT);
+        memcpy(gBattleTextBuff2, gBattleStruct->statBatchTextBuffs[1], TEXT_BUFF_ARRAY_COUNT);
+        PrepareStringBattle(stringId, gBattlerAttacker);
+        gBattleCommunication[MSG_DISPLAY] = 1;
+        gBattleCommunication[0] = TRUE;
+        break;
+    }
+    case VARIOUS_CAN_BATCH_SPREAD_STAT:
+    {
+        // A stat move that hits both foes (Growl, Leer...) can work out both targets before showing anything, so the
+        // changes go off together. Sets gBattleCommunication[0] to whether it can: this is the first of two targets,
+        // and the second has nothing that would end the move early (Magic Coat, Soundproof)
+        u8 partner = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(gActiveBattler)));
+
+        gBattleCommunication[0] = FALSE;
+        if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+         || gBattleMoves[gCurrentMove].target != MOVE_TARGET_BOTH
+         || gHitMarker & (HITMARKER_NO_ATTACKSTRING | HITMARKER_UNABLE_TO_USE_MOVE)
+         || GetBattlerSide(gActiveBattler) == GetBattlerSide(gBattlerAttacker)
+         || gBattleMons[partner].hp == 0
+         || gAbsentBattlerFlags & gBitTable[partner])
+            break;
+        if ((gProtectStructs[partner].bounceMove && gBattleMoves[gCurrentMove].flags & FLAG_MAGIC_COAT_AFFECTED)
+         || (gBattleMons[partner].ability == ABILITY_SOUNDPROOF && IsSoundMove(gCurrentMove)))
+            break;
+        gBattleCommunication[0] = TRUE;
+        break;
+    }
+    case VARIOUS_SPREAD_STAT_NEXT_TARGET:
+        // Moves a batched stat move on to its second target, like MOVEEND_NEXT_TARGET does for the usual flow. Sets
+        // gBattleCommunication[0] to FALSE once both are done
+        if (gHitMarker & HITMARKER_NO_ATTACKSTRING)
+        {
+            gBattleCommunication[0] = FALSE;
+            break;
+        }
+        gBattlerTarget = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(gBattlerTarget)));
+        gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+        MoveValuesCleanUp();
+        gBattleCommunication[0] = TRUE;
         break;
     case VARIOUS_NATURAL_GIFT:
     {

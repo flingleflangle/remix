@@ -96,7 +96,8 @@ EventScript_NotEnoughMonsForDoubleRematchBattle::
 	end
 
 @ With a follower that has a partner party (VAR_FOLLOWER_PARTNER), every trainer battle is a
-@ multi battle beside them. The player brings up to 3 Pokémon; their party is put back afterwards.
+@ multi battle beside them. The player's first 3 usable Pokémon fight, or the player picks 3 if the
+@ battle used choose_party=TRUE (bosses); their party is put back afterwards.
 EventScript_TryPrepareFollowerBattle::
 	special FollowerBattle_Prepare
 	goto_if_eq VAR_RESULT, FOLLOWER_BATTLE_CHOOSE, EventScript_ChooseFollowerBattleParty

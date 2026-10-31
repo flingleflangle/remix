@@ -744,8 +744,14 @@
 	NO_MUSIC = FALSE
 
 	@ Starts a single trainer battle. Takes a trainer, intro text, loss text, and an optional event script.
-	@ When used with an event script, you can also pass in an optional flag to disable music
-	.macro trainerbattle_single trainer:req, intro_text:req, lose_text:req, event_script=FALSE, music=TRUE
+	@ When used with an event script, you can also pass in an optional flag to disable music.
+	@ choose_party=TRUE lets the player pick their 3 Pokémon if a follower fights beside them (for bosses;
+	@ otherwise the first 3 usable ones fight). Only for talked-to trainers: it puts a special before the
+	@ trainerbattle command, which trainers that spot the player can't have
+	.macro trainerbattle_single trainer:req, intro_text:req, lose_text:req, event_script=FALSE, music=TRUE, choose_party=FALSE
+	.if \choose_party == TRUE
+	special FollowerBattle_ChooseNextParty
+	.endif
 	.if \event_script == FALSE
 	trainerbattle TRAINER_BATTLE_SINGLE, \trainer, LOCALID_NONE, \intro_text, \lose_text
 	.elseif \music == TRUE
@@ -757,7 +763,11 @@
 
 	@ Starts a double trainer battle. Takes a trainer, intro text, loss text, text for when you have too few pokemon
 	@ and an optional event script. When used with an event script you can pass in an optional flag to disable music
-	.macro trainerbattle_double trainer:req, intro_text:req, lose_text:req, not_enough_pkmn_text:req, event_script=FALSE, music=TRUE
+	@ choose_party=TRUE works as in trainerbattle_single
+	.macro trainerbattle_double trainer:req, intro_text:req, lose_text:req, not_enough_pkmn_text:req, event_script=FALSE, music=TRUE, choose_party=FALSE
+	.if \choose_party == TRUE
+	special FollowerBattle_ChooseNextParty
+	.endif
 	.if \event_script == FALSE
 	trainerbattle TRAINER_BATTLE_DOUBLE, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text
 	.elseif \music == TRUE

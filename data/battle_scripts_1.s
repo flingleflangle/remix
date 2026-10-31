@@ -723,6 +723,8 @@ BattleScript_EffectEvasionDown::
 	setstatchanger STAT_EVASION, 1, TRUE
 BattleScript_EffectStatDown::
 	attackcanceler
+	various BS_TARGET, VARIOUS_CAN_BATCH_SPREAD_STAT
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, FALSE, BattleScript_SpreadStatDown
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_FailedFromAtkString
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
@@ -743,6 +745,43 @@ BattleScript_StatDownPrintString::
 	waitmessage B_WAIT_TIME_LONG
 BattleScript_StatDownEnd::
 	goto BattleScript_MoveEnd
+
+@ A stat-lowering move hitting both foes in a double battle (Growl, Leer...): both are worked out first, then the
+@ drops are shown together (one animation, and one message if both fell). Misses and failures are shown as they happen
+BattleScript_SpreadStatDown:
+	attackstring
+	ppreduce
+	various BS_ATTACKER, VARIOUS_STAT_BATCH_RESET
+BattleScript_SpreadStatDownLoop:
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_SpreadStatDownFailed
+	accuracycheck BattleScript_SpreadStatDownMissed, ACC_CURR_MOVE
+	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_SpreadStatDownNext
+	jumpifbyte CMP_LESS_THAN, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_DECREASE, BattleScript_SpreadStatDownWorked
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_FELL_EMPTY, BattleScript_SpreadStatDownNext
+	pause B_WAIT_TIME_SHORT
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_SpreadStatDownNext
+BattleScript_SpreadStatDownWorked:
+	attackanimation
+	waitanimation
+	statbatchadd 0, 0
+BattleScript_SpreadStatDownNext:
+	various BS_ATTACKER, VARIOUS_SPREAD_STAT_NEXT_TARGET
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, FALSE, BattleScript_SpreadStatDownLoop
+	call BattleScript_StatBatchFlush
+	goto BattleScript_MoveEnd
+BattleScript_SpreadStatDownFailed:
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_BUTITFAILED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_SpreadStatDownNext
+BattleScript_SpreadStatDownMissed:
+	pause B_WAIT_TIME_SHORT
+	effectivenesssound
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_SpreadStatDownNext
 
 BattleScript_StatDown::
 	playanimation BS_EFFECT_BATTLER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
@@ -1912,6 +1951,8 @@ BattleScript_EffectSynchroParalyze::
 BattleScript_EffectSweetScent::
 	setstatchanger STAT_EVASION, 1, TRUE
 	attackcanceler
+	various BS_TARGET, VARIOUS_CAN_BATCH_SPREAD_STAT
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, FALSE, BattleScript_SpreadSweetScent
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_FailedFromAtkString
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
@@ -1938,6 +1979,46 @@ BattleScript_SweetScentUp::
 	waitmessage B_WAIT_TIME_LONG
 BattleScript_SweetScentEnd::
 	goto BattleScript_MoveEnd
+
+@ Sweet Scent hitting both foes in a double battle: both evasion drops are worked out first and shown together
+@ (see BattleScript_SpreadStatDown), then the user's accuracy rises once if either foe was affected
+BattleScript_SpreadSweetScent:
+	attackstring
+	ppreduce
+	various BS_ATTACKER, VARIOUS_STAT_BATCH_RESET
+	setbyte sSPREAD_STAT_AFFECTED, FALSE
+BattleScript_SpreadSweetScentLoop:
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_SpreadSweetScentFailed
+	accuracycheck BattleScript_SpreadSweetScentMissed, ACC_CURR_MOVE
+	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_SpreadSweetScentNext
+	setbyte sSPREAD_STAT_AFFECTED, TRUE
+	jumpifbyte CMP_LESS_THAN, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_DECREASE, BattleScript_SpreadSweetScentWorked
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_FELL_EMPTY, BattleScript_SpreadSweetScentNext
+	pause B_WAIT_TIME_SHORT
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_SpreadSweetScentNext
+BattleScript_SpreadSweetScentWorked:
+	attackanimation
+	waitanimation
+	statbatchadd 0, 0
+BattleScript_SpreadSweetScentNext:
+	various BS_ATTACKER, VARIOUS_SPREAD_STAT_NEXT_TARGET
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, FALSE, BattleScript_SpreadSweetScentLoop
+	call BattleScript_StatBatchFlush
+	jumpifbyte CMP_EQUAL, sSPREAD_STAT_AFFECTED, FALSE, BattleScript_SweetScentEnd
+	goto BattleScript_SweetScentUp
+BattleScript_SpreadSweetScentFailed:
+	pause B_WAIT_TIME_SHORT
+	printstring STRINGID_BUTITFAILED
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_SpreadSweetScentNext
+BattleScript_SpreadSweetScentMissed:
+	pause B_WAIT_TIME_SHORT
+	effectivenesssound
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_SpreadSweetScentNext
 
 BattleScript_EffectEntwine::
 	attackcanceler
@@ -6543,15 +6624,15 @@ BattleScript_DoCastformChange::
 	waitmessage B_WAIT_TIME_LONG
 	return
 
+@ No pause before it, so it goes off as soon as the Pokémon is out (BattleScript_StatBatchFlush waits for the send-out)
 BattleScript_IntimidateActivatesEnd3::
-	call BattleScript_PauseIntimidateActivates
+	call BattleScript_IntimidateActivates
 	end3
 
-BattleScript_PauseIntimidateActivates:
-	pause B_WAIT_TIME_SHORT
 BattleScript_IntimidateActivates::
 	setbyte gBattlerTarget, 0
 	setstatchanger STAT_ATK, 1, TRUE
+	various BS_ATTACKER, VARIOUS_STAT_BATCH_RESET
 BattleScript_IntimidateActivatesLoop:
 	trygetintimidatetarget BattleScript_IntimidateActivatesReturn
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_IntimidateActivatesLoopIncrement
@@ -6565,14 +6646,12 @@ BattleScript_IntimidateActivatesLoop:
 	jumpifability BS_TARGET, ABILITY_SCRAPPY, BattleScript_IntimidatePrevented
 	statbuffchange STAT_CHANGE_NOT_PROTECT_AFFECTED | STAT_CHANGE_ALLOW_PTR, BattleScript_IntimidateActivatesLoopIncrement
 	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, 1, BattleScript_IntimidateActivatesLoopIncrement
-	setgraphicalstatchangevalues
-	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-	printstring STRINGID_PKMNCUTSATTACKWITH
-	waitmessage B_WAIT_TIME_LONG
+	statbatchadd STRINGID_PKMNCUTSATTACKWITH, STRINGID_PKMNCUTSFOETEAMSATTACK
 BattleScript_IntimidateActivatesLoopIncrement:
 	addbyte gBattlerTarget, 1
 	goto BattleScript_IntimidateActivatesLoop
 BattleScript_IntimidateActivatesReturn:
+	call BattleScript_StatBatchFlush
 	return
 BattleScript_IntimidatePrevented:
 	pause B_WAIT_TIME_SHORT
@@ -6582,14 +6661,13 @@ BattleScript_IntimidatePrevented:
 
 @ Illuminate works like Intimidate, but lowers each foe's accuracy
 BattleScript_IlluminateActivatesEnd3::
-	call BattleScript_PauseIlluminateActivates
+	call BattleScript_IlluminateActivates
 	end3
 
-BattleScript_PauseIlluminateActivates:
-	pause B_WAIT_TIME_SHORT
 BattleScript_IlluminateActivates::
 	setbyte gBattlerTarget, 0
 	setstatchanger STAT_ACC, 1, TRUE
+	various BS_ATTACKER, VARIOUS_STAT_BATCH_RESET
 BattleScript_IlluminateActivatesLoop:
 	trygetintimidatetarget BattleScript_IlluminateActivatesReturn
 	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_IlluminateActivatesLoopIncrement
@@ -6598,14 +6676,28 @@ BattleScript_IlluminateActivatesLoop:
 	jumpifability BS_TARGET, ABILITY_KEEN_EYE, BattleScript_IlluminatePrevented
 	statbuffchange STAT_CHANGE_NOT_PROTECT_AFFECTED | STAT_CHANGE_ALLOW_PTR, BattleScript_IlluminateActivatesLoopIncrement
 	jumpifbyte CMP_GREATER_THAN, cMULTISTRING_CHOOSER, 1, BattleScript_IlluminateActivatesLoopIncrement
-	setgraphicalstatchangevalues
-	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-	printstring STRINGID_PKMNCUTSACCURACYWITH
-	waitmessage B_WAIT_TIME_LONG
+	statbatchadd STRINGID_PKMNCUTSACCURACYWITH, STRINGID_PKMNCUTSFOETEAMSACCURACY
 BattleScript_IlluminateActivatesLoopIncrement:
 	addbyte gBattlerTarget, 1
 	goto BattleScript_IlluminateActivatesLoop
 BattleScript_IlluminateActivatesReturn:
+	call BattleScript_StatBatchFlush
+	return
+
+@ Shows the stat changes held back with statbatchadd: one animation for them all, then one message per team
+@ (or per Pokémon, if its partner didn't get the change). Cmd_moveend also calls this, so a move can't lose them
+BattleScript_StatBatchFlush::
+	waitstate
+	various BS_ATTACKER, VARIOUS_STAT_BATCH_ANIM
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_StatBatchFlushReturn
+	playanimation BS_TARGET, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	waitanimation
+BattleScript_StatBatchFlushLoop:
+	various BS_ATTACKER, VARIOUS_STAT_BATCH_NEXT
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_StatBatchFlushReturn
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_StatBatchFlushLoop
+BattleScript_StatBatchFlushReturn:
 	return
 BattleScript_IlluminatePrevented:
 	pause B_WAIT_TIME_SHORT
@@ -6616,11 +6708,9 @@ BattleScript_IlluminatePrevented:
 @ First Sight works like Intimidate: on switch-in, each foe of the opposite gender falls in love
 @ with the ability's holder. Oblivious and Heartbroken prevent it.
 BattleScript_FirstSightActivatesEnd3::
-	call BattleScript_PauseFirstSightActivates
+	call BattleScript_FirstSightActivates
 	end3
 
-BattleScript_PauseFirstSightActivates:
-	pause B_WAIT_TIME_SHORT
 BattleScript_FirstSightActivates::
 	setbyte gBattlerTarget, 0
 BattleScript_FirstSightActivatesLoop:
@@ -6835,6 +6925,13 @@ BattleScript_RoughSkinActivates::
 BattleScript_CuteCharmActivates::
 	status2animation BS_ATTACKER, STATUS2_INFATUATION
 	printstring STRINGID_PKMNSXINFATUATEDY
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+@ The attacker's Cute Charm, on making contact
+BattleScript_CuteCharmAttackerActivates::
+	status2animation BS_TARGET, STATUS2_INFATUATION
+	printstring STRINGID_ATKSXINFATUATEDDEF
 	waitmessage B_WAIT_TIME_LONG
 	return
 

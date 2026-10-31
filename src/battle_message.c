@@ -114,6 +114,14 @@ EWRAM_DATA static u8 sPartnerLineBuffer[200] = {0}; // a follower's helpcatch li
 static const u8 sText_FollowerTryToCatch[] = _("{B_PARTNER_NAME}: That's it!\nTry to catch it, now!");
 static const u8 sText_FollowerThrewBall[] = _("{B_PARTNER_NAME} threw a\nPOKé BALL!");
 static const u8 sText_FollowerCaughtWildMon[] = _("Gotcha!\n{B_PARTNER_NAME} caught {B_OPPONENT_MON1_NAME}!{WAIT_SE}{PLAY_BGM MUS_CAUGHT}{PAUSE 127}");
+// For stat changes a Pokémon and its partner get together (see VARIOUS_STAT_BATCH_NEXT). Each foe team string is
+// followed by its ally team one
+static const u8 sText_FoeTeamsStatChanged[] = _("The opposing team's {B_BUFF1}\n{B_BUFF2}");
+static const u8 sText_AllyTeamsStatChanged[] = _("Your team's {B_BUFF1}\n{B_BUFF2}");
+static const u8 sText_PkmnCutsFoeTeamsAttack[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncuts the opposing team's ATTACK!");
+static const u8 sText_PkmnCutsAllyTeamsAttack[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncuts your team's ATTACK!");
+static const u8 sText_PkmnCutsFoeTeamsAccuracy[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncuts the opposing team's ACCURACY!");
+static const u8 sText_PkmnCutsAllyTeamsAccuracy[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncuts your team's ACCURACY!");
 static const u8 sText_PkmnPulledIntoBlackHole[] = _("{B_DEF_NAME_WITH_PREFIX} was pulled\ninto the BLACK HOLE!");
 static const u8 sText_PkmnCantUseMoveBlackHole[] = _("{B_ACTIVE_NAME_WITH_PREFIX} can't use\n{B_CURRENT_MOVE} in the BLACK HOLE!\p");
 static const u8 sText_ChakraSurged[] = _("{B_ATK_NAME_WITH_PREFIX}'s chakra\nsurged through its body!");
@@ -351,6 +359,7 @@ static const u8 sText_PkmnsXWhippedUpHailstorm[] = _("{B_SCR_ACTIVE_NAME_WITH_PR
 static const u8 sText_PkmnsXIntensifiedSun[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nintensified the sun's rays!");
 static const u8 sText_PkmnsXPreventsYLoss[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nprevents {B_BUFF1} loss!");
 static const u8 sText_PkmnsXInfatuatedY[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ninfatuated {B_ATK_NAME_WITH_PREFIX}!");
+static const u8 sText_AtksXInfatuatedDef[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\ninfatuated {B_DEF_NAME_WITH_PREFIX}!");
 static const u8 sText_PkmnsXMadeYIneffective[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nmade {B_CURRENT_MOVE} ineffective!");
 static const u8 sText_PkmnsXCuredYProblem[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncured its {B_BUFF1} problem!");
 static const u8 sText_ItSuckedLiquidOoze[] = _("It sucked up the\nLIQUID OOZE!");
@@ -1024,6 +1033,13 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_FOLLOWERTRYTOCATCH - BATTLESTRINGS_TABLE_START] = sText_FollowerTryToCatch,
     [STRINGID_FOLLOWERTHREWBALL - BATTLESTRINGS_TABLE_START] = sText_FollowerThrewBall,
     [STRINGID_FOLLOWERCAUGHTWILDMON - BATTLESTRINGS_TABLE_START] = sText_FollowerCaughtWildMon,
+    [STRINGID_FOETEAMSSTATCHANGED - BATTLESTRINGS_TABLE_START] = sText_FoeTeamsStatChanged,
+    [STRINGID_ALLYTEAMSSTATCHANGED - BATTLESTRINGS_TABLE_START] = sText_AllyTeamsStatChanged,
+    [STRINGID_PKMNCUTSFOETEAMSATTACK - BATTLESTRINGS_TABLE_START] = sText_PkmnCutsFoeTeamsAttack,
+    [STRINGID_PKMNCUTSALLYTEAMSATTACK - BATTLESTRINGS_TABLE_START] = sText_PkmnCutsAllyTeamsAttack,
+    [STRINGID_PKMNCUTSFOETEAMSACCURACY - BATTLESTRINGS_TABLE_START] = sText_PkmnCutsFoeTeamsAccuracy,
+    [STRINGID_PKMNCUTSALLYTEAMSACCURACY - BATTLESTRINGS_TABLE_START] = sText_PkmnCutsAllyTeamsAccuracy,
+    [STRINGID_ATKSXINFATUATEDDEF - BATTLESTRINGS_TABLE_START] = sText_AtksXInfatuatedDef,
 };
 
 const u16 gMissStringIds[] =

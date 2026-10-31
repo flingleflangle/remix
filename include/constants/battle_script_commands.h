@@ -29,6 +29,7 @@
 #define sWINDOWS_TYPE                (gBattleScripting + 0x24) // windowsType
 #define sMULTIPLAYER_ID              (gBattleScripting + 0x25) // multiplayerId
 #define sSPECIAL_TRAINER_BATTLE_TYPE (gBattleScripting + 0x26) // specialTrainerBattleType
+#define sSPREAD_STAT_AFFECTED        (gBattleScripting + 0x27) // spreadStatAffected
 
 // Array entries for battle communication
 #define MULTIUSE_STATE          0
@@ -144,6 +145,12 @@
 #define VARIOUS_TRY_SPREAD_ABSORB               63
 #define VARIOUS_NATURAL_GIFT                    64
 #define VARIOUS_FEINT_BREAK_PROTECT             65
+#define VARIOUS_STAT_BATCH_RESET                66
+#define VARIOUS_STAT_BATCH_ADD                  67 // Use the statbatchadd macro, it takes a string
+#define VARIOUS_STAT_BATCH_ANIM                 68
+#define VARIOUS_STAT_BATCH_NEXT                 69
+#define VARIOUS_CAN_BATCH_SPREAD_STAT           70
+#define VARIOUS_SPREAD_STAT_NEXT_TARGET         71
 
 // EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
 // They last for the move that set them (gExMoveFlags)

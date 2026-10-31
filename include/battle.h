@@ -461,6 +461,13 @@ struct BattleStruct
     u8 arenaLostPlayerMons; // Bits for party member, lost as in referee's decision, not by fainting.
     u8 arenaLostOpponentMons;
     u8 alreadyStatusedMoveAttempt; // As bits for battlers; For example when using Thunder Wave on an already paralyzed Pokémon.
+    // Stat changes shown together (Intimidate, Growl in doubles...): one animation and one message. See VARIOUS_STAT_BATCH_ADD
+    u8 statBatchBattlers;
+    u8 statBatchAnimArg;
+    u8 statBatchSavedTarget;
+    u16 statBatchStringId;
+    u16 statBatchTeamStringId;
+    u8 statBatchTextBuffs[2][TEXT_BUFF_ARRAY_COUNT];
 };
 
 // The palaceFlags member of struct BattleStruct contains 1 flag per move to indicate which moves the AI should consider,
@@ -532,6 +539,7 @@ struct BattleScripting
     u8 windowsType; // B_WIN_TYPE_*
     u8 multiplayerId;
     u8 specialTrainerBattleType;
+    bool8 spreadStatAffected; // A stat move hitting both foes affected at least one (Sweet Scent's accuracy boost)
 };
 
 struct BattleSpriteInfo
