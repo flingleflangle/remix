@@ -439,6 +439,8 @@ void FreeMenuHandlerSubstruct2(void)
 {
     struct Pokenav_MenuGfx *gfx = GetSubstructPtr(POKENAV_SUBSTRUCT_MENU_GFX);
 
+    if (gfx == NULL) // already freed: the PokéNav closed from a feature (see CB2_Pokenav)
+        return;
     DestroyMovingDotsBgTask();
     RemoveWindow(gfx->optionDescWindowId);
     FreeAndDestroyMainMenuSprites();

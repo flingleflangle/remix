@@ -13,6 +13,15 @@ Common_EventScript_FollowerStopStepBack::
 	waitmovement 0
 	return
 
+@ Someone started following again while the player stands on a stop: setvar VAR_0x8004 to the
+@ direction back onto the map, then the player steps off it and the follower falls in behind
+Common_EventScript_FollowerStopStepOff::
+	special FollowerStop_PrepareStepOff
+	applymovement VAR_0x8005, gFollowerStopFollowerMovement
+	applymovement OBJ_EVENT_ID_PLAYER, gFollowerStopPlayerMovement
+	waitmovement 0
+	return
+
 Common_EventScript_FollowerStopLeave::
 	special FollowerStop_PrepareLeave
 	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_FollowerFlyAway @ nowhere to walk to
@@ -114,3 +123,39 @@ EventScript_FollowerPartnerCaughtWildMon::
 	goto_if_eq VAR_WALLY_FOLLOWER, 1, Route116_EventScript_WallyCaughtSkitty
 	releaseall
 	end
+
+@ The player tried to call their follower on the POKéNAV: the PokéNav closes (gPokenavCalledFollower)
+@ and they point out they're right there
+EventScript_FollowerPokenavCalled::
+	lockall
+	facefollower
+	goto_if_eq VAR_FOLLOWER_PARTNER, FOLLOWER_PARTNER_WALLY, EventScript_WallyPokenavCalled
+	goto_if_eq VAR_FOLLOWER_PARTNER, FOLLOWER_PARTNER_BRENDAN, EventScript_BrendanPokenavCalled
+	msgbox Text_MayPokenavCalled, MSGBOX_DEFAULT
+	releaseall
+	end
+
+EventScript_BrendanPokenavCalled::
+	msgbox Text_BrendanPokenavCalled, MSGBOX_DEFAULT
+	releaseall
+	end
+
+EventScript_WallyPokenavCalled::
+	msgbox Text_WallyPokenavCalled, MSGBOX_DEFAULT
+	releaseall
+	end
+
+Text_MayPokenavCalled:
+	.string "MAY: …{PLAYER}?\n"
+	.string "What are you doing?\p"
+	.string "I'm standing right\n"
+	.string "behind you, silly!$"
+
+Text_BrendanPokenavCalled:
+	.string "BRENDAN: Uh, {PLAYER}?\n"
+	.string "I'm right here, you know.$"
+
+Text_WallyPokenavCalled:
+	.string "WALLY: Um… {PLAYER}?\n"
+	.string "I'm right behind you…\l"
+	.string "Did you mean to call someone else?$"

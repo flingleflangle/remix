@@ -49,14 +49,23 @@ static const struct UCoords8 sBattlerCoords[][MAX_BATTLERS_COUNT] =
         { 90, 88 },
         { 152, 32 },
     },
+    { // Lone foe facing the player and a partner: centred like a single battle, but a little higher,
+      // so the player's double battle healthbox (higher than the single one) covers less of them
+        { 72, 80 },
+        { 176, 32 },
+        { 48, 40 },
+        { 112, 80 },
+    },
 };
+
+#define BATTLER_COORDS_PARTNER_VS_ONE 2
 
 // Which sBattlerCoords layout a battler uses. A foe facing the player and a partner alone
 // (a wild Pokémon, or a trainer with one Pokémon) stands in the centre like in a single battle.
 static u8 GetBattlerCoordsLayout(u8 battler)
 {
     if (gPartnerVsOneLoneFoe && !IsContest() && GetBattlerPosition(battler) == B_POSITION_OPPONENT_LEFT)
-        return 0;
+        return BATTLER_COORDS_PARTNER_VS_ONE;
     return IS_DOUBLE_BATTLE();
 }
 

@@ -675,7 +675,7 @@
 #define FLAG_WALLY_METEOR_FALLS_DONE 0x274 // the player found WALLY's stones with him in METEOR FALLS
 #define FLAG_HIDE_ROUTE_116_WALLY 0x275 // set on every visit unless WALLY should be there
 #define FLAG_WALLY_LEFT_VERDANTURF 0x276 // WALLY left VERDANTURF on his own (after his speech, or when the player beat FLANNERY)
-#define FLAG_UNUSED_0x277  0x277 // Unused Flag
+#define FLAG_WALLY_ROUTE116_PARTED 0x277 // the player left WALLY on Route 116 (he's gone once they leave the map)
 #define FLAG_UNUSED_0x278  0x278 // Unused Flag
 #define FLAG_UNUSED_0x279  0x279 // Unused Flag
 #define FLAG_UNUSED_0x27A  0x27A // Unused Flag

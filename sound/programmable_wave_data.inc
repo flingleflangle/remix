@@ -76,3 +76,21 @@ ProgrammableWaveData_24::
 
 ProgrammableWaveData_25::
 	.incbin "sound/programmable_wave_samples/25.pcm"
+
+ProgrammableWaveData_26:: @ wave 03 (saw) as a single cycle: an octave lower than 03 at the same note
+	.incbin "sound/programmable_wave_samples/26.pcm"
+
+ProgrammableWaveData_27:: @ wave 06 (square) as a single cycle: an octave lower than 06 at the same note
+	.incbin "sound/programmable_wave_samples/27.pcm"
+
+ProgrammableWaveData_28:: @ wave 02 (triangle) as a single cycle: an octave lower than 02 at the same note
+	.incbin "sound/programmable_wave_samples/28.pcm"
+
+ProgrammableWaveData_29:: @ wave 01 (soft) as a single cycle: an octave lower than 01 at the same note
+	.incbin "sound/programmable_wave_samples/29.pcm"
+
+ProgrammableWaveData_30:: @ wave 26 (single-cycle saw) at 75% height, for a volume between the wave channel's 25% and 50% steps
+	.incbin "sound/programmable_wave_samples/30.pcm"
+
+ProgrammableWaveData_31:: @ wave 27 (single-cycle square) at 75% height, for a volume between the wave channel's 25% and 50% steps
+	.incbin "sound/programmable_wave_samples/31.pcm"

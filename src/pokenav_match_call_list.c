@@ -2,6 +2,7 @@
 #include "battle_setup.h"
 #include "data.h"
 #include "event_data.h"
+#include "follow_me.h"
 #include "gym_leader_rematch.h"
 #include "international_string_util.h"
 #include "main.h"
@@ -12,6 +13,7 @@
 #include "sound.h"
 #include "string_util.h"
 #include "strings.h"
+#include "constants/follower_parties.h"
 #include "constants/songs.h"
 
 struct Pokenav_MatchCallMenu
@@ -35,6 +37,7 @@ static u32 CB2_HandleCheckPageInput(struct Pokenav_MatchCallMenu *);
 static u32 CB2_HandleCallExitInput(struct Pokenav_MatchCallMenu *);
 static u32 LoopedTask_BuildMatchCallList(s32);
 static bool32 ShouldDoNearbyMessage(void);
+static bool32 IsCallingFollower(void);
 
 #include "data/text/match_call_messages.h"
 
@@ -154,6 +157,13 @@ static u32 CB2_HandleMatchCallOptionsInput(struct Pokenav_MatchCallMenu *state)
         case MATCH_CALL_OPTION_CALL:
             if (GetPokenavMode() == POKENAV_MODE_FORCE_CALL_READY)
                 SetPokenavMode(POKENAV_MODE_FORCE_CALL_EXIT);
+
+            if (GetPokenavMode() == POKENAV_MODE_NORMAL && IsCallingFollower())
+            {
+                gPokenavCalledFollower = TRUE;
+                PlaySE(SE_POKENAV_CALL); // it rings, but they don't pick up
+                return POKENAV_MENU_FUNC_EXIT;
+            }
 
             state->callback = CB2_HandleCallExitInput;
             if (ShouldDoNearbyMessage())
@@ -485,6 +495,29 @@ static bool32 UNUSED HasRematchEntry(void)
         }
     }
 
+    return FALSE;
+}
+
+// TRUE if the player is calling whoever's following them (MAY, BRENDAN or WALLY):
+// instead of answering, they close the PokéNav and point out they're right there
+static bool32 IsCallingFollower(void)
+{
+    struct Pokenav_MatchCallMenu *state = GetSubstructPtr(POKENAV_SUBSTRUCT_MATCH_CALL_MAIN);
+    int selection = PokenavList_GetSelectedIndex();
+    u16 partner = VarGet(VAR_FOLLOWER_PARTNER);
+
+    if (!PlayerHasFollower() || !state->matchCallEntries[selection].isSpecialTrainer)
+        return FALSE;
+
+    switch (state->matchCallEntries[selection].headerId)
+    {
+    case MC_HEADER_MAY:
+        return partner == FOLLOWER_PARTNER_MAY;
+    case MC_HEADER_BRENDAN:
+        return partner == FOLLOWER_PARTNER_BRENDAN;
+    case MC_HEADER_WALLY:
+        return partner == FOLLOWER_PARTNER_WALLY;
+    }
     return FALSE;
 }
 

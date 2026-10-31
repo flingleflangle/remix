@@ -1,7 +1,10 @@
 @ "Trombe!" from Super Robot Taisen: Original Generation (song 0x1E), ported from sound/import.
 @ Track numbers match the original. Tracks 2 (10 trumpet notes) and 12 (a quiet doubling layer) were cut to fit Emerald's 10 tracks and 5 sampled channels.
-@ Track 11 is shifted down an octave because Emerald's waves repeat twice.
-@ Track 11 plays the soft bass (slot 109) in the intro, where the held saw notes buzzed, then the saw bass (slot 108) from the loop point on.
+@ Track 11's wave bass plays the single-cycle soft wave and saw (slots 111 and 104) with no octave shift. Emerald's own waves repeat twice and sound an octave high,
+@ and shifting the track down an octave to make up for it put most of its notes below key 36, where the wave channel clamps
+@ every note to the same pitch (MidiKeyToCgbFreq). The single-cycle waves sound an octave lower themselves.
+@ Track 11 plays the soft bass (slot 111) in the intro, where the held saw notes buzzed, then the saw bass (slot 104) from the loop point on.
+@ Its three B0 notes (below the lowest note the wave channel can play) are raised to B1.
 @ Track 5 uses the tuba (slot 58) instead of slot 61, whose Emerald trumpet can't play its low notes.
 @ Track 5 also uses the tubular bells (slot 14, like the start of Slateport) instead of the electric piano (slot 100), which sounded harsh on long notes.
 @ Track 3 (the trumpet lead) is louder than the original (72 instead of 49) to stand out in the mix.
@@ -3611,9 +3614,9 @@ mus_trombe_10_004:
 @**************** Track 11 ****************@
 
 mus_trombe_11:
-	.byte		KEYSH , mus_trombe_key-12
+	.byte		KEYSH , mus_trombe_key+0
 	.byte	W01
-	.byte		VOICE , 109
+	.byte		VOICE , 111
 	.byte		VOL   , 44*mus_trombe_mvl/mxv
 	.byte	W01
 	.byte		PAN   , c_v+0
@@ -3636,7 +3639,7 @@ mus_trombe_11:
 	.byte		        Cn1
 	.byte	W96
 	.byte	W96
-	.byte		VOICE , 108
+	.byte		VOICE , 104
 mus_trombe_11_000:
 	.byte		N07   , Bn1 , v120
 	.byte	W12
@@ -3851,7 +3854,7 @@ mus_trombe_11_003:
 	.byte	W12
 	.byte		N07
 	.byte	W48
-	.byte		        Bn0
+	.byte		        Bn1
 	.byte	W12
 	.byte		N07
 	.byte	W12

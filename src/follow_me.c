@@ -1543,7 +1543,7 @@ void CheckPlayerHasFollower(void)
 #define FOLLOWER_LEAVE_STEPS 10
 
 EWRAM_DATA u8 gFollowerStopFollowerMovement[FOLLOWER_LEAVE_STEPS + 1] = {0};
-EWRAM_DATA u8 gFollowerStopPlayerMovement[2] = {0};
+EWRAM_DATA u8 gFollowerStopPlayerMovement[3] = {0};
 
 static const u8 sPerpendicularDirs[][2] =
 {
@@ -1654,6 +1654,76 @@ void FollowerStop_PrepareLeave(void)
     }
     gFollowerStopFollowerMovement[steps] = MOVEMENT_ACTION_STEP_END;
     gSpecialVar_Result = (steps != 0);
+}
+
+// special FollowerStop_StayInPlace: the follower stops following but stays where they're standing,
+// so the player can talk to them again (their object's script). They keep that spot if they go off
+// screen, until the map is reloaded.
+void FollowerStop_StayInPlace(void)
+{
+    struct ObjectEvent *follower;
+
+    if (!gSaveBlock2Ptr->follower.inProgress)
+        return;
+
+    follower = &gObjectEvents[GetFollowerMapObjId()];
+    SetObjEventTemplateCoords(follower->localId, follower->currentCoords.x - MAP_OFFSET, follower->currentCoords.y - MAP_OFFSET);
+    follower->invisible = FALSE;
+    // Their last following step is still held (nothing clears it for MOVEMENT_TYPE_NONE), which
+    // would stop faceplayer from turning them: clear it and make them a normal standing NPC
+    ObjectEventClearHeldMovementIfActive(follower);
+    SetTrainerMovementType(follower, GetTrainerFacingDirectionMovementType(follower->facingDirection));
+    SetObjEventTemplateMovementType(follower->localId, follower->movementType);
+    gSaveBlock2Ptr->follower.inProgress = FALSE;
+}
+
+// special FollowerStop_PrepareStepOff: right after someone starts following again while the player
+// stands on a stop, the player steps off it in direction VAR_0x8004 and the follower falls in behind
+// (stepping aside first if they're standing in the way). Use with Common_EventScript_FollowerStopStepOff.
+void FollowerStop_PrepareStepOff(void)
+{
+    struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct ObjectEvent *follower = &gObjectEvents[GetFollowerMapObjId()];
+    u8 dir = gSpecialVar_0x8004;
+    s16 px = player->currentCoords.x, py = player->currentCoords.y;
+    s16 tx = px, ty = py;
+    s16 fx = follower->currentCoords.x, fy = follower->currentCoords.y;
+
+    gSpecialVar_0x8005 = GetFollowerLocalId();
+    MoveCoords(dir, &tx, &ty);
+
+    if (fx == tx && fy == ty)
+    {
+        u8 i;
+
+        // In the way: step aside, then around behind the player once they've passed
+        for (i = 0; i < 2; i++)
+        {
+            u8 side = sPerpendicularDirs[dir][i];
+
+            if (CanFollowerStepTo(follower, fx, fy, side))
+            {
+                gFollowerStopFollowerMovement[0] = GetWalkNormalMovementAction(side);
+                gFollowerStopFollowerMovement[1] = GetWalkNormalMovementAction(GetOppositeDirection(dir));
+                gFollowerStopFollowerMovement[2] = GetWalkNormalMovementAction(GetOppositeDirection(side));
+                gFollowerStopFollowerMovement[3] = MOVEMENT_ACTION_STEP_END;
+                gFollowerStopPlayerMovement[0] = MOVEMENT_ACTION_DELAY_16;
+                gFollowerStopPlayerMovement[1] = GetWalkNormalMovementAction(dir);
+                gFollowerStopPlayerMovement[2] = MOVEMENT_ACTION_STEP_END;
+                return;
+            }
+        }
+        // Boxed in: the player stays put
+        gFollowerStopFollowerMovement[0] = MOVEMENT_ACTION_STEP_END;
+        gFollowerStopPlayerMovement[0] = MOVEMENT_ACTION_STEP_END;
+        return;
+    }
+
+    // Beside the player: they step into the player's tile as the player moves off
+    gFollowerStopFollowerMovement[0] = GetWalkNormalMovementAction(DetermineFollowerDirection(player, follower));
+    gFollowerStopFollowerMovement[1] = MOVEMENT_ACTION_STEP_END;
+    gFollowerStopPlayerMovement[0] = GetWalkNormalMovementAction(dir);
+    gFollowerStopPlayerMovement[1] = MOVEMENT_ACTION_STEP_END;
 }
 
 // Someone catching up to the player (the rival on Routes 112, 119 and 126): see RivalApproach_Prepare

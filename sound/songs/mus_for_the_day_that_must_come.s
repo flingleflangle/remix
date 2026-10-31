@@ -1,6 +1,8 @@
 @ "For the Day that Must Come" from Super Robot Taisen: Original Generation (song 0x24), ported from sound/import.
 @ Track numbers match the original. Track 11 (a quiet doubling layer) was cut to fit Emerald's 10 tracks and 5 sampled channels.
-@ Track 10 is shifted down an octave because Emerald's waves repeat twice.
+@ Track 10's wave bass plays the single-cycle saw (slot 104) with no octave shift. Emerald's own waves repeat twice and sound an octave high,
+@ and shifting the track down an octave to make up for it put most of its notes below key 36, where the wave channel clamps
+@ every note to the same pitch (MidiKeyToCgbFreq). The single-cycle waves sound an octave lower themselves.
 
 	.include "MPlayDef.s"
 
@@ -3830,9 +3832,9 @@ mus_for_the_day_that_must_come_9_004:
 @**************** Track 10 ****************@
 
 mus_for_the_day_that_must_come_10:
-	.byte		KEYSH , mus_for_the_day_that_must_come_key-12
+	.byte		KEYSH , mus_for_the_day_that_must_come_key+0
 	.byte	W01
-	.byte		VOICE , 108
+	.byte		VOICE , 104
 	.byte		VOL   , 70*mus_for_the_day_that_must_come_mvl/mxv
 	.byte	W01
 	.byte		PAN   , c_v+0

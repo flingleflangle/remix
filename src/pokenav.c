@@ -8,6 +8,8 @@
 #include "pokemon_storage_system.h"
 #include "pokenav.h"
 #include "event_data.h"
+#include "event_scripts.h"
+#include "script.h"
 
 #define LOOPED_TASK_DECODE_STATE(action) (action - 5)
 
@@ -206,6 +208,7 @@ const struct PokenavCallbacks PokenavMenuCallbacks[15] =
 
 EWRAM_DATA u8 gNextLoopedTaskId = 0;
 EWRAM_DATA bool8 gSysPcFromPokenav = 0;
+EWRAM_DATA bool8 gPokenavCalledFollower = 0; // calling the person following the player closes the PokéNav (see ShouldInterruptFollowerCall)
 EWRAM_DATA struct PokenavResources *gPokenavResources = NULL;
 
 // code
@@ -488,13 +491,28 @@ static void Task_Pokenav(u8 taskId)
             tState = 3;
         break;
     case 5:
+        // The PokéNav closing from a feature instead of the main menu (calling the follower in
+        // MATCH CALL): free that feature as switching back to the main menu would have
+        if (!gPaletteFade.active && PokenavMenuCallbacks[gPokenavResources->currentMenuIndex].free2 != FreeMenuHandlerSubstruct2)
+        {
+            PokenavMenuCallbacks[gPokenavResources->currentMenuIndex].free2();
+            PokenavMenuCallbacks[gPokenavResources->currentMenuIndex].free1();
+        }
         if (!WaitForPokenavShutdownFade())
         {
             bool32 calledFromScript = (gPokenavResources->mode != POKENAV_MODE_NORMAL);
 
             FreeMenuHandlerSubstruct1();
             FreePokenavResources();
-            if (calledFromScript)
+            if (gPokenavCalledFollower)
+            {
+                // They're right there: back to the field, where they point that out
+                gPokenavCalledFollower = FALSE;
+                ScriptContext_SetupScript(EventScript_FollowerPokenavCalled);
+                ScriptContext_Stop();
+                SetMainCallback2(CB2_ReturnToFieldContinueScript);
+            }
+            else if (calledFromScript)
                 SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
             else
                 if (gSysPcFromPokenav)

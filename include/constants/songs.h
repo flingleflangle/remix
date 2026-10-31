@@ -548,23 +548,22 @@
 #define MUS_TROMBE                  612
 #define MUS_WOMAN_THE_COOL_SPY      613
 #define MUS_WILDERNESS_OF_BATTLE    614
-#define MUS_MARIONETTE_MESSIAH      615
-#define MUS_MESSENGER_FROM_THE_VOID 616
-#define MUS_THE_SWORD_THAT_CLEAVES_EVIL 617
-#define MUS_DD_HIDEOUT              618
-#define MUS_DD_FACTORY              619
-#define MUS_DD_3RD_GEAR             620
-#define MUS_DD_MUSEUM               621
-#define MUS_DD_DETECTIVE            622
-#define MUS_DD_SUNKEN_RUINS         623
-#define MUS_DD_METAL_CITY           624
-#define MUS_DD_DRILL_MISSILE        625
+#define MUS_MESSENGER_FROM_THE_VOID 615
+#define MUS_THE_SWORD_THAT_CLEAVES_EVIL 616
+#define MUS_DD_HIDEOUT              617
+#define MUS_DD_FACTORY              618
+#define MUS_DD_3RD_GEAR             619
+#define MUS_DD_MUSEUM               620
+#define MUS_DD_DETECTIVE            621
+#define MUS_DD_SUNKEN_RUINS         622
+#define MUS_DD_METAL_CITY           623
+#define MUS_DD_DRILL_MISSILE        624
 // Serenade's song, Littleroot's lead cut into one part per turn of the move
-#define SE_M_SERENADE_1             626
-#define SE_M_SERENADE_2             627
-#define SE_M_SERENADE_3             628
-#define SE_M_SERENADE_4             629
-#define SE_M_SERENADE_5             630
+#define SE_M_SERENADE_1             625
+#define SE_M_SERENADE_2             626
+#define SE_M_SERENADE_3             627
+#define SE_M_SERENADE_4             628
+#define SE_M_SERENADE_5             629
 
 #define MUS_ROUTE118                0x7FFF  // Map is split into 2 music sections. controlled by GetCurrLocationDefaultMusic().
 

@@ -1,14 +1,19 @@
 @ The user's own port of "Marionette Messiah". Originally made from mus_t_marionette.mid (backed up in
 @ sound/songs/midi/recopy), now maintained by hand here. Its instruments are voicegroup_t_marionette
-@ (orchestra hits instead of tubular bells, a softer wave), track 6 is quieter (50 instead of 94), and
-@ the 24-tick delay at the start was removed.
-@ Tracks 7 and 8 (the drums) are the original game's drum tracks, from mus_marionette_messiah (with its 24-tick
+@ (orchestra hits instead of tubular bells), and the 24-tick delay at the start was removed.
+@ Tracks 7 and 8 (the drums) are the original game's drum tracks, from the direct port of the original (MUS_MARIONETTE_MESSIAH, since removed; with its 24-tick
 @ delay removed too), in place of a static-y noise track. The orchestra hits are an octave lower to match
 @ the original, and the lead tracks reset their pitch bend at the loop point.
 @ Track 3's french horn no longer has a strong vibrato (MOD 20) on its first note at bar 46, which made it sound sour going into the loop.
-@ Track 6's accented D at about 24s (bar 14) plays on the triangle (slot 87, written Dn3) instead of slot 89 (written Dn4), at the same pitch.
-@ Track 6's other slot 89 notes (soft high notes at about 7-18s and 79-81s, on the buzzy wave 15) were removed. Their gaps hold a new
-@ harmony line on the bass triangle (slot 87) that moves with the horn: same rhythm, a third below each horn note (G minor).
+@ Track 6 (the wave bass) is the bassline from that direct port (its track 7, 24-tick delay trimmed, VOL 76 here, the wave channel's 50%
+@ volume step, with its waves at 75% height for a level between that song's 25% step and 50%), on single-cycle saw and square waves (slots 90 and 91, at 75% height) that play the full line: the old bass
+@ was an octave-shifted two-cycle triangle with many notes below key 36, where the wave channel clamps them all to one pitch.
+@ Its quiet square-wave accents are left out in bars 8-10 (patterns _003h and _001h), where they sat in the horn harmony's register.
+@ Track 9 is a second french horn harmonizing with track 3: same rhythm, a third below each horn note (G minor), but a fourth
+@ below on its held Gs and phrase-ending Fs, and the quick passing B-flat left alone, as the original's bar 47 chords did.
+@ It comes in after each of the horn's pauses for the orchestra hits: from bar 8 to the end of bar 11 (after track 2's hits at
+@ bars 7-8), and for the reprise going into the loop, on its last two notes (bar 48). Track 3's own bar 47 chords were removed, since track 9 covers them. As the last track, its notes are the first to give way when all 5 sampled
+@ channels are busy, so it never cuts off the drums or the melody (it may drop a note in the busiest moments instead).
 @ Master volume (mus_t_marionette_mvl) is 110, up from 90, to sit closer to the vanilla battle themes. Every VOL scales with it,
 @ including the drums (90*mvl/mxv, which was a fixed 64 before: the same at the old master volume).
 @
@@ -20,10 +25,10 @@
 @   Track 3: french horn (slot 60), switching to orchestra hits (slot 14) and tubular bells (slot 4, VOL 80) from bar 16 to bar 46.
 @   Track 4: square wave (channel 1), switching between a thin plucked square (slot 85, 12.5% duty) and a fuller one (slot 80, 25% duty).
 @   Track 5: square wave (channel 2), switching between a hollow square (slot 83, 75% duty) and a thin plucked one (slot 82, 12.5% duty).
-@   Track 6: wave bass on the smooth triangle (slot 87), which also plays a third below the horn, in its rhythm, in the bass's gaps
-@            (about 7-18s and 79-81s), in place of the removed slot 89 notes.
-@   Track 7: rock drums (slot 126), from mus_marionette_messiah.
-@   Track 8: rock drums (slot 125), from mus_marionette_messiah.
+@   Track 6: wave bass, from the removed direct port. Mostly the single-cycle saw (slot 90), with quiet single-cycle square accents (slot 91).
+@   Track 7: rock drums (slot 126), from the removed direct port.
+@   Track 8: rock drums (slot 125), from the removed direct port.
+@   Track 9: french horn harmony (slot 60), after the horn's pauses for the orchestra hits (bars 8-11, and the last two notes before the loop, bar 48).
 
 	.include "MPlayDef.s"
 
@@ -1261,7 +1266,7 @@ mus_t_marionette_2_013:
 @ 037   ----------------------------------------
 	.byte	W42
 	.byte		VOICE , 29
-	.byte		VOL   , 52*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 46*mus_t_marionette_mvl/mxv
 	.byte	W01
 	.byte		BEND  , c_v+0
 	.byte	W03
@@ -2065,22 +2070,17 @@ mus_t_marionette_3_B1:
 	.byte	W12
 	.byte		        Fn4 
 	.byte	W12
-	.byte		N16   , Cn4 , v096
 	.byte		N16   , Ds4 , v127
 	.byte	W24
-	.byte		N11   , An3 , v096
 	.byte		N06   , Cn4 , v127
 	.byte	W06
 	.byte		N05   , As3 
 	.byte	W06
-	.byte		N08   , Fn3 , v096
 	.byte		N08   , An3 , v127
 	.byte	W12
 @ 048   ----------------------------------------
-	.byte		N06   , Gn3 , v096
 	.byte		N06   , As3 , v127
 	.byte	W12
-	.byte		N10   , Cn3 , v096
 	.byte		N10   , Fn3 , v127
 	.byte	W12
 	.byte	GOTO
@@ -2094,7 +2094,7 @@ mus_t_marionette_4:
 	.byte	KEYSH , mus_t_marionette_key+0
 @ 000   ----------------------------------------
 	.byte		VOICE , 85
-	.byte		VOL   , 72*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 50*mus_t_marionette_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte		BEND  , c_v+0
 	.byte		N12   , As2 , v100
@@ -2869,7 +2869,7 @@ mus_t_marionette_5:
 	.byte	KEYSH , mus_t_marionette_key+0
 @ 000   ----------------------------------------
 	.byte		VOICE , 83
-	.byte		VOL   , 72*mus_t_marionette_mvl/mxv
+	.byte		VOL   , 50*mus_t_marionette_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte		BEND  , c_v+0
 	.byte		N30   , Gn2 , v108
@@ -3840,699 +3840,614 @@ mus_t_marionette_5_B2:
 @**************** Track 6 (Midi-Chn.6) ****************@
 
 mus_t_marionette_6:
-	.byte	KEYSH , mus_t_marionette_key+0
-@ 000   ----------------------------------------
-	.byte		VOICE , 87
-	.byte		VOL   , 25*mus_t_marionette_mvl/mxv
+	.byte		KEYSH , mus_t_marionette_key+0
+	.byte		VOICE , 90
+	.byte		VOL   , 76*mus_t_marionette_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte		BEND  , c_v+0
-	.byte		N90   , Gn1 , v124
-	.byte	W72
-@ 001   ----------------------------------------
-	.byte	W24
-	.byte		        Fn1 
-	.byte	W72
-@ 002   ----------------------------------------
-	.byte	W24
-	.byte		N42   , En1 
+	.byte		N90   , Gn1 , v116
+	.byte	W96
+	.byte		        Fn1
+	.byte	W96
+	.byte		N42   , En1
 	.byte	W48
-	.byte		        Ds1 
-	.byte	W24
-@ 003   ----------------------------------------
-	.byte	W24
-	.byte		        Dn1 
+	.byte		        Ds1
 	.byte	W48
-	.byte		N18   
+	.byte		        Dn1
+	.byte	W48
+	.byte		N18
 	.byte	W24
-@ 004   ----------------------------------------
-	.byte		N18   
+	.byte		N18
 	.byte	W24
-	.byte		N06   , Gn1 
+mus_t_marionette_6_000:
+	.byte		N06   , Gn1 , v116
 	.byte	W12
-	.byte		N11   
+	.byte		N11
 	.byte	W11
-	.byte		VOICE , 87
+	.byte		VOICE , 91
+	.byte		VOL   , 76*mus_t_marionette_mvl/mxv
 	.byte	W01
-	.byte		N16   , As2 , v100
+	.byte		N16   , As4 , v028
 	.byte	W24
-	.byte		N06   , An2
+	.byte		N06   , An4
 	.byte	W06
-	.byte		VOICE , 87
+	.byte		VOICE , 90
 	.byte	W01
-	.byte		N04   , Dn0 , v124
+	.byte		N04   , Dn1 , v116
 	.byte	W05
-	.byte		N10   , Dn1 
+	.byte		N10   , Dn2
 	.byte	W12
-@ 005   ----------------------------------------
+	.byte		N06   , Cn2
+	.byte	W07
+	.byte		N04   , Dn2
+	.byte	W05
+	.byte		N06   , An1
+	.byte	W07
+	.byte		N04   , Fn1
+	.byte	W05
+	.byte		PEND
+mus_t_marionette_6_001:
+	.byte		N06   , Gn1 , v116
+	.byte	W12
+	.byte		N11
+	.byte	W11
+	.byte		VOICE , 91
+	.byte	W01
+	.byte		N16   , Gn4 , v028
+	.byte	W24
+	.byte		VOICE , 90
+	.byte		N06   , Fn1 , v116
+	.byte	W07
+	.byte		N04   , Dn1
+	.byte	W05
+	.byte		N06   , Fn1
+	.byte	W07
+	.byte		N04   , Gn1
+	.byte	W12
+	.byte		        Fn1
+	.byte	W05
+	.byte		N10   , As1
+	.byte	W12
+	.byte		PEND
+mus_t_marionette_6_002:
+	.byte	PATT
+	 .word	mus_t_marionette_6_000
+	.byte		N06   , Gn1 , v116
+	.byte	W12
+	.byte		N11
+	.byte	W11
+	.byte		VOICE , 91
+	.byte	W01
+	.byte		N06   , As4 , v028
+	.byte	W12
+	.byte		        Cn5
+	.byte	W12
+	.byte		VOICE , 90
+	.byte		N06   , Fn1 , v116
+	.byte	W07
+	.byte		N04   , Dn1
+	.byte	W05
+	.byte		N06   , Fn1
+	.byte	W07
+	.byte		N04   , Gn1
+	.byte	W12
+	.byte		        Fn1
+	.byte	W05
+	.byte		N10   , As1
+	.byte	W12
+mus_t_marionette_6_003h: @ bars 8 and 10: _003 without its square-wave accents, which sat under the horn harmony (track 9)
+	.byte		N06   , Gn1 , v116
+	.byte	W12
+	.byte		N11
+	.byte	W11
+	.byte		VOICE , 91
+	.byte	W01
+	.byte	W24
+	.byte	W06
+	.byte		VOICE , 90
+	.byte	W01
+	.byte		N04   , Dn1 , v116
+	.byte	W05
+	.byte		N10   , Dn2
+	.byte	W12
+	.byte		N06   , Cn2
+	.byte	W07
+	.byte		N04   , Dn2
+	.byte	W05
+	.byte		N06   , An1
+	.byte	W07
+	.byte		N04   , Fn1
+	.byte	W05
+	.byte		PEND
+	.byte	PATT
+	 .word	mus_t_marionette_6_001h
+	.byte	PATT
+	 .word	mus_t_marionette_6_003h
+	.byte		N06   , Cn1 , v116
+	.byte	W12
+	.byte		N10   , Dn1
+	.byte	W12
+	.byte		N06   , Ds1
+	.byte	W12
+	.byte		N10   , Fn1
+	.byte	W12
+	.byte		N12   , Gn1
+	.byte	W48
+mus_t_marionette_6_004:
+	.byte		VOL   , 76*mus_t_marionette_mvl/mxv
+	.byte		N06   , Gn1 , v116
+	.byte	W12
+	.byte		N12
+	.byte	W42
+	.byte	W01
+	.byte		N04   , Dn1
+	.byte	W05
+	.byte		N10   , Dn2
+	.byte	W12
+	.byte		N06   , Cn2
+	.byte	W07
+	.byte		N04   , Dn2
+	.byte	W05
+	.byte		N06   , An1
+	.byte	W07
+	.byte		N04   , Fn1
+	.byte	W05
+	.byte		PEND
 mus_t_marionette_6_005:
-	.byte		N06   , Cn1 , v124
-	.byte	W07
-	.byte		N04   , Dn1 
-	.byte	W05
-	.byte		N06   , An0 
-	.byte	W07
-	.byte		N04   , Fn0 
-	.byte	W05
-	.byte		N06   , Gn0 
+	.byte		N06   , Gn1 , v116
 	.byte	W12
-	.byte		N11   
-	.byte	W11
-	.byte		VOICE , 87
-	.byte	W01
-	.byte		N16   , Cn3 , v100
-	.byte	W24
-	.byte		VOICE , 87
-	.byte		N06   , Fn0 , v124
-	.byte	W07
-	.byte		N04   , Dn0 
-	.byte	W05
-	.byte		N06   , Fn0 
-	.byte	W07
-	.byte		N04   , Gn0 
-	.byte	W05
-	.byte	PEND
-@ 006   ----------------------------------------
-mus_t_marionette_6_006:
-	.byte	W07
-	.byte		N04   , Fn0 , v124
-	.byte	W05
-	.byte		N10   , As0 
-	.byte	W12
-	.byte	PEND
-mus_t_marionette_6_B1:
-	.byte		BEND  , c_v+0
-	.byte		N06   , Gn0 , v124
-	.byte	W12
-	.byte		N11   
-	.byte	W11
-	.byte		VOICE , 87
-	.byte	W01
-	.byte		N16   , As2 , v100
-	.byte	W24
-	.byte		N06   , An2
-	.byte	W06
-	.byte		VOICE , 87
-	.byte	W01
-	.byte		N04   , Dn0 , v124
-	.byte	W05
-	.byte		N10   , Dn1 
-	.byte	W12
-@ 007   ----------------------------------------
-	.byte		N06   , Cn1 
-	.byte	W07
-	.byte		N04   , Dn1 
-	.byte	W05
-	.byte		N06   , An0 
-	.byte	W07
-	.byte		N04   , Fn0 
-	.byte	W05
-	.byte		N06   , Gn0 
-	.byte	W12
-	.byte		N11   
-	.byte	W11
-	.byte		VOICE , 87
-	.byte	W01
-	.byte		N06   , Cn3 , v100
-	.byte	W12
-	.byte		N06   , Dn3
-	.byte	W12
-	.byte		VOICE , 87
-	.byte		N06   , Fn0 , v124
-	.byte	W07
-	.byte		N04   , Dn0 
-	.byte	W05
-	.byte		N06   , Fn0 
-	.byte	W07
-	.byte		N04   , Gn0 
-	.byte	W05
-@ 008   ----------------------------------------
-mus_t_marionette_6_008:
-	.byte	W07
-	.byte		N04   , Fn0 , v124
-	.byte	W05
-	.byte		N10   , As0 
-	.byte	W12
-	.byte		N06   , Gn0 
-	.byte	W12
-	.byte		N11   
-	.byte	W11
-	.byte		VOICE , 87
-	.byte	W01
-	.byte		N16   , As2 , v100
-	.byte	W24
-	.byte		N06   , An2
-	.byte	W06
-	.byte		VOICE , 87
-	.byte	W01
-	.byte		N04   , Dn0 , v124
-	.byte	W05
-	.byte		N10   , Dn1 
-	.byte	W12
-	.byte	PEND
-@ 009   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_005
-@ 010   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_008
-@ 011   ----------------------------------------
-	.byte		VOL   , 50*mus_t_marionette_mvl/mxv
-	.byte		N06   , Cn2 , v124
-	.byte	W07
-	.byte		N04   , Dn2 
-	.byte	W05
-	.byte		N06   , An1 
-	.byte	W07
-	.byte		N04   , Fn1 
-	.byte	W05
-	.byte		N06   , Cn1 
-	.byte	W12
-	.byte		N10   , Dn1 
-	.byte	W12
-	.byte		N06   , Ds1 
-	.byte	W12
-	.byte		N10   , Fn1 
-	.byte	W12
-	.byte		N12   , Gn1 
-	.byte	W24
-@ 012   ----------------------------------------
-	.byte	W24
-	.byte		N06   
-	.byte	W12
-	.byte		N12   
-	.byte	W42
-	.byte	W01
-	.byte		N04   , Dn1 
-	.byte	W05
-	.byte		N10   , Dn2 
-	.byte	W12
-@ 013   ----------------------------------------
-mus_t_marionette_6_013:
-	.byte		N06   , Cn2 , v124
-	.byte	W07
-	.byte		N04   , Dn2 
-	.byte	W05
-	.byte		N06   , An1 
-	.byte	W07
-	.byte		N04   , Fn1 
-	.byte	W05
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N12   
+	.byte		N12
 	.byte	W36
-	.byte		N06   , Fn1 
+	.byte		N06   , Fn1
 	.byte	W07
-	.byte		N04   , Dn1 
+	.byte		N04   , Dn1
 	.byte	W05
-	.byte		N06   , Fn1 
+	.byte		N06   , Fn1
 	.byte	W07
-	.byte		N04   , Gn1 
+	.byte		N04   , Gn1
+	.byte	W12
+	.byte		        Fn1
 	.byte	W05
-	.byte	PEND
-@ 014   ----------------------------------------
-	.byte	W07
-	.byte		        Fn1 
-	.byte	W05
-	.byte		N10   , As1 
+	.byte		N10   , As1
 	.byte	W12
-	.byte		N06   , Gn1 
+	.byte		PEND
+	.byte		N06   , Gn1
 	.byte	W12
-	.byte		N11   
+	.byte		N11
 	.byte	W12
-	.byte		VOICE , 87
+	.byte		VOICE , 91
 	.byte		PAN   , c_v+63
-	.byte		N21   , Dn3 , v108
+	.byte		N21   , Dn4 , v092
 	.byte	W23
-	.byte		VOICE , 87
+	.byte		VOICE , 90
 	.byte	W01
 	.byte		PAN   , c_v+0
 	.byte	W07
-	.byte		N04   , Dn1 , v124
+	.byte		N04   , Dn1 , v116
 	.byte	W05
-	.byte		N10   , Dn2 
+	.byte		N10   , Dn2
 	.byte	W12
-@ 015   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_013
-@ 016   ----------------------------------------
+	.byte		N06   , Cn2
 	.byte	W07
-	.byte		N04   , Fn1 , v124
+	.byte		N04   , Dn2
 	.byte	W05
-	.byte		N10   , As1 
-	.byte	W12
-	.byte		N06   , Cn2 
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-	.byte		N06   , Gn5 , v112
+	.byte		N06   , An1
 	.byte	W07
-	.byte		N04   , Gn1 , v124
+	.byte		N04   , Fn1
 	.byte	W05
-	.byte		N10   , Cn2 
-	.byte	W12
-	.byte		N06   , Bn1 
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-@ 017   ----------------------------------------
-	.byte		N06   , Gn5 , v112
-	.byte	W07
-	.byte		N04   , Gn1 , v124
-	.byte	W05
-	.byte		N10   , Bn1 
-	.byte	W12
-	.byte		N06   , As1 
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-	.byte		N06   , Gn5 , v112
-	.byte	W07
-	.byte		N04   , Gn1 , v124
-	.byte	W05
-	.byte		N10   , As1 
-	.byte	W12
-	.byte		N06   , An1 
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-@ 018   ----------------------------------------
-	.byte	W07
-	.byte		N04   , Dn1 
-	.byte	W05
-	.byte		N10   , Dn2 
-	.byte	W12
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N12   
-	.byte	W42
-	.byte	W01
-	.byte		N04   , Dn1 
-	.byte	W05
-	.byte		N10   , Dn2 
-	.byte	W12
-@ 019   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_013
-@ 020   ----------------------------------------
-mus_t_marionette_6_020:
-	.byte	W07
-	.byte		N04   , Fn1 , v124
-	.byte	W05
-	.byte		N10   , As1 
-	.byte	W12
-	.byte		N06   , Cn2 
-	.byte	W12
-	.byte		N12   
-	.byte	W36
-	.byte		N06   
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-	.byte	PEND
-@ 021   ----------------------------------------
-	.byte	W07
-	.byte		N04   , Gn1 
-	.byte	W05
-	.byte		N10   , Cn2 
-	.byte	W12
-	.byte		N06   , An1 
-	.byte	W12
-	.byte		N12   
-	.byte	W36
-	.byte		N06   , Gs1 
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-@ 022   ----------------------------------------
-	.byte	W07
-	.byte		N04   , Ds1 
-	.byte	W05
-	.byte		N10   , Gs1 
-	.byte	W12
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N12   
-	.byte	W42
-	.byte	W01
-	.byte		N04   , Dn1 
-	.byte	W05
-	.byte		N10   , Dn2 
-	.byte	W12
-@ 023   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_013
-@ 024   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_020
-@ 025   ----------------------------------------
-	.byte	W07
-	.byte		N04   , Gn1 , v124
-	.byte	W05
-	.byte		N10   , Cn2 
-	.byte	W12
-	.byte		N06   , Dn2 
-	.byte	W12
-	.byte		N12   
-	.byte	W36
-	.byte		N06   , Ds2 
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-@ 026   ----------------------------------------
-	.byte	W07
-	.byte		N04   , As1 
-	.byte	W05
-	.byte		N10   , Ds2 
-	.byte	W12
-	.byte		N06   , An1 
-	.byte	W12
-	.byte		N12   
-	.byte	W36
-	.byte		N06   
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-@ 027   ----------------------------------------
-	.byte	W07
-	.byte		N04   , En1 
-	.byte	W05
-	.byte		N10   , An1 
-	.byte	W12
-	.byte		N06   , Dn2 
-	.byte	W12
-	.byte		N12   
-	.byte	W36
-	.byte		N06   
-	.byte	W12
-	.byte		N12   
-	.byte	W12
-@ 028   ----------------------------------------
-	.byte	W07
-	.byte		N04   , An1 
-	.byte	W05
-	.byte		N10   , Dn2 
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		BEND  , c_v+15
-	.byte		N14   , Cn2 
-	.byte	W01
-	.byte		BEND  , c_v+31
-	.byte	W01
-	.byte		        c_v+47
-	.byte	W01
-	.byte		        c_v+63
-	.byte	W06
-	.byte		        c_v+56
-	.byte	W01
-	.byte		        c_v+48
-	.byte	W01
-	.byte		        c_v+40
-	.byte	W01
-	.byte		        c_v+24
-	.byte	W01
-	.byte		        c_v+16
-	.byte	W01
-	.byte		        c_v+8
-	.byte	W01
-	.byte		        c_v-8
-	.byte	W01
-	.byte		        c_v-16
-	.byte	W01
-	.byte		        c_v-24
-	.byte	W01
-	.byte		        c_v-40
-	.byte	W01
-	.byte		        c_v-48
-	.byte	W01
-	.byte		        c_v-56
-	.byte	W01
-	.byte		        c_v-64
-	.byte	W03
-	.byte		        c_v+0
-	.byte	W24
-@ 029   ----------------------------------------
-	.byte	W24
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-@ 030   ----------------------------------------
-mus_t_marionette_6_030:
-	.byte		N06   , Gn1 , v124
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , Fs1 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte	PEND
-@ 031   ----------------------------------------
-mus_t_marionette_6_031:
-	.byte		N06   , Fs1 , v124
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , Fn1 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , En1 
-	.byte	W12
-	.byte		N10   , En2 
-	.byte	W12
-	.byte	PEND
-@ 032   ----------------------------------------
-mus_t_marionette_6_032:
-	.byte		N06   , En1 , v124
-	.byte	W12
-	.byte		N10   , En2 
-	.byte	W12
-	.byte		N06   , Ds2 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , Dn2 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte	PEND
-@ 033   ----------------------------------------
-mus_t_marionette_6_033:
-	.byte		N06   , Cs2 , v124
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , Cn2 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , As1 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte	PEND
-@ 034   ----------------------------------------
-mus_t_marionette_6_034:
-	.byte		N06   , As1 , v124
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , An1 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte	PEND
-@ 035   ----------------------------------------
-mus_t_marionette_6_035:
-	.byte		N06   , Cn2 , v124
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , An1 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte	PEND
-@ 036   ----------------------------------------
-mus_t_marionette_6_036:
-	.byte		N06   , An1 , v124
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , Dn2 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte	PEND
-@ 037   ----------------------------------------
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-@ 038   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_030
-@ 039   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_031
-@ 040   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_032
-@ 041   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_033
-@ 042   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_034
-@ 043   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_035
-@ 044   ----------------------------------------
-	.byte	PATT
-	 .word	mus_t_marionette_6_036
-@ 045   ----------------------------------------
-	.byte		N06   , Dn2 , v124
-	.byte	W12
-	.byte		N10   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		N06   
-	.byte	W12
-	.byte		BEND  , c_v+15
-	.byte		N14   , Cn2 
-	.byte	W01
-	.byte		BEND  , c_v+31
-	.byte	W01
-	.byte		        c_v+47
-	.byte	W01
-	.byte		        c_v+63
-	.byte	W06
-	.byte		        c_v+56
-	.byte	W01
-	.byte		        c_v+48
-	.byte	W01
-	.byte		        c_v+40
-	.byte	W01
-	.byte		        c_v+24
-	.byte	W01
-	.byte		        c_v+16
-	.byte	W01
-	.byte		        c_v+8
-	.byte	W01
-	.byte		        c_v-8
-	.byte	W01
-	.byte		        c_v-16
-	.byte	W01
-	.byte		        c_v-24
-	.byte	W01
-	.byte		        c_v-40
-	.byte	W01
-	.byte		        c_v-48
-	.byte	W01
-	.byte		        c_v-56
-	.byte	W01
-	.byte		        c_v-64
-	.byte	W24
-	.byte	W03
-@ 046   ----------------------------------------
-	.byte		        c_v+0
-	.byte	W24
-	.byte		N06   , Gn1 
-	.byte	W12
-	.byte		N11   
-	.byte	W11
-	.byte		VOICE , 87
-	.byte		VOL   , 25*mus_t_marionette_mvl/mxv
-	.byte	W01
-	.byte		N16   , As2 , v100
-	.byte	W24
-	.byte		N06   , An2
-	.byte	W06
-	.byte		VOICE , 87
-	.byte	W01
-	.byte		N04   , Dn0 , v124
-	.byte	W05
-	.byte		N10   , Dn1 
-	.byte	W12
-@ 047   ----------------------------------------
 	.byte	PATT
 	 .word	mus_t_marionette_6_005
-@ 048   ----------------------------------------
+	.byte		N06   , Cn2 , v116
+	.byte	W12
+	.byte		N12
+	.byte	W12
+	.byte		N06   , Gn5 , v100
+	.byte	W07
+	.byte		N04   , Gn1 , v116
+	.byte	W05
+	.byte		N10   , Cn2
+	.byte	W12
+	.byte		N06   , Bn1
+	.byte	W12
+	.byte		N12
+	.byte	W12
+	.byte		N06   , Gn5 , v100
+	.byte	W07
+	.byte		N04   , Gn1 , v116
+	.byte	W05
+	.byte		N10   , Bn1
+	.byte	W12
+	.byte		N06   , As1
+	.byte	W12
+	.byte		N12
+	.byte	W12
+	.byte		N06   , Gn5 , v100
+	.byte	W07
+	.byte		N04   , Gn1 , v116
+	.byte	W05
+	.byte		N10   , As1
+	.byte	W12
+	.byte		N06   , An1
+	.byte	W12
+	.byte		N12
+	.byte	W19
+	.byte		N04   , Dn1
+	.byte	W05
+	.byte		N10   , Dn2
+	.byte	W12
+	.byte	PATT
+	 .word	mus_t_marionette_6_004
+	.byte	PATT
+	 .word	mus_t_marionette_6_005
+mus_t_marionette_6_006:
+	.byte		N06   , Cn2 , v116
+	.byte	W12
+	.byte		N12
+	.byte	W36
+	.byte		N06
+	.byte	W12
+	.byte		N12
+	.byte	W19
+	.byte		N04   , Gn1
+	.byte	W05
+	.byte		N10   , Cn2
+	.byte	W12
+	.byte		PEND
+	.byte		N06   , An1
+	.byte	W12
+	.byte		N12
+	.byte	W36
+	.byte		N06   , Gs1
+	.byte	W12
+	.byte		N12
+	.byte	W19
+	.byte		N04   , Ds1
+	.byte	W05
+	.byte		N10   , Gs1
+	.byte	W12
+	.byte	PATT
+	 .word	mus_t_marionette_6_004
+	.byte	PATT
+	 .word	mus_t_marionette_6_005
 	.byte	PATT
 	 .word	mus_t_marionette_6_006
+	.byte		N06   , Dn2 , v116
+	.byte	W12
+	.byte		N12
+	.byte	W36
+	.byte		N06   , Ds2
+	.byte	W12
+	.byte		N12
+	.byte	W19
+	.byte		N04   , As1
+	.byte	W05
+	.byte		N10   , Ds2
+	.byte	W12
+	.byte		N06   , An1
+	.byte	W12
+	.byte		N12
+	.byte	W36
+	.byte		N06
+	.byte	W12
+	.byte		N12
+	.byte	W19
+	.byte		N04   , En1
+	.byte	W05
+	.byte		N10   , An1
+	.byte	W12
+	.byte		N06   , Dn2
+	.byte	W12
+	.byte		N12
+	.byte	W36
+	.byte		N06
+	.byte	W12
+	.byte		N12
+	.byte	W19
+	.byte		N04   , An1
+	.byte	W05
+	.byte		N10   , Dn2
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		BEND  , c_v+15
+	.byte		N14   , Cn2
+	.byte	W01
+	.byte		BEND  , c_v+31
+	.byte	W01
+	.byte		        c_v+47
+	.byte	W01
+	.byte		        c_v+63
+	.byte	W06
+	.byte		        c_v+56
+	.byte	W01
+	.byte		        c_v+48
+	.byte	W01
+	.byte		        c_v+40
+	.byte	W01
+	.byte		        c_v+24
+	.byte	W01
+	.byte		        c_v+16
+	.byte	W01
+	.byte		        c_v+8
+	.byte	W01
+	.byte		        c_v-8
+	.byte	W01
+	.byte		        c_v-16
+	.byte	W01
+	.byte		        c_v-24
+	.byte	W01
+	.byte		        c_v-40
+	.byte	W01
+	.byte		        c_v-48
+	.byte	W01
+	.byte		        c_v-56
+	.byte	W01
+	.byte		        c_v-64
+	.byte	W03
+	.byte		        c_v+0
+	.byte	W48
+mus_t_marionette_6_007:
+	.byte		N06   , Gn1 , v116
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		PEND
+mus_t_marionette_6_008:
+	.byte		N06   , Fs1 , v116
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		PEND
+mus_t_marionette_6_009:
+	.byte		N06   , Fn1 , v116
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06   , En1
+	.byte	W12
+	.byte		N10   , En2
+	.byte	W12
+	.byte		N06   , En1
+	.byte	W12
+	.byte		N10   , En2
+	.byte	W12
+	.byte		PEND
+mus_t_marionette_6_010:
+	.byte		N06   , Ds2 , v116
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06   , Dn2
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06   , Cs2
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		PEND
+mus_t_marionette_6_011:
+	.byte		N06   , Cn2 , v116
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06   , As1
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		PEND
+mus_t_marionette_6_012:
+	.byte		N06   , An1 , v116
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06   , Gn1
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06   , Cn2
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		PEND
+mus_t_marionette_6_013:
+	.byte		N06   , An1 , v116
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		PEND
+mus_t_marionette_6_014:
+	.byte		N06   , Dn2 , v116
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		N10
+	.byte	W12
+	.byte		PEND
+	.byte	PATT
+	 .word	mus_t_marionette_6_007
+	.byte	PATT
+	 .word	mus_t_marionette_6_008
+	.byte	PATT
+	 .word	mus_t_marionette_6_009
+	.byte	PATT
+	 .word	mus_t_marionette_6_010
+	.byte	PATT
+	 .word	mus_t_marionette_6_011
+	.byte	PATT
+	 .word	mus_t_marionette_6_012
+	.byte	PATT
+	 .word	mus_t_marionette_6_013
+	.byte	PATT
+	 .word	mus_t_marionette_6_014
+	.byte		N06   , Dn2 , v116
+	.byte	W12
+	.byte		N06
+	.byte	W12
+	.byte		BEND  , c_v+15
+	.byte		N14   , Cn2
+	.byte	W01
+	.byte		BEND  , c_v+31
+	.byte	W01
+	.byte		        c_v+47
+	.byte	W01
+	.byte		        c_v+63
+	.byte	W06
+	.byte		        c_v+56
+	.byte	W01
+	.byte		        c_v+48
+	.byte	W01
+	.byte		        c_v+40
+	.byte	W01
+	.byte		        c_v+24
+	.byte	W01
+	.byte		        c_v+16
+	.byte	W01
+	.byte		        c_v+8
+	.byte	W01
+	.byte		        c_v-8
+	.byte	W01
+	.byte		        c_v-16
+	.byte	W01
+	.byte		        c_v-24
+	.byte	W01
+	.byte		        c_v-40
+	.byte	W01
+	.byte		        c_v-48
+	.byte	W01
+	.byte		        c_v-56
+	.byte	W01
+	.byte		        c_v-64
+	.byte	W24
+	.byte	W03
+	.byte		        c_v+0
+	.byte	W24
+	.byte	PATT
+	 .word	mus_t_marionette_6_003
+	.byte	PATT
+	 .word	mus_t_marionette_6_001
 	.byte	GOTO
-	 .word	mus_t_marionette_6_B1
-mus_t_marionette_6_B2:
-	.byte	FINE
+	 .word	mus_t_marionette_6_002
+	.byte		FINE
+
+@ Patterns reached only through PATT:
+mus_t_marionette_6_003: @ bars 46 (and its loop repeats); bars 8 and 10 use _003h
+	.byte		N06   , Gn1 , v116
+	.byte	W12
+	.byte		N11
+	.byte	W11
+	.byte		VOICE , 91
+	.byte	W01
+	.byte		N16   , Gn4 , v028
+	.byte	W24
+	.byte		N06   , Fn4
+	.byte	W06
+	.byte		VOICE , 90
+	.byte	W01
+	.byte		N04   , Dn1 , v116
+	.byte	W05
+	.byte		N10   , Dn2
+	.byte	W12
+	.byte		N06   , Cn2
+	.byte	W07
+	.byte		N04   , Dn2
+	.byte	W05
+	.byte		N06   , An1
+	.byte	W07
+	.byte		N04   , Fn1
+	.byte	W05
+	.byte		PEND
+
+mus_t_marionette_6_001h: @ bar 9: _001 without its square-wave accent, which sat under the horn harmony (track 9)
+	.byte		N06   , Gn1 , v116
+	.byte	W12
+	.byte		N11
+	.byte	W11
+	.byte		VOICE , 91
+	.byte	W01
+	.byte	W24
+	.byte		VOICE , 90
+	.byte		N06   , Fn1 , v116
+	.byte	W07
+	.byte		N04   , Dn1
+	.byte	W05
+	.byte		N06   , Fn1
+	.byte	W07
+	.byte		N04   , Gn1
+	.byte	W12
+	.byte		        Fn1
+	.byte	W05
+	.byte		N10   , As1
+	.byte	W12
+	.byte		PEND
 
 @**************** Track 7 (Midi-Chn.7) ****************@
 
@@ -6367,11 +6282,168 @@ mus_t_marionette_8_006:
 	 .word	mus_t_marionette_8_000
 	.byte		FINE
 
+@**************** Track 9 (horn harmony) ****************@
+
+mus_t_marionette_9:
+	.byte	KEYSH , mus_t_marionette_key+0
+@ 000   ----------------------------------------
+	.byte		VOICE , 60
+	.byte		VOL   , 97*mus_t_marionette_mvl/mxv
+	.byte		PAN   , c_v+0
+	.byte		BEND  , c_v+0
+	.byte	W72
+@ 001   ----------------------------------------
+	.byte	W96
+@ 002   ----------------------------------------
+	.byte	W96
+@ 003   ----------------------------------------
+	.byte	W96
+@ 004   ----------------------------------------
+	.byte	W96
+@ 005   ----------------------------------------
+	.byte	W96
+@ 006   ----------------------------------------
+	.byte	W24
+mus_t_marionette_9_B1:
+	.byte	W72
+@ 007   ----------------------------------------
+	.byte	W96
+@ 008   ----------------------------------------
+	.byte	W24
+	.byte		N16   , Dn3 , v096
+	.byte	W24
+	.byte		N16   , As3 , v096
+	.byte	W24
+	.byte		N06   , An3 , v096
+	.byte	W12
+	.byte		N06   , Fn3 , v096
+	.byte	W12
+@ 009   ----------------------------------------
+	.byte		N21   , Gn3 , v096
+	.byte	W24
+	.byte		N06   , As3 , v096
+	.byte	W12
+	.byte		N06   , Dn4 , v096
+	.byte	W12
+	.byte		N16   , Cn4 , v096
+	.byte	W24
+	.byte		N11   , An3 , v096
+	.byte	W12
+	.byte		N08   , Fn3 , v096
+	.byte	W12
+@ 010   ----------------------------------------
+	.byte		N06   , Gn3 , v096
+	.byte	W12
+	.byte		N10   , Cn3 , v096
+	.byte	W12
+	.byte		N16   , Dn3 , v096
+	.byte	W24
+	.byte		N16   , As3 , v096
+	.byte	W24
+	.byte		N06   , An3 , v096
+	.byte	W12
+	.byte		N06   , Fn3 , v096
+	.byte	W12
+@ 011   ----------------------------------------
+	.byte		N21   , Gn3 , v096
+	.byte	W24
+	.byte		N05   , An2 , v090
+	.byte	W12
+	.byte		N05   , As2 , v090
+	.byte	W12
+	.byte		N05   , Cn3 , v090
+	.byte	W12
+	.byte		N05   , Dn3 , v090
+	.byte	W12
+	.byte		N05   , Ds3 , v090
+	.byte	W24
+@ 012   ----------------------------------------
+	.byte	W96
+@ 013   ----------------------------------------
+	.byte	W96
+@ 014   ----------------------------------------
+	.byte	W96
+@ 015   ----------------------------------------
+	.byte	W96
+@ 016   ----------------------------------------
+	.byte	W96
+@ 017   ----------------------------------------
+	.byte	W96
+@ 018   ----------------------------------------
+	.byte	W96
+@ 019   ----------------------------------------
+	.byte	W96
+@ 020   ----------------------------------------
+	.byte	W96
+@ 021   ----------------------------------------
+	.byte	W96
+@ 022   ----------------------------------------
+	.byte	W96
+@ 023   ----------------------------------------
+	.byte	W96
+@ 024   ----------------------------------------
+	.byte	W96
+@ 025   ----------------------------------------
+	.byte	W96
+@ 026   ----------------------------------------
+	.byte	W96
+@ 027   ----------------------------------------
+	.byte	W96
+@ 028   ----------------------------------------
+	.byte	W96
+@ 029   ----------------------------------------
+	.byte	W96
+@ 030   ----------------------------------------
+	.byte	W96
+@ 031   ----------------------------------------
+	.byte	W96
+@ 032   ----------------------------------------
+	.byte	W96
+@ 033   ----------------------------------------
+	.byte	W96
+@ 034   ----------------------------------------
+	.byte	W96
+@ 035   ----------------------------------------
+	.byte	W96
+@ 036   ----------------------------------------
+	.byte	W96
+@ 037   ----------------------------------------
+	.byte	W96
+@ 038   ----------------------------------------
+	.byte	W96
+@ 039   ----------------------------------------
+	.byte	W96
+@ 040   ----------------------------------------
+	.byte	W96
+@ 041   ----------------------------------------
+	.byte	W96
+@ 042   ----------------------------------------
+	.byte	W96
+@ 043   ----------------------------------------
+	.byte	W96
+@ 044   ----------------------------------------
+	.byte	W96
+@ 045   ----------------------------------------
+	.byte	W96
+@ 046   ----------------------------------------
+	.byte	W96
+@ 047   ----------------------------------------
+	.byte	W96
+@ 048   ----------------------------------------
+	.byte		N06   , Gn3 , v096
+	.byte	W12
+	.byte		N10   , Cn3 , v096
+	.byte	W12
+	.byte	GOTO
+	 .word	mus_t_marionette_9_B1
+mus_t_marionette_9_B2:
+	.byte	FINE
+
 @******************************************************@
 	.align	2
 
 mus_t_marionette:
-	.byte	8	@ NumTrks
+	.byte	9	@ NumTrks
 	.byte	0	@ NumBlks
 	.byte	mus_t_marionette_pri	@ Priority
 	.byte	mus_t_marionette_rev	@ Reverb.
@@ -6386,5 +6458,6 @@ mus_t_marionette:
 	.word	mus_t_marionette_6
 	.word	mus_t_marionette_7
 	.word	mus_t_marionette_8
+	.word	mus_t_marionette_9
 
 	.end

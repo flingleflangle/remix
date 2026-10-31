@@ -1,7 +1,9 @@
 @ "Wilderness of Battle" from Super Robot Taisen: Original Generation (song 0x0C), ported from sound/import,
 @ where the rip mislabels it as "09 Messenger from the Void".
 @ Track numbers match the original. Track 11 (a quiet doubling layer) was cut to fit Emerald's 10 tracks and 5 sampled channels.
-@ Track 10 is shifted down an octave because Emerald's waves repeat twice.
+@ Track 10's wave bass plays the single-cycle saw (slot 104) with no octave shift. Emerald's own waves repeat twice and sound an octave high,
+@ and shifting the track down an octave to make up for it put most of its notes below key 36, where the wave channel clamps
+@ every note to the same pitch (MidiKeyToCgbFreq). The single-cycle waves sound an octave lower themselves.
 
 	.include "MPlayDef.s"
 
@@ -3857,8 +3859,8 @@ mus_wilderness_of_battle_9_003:
 @**************** Track 10 ****************@
 
 mus_wilderness_of_battle_10:
-	.byte		KEYSH , mus_wilderness_of_battle_key-12
-	.byte		VOICE , 108
+	.byte		KEYSH , mus_wilderness_of_battle_key+0
+	.byte		VOICE , 104
 	.byte	W01
 	.byte		VOL   , 70*mus_wilderness_of_battle_mvl/mxv
 	.byte		PAN   , c_v+0

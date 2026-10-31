@@ -1195,7 +1195,6 @@ SECTIONS {
         sound/songs/mus_trombe.o(.rodata);
         sound/songs/mus_woman_the_cool_spy.o(.rodata);
         sound/songs/mus_wilderness_of_battle.o(.rodata);
-        sound/songs/mus_marionette_messiah.o(.rodata);
         sound/songs/mus_messenger_from_the_void.o(.rodata);
         sound/songs/mus_the_sword_that_cleaves_evil.o(.rodata);
         sound/songs/mus_dd_hideout.o(.rodata);

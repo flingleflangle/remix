@@ -1,7 +1,9 @@
 @ "Messenger from the Void" from Super Robot Taisen: Original Generation (song 0x17), ported from sound/import,
 @ where the rip mislabels it as "37 Unknown 2".
 @ Track numbers match the original. Tracks 10 (one of two square-wave backing parts) and 12 (a quiet doubling layer) were cut to fit Emerald's 10 tracks. The horns and strings carry the melody, so they stay; up to 6 sampled notes overlap very briefly (0.5% of the song).
-@ Track 9 is shifted down an octave because Emerald's waves repeat twice.
+@ Track 9's wave bass plays the single-cycle triangle and saw (slots 106 and 104) with no octave shift. Emerald's own waves repeat twice and sound an octave high,
+@ and shifting the track down an octave to make up for it put most of its notes below key 36, where the wave channel clamps
+@ every note to the same pitch (MidiKeyToCgbFreq). The single-cycle waves sound an octave lower themselves.
 @ Track 7 (a very low guitar part) uses the fingered bass (slot 33) instead of the guitar (slot 30), which sounded muddy that low.
 
 	.include "MPlayDef.s"
@@ -5964,8 +5966,8 @@ mus_messenger_from_the_void_8_009:
 @**************** Track 9 ****************@
 
 mus_messenger_from_the_void_9:
-	.byte		KEYSH , mus_messenger_from_the_void_key-12
-	.byte		VOICE , 102
+	.byte		KEYSH , mus_messenger_from_the_void_key+0
+	.byte		VOICE , 106
 	.byte	W01
 	.byte		VOL   , 80*mus_messenger_from_the_void_mvl/mxv
 	.byte		PAN   , c_v+0
@@ -5993,7 +5995,7 @@ mus_messenger_from_the_void_9:
 	.byte	W01
 	.byte		EOT   
 	.byte	W06
-	.byte		VOICE , 103
+	.byte		VOICE , 104
 	.byte	W01
 	.byte		MOD   , 0
 	.byte		BEND  , c_v-64

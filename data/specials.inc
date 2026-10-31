@@ -557,3 +557,5 @@ gSpecials::
 	def_special RivalApproach_Prepare
 	def_special GetCurrentMapForScript
 	def_special FollowerAppearBesidePlayer
+	def_special FollowerStop_StayInPlace
+	def_special FollowerStop_PrepareStepOff

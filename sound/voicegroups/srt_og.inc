@@ -106,14 +106,14 @@ voice_group srt_og
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
 	voice_programmable_wave 60, 0, ProgrammableWaveData_2, 0, 0, 13, 0 @ triangle bass, the original's wave repeated twice (its tracks are shifted down an octave)
 	voice_programmable_wave 60, 0, ProgrammableWaveData_3, 0, 0, 13, 0 @ saw bass, the original's wave repeated twice (its tracks are shifted down an octave)
-	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
-	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
-	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
+	voice_programmable_wave 60, 0, ProgrammableWaveData_26, 0, 0, 13, 0 @ saw bass as a single cycle: plays its written notes without an octave shift, so low notes are not clamped (slot 108 is the two-cycle saw)
+	voice_programmable_wave 60, 0, ProgrammableWaveData_27, 0, 0, 13, 0 @ square bass as a single cycle: plays its written notes without an octave shift, so low notes are not clamped (slot 107 is the two-cycle square)
+	voice_programmable_wave 60, 0, ProgrammableWaveData_28, 0, 0, 13, 0 @ triangle bass as a single cycle: plays its written notes without an octave shift, so low notes are not clamped (slot 102 is the two-cycle triangle)
 	voice_programmable_wave 60, 0, ProgrammableWaveData_6, 0, 0, 13, 0 @ square bass. Emerald's waves repeat twice, so its tracks are shifted down an octave
 	voice_programmable_wave 60, 0, ProgrammableWaveData_3, 0, 0, 13, 0 @ saw bass. Emerald's waves repeat twice, so its tracks are shifted down an octave
 	voice_programmable_wave 60, 0, ProgrammableWaveData_1, 0, 0, 13, 0 @ soft bass (a smooth Emerald wave; tracks using it are shifted down an octave)
 	voice_keysplit_all voicegroup_srt_og_drumset_110 @ drums and effects
-	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
+	voice_programmable_wave 60, 0, ProgrammableWaveData_29, 0, 0, 13, 0 @ soft bass as a single cycle: plays its written notes without an octave shift, so low notes are not clamped (slot 109 is the two-cycle wave)
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0

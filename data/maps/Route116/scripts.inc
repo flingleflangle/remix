@@ -16,8 +16,10 @@ Route116_OnTransition:
 @ WALLY (once his family in VERDANTURF has said he left, until the player's 5th badge) is trying to
 @ catch a SKITTY. He can tag along, and in a battle with a SKITTY he catches it himself
 @ (partnercatch). That finishes this section (FLAG_WALLY_ROUTE116_DONE), one of the three for the
-@ secret path. Stops: toward RUSTBORO, toward VERDANTURF and in front of RUSTURF TUNNEL, where he
-@ stays to keep looking (he's back next visit). VAR_WALLY_FOLLOWER is 1 while he's following here.
+@ secret path. Stops: toward RUSTBORO and in front of RUSTURF TUNNEL. If the player says they're
+@ leaving, he stays where he's standing and they can talk to him to team up again, until they leave
+@ the map: then he's gone for good (FLAG_WALLY_ROUTE116_PARTED) and this section is missed.
+@ VAR_WALLY_FOLLOWER is 1 while he's following here.
 Route116_EventScript_TryShowWally::
 	setflag FLAG_HIDE_ROUTE_116_WALLY
 	checkfollower
@@ -25,6 +27,7 @@ Route116_EventScript_TryShowWally::
 	goto_if_unset FLAG_WALLY_FAMILY_TOLD, Common_EventScript_NopReturn
 	goto_if_set FLAG_WALLY_ROUTE116_DONE, Common_EventScript_NopReturn
 	goto_if_set FLAG_BADGE05_GET, Common_EventScript_NopReturn
+	goto_if_set FLAG_WALLY_ROUTE116_PARTED, Common_EventScript_NopReturn
 	goto_if_ne VAR_WALLY_FOLLOWER, 0, Common_EventScript_NopReturn
 	clearflag FLAG_HIDE_ROUTE_116_WALLY
 	return
@@ -40,16 +43,55 @@ Route116_EventScript_Wally::
 	faceplayer
 	checkfollower
 	goto_if_eq VAR_RESULT, TRUE, Route116_EventScript_WallyBusy
+	goto_if_set FLAG_WALLY_ROUTE116_PARTED, Route116_EventScript_WallyPlayerCameBack
 	msgbox Route116_Text_WallyAskHelp, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, Route116_EventScript_WallyDeclined
 	msgbox Route116_Text_WallyLetsGo, MSGBOX_DEFAULT
+	goto Route116_EventScript_WallyJoin
+	end
+
+@ The player left him at a stop but came back before leaving the map
+Route116_EventScript_WallyPlayerCameBack::
+	msgbox Route116_Text_WallyPlayerCameBack, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route116_EventScript_WallyDeclined
+	msgbox Route116_Text_WallyStaying, MSGBOX_DEFAULT
+	clearflag FLAG_WALLY_ROUTE116_PARTED
+	goto Route116_EventScript_WallyJoin
+	end
+
+Route116_EventScript_WallyJoin::
 	closemessage
 	setfollower LOCALID_ROUTE116_WALLY, FOLLOWER_FLAG_WALLY
 	setfollowerpartner FOLLOWER_PARTNER_WALLY
 	call Route116_EventScript_WallyPartnerCatchSkitty
 	setvar VAR_WALLY_FOLLOWER, 1
+	call Route116_EventScript_WallyTryStepOffStop
 	release
 	end
+
+@ Teaming up again while standing on a stop: step off it (its coord events won't run again until
+@ the player steps back on), so the player can't walk WALLY straight off the route
+Route116_EventScript_WallyTryStepOffStop::
+	getplayerxy VAR_0x8008, VAR_0x8009
+	goto_if_eq VAR_0x8008, 0, Route116_EventScript_WallyStepOffWest
+	goto_if_ne VAR_0x8009, 9, Route116_EventScript_WallyTryStepOffTunnel2
+	goto_if_eq VAR_0x8008, 47, Route116_EventScript_WallyStepOffTunnel
+	return
+
+Route116_EventScript_WallyTryStepOffTunnel2::
+	goto_if_ne VAR_0x8009, 11, Common_EventScript_NopReturn
+	goto_if_eq VAR_0x8008, 65, Route116_EventScript_WallyStepOffTunnel
+	return
+
+Route116_EventScript_WallyStepOffWest::
+	setvar VAR_0x8004, DIR_EAST
+	call Common_EventScript_FollowerStopStepOff
+	return
+
+Route116_EventScript_WallyStepOffTunnel::
+	setvar VAR_0x8004, DIR_SOUTH
+	call Common_EventScript_FollowerStopStepOff
+	return
 
 Route116_EventScript_WallyPartnerCatchSkitty::
 	partnercatch Route116_Text_WallyFoundSkitty, Route116_Text_WallyPlayerCaughtSkitty, SPECIES_SKITTY
@@ -89,17 +131,12 @@ Route116_EventScript_WallyStopWest::
 	goto Route116_EventScript_WallyStop
 	end
 
-Route116_EventScript_WallyStopSouth::
-	setvar VAR_0x8007, DIR_NORTH
-	goto Route116_EventScript_WallyStop
-	end
-
 Route116_EventScript_WallyStopTunnel::
 	setvar VAR_0x8007, DIR_SOUTH
 	goto Route116_EventScript_WallyStop
 	end
 
-@ VAR_0x8007 = the way back onto the route (the player steps back that way, or WALLY heads off that way)
+@ VAR_0x8007 = the way back onto the route (the player steps back that way if they stay)
 Route116_EventScript_WallyStop::
 	lockall
 	checkfollower
@@ -110,8 +147,9 @@ Route116_EventScript_WallyStop::
 	goto_if_eq VAR_RESULT, NO, Route116_EventScript_WallyStay
 	msgbox Route116_Text_WallyKeepLooking, MSGBOX_DEFAULT
 	closemessage
-	copyvar VAR_0x8004, VAR_0x8007
-	call Common_EventScript_FollowerStopLeave
+	special FollowerStop_StayInPlace
+	setfollowerpartner FOLLOWER_PARTNER_NONE
+	setflag FLAG_WALLY_ROUTE116_PARTED
 	setvar VAR_WALLY_FOLLOWER, 0
 	releaseall
 	end
@@ -604,7 +642,7 @@ Route116_Text_WallyAskHelp:
 	.string "though. Is that okay?$"
 
 Route116_Text_WallyDeclined:
-	.string "WALLY: Oh… Okay.\n"
+	.string "WALLY: That's fine.\n"
 	.string "I'll keep trying on my own.$"
 
 Route116_Text_WallyLetsGo:
@@ -615,8 +653,8 @@ Route116_Text_WallyLetsGo:
 Route116_Text_WallyBusy:
 	.string "WALLY: Oh, {PLAYER}…\n"
 	.string "You look busy right now.\p"
-	.string "That's okay! I'll keep trying to\n"
-	.string "catch a SKITTY on my own.\p"
+	.string "That's okay! I'll keep trying until\n"
+	.string "I catch a SKITTY on my own.\p"
 	.string "Maybe I'll run into you again!\n"
 	.string "See you next time!$"
 
@@ -631,7 +669,7 @@ Route116_Text_WallyFoundSkitty:
 
 Route116_Text_WallyPlayerCaughtSkitty:
 	.string "WALLY: Hey! That one was mine…\p"
-	.string "…Oh, it's okay.\n"
+	.string "…Oh well, that's okay.\n"
 	.string "There has to be more around here…$"
 
 Route116_Text_WallyCaughtSkitty:
@@ -639,17 +677,25 @@ Route116_Text_WallyCaughtSkitty:
 	.string "I caught a SKITTY all by myself!\p"
 	.string "Well… not all by myself.\n"
 	.string "Thank you, {PLAYER}!\p"
-	.string "I'm going to keep training.\n"
+	.string "I'm going to keep up my training.\n"
 	.string "Maybe I'll see you again!$"
 
 Route116_Text_WallyAskLeaving:
-	.string "WALLY: Are you leaving, {PLAYER}?$"
+	.string "WALLY: Oh, are you leaving already?\n"
+	.string "I know it's hard to find…$"
 
 Route116_Text_WallyKeepLooking:
-	.string "WALLY: Okay… I'll keep looking for\n"
-	.string "a SKITTY here.\p"
-	.string "Thanks for helping me, {PLAYER}!$"
+	.string "WALLY: Okay… Well, I'll keep looking\n"
+	.string "for a SKITTY on my own.\p"
+	.string "Thanks anyway, {PLAYER}!\n"
+	.string "I'll see you later!$"
+
+Route116_Text_WallyPlayerCameBack:
+	.string "WALLY: Oh, huh?\n"
+	.string "Did you change your mind, {PLAYER}?\p"
+	.string "It's okay if you're busy,\n"
+	.string "I know you're always running.$"
 
 Route116_Text_WallyStaying:
-	.string "WALLY: Oh, good!\n"
+	.string "WALLY: Oh, thank you!\n"
 	.string "Let's keep looking!$"

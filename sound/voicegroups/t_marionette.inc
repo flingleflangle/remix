@@ -92,8 +92,8 @@ voice_group t_marionette
 	voice_programmable_wave_alt 60, 0, ProgrammableWaveData_2, 0, 7, 15, 1
 	voice_programmable_wave_alt 60, 0, ProgrammableWaveData_1, 0, 7, 15, 0
 	voice_programmable_wave_alt 60, 0, ProgrammableWaveData_15, 0, 1, 9, 2
-	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
-	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
+	voice_programmable_wave 60, 0, ProgrammableWaveData_30, 0, 0, 13, 0 @ single-cycle saw bass at 75% height (srt_og slot 104 is full height), for the bassline from the removed direct port of Marionette Messiah
+	voice_programmable_wave 60, 0, ProgrammableWaveData_31, 0, 0, 13, 0 @ single-cycle square bass at 75% height (srt_og slot 105 is full height), for the bassline from the removed direct port of Marionette Messiah
 	voice_square_2_alt 60, 0, 2, 0, 2, 6, 3
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0
 	voice_square_1 60, 0, 0, 2, 0, 0, 15, 0

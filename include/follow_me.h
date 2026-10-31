@@ -52,6 +52,8 @@ void SetFollowerSprite(u8 spriteIndex);
 bool8 PlayerHasFollower(void);
 void FollowerStop_PrepareStepBack(void);
 void FollowerStop_PrepareLeave(void);
+void FollowerStop_StayInPlace(void);
+void FollowerStop_PrepareStepOff(void);
 void GetFollowerLocalIdForScript(void);
 void RivalApproach_Prepare(void);
 void GetCurrentMapForScript(void);

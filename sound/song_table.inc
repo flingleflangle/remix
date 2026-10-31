@@ -616,7 +616,6 @@ gSongTable::
 	song mus_trombe, 0, 0
 	song mus_woman_the_cool_spy, 0, 0
 	song mus_wilderness_of_battle, 0, 0
-	song mus_marionette_messiah, 0, 0
 	song mus_messenger_from_the_void, 0, 0
 	song mus_the_sword_that_cleaves_evil, 0, 0
 	song mus_dd_hideout, 0, 0

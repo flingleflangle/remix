@@ -1460,8 +1460,10 @@ static void BallWobbleStep(struct Sprite *sprite)
 {
     s8 shakes = SHAKES(sprite->sState) + 1;
     u16 frame;
-    // B presses do nothing during Wally's catch tutorial, or with a Master Ball since its catch is guaranteed
-    bool8 checkTiming = !(gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL) && gLastUsedItem != ITEM_MASTER_BALL;
+    // B presses do nothing during Wally's catch tutorial or a follower's own throw (partnercatch),
+    // or with a Master Ball since its catch is guaranteed
+    bool8 checkTiming = !(gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL) && !FollowerBattle_PartnerThrowsBall()
+                     && gLastUsedItem != ITEM_MASTER_BALL;
 	if(checkTiming && JOY_NEW(B_BUTTON) && (STATE(sprite->sState) != BALL_WAIT_NEXT_SHAKE)){  //  IF new B button pressed when the ball is shaking
         gBallShakesBData.ballShakesArray |= (1 << ((2 * shakes) - 1));
     }
