@@ -888,32 +888,32 @@ static const u8 sPickupProbabilities[] =
     30, 40, 50, 60, 70, 80, 90, 94, 98
 };
 
-// Fruit Feast grows a Berry after battle, like Pickup. Each tier is rarer than the last
-static const u16 sFruitFeastBerriesCommon[] =
+// Fiesta grows a Berry after battle, like Pickup. Each tier is rarer than the last
+static const u16 sFiestaBerriesCommon[] =
 {
     ITEM_CHERI_BERRY, ITEM_CHESTO_BERRY, ITEM_PECHA_BERRY, ITEM_RAWST_BERRY,
     ITEM_ASPEAR_BERRY, ITEM_LEPPA_BERRY, ITEM_ORAN_BERRY, ITEM_PERSIM_BERRY,
 };
 
-static const u16 sFruitFeastBerriesUncommon[] =
+static const u16 sFiestaBerriesUncommon[] =
 {
     ITEM_SITRUS_BERRY, ITEM_LUM_BERRY, ITEM_FIGY_BERRY, ITEM_WIKI_BERRY, ITEM_MAGO_BERRY, ITEM_AGUAV_BERRY,
     ITEM_IAPAPA_BERRY, ITEM_RAZZ_BERRY, ITEM_BLUK_BERRY, ITEM_NANAB_BERRY, ITEM_WEPEAR_BERRY, ITEM_PINAP_BERRY,
 };
 
-static const u16 sFruitFeastBerriesRare[] =
+static const u16 sFiestaBerriesRare[] =
 {
     ITEM_POMEG_BERRY, ITEM_KELPSY_BERRY, ITEM_QUALOT_BERRY, ITEM_HONDEW_BERRY, ITEM_GREPA_BERRY,
     ITEM_TAMATO_BERRY, ITEM_CORNN_BERRY, ITEM_MAGOST_BERRY, ITEM_RABUTA_BERRY, ITEM_NOMEL_BERRY,
 };
 
-static const u16 sFruitFeastBerriesVeryRare[] =
+static const u16 sFiestaBerriesVeryRare[] =
 {
     ITEM_SPELON_BERRY, ITEM_PAMTRE_BERRY, ITEM_WATMEL_BERRY, ITEM_DURIN_BERRY, ITEM_BELUE_BERRY,
     ITEM_LIECHI_BERRY, ITEM_GANLON_BERRY, ITEM_SALAC_BERRY, ITEM_PETAYA_BERRY, ITEM_APICOT_BERRY,
 };
 
-static const u16 sFruitFeastBerriesRarest[] =
+static const u16 sFiestaBerriesRarest[] =
 {
     ITEM_LANSAT_BERRY, ITEM_STARF_BERRY, ITEM_SHIFT_BERRY, ITEM_REMEM_BERRY, ITEM_RENEW_BERRY,
 };
@@ -922,17 +922,17 @@ static const struct
 {
     const u16 *berries;
     u8 count;
-} sFruitFeastTiers[] =
+} sFiestaTiers[] =
 {
-    {sFruitFeastBerriesCommon,   ARRAY_COUNT(sFruitFeastBerriesCommon)},
-    {sFruitFeastBerriesUncommon, ARRAY_COUNT(sFruitFeastBerriesUncommon)},
-    {sFruitFeastBerriesRare,     ARRAY_COUNT(sFruitFeastBerriesRare)},
-    {sFruitFeastBerriesVeryRare, ARRAY_COUNT(sFruitFeastBerriesVeryRare)},
-    {sFruitFeastBerriesRarest,   ARRAY_COUNT(sFruitFeastBerriesRarest)},
+    {sFiestaBerriesCommon,   ARRAY_COUNT(sFiestaBerriesCommon)},
+    {sFiestaBerriesUncommon, ARRAY_COUNT(sFiestaBerriesUncommon)},
+    {sFiestaBerriesRare,     ARRAY_COUNT(sFiestaBerriesRare)},
+    {sFiestaBerriesVeryRare, ARRAY_COUNT(sFiestaBerriesVeryRare)},
+    {sFiestaBerriesRarest,   ARRAY_COUNT(sFiestaBerriesRarest)},
 };
 
 // Chance out of 100 of each tier above, for levels 1-20, 21-40, 41-60, 61-80 and 81-100
-static const u8 sFruitFeastTierChances[][ARRAY_COUNT(sFruitFeastTiers)] =
+static const u8 sFiestaTierChances[][ARRAY_COUNT(sFiestaTiers)] =
 {
     {80, 20,  0,  0,  0},
     {55, 35, 10,  0,  0},
@@ -941,19 +941,19 @@ static const u8 sFruitFeastTierChances[][ARRAY_COUNT(sFruitFeastTiers)] =
     {10, 25, 30, 25, 10},
 };
 
-static u16 GetFruitFeastBerry(u8 level)
+static u16 GetFiestaBerry(u8 level)
 {
-    const u8 *chances = sFruitFeastTierChances[min((level - 1) / 20, ARRAY_COUNT(sFruitFeastTierChances) - 1)];
+    const u8 *chances = sFiestaTierChances[min((level - 1) / 20, ARRAY_COUNT(sFiestaTierChances) - 1)];
     s32 rand = Random() % 100;
     u32 tier;
 
-    for (tier = 0; tier < ARRAY_COUNT(sFruitFeastTiers) - 1; tier++)
+    for (tier = 0; tier < ARRAY_COUNT(sFiestaTiers) - 1; tier++)
     {
         if (rand < chances[tier])
             break;
         rand -= chances[tier];
     }
-    return sFruitFeastTiers[tier].berries[Random() % sFruitFeastTiers[tier].count];
+    return sFiestaTiers[tier].berries[Random() % sFiestaTiers[tier].count];
 }
 
 static const u8 sEnvironmentToType[] =
@@ -6882,14 +6882,14 @@ static void Cmd_removeitem(void)
 
     gBattlescriptCurrInstr += 2;
 
-    // Fruit Feast: every Berry it eats raises its stats by flavor. Natural Gift uses a Berry up without eating it
+    // Fiesta: every Berry it eats raises its stats by flavor. Natural Gift uses a Berry up without eating it
     if (gBattleMons[gActiveBattler].ability == ABILITY_FIESTA
      && !(gCurrentMove == MOVE_NATURAL_GIFT && gActiveBattler == gBattlerAttacker)
-     && TryStartFruitFeast(gActiveBattler, *usedHeldItem))
+     && TryStartFiesta(gActiveBattler, *usedHeldItem))
     {
         gBattleScripting.battler = gActiveBattler;
         BattleScriptPushCursor();
-        gBattlescriptCurrInstr = BattleScript_FruitFeastStatsUp;
+        gBattlescriptCurrInstr = BattleScript_FiestaStatsUp;
     }
 }
 
@@ -7846,8 +7846,8 @@ static void Cmd_various(void)
         gBattleCommunication[0] = TRUE;
         break;
     case VARIOUS_FRUIT_FEAST_NEXT_STAT:
-        // Raises the next stat from the Berry Fruit Feast just ate. Sets gBattleCommunication[0] to FALSE once done
-        gBattleCommunication[0] = SetNextFruitFeastStat(gActiveBattler);
+        // Raises the next stat from the Berry Fiesta just ate. Sets gBattleCommunication[0] to FALSE once done
+        gBattleCommunication[0] = SetNextFiestaStat(gActiveBattler);
         break;
     case VARIOUS_NATURAL_GIFT:
     {
@@ -11974,7 +11974,7 @@ static void Cmd_pickup(void)
                 && GetMonAbility(&gPlayerParty[i]) == ABILITY_FIESTA
                 && (Random() % 10) == 0)
             {
-                heldItem = GetFruitFeastBerry(GetMonData(&gPlayerParty[i], MON_DATA_LEVEL));
+                heldItem = GetFiestaBerry(GetMonData(&gPlayerParty[i], MON_DATA_LEVEL));
                 SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &heldItem);
             }
 			else if (species == SPECIES_SHUCKLE

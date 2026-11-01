@@ -87,7 +87,7 @@ static const u8 sFirstSightDescription[] = _("Infatuates foes on entry.");
 static const u8 sWishmakerDescription[] = _("Grants every EX move."); // Also works like Serene Grace, unmentioned
 static const u8 sMysticVeilDescription[] = _("Ups stats in a sandstorm.");
 static const u8 sNorthStarDescription[] = _("Contact may start PERISH.");
-static const u8 sFruitFeastDescription[] = _("Grows and savors BERRIES.");
+static const u8 sFiestaDescription[] = _("Grows and savors BERRIES.");
 static const u8 sHydrationDescription[] = _("Heals status in rain.");
 static const u8 sMagicGuardDescription[] = _("Only hurt by attacks.");
 static const u8 sDrySkinDescription[] = _("Rain and water heal it.");
@@ -202,7 +202,7 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_TINTED_LENS] = _("TINTED LENS"),
     [ABILITY_SCRAPPY] = _("SCRAPPY"),
     [ABILITY_STORM_DRAIN] = _("STORM DRAIN"),
-    [ABILITY_FIESTA] = _("FRUIT FEAST"),
+    [ABILITY_FIESTA] = _("FIESTA"),
 };
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
@@ -307,5 +307,5 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_TINTED_LENS] = sTintedLensDescription,
     [ABILITY_SCRAPPY] = sScrappyDescription,
     [ABILITY_STORM_DRAIN] = sStormDrainDescription,
-    [ABILITY_FIESTA] = sFruitFeastDescription,
+    [ABILITY_FIESTA] = sFiestaDescription,
 };

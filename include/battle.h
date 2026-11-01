@@ -153,7 +153,7 @@ struct SpecialStatus
     u32 focusBanded:1;
     u32 bubbleCoatPopped:1; // Bubble Coat took a multi-hit move's first hit, message pending
     u32 lifeOrbRecoiled:1; // Life Orb already took its recoil for this move
-    u32 fruitFeastAte:1; // Fruit Feast already ate its Berry this switch-in
+    u32 FiestaAte:1; // Fiesta already ate its Berry this switch-in
     s32 shellBellDmg;
     s32 physicalDmg;
     s32 specialDmg;

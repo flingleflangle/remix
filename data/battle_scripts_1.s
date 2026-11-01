@@ -6570,20 +6570,20 @@ BattleScript_DownloadActivates::
 	waitmessage B_WAIT_TIME_LONG
 	end3
 
-@ Fruit Feast: the Berry it just ate raises a stat for each of its flavors. Called from removeitem
-BattleScript_FruitFeastStatsUp::
+@ Fiesta: the Berry it just ate raises a stat for each of its flavors. Called from removeitem
+BattleScript_FiestaStatsUp::
 	playanimation BS_SCRIPTING, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
-BattleScript_FruitFeastNextStat:
+BattleScript_FiestaNextStat:
 	various BS_SCRIPTING, VARIOUS_FRUIT_FEAST_NEXT_STAT
-	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_FruitFeastStatsUpEnd
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_FiestaStatsUpEnd
 	printstring STRINGID_PKMNABILITYRAISEDSTAT
 	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_FruitFeastNextStat
-BattleScript_FruitFeastStatsUpEnd:
+	goto BattleScript_FiestaNextStat
+BattleScript_FiestaStatsUpEnd:
 	return
 
-@ Fruit Feast eats a Berry that does nothing in battle as soon as it comes in
-BattleScript_FruitFeastEatsBerry::
+@ Fiesta eats a Berry that does nothing in battle as soon as it comes in
+BattleScript_FiestaEatsBerry::
 	playanimation BS_SCRIPTING, B_ANIM_HELD_ITEM_EFFECT
 	printstring STRINGID_PKMNATEITSBERRY
 	waitmessage B_WAIT_TIME_LONG

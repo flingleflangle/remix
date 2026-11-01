@@ -3082,16 +3082,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
             case ABILITY_FIESTA:
                 // Eats a held Berry that does nothing in battle as soon as it comes in, for its stat raises.
                 // Other Berries wait for their usual moment (Cmd_removeitem)
-                if (!gSpecialStatuses[battler].fruitFeastAte
+                if (!gSpecialStatuses[battler].FiestaAte
                  && gBattleMons[battler].item >= FIRST_BERRY_INDEX && gBattleMons[battler].item <= LAST_BERRY_INDEX
                  && (gBattleMons[battler].item == ITEM_ENIGMA_BERRY ? gEnigmaBerries[battler].holdEffect
                                                                      : GetItemHoldEffect(gBattleMons[battler].item)) == HOLD_EFFECT_NONE
-                 && TryStartFruitFeast(battler, gBattleMons[battler].item))
+                 && TryStartFiesta(battler, gBattleMons[battler].item))
                 {
-                    gSpecialStatuses[battler].fruitFeastAte = TRUE;
+                    gSpecialStatuses[battler].FiestaAte = TRUE;
                     gLastUsedItem = gBattleMons[battler].item;
                     gBattleScripting.battler = battler;
-                    BattleScriptPushCursorAndCallback(BattleScript_FruitFeastEatsBerry);
+                    BattleScriptPushCursorAndCallback(BattleScript_FiestaEatsBerry);
                     effect++;
                 }
                 break;
@@ -4163,11 +4163,11 @@ bool32 SetExBonusStatsUpAnim(u8 battler)
     return count != 0;
 }
 
-// Fruit Feast: the stages each stat still has to rise from the Berry just eaten
-static EWRAM_DATA u8 sFruitFeastStages[NUM_BATTLE_STATS] = {0};
+// Fiesta: the stages each stat still has to rise from the Berry just eaten
+static EWRAM_DATA u8 sFiestaStages[NUM_BATTLE_STATS] = {0};
 
 // A flavor's stat stages: 10 for +1, 20 for +2, 40 for +3
-static u8 GetFruitFeastFlavorStages(u8 flavor)
+static u8 GetFiestaFlavorStages(u8 flavor)
 {
     if (flavor >= 40)
         return 3;
@@ -4178,10 +4178,10 @@ static u8 GetFruitFeastFlavorStages(u8 flavor)
     return 0;
 }
 
-// Fruit Feast: gets the stat raises for eating this Berry ready for SetNextFruitFeastStat, and sets the
+// Fiesta: gets the stat raises for eating this Berry ready for SetNextFiestaStat, and sets the
 // stat-up animation. Spicy raises Attack, Dry Sp. Atk, Sweet Speed, Bitter Sp. Def and Sour Defense.
 // Returns FALSE if it wouldn't raise anything (no flavor, or those stats are maxed)
-bool32 TryStartFruitFeast(u8 battler, u16 item)
+bool32 TryStartFiesta(u8 battler, u16 item)
 {
     const struct Berry *berry;
     u32 stat, count = 0, maxStages = 0;
@@ -4191,22 +4191,22 @@ bool32 TryStartFruitFeast(u8 battler, u16 item)
         return FALSE;
 
     berry = GetBerryInfo(ItemIdToBerryType(item));
-    memset(sFruitFeastStages, 0, sizeof(sFruitFeastStages));
-    sFruitFeastStages[STAT_ATK] = GetFruitFeastFlavorStages(berry->spicy);
-    sFruitFeastStages[STAT_SPATK] = GetFruitFeastFlavorStages(berry->dry);
-    sFruitFeastStages[STAT_SPEED] = GetFruitFeastFlavorStages(berry->sweet);
-    sFruitFeastStages[STAT_SPDEF] = GetFruitFeastFlavorStages(berry->bitter);
-    sFruitFeastStages[STAT_DEF] = GetFruitFeastFlavorStages(berry->sour);
+    memset(sFiestaStages, 0, sizeof(sFiestaStages));
+    sFiestaStages[STAT_ATK] = GetFiestaFlavorStages(berry->spicy);
+    sFiestaStages[STAT_SPATK] = GetFiestaFlavorStages(berry->dry);
+    sFiestaStages[STAT_SPEED] = GetFiestaFlavorStages(berry->sweet);
+    sFiestaStages[STAT_SPDEF] = GetFiestaFlavorStages(berry->bitter);
+    sFiestaStages[STAT_DEF] = GetFiestaFlavorStages(berry->sour);
 
     for (stat = STAT_ATK; stat < NUM_BATTLE_STATS; stat++)
     {
-        if (sFruitFeastStages[stat] == 0 || gBattleMons[battler].statStages[stat] >= MAX_STAT_STAGE)
+        if (sFiestaStages[stat] == 0 || gBattleMons[battler].statStages[stat] >= MAX_STAT_STAGE)
         {
-            sFruitFeastStages[stat] = 0;
+            sFiestaStages[stat] = 0;
             continue;
         }
-        animId = (sFruitFeastStages[stat] >= 2 ? STAT_ANIM_PLUS2 : STAT_ANIM_PLUS1) + stat;
-        maxStages = max(maxStages, sFruitFeastStages[stat]);
+        animId = (sFiestaStages[stat] >= 2 ? STAT_ANIM_PLUS2 : STAT_ANIM_PLUS1) + stat;
+        maxStages = max(maxStages, sFiestaStages[stat]);
         count++;
     }
     if (count > 1)
@@ -4216,17 +4216,17 @@ bool32 TryStartFruitFeast(u8 battler, u16 item)
     return count != 0;
 }
 
-// Fruit Feast: raises the next stat and buffers its name. Returns FALSE once they're all done
-bool32 SetNextFruitFeastStat(u8 battler)
+// Fiesta: raises the next stat and buffers its name. Returns FALSE once they're all done
+bool32 SetNextFiestaStat(u8 battler)
 {
     u32 stat;
 
     for (stat = STAT_ATK; stat < NUM_BATTLE_STATS; stat++)
     {
-        if (sFruitFeastStages[stat] != 0)
+        if (sFiestaStages[stat] != 0)
         {
-            gBattleMons[battler].statStages[stat] = min(gBattleMons[battler].statStages[stat] + sFruitFeastStages[stat], MAX_STAT_STAGE);
-            sFruitFeastStages[stat] = 0;
+            gBattleMons[battler].statStages[stat] = min(gBattleMons[battler].statStages[stat] + sFiestaStages[stat], MAX_STAT_STAGE);
+            sFiestaStages[stat] = 0;
             PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
             return TRUE;
         }
