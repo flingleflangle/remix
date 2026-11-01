@@ -1828,6 +1828,19 @@ static ItemUseFunc GetRegisteredItemFieldFunc(u16 itemId)
     return GetItemFieldFunc(itemId);
 }
 
+// Hold-only items (no field or battle use) get Give in Use's spot, leaving its old spot blank
+static void TryReplaceUseWithGive(void)
+{
+    if (GetItemFieldFunc(gSpecialVar_ItemId) == ItemUseOutOfBattle_CannotUse
+     && !GetItemBattleUsage(gSpecialVar_ItemId)
+     && gBagMenu->contextMenuItemsBuffer[0] == ACTION_USE
+     && gBagMenu->contextMenuItemsBuffer[1] == ACTION_GIVE)
+    {
+        gBagMenu->contextMenuItemsBuffer[0] = ACTION_GIVE;
+        gBagMenu->contextMenuItemsBuffer[1] = ACTION_DUMMY;
+    }
+}
+
 static void OpenContextMenu(u8 taskId)
 {
     u32 i;
@@ -1923,6 +1936,8 @@ static void OpenContextMenu(u8 taskId)
                 }
                 if (ItemIsMail(gSpecialVar_ItemId) == TRUE)
                     gBagMenu->contextMenuItemsBuffer[0] = ACTION_CHECK;
+                else
+                    TryReplaceUseWithGive();
                 break;
             case KEYITEMS_POCKET:
                 gBagMenu->contextMenuItemsPtr = gBagMenu->contextMenuItemsBuffer;
@@ -1957,6 +1972,7 @@ static void OpenContextMenu(u8 taskId)
                 memcpy(&gBagMenu->contextMenuItemsBuffer, &sContextMenuItems_BerriesPocket, sizeof(sContextMenuItems_BerriesPocket));
                 if (CanRegisterNonKeyItem(gSpecialVar_ItemId))
                     gBagMenu->contextMenuItemsBuffer[5] = ACTION_REGISTER;
+                TryReplaceUseWithGive();
                 break;
             }
 

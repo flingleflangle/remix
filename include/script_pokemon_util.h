@@ -9,5 +9,6 @@ void GrantExFormToPartyMon(void);
 void ScriptSetMonMoveSlot(u8 monIndex, u16 move, u8 slot);
 void ReducePlayerPartyToSelectedMons(void);
 void HealPlayerParty(void);
+void HealPlayerPC(void);
 
 #endif // GUARD_SCRIPT_POKEMON_UTIL_H

@@ -3473,11 +3473,11 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     // Apply abilities / field sports
     if (defender->ability == ABILITY_THICK_FAT && (type == TYPE_FIRE || type == TYPE_ICE))
         spAttack /= 2;
-    if (defender->ability == ABILITY_MAGMA_ARMOR && (type == TYPE_WATER || type == TYPE_ICE))
+    if (defender->ability == ABILITY_MAGMA_ARMOR && (type == TYPE_WATER || type == TYPE_GROUND))
         spAttack /= 2;
     if (defender->ability == ABILITY_WATER_VEIL && type == TYPE_FIRE)
         spAttack /= 2;
-    if (defender->ability == ABILITY_IMMUNITY && type == TYPE_POISON)
+    if (defender->ability == ABILITY_IMMUNITY && (type == TYPE_POISON || type == TYPE_BUG))
         attack /= 2;
     // Battle Armor takes 20% less from physical moves, Shell Armor 20% less from special ones
     if (defender->ability == ABILITY_BATTLE_ARMOR)

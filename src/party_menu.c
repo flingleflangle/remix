@@ -6908,7 +6908,23 @@ void ItemUseCB_PokeBall(u8 taskId, TaskFunc task)
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
     u16 currBall = GetMonData(mon, MON_DATA_POKEBALL);
     u16 newBall = gSpecialVar_ItemId;
-    static const u8 sText_MonBallWasChanged[] = _("{STR_VAR_1} was put in the {STR_VAR_2}.{PAUSE_UNTIL_PRESS}");
+    // Same two sounds (and gap) as a wild catch attempt: the ball opening, then the mon being drawn in
+    static const u8 sText_MonBallWasChanged[] = _("{PLAY_SE SE_BALL_OPEN}{PAUSE 21}{PLAY_SE SE_BALL_TRADE}{STR_VAR_1} was put in the {STR_VAR_2}.{PAUSE_UNTIL_PRESS}");
+
+    // Traded mons and Master Ball catches keep the ball they came in
+    if (currBall == ITEM_MASTER_BALL || IsTradedMon(mon))
+    {
+        static const u8 sText_MonBallCantBeChanged[] = _("{STR_VAR_1} won't leave its\n{STR_VAR_2}!{PAUSE_UNTIL_PRESS}");
+
+        GetMonNickname(mon, gStringVar1);
+        CopyItemName(currBall, gStringVar2);
+        StringExpandPlaceholders(gStringVar4, sText_MonBallCantBeChanged);
+        gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gStringVar4, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = task;
+        return;
+    }
 
     if (currBall == newBall)
     {
@@ -6916,18 +6932,29 @@ void ItemUseCB_PokeBall(u8 taskId, TaskFunc task)
         DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
         ScheduleBgCopyTilemapToVram(2);
         gTasks[taskId].func = task;
+        return;
+    }
+
+    // Swap the new ball for the old one in the bag. The new ball is taken first so a stack
+    // it empties frees its slot; if the old ball still doesn't fit, undo and cancel the swap.
+    RemoveBagItem(newBall, 1);
+    if (GetPocketByItemId(currBall) == POCKET_POKE_BALLS && !AddBagItem(currBall, 1))
+    {
+        AddBagItem(newBall, 1);
+        gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_BagIsFull, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = task;
     }
     else
     {
         GetMonNickname(mon, gStringVar1);
         CopyItemName(newBall, gStringVar2);
-        PlaySE(SE_SELECT);
         gPartyMenuUseExitCallback = TRUE;
         SetMonData(mon, MON_DATA_POKEBALL, &newBall);
         StringExpandPlaceholders(gStringVar4, sText_MonBallWasChanged);
         DisplayPartyMenuMessage(gStringVar4, TRUE);
         ScheduleBgCopyTilemapToVram(2);
         gTasks[taskId].func = task;
-        RemoveBagItem(newBall, 1);
     }
 }

@@ -3,6 +3,21 @@
 @ Track 8's wave bass plays the single-cycle saw (slot 104) with no octave shift. Emerald's own waves repeat twice and sound an octave high,
 @ and shifting the track down an octave to make up for it put most of its notes below key 36, where the wave channel clamps
 @ every note to the same pitch (MidiKeyToCgbFreq). The single-cycle waves sound an octave lower themselves.
+@
+@ Instruments by track (slot numbers in voicegroups/srt_og.inc; the loop starts at bar 9):
+@   Track 1:  drums (kick, snare, toms; slot 119).
+@   Track 2:  ocarina (french horn in Emerald, slot 79).
+@   Track 3:  orchestra hits (slot 55).
+@   Track 4:  brass (trumpet in Emerald, slot 61).
+@   Track 5:  strings (slot 48).
+@   Track 7:  piano (slot 0).
+@   Track 8:  wave bass, the single-cycle saw (slot 104).
+@   Track 9:  square wave (channel 1), a 50% duty square (slot 82) in the intro, switching to a 25% one (slot 81) at the loop point (bar 9).
+@             Back to slot 82 at bar 16, slot 81 at bar 34, 82 at bar 42, 81 at bar 46, and 82 at bar 49 to the end of the loop.
+@   Track 10: square wave (channel 2), switching in step with track 9: a 50% duty square (slot 87) where track 9 plays slot 82,
+@             and a 25% one (slot 86) where track 9 plays slot 81.
+@   Track 11: noise hi-hats, alternating note by note between a longer hiss (slot 123) and a short tick (slot 124) the whole song.
+@             It starts on the nylon guitar (slot 24), but switches to slot 123 before its first note.
 
 	.include "MPlayDef.s"
 
@@ -753,9 +768,9 @@ mus_woman_the_cool_spy_1_009:
 
 mus_woman_the_cool_spy_2:
 	.byte		KEYSH , mus_woman_the_cool_spy_key+0
-	.byte		VOICE , 79
+	.byte		VOICE , 48
 	.byte	W01
-	.byte		VOL   , 59*mus_woman_the_cool_spy_mvl/mxv
+	.byte		VOL   , 92*mus_woman_the_cool_spy_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W01
 	.byte		BEND  , c_v+0
@@ -1134,7 +1149,7 @@ mus_woman_the_cool_spy_3:
 	.byte		KEYSH , mus_woman_the_cool_spy_key+0
 	.byte		VOICE , 55
 	.byte	W01
-	.byte		VOL   , 80*mus_woman_the_cool_spy_mvl/mxv
+	.byte		VOL   , 70*mus_woman_the_cool_spy_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W01
 	.byte		BEND  , c_v+0
@@ -1264,7 +1279,7 @@ mus_woman_the_cool_spy_4:
 	.byte		KEYSH , mus_woman_the_cool_spy_key+0
 	.byte		VOICE , 61
 	.byte	W01
-	.byte		VOL   , 66*mus_woman_the_cool_spy_mvl/mxv
+	.byte		VOL   , 86*mus_woman_the_cool_spy_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W01
 	.byte		BEND  , c_v+0
@@ -1461,7 +1476,7 @@ mus_woman_the_cool_spy_5:
 	.byte		KEYSH , mus_woman_the_cool_spy_key+0
 	.byte		VOICE , 48
 	.byte	W01
-	.byte		VOL   , 44*mus_woman_the_cool_spy_mvl/mxv
+	.byte		VOL   , 62*mus_woman_the_cool_spy_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W01
 	.byte		BEND  , c_v+0
@@ -1744,9 +1759,9 @@ mus_woman_the_cool_spy_5_004:
 
 mus_woman_the_cool_spy_7:
 	.byte		KEYSH , mus_woman_the_cool_spy_key+0
-	.byte		VOICE , 0
+	.byte		VOICE , 24
 	.byte	W01
-	.byte		VOL   , 37*mus_woman_the_cool_spy_mvl/mxv
+	.byte		VOL   , 57*mus_woman_the_cool_spy_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W01
 	.byte		BEND  , c_v+0
@@ -1970,7 +1985,7 @@ mus_woman_the_cool_spy_8:
 	.byte		KEYSH , mus_woman_the_cool_spy_key+0
 	.byte		VOICE , 104
 	.byte	W01
-	.byte		VOL   , 75*mus_woman_the_cool_spy_mvl/mxv
+	.byte		VOL   , 51*mus_woman_the_cool_spy_mvl/mxv
 	.byte		PAN   , c_v+0
 	.byte	W01
 	.byte		BEND  , c_v+0

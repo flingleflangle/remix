@@ -4,6 +4,7 @@
 #include "decompress.h"
 #include "decoration.h"
 #include "decoration_inventory.h"
+#include "event_data.h"
 #include "event_object_movement.h"
 #include "field_player_avatar.h"
 #include "field_screen_effect.h"
@@ -1149,18 +1150,26 @@ static void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
     {
         PlaySE(SE_SELECT);
 
-        // Purchasing 10+ Poke Balls gets the player a Premier Ball
-        if ((GetItemPocket(tItemId) == POCKET_POKE_BALLS) && tItemCount > 9 && AddBagItem(ITEM_PREMIER_BALL, tItemCount / 10) == TRUE)
-            if (tItemCount > 19)
-           {
-               BuyMenuDisplayMessage(taskId, gText_ThrowInPremierBalls, BuyMenuReturnToItemList);
-           }
-           else
-           {
-               BuyMenuDisplayMessage(taskId, gText_ThrowInPremierBall, BuyMenuReturnToItemList);
-           }
-        else
-            BuyMenuReturnToItemList(taskId);
+        // Every 10 Poke Balls bought gets the player a Premier Ball. The count carries over between
+        // purchases and marts, so buying 7 and then 3 still earns one
+        if (GetItemPocket(tItemId) == POCKET_POKE_BALLS && tItemId != ITEM_PREMIER_BALL)
+        {
+            u16 ballsBought = VarGet(VAR_PREMIER_BALL_PROGRESS) + tItemCount;
+            u16 premierBalls = ballsBought / 10;
+
+            // If the bag can't take them, keep the full count so they're given on a later purchase
+            if (premierBalls > 0 && AddBagItem(ITEM_PREMIER_BALL, premierBalls) == TRUE)
+            {
+                VarSet(VAR_PREMIER_BALL_PROGRESS, ballsBought % 10);
+                if (premierBalls > 1)
+                    BuyMenuDisplayMessage(taskId, gText_ThrowInPremierBalls, BuyMenuReturnToItemList);
+                else
+                    BuyMenuDisplayMessage(taskId, gText_ThrowInPremierBall, BuyMenuReturnToItemList);
+                return;
+            }
+            VarSet(VAR_PREMIER_BALL_PROGRESS, ballsBought);
+        }
+        BuyMenuReturnToItemList(taskId);
     }
 }
 

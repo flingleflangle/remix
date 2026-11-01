@@ -560,3 +560,4 @@ gSpecials::
 	def_special FollowerAppearBesidePlayer
 	def_special FollowerStop_StayInPlace
 	def_special FollowerStop_PrepareStepOff
+	def_special HealPlayerPC

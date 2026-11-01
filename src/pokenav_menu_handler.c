@@ -304,6 +304,7 @@ static void Task_WaitFadeAccessPC(u8 taskId)
 {
     if (WaitForPokenavShutdownFade())
     {
+        PlaySE(SE_PC_ON);
         ScriptContext_SetupScript(EventScript_PCMainMenu);
         DestroyTask(taskId);
     }

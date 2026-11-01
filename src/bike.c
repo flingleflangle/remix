@@ -984,9 +984,8 @@ void GetOnOffBike(u8 transitionFlags)
     else
     {
         SetPlayerAvatarTransitionFlags(transitionFlags);
-        // TEMP: testing MUS_T_MARIONETTE. Change both back to MUS_CYCLING
-        Overworld_SetSavedMusic(MUS_WOMAN_THE_COOL_SPY);
-        Overworld_ChangeMusicTo(MUS_WOMAN_THE_COOL_SPY);
+        Overworld_SetSavedMusic(MUS_CYCLING);
+        Overworld_ChangeMusicTo(MUS_CYCLING);
     }
 }
 

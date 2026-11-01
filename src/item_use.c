@@ -41,6 +41,7 @@
 #include "follow_me.h"
 #include "constants/event_bg.h"
 #include "constants/event_objects.h"
+#include "constants/field_effects.h"
 #include "constants/item_effects.h"
 #include "constants/items.h"
 #include "constants/songs.h"
@@ -327,13 +328,12 @@ void ItemUseOutOfBattle_Itemfinder(u8 var)
     SetUpItemUseOnFieldCallback(var);
 }
 
-static void ItemUseOnFieldCB_Itemfinder(u8 taskId)
-{
-    if (ItemfinderCheckForHiddenItems(gMapHeader.events, taskId) == TRUE)
-        gTasks[taskId].func = Task_UseItemfinder;
-    else
-        DisplayItemMessageOnField(taskId, gText_ItemFinderNothing, Task_CloseItemfinderMessage);
-}
+// Itemfinder detection range, in metatiles on either side of the player.
+#define ITEMFINDER_RANGE_X 8
+#define ITEMFINDER_RANGE_Y 7
+
+// Only the closest beep band also sparkles the item's tile
+#define ITEMFINDER_MAX_BEEPS 4
 
 // Define itemfinder task data
 #define tItemDistanceX    data[0]
@@ -342,6 +342,83 @@ static void ItemUseOnFieldCB_Itemfinder(u8 taskId)
 #define tCounter          data[3] // Used to count delay between beeps and rotations during player spin
 #define tItemfinderBeeps  data[4]
 #define tFacingDir        data[5]
+#define tBeepsToPlay      data[6]
+
+// The farthest detectable item is ITEMFINDER_RANGE_X + ITEMFINDER_RANGE_Y (14) steps away.
+// Closer items get more beeps, up to 4.
+static u8 GetItemfinderBeepCount(s16 itemDistanceX, s16 itemDistanceY)
+{
+    s16 distance = abs(itemDistanceX) + abs(itemDistanceY);
+
+    if (distance <= 3)
+        return ITEMFINDER_MAX_BEEPS;
+    else if (distance <= 5)
+        return 3;
+    else if (distance <= 7)
+        return 2;
+    else
+        return 1;
+}
+
+// Hidden items on the current map that haven't been picked up yet
+static u16 CountHiddenItemsOnMap(const struct MapEvents *events)
+{
+    u16 count = 0;
+    int i;
+
+    for (i = 0; i < events->bgEventCount; i++)
+    {
+        if (events->bgEvents[i].kind == BG_EVENT_HIDDEN_ITEM
+         && !FlagGet(events->bgEvents[i].bgUnion.hiddenItem.hiddenItemId + FLAG_HIDDEN_ITEMS_START))
+            count++;
+    }
+    return count;
+}
+
+static void ItemUseOnFieldCB_Itemfinder(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+
+    if (ItemfinderCheckForHiddenItems(gMapHeader.events, taskId) == TRUE)
+    {
+        tBeepsToPlay = GetItemfinderBeepCount(tItemDistanceX, tItemDistanceY);
+        gTasks[taskId].func = Task_UseItemfinder;
+    }
+    else
+    {
+        u16 itemsInArea = CountHiddenItemsOnMap(gMapHeader.events);
+        const u8 *text;
+
+        if (itemsInArea == 0)
+            text = gText_ItemFinderNoneInArea;
+        else if (itemsInArea == 1)
+            text = gText_ItemFinderOneInArea;
+        else
+            text = gText_ItemFinderManyInArea;
+
+        // VS Seeker beep when items remain elsewhere; "no response" stays silent
+        if (itemsInArea != 0)
+            PlaySE(SE_CONTEST_MONS_TURN);
+        ConvertIntToDecimalStringN(gStringVar1, itemsInArea, STR_CONV_MODE_LEFT_ALIGN, 3);
+        StringExpandPlaceholders(gStringVar4, text);
+        DisplayItemMessageOnField(taskId, gStringVar4, Task_CloseItemfinderMessage);
+    }
+}
+
+
+// Briefly sparkle the hidden item's tile (same effect as a growing berry tree).
+// Priority 1 keeps it visible above top-layer metatiles like treetops.
+static void ItemfinderSparkleAtItem(s16 itemDistanceX, s16 itemDistanceY)
+{
+    s16 playerX, playerY;
+
+    PlayerGetDestCoords(&playerX, &playerY);
+    gFieldEffectArguments[0] = playerX + itemDistanceX;
+    gFieldEffectArguments[1] = playerY + itemDistanceY;
+    gFieldEffectArguments[2] = 0;
+    gFieldEffectArguments[3] = 1;
+    FieldEffectStart(FLDEFF_BERRY_TREE_GROWTH_SPARKLE);
+}
 
 static void Task_UseItemfinder(u8 taskId)
 {
@@ -351,8 +428,10 @@ static void Task_UseItemfinder(u8 taskId)
     s16 *data = gTasks[taskId].data;
     if (tCounter == 0)
     {
-        if (tItemfinderBeeps == 4)
+        if (tItemfinderBeeps == tBeepsToPlay)
         {
+            if (tBeepsToPlay == ITEMFINDER_MAX_BEEPS)
+                ItemfinderSparkleAtItem(tItemDistanceX, tItemDistanceY);
             playerDirToItem = GetDirectionToHiddenItem(tItemDistanceX, tItemDistanceY);
             if (playerDirToItem != DIR_NONE)
             {
@@ -405,9 +484,8 @@ static bool8 ItemfinderCheckForHiddenItems(const struct MapEvents *events, u8 ta
             itemY = (u16)events->bgEvents[i].y + MAP_OFFSET;
             distanceY = itemY - playerY;
 
-            // Player can see 7 metatiles on either side horizontally
-            // and 5 metatiles on either side vertically
-            if (distanceX >= -7 && distanceX <= 7 && distanceY >= -5 && distanceY <= 5)
+            if (distanceX >= -ITEMFINDER_RANGE_X && distanceX <= ITEMFINDER_RANGE_X
+             && distanceY >= -ITEMFINDER_RANGE_Y && distanceY <= ITEMFINDER_RANGE_Y)
                 SetDistanceOfClosestHiddenItem(taskId, distanceX, distanceY);
         }
     }
@@ -489,11 +567,9 @@ static void CheckForHiddenItemsInMapConnection(u8 taskId)
 
     PlayerGetDestCoords(&playerX, &playerY);
 
-    // Player can see 7 metatiles on either side horizontally
-    // and 5 metatiles on either side vertically
-    for (x = playerX - 7; x <= playerX + 7; x++)
+    for (x = playerX - ITEMFINDER_RANGE_X; x <= playerX + ITEMFINDER_RANGE_X; x++)
     {
-        for (y = playerY - 5; y <= playerY + 5; y++)
+        for (y = playerY - ITEMFINDER_RANGE_Y; y <= playerY + ITEMFINDER_RANGE_Y; y++)
         {
             if (var1 > x
              || x >= width
@@ -624,8 +700,29 @@ static void PlayerFaceHiddenItem(u8 direction)
 
 static void Task_HiddenItemNearby(u8 taskId)
 {
+    s16 *data = gTasks[taskId].data;
+    const u8 *text;
+
     if (ObjectEventCheckHeldMovementStatus(&gObjectEvents[GetObjectEventIdByLocalIdAndMap(LOCALID_PLAYER, 0, 0)]) == TRUE)
-        DisplayItemMessageOnField(taskId, gText_ItemFinderNearby, Task_CloseItemfinderMessage);
+    {
+        // Message matches how many times the Itemfinder beeped
+        switch (tBeepsToPlay)
+        {
+        case 1:
+            text = gText_ItemFinderNearby;
+            break;
+        case 2:
+            text = gText_ItemFinderTwoBeeps;
+            break;
+        case 3:
+            text = gText_ItemFinderThreeBeeps;
+            break;
+        default:
+            text = gText_ItemFinderOnTop;
+            break;
+        }
+        DisplayItemMessageOnField(taskId, text, Task_CloseItemfinderMessage);
+    }
 }
 
 static void Task_StandingOnHiddenItem(u8 taskId)
@@ -653,6 +750,7 @@ static void Task_StandingOnHiddenItem(u8 taskId)
 #undef tCounter
 #undef tItemfinderBeeps
 #undef tFacingDir
+#undef tBeepsToPlay
 
 void ItemUseOutOfBattle_PokeblockCase(u8 taskId)
 {

@@ -16,6 +16,7 @@
 #include "party_menu.h"
 #include "pokedex.h"
 #include "pokemon.h"
+#include "pokemon_storage_system.h"
 #include "random.h"
 #include "script.h"
 #include "sprite.h"
@@ -56,6 +57,46 @@ void HealPlayerParty(void)
         arg[2] = 0;
         arg[3] = 0;
         SetMonData(&gPlayerParty[i], MON_DATA_STATUS, arg);
+    }
+}
+
+// Boxed mons keep their HP/status in box_hp/box_ailment while inPC is set (see SetPlacedMonData).
+// Clearing inPC makes every withdraw/summary path treat the mon as fully healed, so that plus
+// restoring the stored PP is a full heal.
+void HealPlayerPC(void)
+{
+    u8 boxId, boxPos, j;
+    u8 ppBonuses, pp;
+    u8 zero = 0;
+    u16 move;
+    struct BoxPokemon *boxMon;
+
+    for (boxId = 0; boxId < TOTAL_BOXES_COUNT; boxId++)
+    {
+        for (boxPos = 0; boxPos < IN_BOX_COUNT; boxPos++)
+        {
+            boxMon = GetBoxedMonPtr(boxId, boxPos);
+            if (!GetBoxMonData(boxMon, MON_DATA_SANITY_HAS_SPECIES) || GetBoxMonData(boxMon, MON_DATA_SANITY_IS_EGG))
+                continue;
+
+            if (GetBoxMonData(boxMon, MON_DATA_IN_PC))
+            {
+                SetBoxMonData(boxMon, MON_DATA_IN_PC, &zero);
+                SetBoxMonData(boxMon, MON_DATA_BOX_HP, &zero);
+                SetBoxMonData(boxMon, MON_DATA_BOX_AILMENT, &zero);
+            }
+
+            ppBonuses = GetBoxMonData(boxMon, MON_DATA_PP_BONUSES);
+            for (j = 0; j < MAX_MON_MOVES; j++)
+            {
+                move = GetBoxMonData(boxMon, MON_DATA_MOVE1 + j);
+                if (move == MOVE_NONE)
+                    continue;
+                pp = CalculatePPWithBonus(move, ppBonuses, j);
+                if (GetBoxMonData(boxMon, MON_DATA_PP1 + j) != pp)
+                    SetBoxMonData(boxMon, MON_DATA_PP1 + j, &pp);
+            }
+        }
     }
 }
 
