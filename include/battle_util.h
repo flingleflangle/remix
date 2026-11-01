@@ -126,6 +126,8 @@ bool32 TryStartExMoveBonus(void);
 void RestoreExMoveBonusState(void);
 bool32 SetExBonusStatsUpAnim(u8 battler);
 bool32 SetNextExBonusStat(void);
+bool32 TryStartFruitFeast(u8 battler, u16 item);
+bool32 SetNextFruitFeastStat(u8 battler);
 bool32 SetExBonusHealDamage(u8 battler);
 bool32 CanBattlerUseExMove(u8 battler, u16 move);
 bool32 IsBattlerEnragedBySolidRage(u8 battler);

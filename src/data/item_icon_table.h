@@ -191,9 +191,9 @@ const u32 *const gItemIconTable[ITEMS_COUNT + 1][2] =
     [ITEM_LANSAT_BERRY] = {gItemIcon_LansatBerry, gItemIconPalette_LansatBerry},
     [ITEM_STARF_BERRY] = {gItemIcon_StarfBerry, gItemIconPalette_StarfBerry},
     [ITEM_ENIGMA_BERRY] = {gItemIcon_EnigmaBerry, gItemIconPalette_EnigmaBerry},
-    [ITEM_UNUSED_BERRY_1] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_UNUSED_BERRY_2] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
-    [ITEM_UNUSED_BERRY_3] = {gItemIcon_QuestionMark, gItemIconPalette_QuestionMark},
+    [ITEM_SHIFT_BERRY] = {gItemIcon_ShiftBerry, gItemIconPalette_ShiftBerry},
+    [ITEM_REMEM_BERRY] = {gItemIcon_RememBerry, gItemIconPalette_RememBerry},
+    [ITEM_RENEW_BERRY] = {gItemIcon_RenewBerry, gItemIconPalette_RenewBerry},
     // Hold items
     [ITEM_BRIGHT_POWDER] = {gItemIcon_BrightPowder, gItemIconPalette_BrightPowder},
     [ITEM_WHITE_HERB] = {gItemIcon_InBattleHerb, gItemIconPalette_WhiteHerb},

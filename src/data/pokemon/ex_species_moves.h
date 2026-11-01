@@ -129,7 +129,7 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_SLOWBRO]      = { .exMoves = { MOVE_NONE } }, // 490: 1 EX slot
     [SPECIES_MAGNEMITE]    = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 325: 3 EX slots
     [SPECIES_MAGNETON]     = { .exMoves = { MOVE_TRI_ATTACK } }, // 465: 1 EX slot
-    [SPECIES_FARFETCHD]    = { .exMoves = { MOVE_SLASH, MOVE_FURY_CUTTER, MOVE_OLD_FURY_CUTTER} }, // 377: 3 EX slots
+    [SPECIES_FARFETCHD]    = { .exMoves = { MOVE_SLASH, MOVE_FURY_CUTTER, MOVE_SLICE} }, // 377: 3 EX slots
     [SPECIES_DODUO]        = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 310: 3 EX slots
     [SPECIES_DODRIO]       = { .exMoves = { MOVE_TRI_ATTACK } }, // 470: 1 EX slot
     [SPECIES_SEEL]         = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 325: 3 EX slots
@@ -169,7 +169,7 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_STARYU]       = { .exMoves = { MOVE_SWIFT, MOVE_NONE, MOVE_NONE } }, // 340: 3 EX slots
     [SPECIES_STARMIE]      = { .exMoves = { MOVE_SWIFT } }, // 520: 1 EX slot
     [SPECIES_MR_MIME]      = { .exMoves = { MOVE_NONE } }, // 460: 1 EX slot
-    [SPECIES_SCYTHER]      = { .exMoves = { MOVE_FURY_CUTTER, MOVE_OLD_FURY_CUTTER } }, // 500: 1 EX slot
+    [SPECIES_SCYTHER]      = { .exMoves = { MOVE_FURY_CUTTER, MOVE_SLICE } }, // 500: 1 EX slot
     [SPECIES_JYNX]         = { .exMoves = { MOVE_ICE_PUNCH, MOVE_LOVELY_KISS } }, // 455: 2 EX slots
     [SPECIES_ELECTABUZZ]   = { .exMoves = { MOVE_THUNDER_PUNCH } }, // 530: 1 EX slot
     [SPECIES_MAGMAR]       = { .exMoves = { MOVE_FIRE_PUNCH } }, // 535: 1 EX slot

@@ -147,6 +147,7 @@ static const struct CaptureStar sCaptureStars[] =
 
 #define BALL_SHAKE_BUTTON_MULT    11  // 10 * (BALL_SHAKE_BUTTON_MULT - 10)  is the amount we multiply 
 // our catch odds with each time the B button is successfully pressed
+#define BALL_SHAKE_BUTTON_MULT_HIGH 12 // Premier and Luxury Balls reward well-timed B presses more
 
 static const struct CompressedSpriteSheet sBallParticleSpriteSheets[POKEBALL_COUNT] =
 {
@@ -1578,7 +1579,10 @@ static void BallWobbleStep(struct Sprite *sprite)
         gBallShakesBData.ballShakesArray |= (shakes << 6);
         // If the B button wasn't held at the beginning and a new B button was pressed when the ball was shaking, increase the odds
         if (((gBallShakesBData.ballShakesArray >> ((shakes - 1) * 2)) & 0x03) == 0x03){
-            gBallShakesBData.odds = (BALL_SHAKE_BUTTON_MULT * gBallShakesBData.odds) / 10;
+            if (gLastUsedItem == ITEM_PREMIER_BALL || gLastUsedItem == ITEM_LUXURY_BALL)
+                gBallShakesBData.odds = (BALL_SHAKE_BUTTON_MULT_HIGH * gBallShakesBData.odds) / 10;
+            else
+                gBallShakesBData.odds = (BALL_SHAKE_BUTTON_MULT * gBallShakesBData.odds) / 10;
 			PlaySE(SE_RG_BAG_CURSOR);
             StartBallTimingFlash(sprite);
             // Stars build up toward the capture's three: none for the 1st well-timed shake, 1 for the 2nd, 2 for the 3rd

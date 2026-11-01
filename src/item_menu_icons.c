@@ -369,6 +369,9 @@ static const struct CompressedTilesPal sBerryPicTable[] =
     [ITEM_TO_BERRY(ITEM_LANSAT_BERRY) - 1] = {gBerryPic_Lansat, gBerryPalette_Lansat},
     [ITEM_TO_BERRY(ITEM_STARF_BERRY)  - 1] = {gBerryPic_Starf,  gBerryPalette_Starf},
     [ITEM_TO_BERRY(ITEM_ENIGMA_BERRY) - 1] = {gBerryPic_Enigma, gBerryPalette_Enigma},
+    [ITEM_TO_BERRY(ITEM_SHIFT_BERRY)  - 1] = {gBerryPic_Shift,  gBerryPalette_Shift},
+    [ITEM_TO_BERRY(ITEM_REMEM_BERRY)  - 1] = {gBerryPic_Remem, gBerryPalette_Remem},
+    [ITEM_TO_BERRY(ITEM_RENEW_BERRY)  - 1] = {gBerryPic_Renew,  gBerryPalette_Renew},
 };
 
 const struct CompressedSpriteSheet gBerryCheckCircleSpriteSheet =

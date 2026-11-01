@@ -2734,7 +2734,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_FURY_CUTTER,
         .power = 20,
-        .type = TYPE_BLADE,
+        .type = TYPE_BUG,
         .accuracy = 95,
         .pp = 20,
         .secondaryEffectChance = 50,
@@ -5239,11 +5239,11 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .flags = FLAG_MIRROR_MOVE_AFFECTED,
     },
 
-    [MOVE_OLD_FURY_CUTTER] =
+    [MOVE_SLICE] =
     {
         .effect = EFFECT_FURY_CUTTER,
         .power = 20,
-        .type = TYPE_BUG,
+        .type = TYPE_BLADE,
         .accuracy = 95,
         .pp = 20,
         .secondaryEffectChance = 50,

@@ -970,6 +970,24 @@ void ItemUseOutOfBattle_TastyTreat(u8 taskId)
     SetUpItemUseCallback(taskId);
 }
 
+void ItemUseOutOfBattle_ShiftBerry(u8 taskId)
+{
+    gItemUseCB = ItemUseCB_ShiftBerry;
+    SetUpItemUseCallback(taskId);
+}
+
+void ItemUseOutOfBattle_RememBerry(u8 taskId)
+{
+    gItemUseCB = ItemUseCB_RememBerry;
+    SetUpItemUseCallback(taskId);
+}
+
+void ItemUseOutOfBattle_RenewBerry(u8 taskId)
+{
+    gItemUseCB = ItemUseCB_RenewBerry;
+    SetUpItemUseCallback(taskId);
+}
+
 void ItemUseOutOfBattle_TMHM(u8 taskId)
 {
     // The boot-up messages need the bag's windows, so registered TMs go straight to the party menu

@@ -151,6 +151,7 @@
 #define VARIOUS_STAT_BATCH_NEXT                 69
 #define VARIOUS_CAN_BATCH_SPREAD_STAT           70
 #define VARIOUS_SPREAD_STAT_NEXT_TARGET         71
+#define VARIOUS_FRUIT_FEAST_NEXT_STAT           72
 
 // EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
 // They last for the move that set them (gExMoveFlags)

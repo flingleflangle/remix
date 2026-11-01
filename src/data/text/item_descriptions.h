@@ -332,6 +332,21 @@ static const u8 sTastyTreatDesc[] = _(
     "Makes a POKéMON\n"
     "friendly, but...");
 
+static const u8 sRenewBerryDesc[] = _(
+    "Wipes away all of a\n"
+    "POKéMON's training\n"
+    "and its SHEEN.");
+
+static const u8 sRememBerryDesc[] = _(
+    "Helps a POKéMON\n"
+    "remember a move it\n"
+    "has forgotten.");
+
+static const u8 sShiftBerryDesc[] = _(
+    "Switches a POKéMON\n"
+    "between its two\n"
+    "possible abilities.");
+
 static const u8 sPPUpDesc[] = _(
     "Raises the maximum\n"
     "PP of a selected\n"

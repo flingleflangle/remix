@@ -167,6 +167,8 @@ extern const u8 BattleScript_CuteCharmAttackerActivates[];
 extern const u8 BattleScript_MirrorScaleCopies[];
 extern const u8 BattleScript_DrySkinSunDmg[];
 extern const u8 BattleScript_DownloadActivates[];
+extern const u8 BattleScript_FruitFeastStatsUp[];
+extern const u8 BattleScript_FruitFeastEatsBerry[];
 extern const u8 BattleScript_PickupActivates[];
 extern const u8 BattleScript_StickyHoldTraps[];
 extern const u8 BattleScript_ForecastClearsSkies[];

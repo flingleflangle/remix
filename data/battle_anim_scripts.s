@@ -420,7 +420,7 @@ gBattleAnims_Moves::
 	.4byte Move_PANIC
 	.4byte Move_LAST_STAND
 	.4byte Move_FLUSH
-	.4byte Move_OLD_FURY_CUTTER
+	.4byte Move_SLICE
 	.4byte Move_TRIPLE_SLASH
 	.4byte Move_WIDE_SLASH
 	.4byte Move_VACUUM_CUT
@@ -1695,7 +1695,7 @@ FireSpinEffect:
 	return
 
 Move_FURY_CUTTER:
-Move_OLD_FURY_CUTTER:
+Move_SLICE:
 FuryCutter:
 	loadspritegfx ANIM_TAG_CUT
 	monbg ANIM_TARGET

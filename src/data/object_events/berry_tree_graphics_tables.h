@@ -466,6 +466,9 @@ const struct SpriteFrameImage *const gBerryTreePicTablePointers[] = {
     [ITEM_LANSAT_BERRY - FIRST_BERRY_INDEX] = sPicTable_LansatBerryTree,
     [ITEM_STARF_BERRY - FIRST_BERRY_INDEX]  = sPicTable_CornnBerryTree,
     [ITEM_ENIGMA_BERRY - FIRST_BERRY_INDEX] = sPicTable_DurinBerryTree,
+    [ITEM_SHIFT_BERRY - FIRST_BERRY_INDEX]  = sPicTable_LumBerryTree,
+    [ITEM_REMEM_BERRY - FIRST_BERRY_INDEX] = sPicTable_PechaBerryTree,
+    [ITEM_RENEW_BERRY - FIRST_BERRY_INDEX]  = sPicTable_ChestoBerryTree,
 };
 
 const u8 *const gBerryTreePaletteSlotTablePointers[] = {
@@ -512,6 +515,9 @@ const u8 *const gBerryTreePaletteSlotTablePointers[] = {
     [ITEM_LANSAT_BERRY - FIRST_BERRY_INDEX] = gBerryTreePaletteSlotTable_Lansat,
     [ITEM_STARF_BERRY - FIRST_BERRY_INDEX] = gBerryTreePaletteSlotTable_Cornn,
     [ITEM_ENIGMA_BERRY - FIRST_BERRY_INDEX] = gBerryTreePaletteSlotTable_Durin,
+    [ITEM_SHIFT_BERRY - FIRST_BERRY_INDEX] = gBerryTreePaletteSlotTable_Lum,
+    [ITEM_REMEM_BERRY - FIRST_BERRY_INDEX] = gBerryTreePaletteSlotTable_Pecha,
+    [ITEM_RENEW_BERRY - FIRST_BERRY_INDEX] = gBerryTreePaletteSlotTable_Chesto,
 };
 
 const u8 *const gBerryTreeObjectEventGraphicsIdTablePointers[] = {
@@ -558,8 +564,7 @@ const u8 *const gBerryTreeObjectEventGraphicsIdTablePointers[] = {
     [ITEM_LANSAT_BERRY - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
     [ITEM_STARF_BERRY - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
     [ITEM_ENIGMA_BERRY - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
-    // 3 unused berries.
-    [ITEM_UNUSED_BERRY_1 - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
-    [ITEM_UNUSED_BERRY_2 - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
-    [ITEM_UNUSED_BERRY_3 - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
+    [ITEM_SHIFT_BERRY - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
+    [ITEM_REMEM_BERRY - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
+    [ITEM_RENEW_BERRY - FIRST_BERRY_INDEX] = gBerryTreeObjectEventGraphicsIdTable,
 };

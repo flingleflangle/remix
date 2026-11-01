@@ -465,6 +465,17 @@ const u8 gItemEffect_PomegBerry[10] = {
     EV_BERRY_FRIENDSHIP_CHANGE,
 };
 
+// The EVs are zeroed before this runs, so the HP EV drop always takes the
+// friendship-only path. Friendship is double the TASTY TREAT's
+const u8 gItemEffect_RenewBerry[10] = {
+    [4] = ITEM4_EV_HP,
+    [5] = ITEM5_FRIENDSHIP_ALL,
+    [6] = ITEM6_SUBTRACT_EV,
+    [7] = +50, // Friendship change, low
+    [8] = +70, // Friendship change, mid
+    [9] = +80, // Friendship change, high
+};
+
 const u8 gItemEffect_KelpsyBerry[10] = {
     [4] = ITEM4_EV_ATK,
     [5] = ITEM5_FRIENDSHIP_ALL,
@@ -594,5 +605,5 @@ const u8 *const gItemEffectTable[] =
     [ITEM_HONDEW_BERRY - ITEM_POTION]  = gItemEffect_HondewBerry,
     [ITEM_GREPA_BERRY - ITEM_POTION]   = gItemEffect_GrepaBerry,
     [ITEM_TAMATO_BERRY - ITEM_POTION]  = gItemEffect_TamatoBerry,
-    [LAST_BERRY_INDEX - ITEM_POTION]   = NULL
+    [ITEM_RENEW_BERRY - ITEM_POTION]   = gItemEffect_RenewBerry, // Also LAST_BERRY_INDEX, which sizes the table
 };

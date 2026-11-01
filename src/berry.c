@@ -111,6 +111,12 @@ static const u8 sBerryDescriptionPart1_Starf[] = _("So strong, it was abandoned 
 static const u8 sBerryDescriptionPart2_Starf[] = _("world's edge. Considered a mirage.");
 static const u8 sBerryDescriptionPart1_Enigma[] = _("A completely enigmatic BERRY.");
 static const u8 sBerryDescriptionPart2_Enigma[] = _("Appears to have the power of stars.");
+static const u8 sBerryDescriptionPart1_Shift[] = _("Its two-toned flesh is said to awaken");
+static const u8 sBerryDescriptionPart1_Remem[] = _("Its tart scent jogs the memory. Eating");
+static const u8 sBerryDescriptionPart2_Remem[] = _("it brings back long-forgotten moves.");
+static const u8 sBerryDescriptionPart1_Renew[] = _("Its bland flesh cleanses the body and");
+static const u8 sBerryDescriptionPart2_Renew[] = _("resets a POKéMON's training and SHEEN.");
+static const u8 sBerryDescriptionPart2_Shift[] = _("a POKéMON's other hidden talent.");
 
 const struct Berry gBerries[] =
 {
@@ -887,6 +893,60 @@ const struct Berry gBerries[] =
         .sour = 40,
         .smoothness = 40,
     },
+
+    [ITEM_SHIFT_BERRY - FIRST_BERRY_INDEX] =
+    {
+        .name = _("SHIFT"),
+        .firmness = BERRY_FIRMNESS_HARD,
+        .size = 88,
+        .maxYield = 3,
+        .minYield = 1,
+        .description1 = sBerryDescriptionPart1_Shift,
+        .description2 = sBerryDescriptionPart2_Shift,
+        .stageDuration = 24,
+        .spicy = 10,
+        .dry = 10,
+        .sweet = 10,
+        .bitter = 10,
+        .sour = 10,
+        .smoothness = 30,
+    },
+
+    [ITEM_REMEM_BERRY - FIRST_BERRY_INDEX] =
+    {
+        .name = _("REMEM"),
+        .firmness = BERRY_FIRMNESS_SOFT,
+        .size = 64,
+        .maxYield = 3,
+        .minYield = 1,
+        .description1 = sBerryDescriptionPart1_Remem,
+        .description2 = sBerryDescriptionPart2_Remem,
+        .stageDuration = 24,
+        .spicy = 0,
+        .dry = 0,
+        .sweet = 10,
+        .bitter = 0,
+        .sour = 30,
+        .smoothness = 30,
+    },
+
+    [ITEM_RENEW_BERRY - FIRST_BERRY_INDEX] =
+    {
+        .name = _("RENEW"),
+        .firmness = BERRY_FIRMNESS_VERY_HARD,
+        .size = 120,
+        .maxYield = 3,
+        .minYield = 1,
+        .description1 = sBerryDescriptionPart1_Renew,
+        .description2 = sBerryDescriptionPart2_Renew,
+        .stageDuration = 24,
+        .spicy = 0,
+        .dry = 0,
+        .sweet = 0,
+        .bitter = 0,
+        .sour = 0,
+        .smoothness = 20,
+    },
 };
 
 const struct BerryCrushBerryData gBerryCrush_BerryData[] = {
@@ -932,7 +992,10 @@ const struct BerryCrushBerryData gBerryCrush_BerryData[] = {
     [ITEM_APICOT_BERRY - FIRST_BERRY_INDEX] = {.difficulty = 180, .powder = 500},
     [ITEM_LANSAT_BERRY - FIRST_BERRY_INDEX] = {.difficulty = 200, .powder = 750},
     [ITEM_STARF_BERRY - FIRST_BERRY_INDEX]  = {.difficulty = 200, .powder = 750},
-    [ITEM_ENIGMA_BERRY - FIRST_BERRY_INDEX] = {.difficulty = 150, .powder = 200}
+    [ITEM_ENIGMA_BERRY - FIRST_BERRY_INDEX] = {.difficulty = 150, .powder = 200},
+    [ITEM_SHIFT_BERRY - FIRST_BERRY_INDEX]  = {.difficulty = 180, .powder = 500},
+    [ITEM_REMEM_BERRY - FIRST_BERRY_INDEX] = {.difficulty = 180, .powder = 500},
+    [ITEM_RENEW_BERRY - FIRST_BERRY_INDEX]  = {.difficulty = 180, .powder = 500},
 };
 
 const struct BerryTree gBlankBerryTree = {};

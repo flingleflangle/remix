@@ -57,7 +57,7 @@ gExMoves::
 	exmove MOVE_AGILITY, BattleScript_ExAgility
 	exmove MOVE_BULLET_SEED, flags=EX_FLAG_FOUR_HITS | EX_FLAG_LEECH_SEED @ See BattleScript_MultiHitEnd
 	exmove MOVE_FURY_CUTTER, BattleScript_ExFuryCutter
-	exmove MOVE_OLD_FURY_CUTTER, BattleScript_ExFuryCutter
+	exmove MOVE_SLICE, BattleScript_ExFuryCutter
 	exmove MOVE_LEECH_LIFE, BattleScript_ExLeechLife
 	exmove MOVE_HYPER_FANG, flags=EX_FLAG_IGNORE_RESISTANCES | EX_FLAG_IGNORE_IMMUNITY
 	exmove MOVE_PETAL_DANCE, flags=EX_FLAG_CALM_RAMPAGE

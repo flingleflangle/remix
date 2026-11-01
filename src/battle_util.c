@@ -8,6 +8,7 @@
 #include "battle_script_commands.h"
 #include "pokemon.h"
 #include "international_string_util.h"
+#include "berry.h"
 #include "item.h"
 #include "util.h"
 #include "battle_scripts.h"
@@ -3078,6 +3079,22 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                     }
                 }
                 break;
+            case ABILITY_FIESTA:
+                // Eats a held Berry that does nothing in battle as soon as it comes in, for its stat raises.
+                // Other Berries wait for their usual moment (Cmd_removeitem)
+                if (!gSpecialStatuses[battler].fruitFeastAte
+                 && gBattleMons[battler].item >= FIRST_BERRY_INDEX && gBattleMons[battler].item <= LAST_BERRY_INDEX
+                 && (gBattleMons[battler].item == ITEM_ENIGMA_BERRY ? gEnigmaBerries[battler].holdEffect
+                                                                     : GetItemHoldEffect(gBattleMons[battler].item)) == HOLD_EFFECT_NONE
+                 && TryStartFruitFeast(battler, gBattleMons[battler].item))
+                {
+                    gSpecialStatuses[battler].fruitFeastAte = TRUE;
+                    gLastUsedItem = gBattleMons[battler].item;
+                    gBattleScripting.battler = battler;
+                    BattleScriptPushCursorAndCallback(BattleScript_FruitFeastEatsBerry);
+                    effect++;
+                }
+                break;
             case ABILITY_TRACE:
                 if (!(gSpecialStatuses[battler].traced))
                 {
@@ -4144,6 +4161,77 @@ bool32 SetExBonusStatsUpAnim(u8 battler)
     gBattleScripting.animArg1 = animId;
     gBattleScripting.animArg2 = 0;
     return count != 0;
+}
+
+// Fruit Feast: the stages each stat still has to rise from the Berry just eaten
+static EWRAM_DATA u8 sFruitFeastStages[NUM_BATTLE_STATS] = {0};
+
+// A flavor's stat stages: 10 for +1, 20 for +2, 40 for +3
+static u8 GetFruitFeastFlavorStages(u8 flavor)
+{
+    if (flavor >= 40)
+        return 3;
+    if (flavor >= 20)
+        return 2;
+    if (flavor >= 10)
+        return 1;
+    return 0;
+}
+
+// Fruit Feast: gets the stat raises for eating this Berry ready for SetNextFruitFeastStat, and sets the
+// stat-up animation. Spicy raises Attack, Dry Sp. Atk, Sweet Speed, Bitter Sp. Def and Sour Defense.
+// Returns FALSE if it wouldn't raise anything (no flavor, or those stats are maxed)
+bool32 TryStartFruitFeast(u8 battler, u16 item)
+{
+    const struct Berry *berry;
+    u32 stat, count = 0, maxStages = 0;
+    u16 animId = 0;
+
+    if (item < FIRST_BERRY_INDEX || item > LAST_BERRY_INDEX)
+        return FALSE;
+
+    berry = GetBerryInfo(ItemIdToBerryType(item));
+    memset(sFruitFeastStages, 0, sizeof(sFruitFeastStages));
+    sFruitFeastStages[STAT_ATK] = GetFruitFeastFlavorStages(berry->spicy);
+    sFruitFeastStages[STAT_SPATK] = GetFruitFeastFlavorStages(berry->dry);
+    sFruitFeastStages[STAT_SPEED] = GetFruitFeastFlavorStages(berry->sweet);
+    sFruitFeastStages[STAT_SPDEF] = GetFruitFeastFlavorStages(berry->bitter);
+    sFruitFeastStages[STAT_DEF] = GetFruitFeastFlavorStages(berry->sour);
+
+    for (stat = STAT_ATK; stat < NUM_BATTLE_STATS; stat++)
+    {
+        if (sFruitFeastStages[stat] == 0 || gBattleMons[battler].statStages[stat] >= MAX_STAT_STAGE)
+        {
+            sFruitFeastStages[stat] = 0;
+            continue;
+        }
+        animId = (sFruitFeastStages[stat] >= 2 ? STAT_ANIM_PLUS2 : STAT_ANIM_PLUS1) + stat;
+        maxStages = max(maxStages, sFruitFeastStages[stat]);
+        count++;
+    }
+    if (count > 1)
+        animId = (maxStages >= 2) ? STAT_ANIM_MULTIPLE_PLUS2 : STAT_ANIM_MULTIPLE_PLUS1;
+    gBattleScripting.animArg1 = animId;
+    gBattleScripting.animArg2 = 0;
+    return count != 0;
+}
+
+// Fruit Feast: raises the next stat and buffers its name. Returns FALSE once they're all done
+bool32 SetNextFruitFeastStat(u8 battler)
+{
+    u32 stat;
+
+    for (stat = STAT_ATK; stat < NUM_BATTLE_STATS; stat++)
+    {
+        if (sFruitFeastStages[stat] != 0)
+        {
+            gBattleMons[battler].statStages[stat] = min(gBattleMons[battler].statStages[stat] + sFruitFeastStages[stat], MAX_STAT_STAGE);
+            sFruitFeastStages[stat] = 0;
+            PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // EX_BONUS_STATS_UP: sets the stat change for the next stat to raise. Returns FALSE once they're all done

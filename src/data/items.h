@@ -2217,37 +2217,37 @@ const struct Item gItems[] =
         .battleUseFunc = ItemUseInBattle_EnigmaBerry,
     },
 
-    [ITEM_UNUSED_BERRY_1] =
+    [ITEM_SHIFT_BERRY] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .name = _("SHIFT BERRY"),
+        .itemId = ITEM_SHIFT_BERRY,
+        .price = 20,
+        .description = sShiftBerryDesc,
+        .pocket = POCKET_BERRIES,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_ShiftBerry,
     },
 
-    [ITEM_UNUSED_BERRY_2] =
+    [ITEM_REMEM_BERRY] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .name = _("REMEM BERRY"),
+        .itemId = ITEM_REMEM_BERRY,
+        .price = 20,
+        .description = sRememBerryDesc,
+        .pocket = POCKET_BERRIES,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_RememBerry,
     },
 
-    [ITEM_UNUSED_BERRY_3] =
+    [ITEM_RENEW_BERRY] =
     {
-        .name = _("????????"),
-        .itemId = ITEM_NONE,
-        .price = 0,
-        .description = sDummyDesc,
-        .pocket = POCKET_ITEMS,
-        .type = ITEM_USE_BAG_MENU,
-        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .name = _("RENEW BERRY"),
+        .itemId = ITEM_RENEW_BERRY,
+        .price = 20,
+        .description = sRenewBerryDesc,
+        .pocket = POCKET_BERRIES,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_RenewBerry,
     },
 
 // Hold items

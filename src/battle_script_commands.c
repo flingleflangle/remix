@@ -888,6 +888,74 @@ static const u8 sPickupProbabilities[] =
     30, 40, 50, 60, 70, 80, 90, 94, 98
 };
 
+// Fruit Feast grows a Berry after battle, like Pickup. Each tier is rarer than the last
+static const u16 sFruitFeastBerriesCommon[] =
+{
+    ITEM_CHERI_BERRY, ITEM_CHESTO_BERRY, ITEM_PECHA_BERRY, ITEM_RAWST_BERRY,
+    ITEM_ASPEAR_BERRY, ITEM_LEPPA_BERRY, ITEM_ORAN_BERRY, ITEM_PERSIM_BERRY,
+};
+
+static const u16 sFruitFeastBerriesUncommon[] =
+{
+    ITEM_SITRUS_BERRY, ITEM_LUM_BERRY, ITEM_FIGY_BERRY, ITEM_WIKI_BERRY, ITEM_MAGO_BERRY, ITEM_AGUAV_BERRY,
+    ITEM_IAPAPA_BERRY, ITEM_RAZZ_BERRY, ITEM_BLUK_BERRY, ITEM_NANAB_BERRY, ITEM_WEPEAR_BERRY, ITEM_PINAP_BERRY,
+};
+
+static const u16 sFruitFeastBerriesRare[] =
+{
+    ITEM_POMEG_BERRY, ITEM_KELPSY_BERRY, ITEM_QUALOT_BERRY, ITEM_HONDEW_BERRY, ITEM_GREPA_BERRY,
+    ITEM_TAMATO_BERRY, ITEM_CORNN_BERRY, ITEM_MAGOST_BERRY, ITEM_RABUTA_BERRY, ITEM_NOMEL_BERRY,
+};
+
+static const u16 sFruitFeastBerriesVeryRare[] =
+{
+    ITEM_SPELON_BERRY, ITEM_PAMTRE_BERRY, ITEM_WATMEL_BERRY, ITEM_DURIN_BERRY, ITEM_BELUE_BERRY,
+    ITEM_LIECHI_BERRY, ITEM_GANLON_BERRY, ITEM_SALAC_BERRY, ITEM_PETAYA_BERRY, ITEM_APICOT_BERRY,
+};
+
+static const u16 sFruitFeastBerriesRarest[] =
+{
+    ITEM_LANSAT_BERRY, ITEM_STARF_BERRY, ITEM_SHIFT_BERRY, ITEM_REMEM_BERRY, ITEM_RENEW_BERRY,
+};
+
+static const struct
+{
+    const u16 *berries;
+    u8 count;
+} sFruitFeastTiers[] =
+{
+    {sFruitFeastBerriesCommon,   ARRAY_COUNT(sFruitFeastBerriesCommon)},
+    {sFruitFeastBerriesUncommon, ARRAY_COUNT(sFruitFeastBerriesUncommon)},
+    {sFruitFeastBerriesRare,     ARRAY_COUNT(sFruitFeastBerriesRare)},
+    {sFruitFeastBerriesVeryRare, ARRAY_COUNT(sFruitFeastBerriesVeryRare)},
+    {sFruitFeastBerriesRarest,   ARRAY_COUNT(sFruitFeastBerriesRarest)},
+};
+
+// Chance out of 100 of each tier above, for levels 1-20, 21-40, 41-60, 61-80 and 81-100
+static const u8 sFruitFeastTierChances[][ARRAY_COUNT(sFruitFeastTiers)] =
+{
+    {80, 20,  0,  0,  0},
+    {55, 35, 10,  0,  0},
+    {35, 35, 22,  7,  1},
+    {20, 30, 30, 15,  5},
+    {10, 25, 30, 25, 10},
+};
+
+static u16 GetFruitFeastBerry(u8 level)
+{
+    const u8 *chances = sFruitFeastTierChances[min((level - 1) / 20, ARRAY_COUNT(sFruitFeastTierChances) - 1)];
+    s32 rand = Random() % 100;
+    u32 tier;
+
+    for (tier = 0; tier < ARRAY_COUNT(sFruitFeastTiers) - 1; tier++)
+    {
+        if (rand < chances[tier])
+            break;
+        rand -= chances[tier];
+    }
+    return sFruitFeastTiers[tier].berries[Random() % sFruitFeastTiers[tier].count];
+}
+
 static const u8 sEnvironmentToType[] =
 {
     [BATTLE_ENVIRONMENT_GRASS]      = TYPE_BUG,
@@ -908,7 +976,7 @@ static const u8 sBallCatchBonuses[] =
     [ITEM_ULTRA_BALL - ITEM_ULTRA_BALL]  = 20,
     [ITEM_GREAT_BALL - ITEM_ULTRA_BALL]  = 15,
     [ITEM_POKE_BALL - ITEM_ULTRA_BALL]   = 10,
-    [ITEM_SAFARI_BALL - ITEM_ULTRA_BALL] = 15
+    [ITEM_SAFARI_BALL - ITEM_ULTRA_BALL] = 10 // Same as a Poké Ball. See ApplyBallThrowTypeOdds for its drop throw
 };
 
 // In Battle Palace, moves are chosen based on the pokemons nature rather than by the player
@@ -6813,6 +6881,16 @@ static void Cmd_removeitem(void)
     MarkBattlerForControllerExec(gActiveBattler);
 
     gBattlescriptCurrInstr += 2;
+
+    // Fruit Feast: every Berry it eats raises its stats by flavor. Natural Gift uses a Berry up without eating it
+    if (gBattleMons[gActiveBattler].ability == ABILITY_FIESTA
+     && !(gCurrentMove == MOVE_NATURAL_GIFT && gActiveBattler == gBattlerAttacker)
+     && TryStartFruitFeast(gActiveBattler, *usedHeldItem))
+    {
+        gBattleScripting.battler = gActiveBattler;
+        BattleScriptPushCursor();
+        gBattlescriptCurrInstr = BattleScript_FruitFeastStatsUp;
+    }
 }
 
 static void Cmd_atknameinbuff1(void)
@@ -7766,6 +7844,10 @@ static void Cmd_various(void)
         gHitMarker |= HITMARKER_NO_ATTACKSTRING;
         MoveValuesCleanUp();
         gBattleCommunication[0] = TRUE;
+        break;
+    case VARIOUS_FRUIT_FEAST_NEXT_STAT:
+        // Raises the next stat from the Berry Fruit Feast just ate. Sets gBattleCommunication[0] to FALSE once done
+        gBattleCommunication[0] = SetNextFruitFeastStat(gActiveBattler);
         break;
     case VARIOUS_NATURAL_GIFT:
     {
@@ -11886,6 +11968,15 @@ static void Cmd_pickup(void)
                     }
                 }
             }
+            else if (species != SPECIES_NONE
+                && species != SPECIES_EGG
+                && heldItem == ITEM_NONE
+                && GetMonAbility(&gPlayerParty[i]) == ABILITY_FIESTA
+                && (Random() % 10) == 0)
+            {
+                heldItem = GetFruitFeastBerry(GetMonData(&gPlayerParty[i], MON_DATA_LEVEL));
+                SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &heldItem);
+            }
 			else if (species == SPECIES_SHUCKLE
                && heldItem >= FIRST_BERRY_INDEX
                && heldItem <= LAST_BERRY_INDEX)
@@ -12209,11 +12300,6 @@ static void Cmd_handleballthrow(void)
                 break;
             }
         }
-        else if (gLastUsedItem == ITEM_SAFARI_BALL
-              && (IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_GRASS) || IS_BATTLER_OF_TYPE(gBattlerTarget, TYPE_NORMAL)))
-        {
-            ballMultiplier = 30;
-        }
         else
         {
             ballMultiplier = sBallCatchBonuses[gLastUsedItem - ITEM_ULTRA_BALL];
@@ -12477,8 +12563,12 @@ bool8 CalcNextShakeFromOdds(u32 odds)
 {
     if (odds > 254 || gLastUsedItem == ITEM_MASTER_BALL || gBattleTypeFlags & BATTLE_TYPE_WALLY_TUTORIAL) // mon caught
         return TRUE;
-    odds = Sqrt(Sqrt(16711680 / odds));
-    odds = 1048560 / odds;
+    // Each shake passes with a (odds / 255)^(1/4) chance out of 65536, so all four together come to
+    // odds / 255. Vanilla takes the integer square roots of 255 / odds, which rounds the chance into a
+    // few coarse steps. This takes them of odds / 255 scaled to 2^32 instead (2^32 / 255 = 16843009),
+    // and rescales between the roots, keeping the full 1/65536 precision
+    odds = Sqrt(odds * 16843009);
+    odds = Sqrt(odds << 16);
     return Random() < odds;
 }
 
@@ -12493,47 +12583,16 @@ bool8 CalcNextShakeFromOdds(u32 odds)
 // reaching the max/min at THROW_SPEED_NEUTRAL * 2 (140) and 0
 #define THROW_SPEED_NEUTRAL 70
 
-#define DEX_HEIGHT 0 // GetPokedexHeightWeight's data argument
-#define DEX_WEIGHT 1
+// HP bar pixels at or under which the bar turns red (20%), matching GetHPBarLevel
+#define THROW_HP_BAR_PIXELS 48
+#define THROW_HP_BAR_RED    (THROW_HP_BAR_PIXELS * 20 / 100)
 
-static EWRAM_DATA u16 sMedianPokedexSize[2] = {0};
+// Underhand throw multiplier against a Pokémon with a status condition
+#define THROW_ODDS_UNDERHAND_STATUS 130
 
-// Median Pokédex height (decimeters) or weight (hectograms) of every Pokémon with an entry, computed once.
-// Unlike the average, this isn't pulled up by a few extremely large Pokémon. Finds the smallest value that
-// at least half of all Pokémon are at or under, by binary searching the value range instead of sorting.
-static u16 GetMedianPokedexSize(u8 heightOrWeight)
-{
-    if (sMedianPokedexSize[heightOrWeight] == 0)
-    {
-        u32 low = 1, high = 0xFFFF, count = 0;
-        u16 dexNum;
-
-        for (dexNum = 1; dexNum <= NATIONAL_DEX_COUNT; dexNum++)
-        {
-            if (GetPokedexHeightWeight(dexNum, heightOrWeight) != 0)
-                count++;
-        }
-
-        while (low < high)
-        {
-            u32 mid = (low + high) / 2;
-            u32 atOrUnder = 0;
-
-            for (dexNum = 1; dexNum <= NATIONAL_DEX_COUNT; dexNum++)
-            {
-                u16 size = GetPokedexHeightWeight(dexNum, heightOrWeight);
-                if (size != 0 && size <= mid)
-                    atOrUnder++;
-            }
-            if (atOrUnder * 2 >= count)
-                high = mid;
-            else
-                low = mid + 1;
-        }
-        sMedianPokedexSize[heightOrWeight] = low;
-    }
-    return sMedianPokedexSize[heightOrWeight];
-}
+// Drop throw multiplier once the HP bar is red. Perfect B timing on all three shakes works out to
+// about 1.1^1.5 (1.154x) on the overall catch chance, so this makes a perfect red-HP drop throw 2x
+#define THROW_ODDS_DROP_RED 173
 
 // Linearly maps value -> multiplier, where `neutral` gives THROW_ODDS_NORMAL and each `neutral`
 // above or below it moves by THROW_ODDS_RANGE, clamped to THROW_ODDS_MIN-THROW_ODDS_MAX
@@ -12544,28 +12603,45 @@ static s32 GetThrowOddsFromValue(s32 value, s32 neutral)
 }
 
 // Bonus added to a throw's multiplier by balls that are well suited to it
-#define THROW_ODDS_BALL_BONUS_LARGE 20
-#define THROW_ODDS_BALL_BONUS_SMALL 10
+#define THROW_ODDS_BALL_BONUS_MEDIUM 15
+#define THROW_ODDS_BALL_BONUS_SMALL  10
 
-static u16 GetBallThrowTypeOddsMultiplier(u8 throwType, u16 species, u16 ball)
+// Highest odds a throw can raise the catch to, so a throw improves a catch but never makes it
+// guaranteed by itself (255+ is). Well-timed B presses can still go past it. Sleep and freeze
+// raise the cap a little, so they're still worth something once a throw reaches it.
+// With CalcNextShakeFromOdds the catch chance is about odds / 255: 230 is ~90%, 240 is ~94%
+#define THROW_ODDS_CAP              230
+#define THROW_ODDS_CAP_SLEEP_FREEZE 240
+
+static u16 GetBallThrowTypeOddsMultiplier(u8 throwType, u8 battler, u16 ball)
 {
-    u16 dexNum = SpeciesToNationalPokedexNum(species);
     s32 multiplier;
 
     switch (throwType)
     {
     case BALL_THROW_DROP:
-        // Better on heavy Pokémon, worse on light ones. Neutral at the median weight
-        multiplier = GetThrowOddsFromValue(GetPokedexHeightWeight(dexNum, DEX_WEIGHT), GetMedianPokedexSize(DEX_WEIGHT));
+        // Worse on healthy Pokémon, better the lower their HP: THROW_ODDS_MIN at full HP, rising
+        // linearly to THROW_ODDS_DROP_RED once the HP bar is red
+        if (GetHPBarLevel(gBattleMons[battler].hp, gBattleMons[battler].maxHP) == HP_BAR_RED)
+        {
+            multiplier = THROW_ODDS_DROP_RED;
+        }
+        else
+        {
+            s32 pixels = GetScaledHPFraction(gBattleMons[battler].hp, gBattleMons[battler].maxHP, THROW_HP_BAR_PIXELS);
+            multiplier = THROW_ODDS_MIN + (THROW_ODDS_DROP_RED - THROW_ODDS_MIN) * (THROW_HP_BAR_PIXELS - pixels)
+                                        / (THROW_HP_BAR_PIXELS - THROW_HP_BAR_RED);
+        }
         break;
     case BALL_THROW_UNDERHAND:
-        // Better on short Pokémon, worse on tall ones. Neutral at the median height
-        multiplier = THROW_ODDS_NORMAL * 2 - GetThrowOddsFromValue(GetPokedexHeightWeight(dexNum, DEX_HEIGHT), GetMedianPokedexSize(DEX_HEIGHT));
+        // Better on Pokémon with a status condition, worse on ones without. Its bonus is kept
+        // below THROW_ODDS_DROP_RED so a red-HP drop throw stays the best throw
+        multiplier = (gBattleMons[battler].status1 & STATUS1_ANY) ? THROW_ODDS_UNDERHAND_STATUS : THROW_ODDS_MIN;
         break;
     case BALL_THROW_CURVE_LEFT:
     case BALL_THROW_CURVE_RIGHT:
         // Better on fast Pokémon, worse on slow ones
-        multiplier = GetThrowOddsFromValue(gSpeciesInfo[species].baseSpeed, THROW_SPEED_NEUTRAL);
+        multiplier = GetThrowOddsFromValue(gSpeciesInfo[gBattleMons[battler].species].baseSpeed, THROW_SPEED_NEUTRAL);
         break;
     case BALL_THROW_NORMAL:
     default:
@@ -12577,28 +12653,35 @@ static u16 GetBallThrowTypeOddsMultiplier(u8 throwType, u16 species, u16 ball)
     {
     case ITEM_POKE_BALL:
     case ITEM_LUXURY_BALL:
+    case ITEM_PREMIER_BALL:
         // Curve throws never make these worse
         if ((throwType == BALL_THROW_CURVE_LEFT || throwType == BALL_THROW_CURVE_RIGHT) && multiplier < THROW_ODDS_NORMAL)
             multiplier = THROW_ODDS_NORMAL;
         break;
     case ITEM_GREAT_BALL:
         if (throwType == BALL_THROW_DROP)
-            multiplier += THROW_ODDS_BALL_BONUS_LARGE;
+            multiplier += THROW_ODDS_BALL_BONUS_SMALL;
+        break;
+    case ITEM_ULTRA_BALL:
+        if (throwType == BALL_THROW_DROP)
+            multiplier += THROW_ODDS_BALL_BONUS_MEDIUM;
         break;
     case ITEM_NET_BALL:
     case ITEM_NEST_BALL:
+    case ITEM_DIVE_BALL:
         if (throwType == BALL_THROW_UNDERHAND)
-            multiplier += THROW_ODDS_BALL_BONUS_LARGE;
+            multiplier += THROW_ODDS_BALL_BONUS_SMALL;
         break;
-    case ITEM_PREMIER_BALL:
-        multiplier += THROW_ODDS_BALL_BONUS_SMALL;
+    case ITEM_REPEAT_BALL:
+        if (throwType == BALL_THROW_CURVE_LEFT || throwType == BALL_THROW_CURVE_RIGHT)
+            multiplier += THROW_ODDS_BALL_BONUS_SMALL;
         break;
     }
     return multiplier;
 }
 
 // The Timer Ball's multiplier from Cmd_handleballthrow: 1x on the first turn, rising to 4x.
-// A fast throw flips this, making it 4x on the first turn and falling to 1x.
+// A curve throw flips this, making it 4x on the first turn and falling to 1x.
 static u32 GetTimerBallMultiplier(bool32 flipped)
 {
     u32 turns = min(gBattleResults.battleTurnCounter, 30);
@@ -12611,6 +12694,7 @@ static u32 GetTimerBallMultiplier(bool32 flipped)
 void ApplyBallThrowTypeOdds(u8 throwType)
 {
     u16 multiplier;
+    u32 oddsBefore, cap;
     bool32 flipTimerBall;
 
     if (throwType >= BALL_THROW_TYPES_COUNT)
@@ -12619,15 +12703,36 @@ void ApplyBallThrowTypeOdds(u8 throwType)
 
     if (gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_WALLY_TUTORIAL))
         return;
-    multiplier = GetBallThrowTypeOddsMultiplier(throwType, gBattleMons[gBattlerTarget].species, gLastUsedItem);
-    flipTimerBall = (gLastUsedItem == ITEM_TIMER_BALL && throwType == BALL_THROW_DROP);
+
+    // A Safari Ball drop throw always catches a Pokémon whose HP bar is red
+    if (gLastUsedItem == ITEM_SAFARI_BALL && throwType == BALL_THROW_DROP
+     && GetHPBarLevel(gBattleMons[gBattlerTarget].hp, gBattleMons[gBattlerTarget].maxHP) == HP_BAR_RED)
+    {
+        gBallShakesBData.odds = 255;
+        gBallShakesBData.shakes = CalcNextShakeFromOdds(gBallShakesBData.odds);
+        gBattleSpritesDataPtr->animationData->ballThrowCaseId = gBallShakesBData.shakes;
+        return;
+    }
+
+    multiplier = GetBallThrowTypeOddsMultiplier(throwType, gBattlerTarget, gLastUsedItem);
+    flipTimerBall = (gLastUsedItem == ITEM_TIMER_BALL
+                  && (throwType == BALL_THROW_CURVE_LEFT || throwType == BALL_THROW_CURVE_RIGHT));
     if (multiplier == THROW_ODDS_NORMAL && !flipTimerBall)
         return;
 
+    oddsBefore = gBallShakesBData.odds;
     if (flipTimerBall)
         gBallShakesBData.odds = gBallShakesBData.odds * GetTimerBallMultiplier(TRUE) / GetTimerBallMultiplier(FALSE);
     gBallShakesBData.odds = gBallShakesBData.odds * multiplier / 100;
-    if (gBallShakesBData.odds == 0)  // CalcNextShakeFromOdds divides by the odds
+
+    // A throw can't raise the odds past the cap, but odds that were already above it stay there
+    if (gBattleMons[gBattlerTarget].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
+        cap = THROW_ODDS_CAP_SLEEP_FREEZE;
+    else
+        cap = THROW_ODDS_CAP;
+    if (gBallShakesBData.odds > max(oddsBefore, cap))
+        gBallShakesBData.odds = max(oddsBefore, cap);
+    if (gBallShakesBData.odds == 0)  // A throw never makes the catch impossible
         gBallShakesBData.odds = 1;
     gBallShakesBData.shakes = CalcNextShakeFromOdds(gBallShakesBData.odds);
     gBattleSpritesDataPtr->animationData->ballThrowCaseId = gBallShakesBData.shakes;

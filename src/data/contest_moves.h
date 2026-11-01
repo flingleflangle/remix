@@ -3267,7 +3267,7 @@ const struct ContestMove gContestMoves[MOVES_COUNT] =
         .comboMoves = {COMBO_STARTER_CHAKRA_SURGE},
     },
 
-    [MOVE_OLD_FURY_CUTTER] =
+    [MOVE_SLICE] =
     {
         .effect = CONTEST_EFFECT_REPETITION_NOT_BORING,
         .contestCategory = CONTEST_CATEGORY_COOL,

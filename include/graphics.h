@@ -3794,6 +3794,12 @@ extern const u32 gItemIcon_PersimBerry[];
 extern const u32 gItemIconPalette_PersimBerry[];
 extern const u32 gItemIcon_LumBerry[];
 extern const u32 gItemIconPalette_LumBerry[];
+extern const u32 gItemIcon_ShiftBerry[];
+extern const u32 gItemIconPalette_ShiftBerry[];
+extern const u32 gItemIcon_RememBerry[];
+extern const u32 gItemIconPalette_RememBerry[];
+extern const u32 gItemIcon_RenewBerry[];
+extern const u32 gItemIconPalette_RenewBerry[];
 extern const u32 gItemIcon_SitrusBerry[];
 extern const u32 gItemIconPalette_SitrusBerry[];
 extern const u32 gItemIcon_FigyBerry[];
@@ -4263,6 +4269,12 @@ extern const u32 gBerryPic_Starf[];
 extern const u32 gBerryPalette_Starf[];
 extern const u32 gBerryPic_Enigma[];
 extern const u32 gBerryPalette_Enigma[];
+extern const u32 gBerryPic_Shift[];
+extern const u32 gBerryPalette_Shift[];
+extern const u32 gBerryPic_Remem[];
+extern const u32 gBerryPalette_Remem[];
+extern const u32 gBerryPic_Renew[];
+extern const u32 gBerryPalette_Renew[];
 
 //PokéNav
 extern const u16 gPokenavCondition_Pal[];

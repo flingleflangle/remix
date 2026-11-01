@@ -359,6 +359,7 @@ static const u8 sText_PkmnsXWhippedUpHailstorm[] = _("{B_SCR_ACTIVE_NAME_WITH_PR
 static const u8 sText_PkmnsXIntensifiedSun[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nintensified the sun's rays!");
 static const u8 sText_PkmnsXPreventsYLoss[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\nprevents {B_BUFF1} loss!");
 static const u8 sText_PkmnsXInfatuatedY[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\ninfatuated {B_ATK_NAME_WITH_PREFIX}!");
+static const u8 sText_PkmnAteItsBerry[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} ate its\n{B_LAST_ITEM}!");
 static const u8 sText_AtksXInfatuatedDef[] = _("{B_ATK_NAME_WITH_PREFIX}'s {B_ATK_ABILITY}\ninfatuated {B_DEF_NAME_WITH_PREFIX}!");
 static const u8 sText_PkmnsXMadeYIneffective[] = _("{B_DEF_NAME_WITH_PREFIX}'s {B_DEF_ABILITY}\nmade {B_CURRENT_MOVE} ineffective!");
 static const u8 sText_PkmnsXCuredYProblem[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s {B_SCR_ACTIVE_ABILITY}\ncured its {B_BUFF1} problem!");
@@ -1040,6 +1041,7 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNCUTSFOETEAMSACCURACY - BATTLESTRINGS_TABLE_START] = sText_PkmnCutsFoeTeamsAccuracy,
     [STRINGID_PKMNCUTSALLYTEAMSACCURACY - BATTLESTRINGS_TABLE_START] = sText_PkmnCutsAllyTeamsAccuracy,
     [STRINGID_ATKSXINFATUATEDDEF - BATTLESTRINGS_TABLE_START] = sText_AtksXInfatuatedDef,
+    [STRINGID_PKMNATEITSBERRY - BATTLESTRINGS_TABLE_START] = sText_PkmnAteItsBerry,
 };
 
 const u16 gMissStringIds[] =

@@ -110,7 +110,7 @@ static const u16 sSceptileExMoves[] =
     MOVE_ABSORB,
     MOVE_MEGA_DRAIN,
     MOVE_FURY_CUTTER,
-    MOVE_OLD_FURY_CUTTER,
+    MOVE_SLICE,
     MOVE_LEAF_BLADE,
     MOVE_BULLET_SEED,
     MOVE_AGILITY,
@@ -136,6 +136,15 @@ static const u16 sLuvdiscExMoves[] =
     MOVE_LOVELY_KISS,
     MOVE_SWAGGER,
     MOVE_FLATTER,
+    MOVE_NONE,
+};
+
+static const u16 sTropiusExMoves[] =
+{
+    MOVE_GROWTH,
+    MOVE_WHIRLWIND,
+    MOVE_NATURAL_GIFT,
+    MOVE_LEAF_STORM,
     MOVE_NONE,
 };
 
@@ -203,6 +212,16 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
         .ability = ABILITY_NORTH_STAR,
         .unlockStat = MON_DATA_FRIENDSHIP,
         .exMoves = sLuvdiscExMoves,
+    },
+
+    [SPECIES_TROPIUS] =
+    {
+        .baseHP = -15,
+        .baseSpeed = +20,
+        .baseSpAttack = +25,
+        .ability = ABILITY_FIESTA,
+        .unlockStat = MON_DATA_FRIENDSHIP,
+        .exMoves = sTropiusExMoves,
     },
 
     // Planned EX forms, not made yet:

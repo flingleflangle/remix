@@ -37,6 +37,7 @@
 #include "main.h"
 #include "menu.h"
 #include "menu_helpers.h"
+#include "move_relearner.h"
 #include "menu_specialized.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
@@ -5257,6 +5258,156 @@ void ItemUseCB_TastyTreat(u8 taskId, TaskFunc task)
         ScheduleBgCopyTilemapToVram(2);
         gTasks[taskId].func = Task_DisplayLevelUpStatsPg1;
     }
+}
+
+static void Task_HandleShiftBerryYesNoInput(u8 taskId)
+{
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+    u8 newAbilityNum = gPartyMenu.data1;
+
+    switch (Menu_ProcessInputNoWrapClearOnChoose())
+    {
+    case 0:
+        PlaySE(SE_USE_ITEM);
+        SetMonData(mon, MON_DATA_ABILITY_NUM, &newAbilityNum);
+        RemoveBagItem(gSpecialVar_ItemId, 1);
+        StringExpandPlaceholders(gStringVar4, gText_PkmnAbilityChangedToVar2);
+        DisplayPartyMenuMessage(gStringVar4, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+        break;
+    case MENU_B_PRESSED:
+    case 1:
+        PlaySE(SE_SELECT);
+        gPartyMenuUseExitCallback = FALSE;
+        gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+        break;
+    }
+}
+
+static void Task_ShiftBerryYesNo(u8 taskId)
+{
+    if (IsPartyMenuTextPrinterActive() != TRUE)
+    {
+        PartyMenuDisplayYesNoMenu();
+        gTasks[taskId].func = Task_HandleShiftBerryYesNoInput;
+    }
+}
+
+static void Task_HandleRenewBerryYesNoInput(u8 taskId)
+{
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+    u8 zero = 0;
+    u32 i;
+
+    switch (Menu_ProcessInputNoWrapClearOnChoose())
+    {
+    case 0:
+        PlaySE(SE_USE_ITEM);
+        for (i = 0; i < NUM_STATS; i++)
+            SetMonData(mon, MON_DATA_HP_EV + i, &zero);
+        SetMonData(mon, MON_DATA_SHEEN, &zero);
+        ExecuteTableBasedItemEffect_(gPartyMenu.slotId, gSpecialVar_ItemId, 0);
+        CalculateMonStats(mon);
+        UpdateMonDisplayInfoAfterRareCandy(gPartyMenu.slotId, mon);
+        RemoveBagItem(gSpecialVar_ItemId, 1);
+        StringExpandPlaceholders(gStringVar4, gText_PkmnTrainingWasReset);
+        DisplayPartyMenuMessage(gStringVar4, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+        break;
+    case MENU_B_PRESSED:
+    case 1:
+        PlaySE(SE_SELECT);
+        gPartyMenuUseExitCallback = FALSE;
+        gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+        break;
+    }
+}
+
+static void Task_RenewBerryYesNo(u8 taskId)
+{
+    if (IsPartyMenuTextPrinterActive() != TRUE)
+    {
+        PartyMenuDisplayYesNoMenu();
+        gTasks[taskId].func = Task_HandleRenewBerryYesNoInput;
+    }
+}
+
+#define RENEW_BERRY_MIN_EVS 60
+
+// Zeroes the mon's EVs and sheen so its training can start over. Needs some training to undo first
+void ItemUseCB_RenewBerry(u8 taskId, TaskFunc task)
+{
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+
+    PlaySE(SE_SELECT);
+    if (GetMonData(mon, MON_DATA_IS_EGG) || GetMonEVCount(mon) < RENEW_BERRY_MIN_EVS)
+    {
+        gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = task;
+        return;
+    }
+
+    gPartyMenuUseExitCallback = TRUE;
+    GetMonNickname(mon, gStringVar1);
+    StringExpandPlaceholders(gStringVar4, gText_AskResetPkmnTraining);
+    DisplayPartyMenuMessage(gStringVar4, TRUE);
+    ScheduleBgCopyTilemapToVram(2);
+    gTasks[taskId].func = Task_RenewBerryYesNo;
+}
+
+// Opens the Move Reminder for the chosen mon; the berry is only eaten if a move gets learned
+void ItemUseCB_RememBerry(u8 taskId, TaskFunc task)
+{
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+
+    PlaySE(SE_SELECT);
+    if (GetMonData(mon, MON_DATA_IS_EGG) || GetNumberOfRelearnableMoves(mon) == 0)
+    {
+        gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = task;
+        return;
+    }
+
+    gSpecialVar_0x8004 = gPartyMenu.slotId;
+    sPartyMenuInternal->exitCallback = CB2_MoveRelearnerFromRememBerry;
+    Task_ClosePartyMenu(taskId);
+}
+
+// Swaps between the species' two abilities, like the old Verdanturf ability guy
+void ItemUseCB_ShiftBerry(u8 taskId, TaskFunc task)
+{
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+    u16 species = GetMonData(mon, MON_DATA_SPECIES);
+    u8 newAbilityNum = !GetMonData(mon, MON_DATA_ABILITY_NUM);
+
+    PlaySE(SE_SELECT);
+    // EX forms have one fixed ability, so a swap would do nothing until it leaves EX form
+    if (GetMonData(mon, MON_DATA_IS_EGG)
+     || IsMonEx(mon)
+     || gSpeciesInfo[species].abilities[1] == 0
+     || gSpeciesInfo[species].abilities[0] == gSpeciesInfo[species].abilities[1])
+    {
+        gPartyMenuUseExitCallback = FALSE;
+        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = task;
+        return;
+    }
+
+    gPartyMenuUseExitCallback = TRUE;
+    gPartyMenu.data1 = newAbilityNum;
+    GetMonNickname(mon, gStringVar1);
+    StringCopy(gStringVar2, gAbilityNames[gSpeciesInfo[species].abilities[newAbilityNum]]);
+    StringExpandPlaceholders(gStringVar4, gText_AskChangeAbilityToVar2);
+    DisplayPartyMenuMessage(gStringVar4, TRUE);
+    ScheduleBgCopyTilemapToVram(2);
+    gTasks[taskId].func = Task_ShiftBerryYesNo;
 }
 
 static void UpdateMonDisplayInfoAfterRareCandy(u8 slot, struct Pokemon *mon)

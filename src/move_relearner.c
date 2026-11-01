@@ -4,6 +4,8 @@
 #include "bg.h"
 #include "contest_effect.h"
 #include "data.h"
+#include "item.h"
+#include "item_menu.h"
 #include "event_data.h"
 #include "field_screen_effect.h"
 #include "gpu_regs.h"
@@ -346,6 +348,10 @@ static const struct BgTemplate sMoveRelearnerMenuBackgroundTemplates[] =
     },
 };
 
+// Set while the screen was opened by a RECALL BERRY from the bag
+static EWRAM_DATA bool8 sFromRememBerry = FALSE;
+static EWRAM_DATA bool8 sRememBerryLearnedMove = FALSE;
+
 static void DoMoveRelearnerMain(void);
 static void CreateLearnableMovesList(void);
 static void CreateUISprites(void);
@@ -386,6 +392,14 @@ static void Task_WaitForFadeOut(u8 taskId)
         gFieldCallback = FieldCB_ContinueScriptHandleMusic;
         DestroyTask(taskId);
     }
+}
+
+// Opened from the party menu after choosing a mon for a RECALL BERRY. The mon is in VAR_0x8004
+void CB2_MoveRelearnerFromRememBerry(void)
+{
+    sFromRememBerry = TRUE;
+    sRememBerryLearnedMove = FALSE;
+    CB2_InitLearnMove();
 }
 
 static void CB2_InitLearnMove(void)
@@ -524,6 +538,7 @@ static void DoMoveRelearnerMain(void)
                 {
                     PrintMessageWithPlaceholders(gText_MoveRelearnerPkmnLearnedMove);
                     gSpecialVar_0x8004 = TRUE;
+                    sRememBerryLearnedMove = TRUE;
                     sMoveRelearnerStruct->state = MENU_STATE_PRINT_TEXT_THEN_FANFARE;
                 }
                 else
@@ -679,7 +694,17 @@ static void DoMoveRelearnerMain(void)
         if (!gPaletteFade.active)
         {
             FreeMoveRelearnerResources();
-            SetMainCallback2(CB2_ReturnToField);
+            if (sFromRememBerry)
+            {
+                sFromRememBerry = FALSE;
+                if (sRememBerryLearnedMove)
+                    RemoveBagItem(gSpecialVar_ItemId, 1);
+                SetMainCallback2(CB2_ReturnToBagMenuPocket);
+            }
+            else
+            {
+                SetMainCallback2(CB2_ReturnToField);
+            }
         }
         break;
     case MENU_STATE_FADE_FROM_SUMMARY_SCREEN:
@@ -714,6 +739,7 @@ static void DoMoveRelearnerMain(void)
                 PrintMessageWithPlaceholders(gText_MoveRelearnerAndPoof);
                 sMoveRelearnerStruct->state = MENU_STATE_DOUBLE_FANFARE_FORGOT_MOVE;
                 gSpecialVar_0x8004 = TRUE;
+                sRememBerryLearnedMove = TRUE;
             }
         }
         break;

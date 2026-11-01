@@ -417,6 +417,18 @@ const u32 gItemIconPalette_LansatBerry[] = INCBIN_U32("graphics/items/icon_palet
 const u32 gItemIcon_StarfBerry[] = INCBIN_U32("graphics/items/icons/starf_berry.4bpp.lz");
 const u32 gItemIconPalette_StarfBerry[] = INCBIN_U32("graphics/items/icon_palettes/starf_berry.gbapal.lz");
 
+// Shares the LUM BERRY icon, recolored
+const u32 gItemIcon_ShiftBerry[] = INCBIN_U32("graphics/items/icons/lum_berry.4bpp.lz");
+const u32 gItemIconPalette_ShiftBerry[] = INCBIN_U32("graphics/items/icon_palettes/shift_berry.gbapal.lz");
+
+// Shares the PECHA BERRY icon, recolored
+const u32 gItemIcon_RememBerry[] = INCBIN_U32("graphics/items/icons/pecha_berry.4bpp.lz");
+const u32 gItemIconPalette_RememBerry[] = INCBIN_U32("graphics/items/icon_palettes/REMEM_BERRY.gbapal.lz");
+
+// Shares the CHESTO BERRY icon, recolored
+const u32 gItemIcon_RenewBerry[] = INCBIN_U32("graphics/items/icons/chesto_berry.4bpp.lz");
+const u32 gItemIconPalette_RenewBerry[] = INCBIN_U32("graphics/items/icon_palettes/renew_berry.gbapal.lz");
+
 const u32 gItemIcon_EnigmaBerry[] = INCBIN_U32("graphics/items/icons/enigma_berry.4bpp.lz");
 const u32 gItemIconPalette_EnigmaBerry[] = INCBIN_U32("graphics/items/icon_palettes/enigma_berry.gbapal.lz");
 
