@@ -133,6 +133,7 @@ struct ProtectStruct
     u32 notFirstStrike:1;
     u32 palaceUnableToUseMove:1;
     u32 detected:1; // Protected by Detect, which blocks all attacking moves
+    u32 focusBroken:1; // Took a super effective or critical hit this turn, which breaks EX Focus Punch's focus
     u32 physicalDmg;
     u32 specialDmg;
     u8 physicalBattlerId;
@@ -702,6 +703,10 @@ extern u8 gExEffectChance;
 extern u8 gExCalmRampageBattlers;
 extern u8 gExLeechSeedTurns[MAX_BATTLERS_COUNT];
 extern u8 gExLockOnTrapBattlers;
+extern u8 gExRageBattlers;
+extern u8 gExBideBattlers;
+extern u8 gExUproarBattlers;
+extern u8 gExForesightBattlers;
 extern u8 gExScreenBlockSides;
 extern u8 gExNoSwitchBattlers;
 extern u8 gEvolvedMidBattleBattlers;

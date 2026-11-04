@@ -145,7 +145,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_VICE_GRIP] =
     {
-        .effect = EFFECT_ENTWINE,
+        .effect = EFFECT_HIT,
         .power = 55,
         .type = TYPE_BUG,
         .accuracy = 100,
@@ -749,7 +749,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .accuracy = 100,
         .pp = 15,
         .secondaryEffectChance = 0,
-        .target = MOVE_TARGET_BOTH,
+        .target = MOVE_TARGET_FOES_AND_ALLY, // Hits its ally too, see BattleScript_Surf
         .priority = 0,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },
@@ -4723,7 +4723,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_SHRED,
         .power = 70,
-        .type = TYPE_BLADE,
+        .type = TYPE_NORMAL,
         .accuracy = 95,
         .pp = 15,
         .secondaryEffectChance = 0,
@@ -4787,9 +4787,9 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 	[MOVE_SPIRIT_PURGE] =
     {
         .effect = EFFECT_SPIRIT_PURGE,
-        .power = 1,
+        .power = 150,
         .type = TYPE_GHOST,
-        .accuracy = 85,
+        .accuracy = 25, // Rises as the target's HP falls, see AccuracyCalcHelper
         .pp = 10,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
@@ -5415,7 +5415,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .type = TYPE_ASTRAL,
         .accuracy = 85,
         .pp = 10,
-        .secondaryEffectChance = 100,
+        .secondaryEffectChance = 50,
         .target = MOVE_TARGET_SELECTED,
         .priority = 0,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
@@ -5703,6 +5703,34 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         .pp = 15,
         .secondaryEffectChance = 0,
         .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+    },
+
+    // EX Air Slash's upgrade: Air Slash, but it hits both foes
+    [MOVE_AIR_SLASH_EX] =
+    {
+        .effect = EFFECT_FLINCH_HIT,
+        .power = 75,
+        .type = TYPE_FLYING,
+        .accuracy = 95,
+        .pp = 20,
+        .secondaryEffectChance = 30,
+        .target = MOVE_TARGET_BOTH,
+        .priority = 0,
+        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+    },
+
+    // EX Dragon Pulse's upgrade: Dragon Pulse, but it hits both foes
+    [MOVE_DRAGON_PULSE_EX] =
+    {
+        .effect = EFFECT_HIT,
+        .power = 90,
+        .type = TYPE_DRAGON,
+        .accuracy = 100,
+        .pp = 10,
+        .secondaryEffectChance = 0,
+        .target = MOVE_TARGET_BOTH,
         .priority = 0,
         .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
     },

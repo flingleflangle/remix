@@ -455,8 +455,15 @@
 #define STRINGID_PKMNCUTSALLYTEAMSACCURACY  454
 #define STRINGID_ATKSXINFATUATEDDEF         455
 #define STRINGID_PKMNATEITSBERRY            456
+#define STRINGID_PKMNCONSTRICTED            457
+#define STRINGID_EXKNOCKEDOUTOFSKY          458
+#define STRINGID_EXSCREENSBLOWNAWAY         459
+#define STRINGID_EXSTATSWASHEDAWAY          460
+#define STRINGID_EXSTATSKNOCKEDAWAY         461
+#define STRINGID_EXGOTITOUTOFSYSTEM         462
+#define STRINGID_EXSEESITCOMING             463
 
-#define BATTLESTRINGS_COUNT                 457
+#define BATTLESTRINGS_COUNT                 464
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,
@@ -685,6 +692,6 @@
 #define B_MSG_EX_UNLOCK_TRAINING   0
 #define B_MSG_EX_UNLOCK_FRIENDSHIP 1
 
-#define NUM_TRAPPING_MOVES 8
+#define NUM_TRAPPING_MOVES 11
 
 #endif // GUARD_CONSTANTS_BATTLE_STRING_IDS_H

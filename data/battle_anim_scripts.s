@@ -455,6 +455,8 @@ gBattleAnims_Moves::
 	.4byte Move_SHADOW_FORCE
 	.4byte Move_HEART_SWAP
 	.4byte Move_NATURAL_GIFT
+	.4byte Move_AIR_SLASH @ MOVE_AIR_SLASH_EX
+	.4byte Move_DRAGON_PULSE @ MOVE_DRAGON_PULSE_EX
 	.4byte Move_COUNT @ cannot be reached, because last move is Psycho Boost
 
 	.align 2
@@ -12440,6 +12442,20 @@ Move_SPIRIT_PURGE:
 	delay 2
 	createsprite gRandomPosHitSplatSpriteTemplate, ANIM_TARGET, 3, ANIM_TARGET, 2
 	createvisualtask SoundTask_PlaySE1WithPanning, 5, SE_M_COMET_PUNCH, SOUND_PAN_TARGET
+	@ The fiery finish only plays if the hit knocks the target out (VARIOUS_SET_ANIM_TURN_IF_KO sets the turn)
+	choosetwoturnanim Move_SPIRIT_PURGE_FadeBack, Move_SPIRIT_PURGE_Finish
+@ It didn't: the user fades back in at its spot, and the background comes back
+Move_SPIRIT_PURGE_FadeBack:
+	waitforvisualfinish
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 1, 16, 0, RGB_BLACK
+	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 1, 16, 0, RGB_BLACK
+	createsprite gSimplePaletteBlendSpriteTemplate, ANIM_ATTACKER, 2, F_PAL_BG, 1, 16, 0, RGB_BLACK
+	waitforvisualfinish
+	clearmonbg ANIM_ATK_PARTNER
+	monbg ANIM_DEF_PARTNER
+	clearmonbg ANIM_DEF_PARTNER
+	end
+Move_SPIRIT_PURGE_Finish:
 	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_ATTACKER, 0, 15, 0, RGB_BLACK
 	createvisualtask AnimTask_BlendBattleAnimPal, 10, F_PAL_TARGET, 0, 15, 0, RGB_BLACK
 	playsewithpan SE_M_TRI_ATTACK2, SOUND_PAN_TARGET

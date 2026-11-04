@@ -276,10 +276,7 @@ gBattleScriptsForMoveEffects::
 
 BattleScript_EffectHit::
 	jumpifmove MOVE_FEINT, BattleScript_Feint
-	jumpifnotmove MOVE_SURF, BattleScript_HitFromAtkCanceler
-	jumpifnostatus3 BS_TARGET, STATUS3_UNDERWATER, BattleScript_HitFromAtkCanceler
-	orword gHitMarker, HITMARKER_IGNORE_UNDERWATER
-	setbyte sDMG_MULTIPLIER, 2
+	jumpifmove MOVE_SURF, BattleScript_Surf
 BattleScript_HitFromAtkCanceler::
 	attackcanceler
 BattleScript_HitFromAccCheck::
@@ -289,6 +286,7 @@ BattleScript_HitFromAtkString::
 	ppreduce
 BattleScript_HitFromCritCalc::
 	critcalc
+BattleScript_HitFromDamageCalc::
 	damagecalc
 	typecalc
 	adjustnormaldamage
@@ -552,20 +550,22 @@ BattleScript_GloryBlazeLoop:
 	tryfaintmon BS_TARGET
 	moveendto MOVEEND_NEXT_TARGET
 	jumpifnexttargetvalid BattleScript_GloryBlazeLoop
-	tryfaintmon BS_ATTACKER
-	end
+	goto BattleScript_GloryBlazeEnd
 BattleScript_GloryBlazeAbsorbed:
 	call BattleScript_SpreadMoveAbsorbed
 	moveendto MOVEEND_NEXT_TARGET
 	jumpifnexttargetvalid BattleScript_GloryBlazeLoop
-	tryfaintmon BS_ATTACKER
-	end
+	goto BattleScript_GloryBlazeEnd
 BattleScript_GloryBlazeMissed:
 	effectivenesssound
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	moveendto MOVEEND_NEXT_TARGET
 	jumpifnexttargetvalid BattleScript_GloryBlazeLoop
+BattleScript_GloryBlazeEnd:
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, BattleScript_GloryBlazeFaintUser
+	call BattleScript_ExTrySetWeather @ EX Glory Blaze leaves harsh sunlight
+BattleScript_GloryBlazeFaintUser:
 	tryfaintmon BS_ATTACKER
 	end
 
@@ -921,6 +921,11 @@ StarBarrageLandReturn:
 	waitmessage B_WAIT_TIME_LONG
 BattleScript_MultiHitEnd::
 	seteffectwithchance
+	call BattleScript_TryExExtraEffect @ EX Double Slap confuses the target, EX Arm Thrust and Fury Attack lower its Defense
+	jumpifnotmove MOVE_BONEMERANG, BattleScript_MultiHitEndFaint
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, BattleScript_MultiHitEndFaint
+	call BattleScript_ExTryKnockOutOfSky @ EX Bonemerang
+BattleScript_MultiHitEndFaint:
 	tryfaintmon BS_TARGET
 	tryfaintmon BS_ATTACKER
 	jumpifmovehadnoeffect BattleScript_MultiHitMoveEnd
@@ -1218,6 +1223,9 @@ BattleScript_EffectFixedDamage::
 
 DragonRage::
 	setword gBattleMoveDamage, 40
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, DragonRageSetDamage
+	setword gBattleMoveDamage, 48 @ EX Dragon Rage: 1.2x
+DragonRageSetDamage:
 	adjustsetdamage
 	goto BattleScript_HitFromAtkAnimation
 
@@ -1228,6 +1236,9 @@ VacuumCut::
 	typecalc
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
 	setword gBattleMoveDamage, 35
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, VacuumCutSetDamage
+	setword gBattleMoveDamage, 42 @ EX Vacuum Cut: 1.2x
+VacuumCutSetDamage:
 	adjustsetdamage
 	attackanimation
 	waitanimation
@@ -1257,6 +1268,9 @@ VacuumNoEffectOnSteel::
 
 SonicBoom::
 	setword gBattleMoveDamage, 20
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, SonicBoomSetDamage
+	setword gBattleMoveDamage, 30 @ EX Sonic Boom
+SonicBoomSetDamage:
 	adjustsetdamage
 	goto BattleScript_HitFromAtkAnimation
 
@@ -1543,7 +1557,9 @@ BattleScript_EffectShred::
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
+	jumpifexmove BattleScript_ShredHit @ EX Shred rakes Ghost types too
 	jumpiftype BS_TARGET, TYPE_GHOST, BattleScript_NotAffected
+BattleScript_ShredHit:
 	critcalc
 	damagecalc
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
@@ -1578,11 +1594,12 @@ BattleScript_EffectDragonFist::
 	end
 
 
+@ A flat 50% gamble (VARIOUS_WAGER_COIN_FLIP), which nothing can change
 BattleScript_EffectWager::
 	attackcanceler
 	setbyte sB_ANIM_TURN, 0
-	critcalc
-	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_WagerFail
+	various BS_ATTACKER, VARIOUS_WAGER_COIN_FLIP
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_WagerFail
 	attackstring
 	ppreduce
 	typecalc
@@ -1786,11 +1803,17 @@ BattleScript_EffectFlyingKnee::
 	seteffectwithchance
 	end
 
+@ After the first turn, a critical hit does double damage and paralyzes
 BattleScript_EffectFlyingKnee2::
-	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_EffectHit
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	jumpifbyte CMP_NOT_EQUAL, gCritMultiplier, 2, BattleScript_HitFromDamageCalc
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	setbyte sDMG_MULTIPLIER, 2
-	goto BattleScript_EffectHit
+	goto BattleScript_HitFromDamageCalc
 	
 BattleScript_EffectDragonLash::
 	attackcanceler
@@ -1860,7 +1883,7 @@ BattleScript_EffectPanic::
 	ppreduce
 	jumpifbattletype BATTLE_TYPE_ARENA, BattleScript_ButItFailed
 	jumpifcantswitch SWITCH_IGNORE_ESCAPE_PREVENTION | BS_ATTACKER, BattleScript_ButItFailed
-	jumpifstatus BS_ATTACKER, STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED | STATUS2_CONFUSION | STATUS2_CURSED | STATUS2_INFATUATION, PanicDouble
+	jumpifstatus2 BS_ATTACKER, STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED | STATUS2_CONFUSION | STATUS2_CURSED | STATUS2_INFATUATION, PanicDouble
 PanicContinue:
 	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackanimation
@@ -1877,6 +1900,7 @@ PanicContinue:
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
+	call BattleScript_TryExExtraEffect @ EX Panic confuses the target
 	tryfaintmon BS_TARGET
 	openpartyscreen BS_ATTACKER, BattleScript_ButItFailed
 	switchoutabilities BS_ATTACKER
@@ -1895,22 +1919,29 @@ PanicDouble:
 	setbyte sDMG_MULTIPLIER, 4
 	goto PanicContinue
 
+@ An on-demand Synchronize: the target's status becomes the user's. As it hits, a user with poison, bad poison, a burn,
+@ Ignite or paralysis cures the target of its status and gives it the user's. A user without one cures the target's
+@ status after the hit instead. Dark types are immune, but not to EX Synchro Blast (EX_FLAG_IGNORE_IMMUNITY)
 BattleScript_EffectSynchroBlast::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
 	attackstring
 	ppreduce
-	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_HitFromAtkString
+	jumpifexmove BattleScript_SynchroBlastCheckSub
 	jumpiftype BS_TARGET, TYPE_DARK, BattleScript_NotAffected
+BattleScript_SynchroBlastCheckSub:
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_HitFromCritCalc
 	jumpifstatus BS_ATTACKER, STATUS1_POISON, BattleScript_EffectSynchroPoison
 	jumpifstatus BS_ATTACKER, STATUS1_TOXIC_POISON, BattleScript_EffectSynchroToxic
 	jumpifstatus BS_ATTACKER, STATUS1_BURN, BattleScript_EffectSynchroBurn
 	jumpifstatus BS_ATTACKER, STATUS1_IGNITE, BattleScript_EffectSynchroIgnite
 	jumpifstatus BS_ATTACKER, STATUS1_PARALYSIS, BattleScript_EffectSynchroParalyze
-	attackanimation
-	waitanimation
 	critcalc
 	damagecalc
 	typecalc
 	adjustnormaldamage
+	attackanimation
+	waitanimation
 	effectivenesssound
 	hitanimation BS_TARGET
 	waitstate
@@ -1920,32 +1951,32 @@ BattleScript_EffectSynchroBlast::
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
-	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
+	jumpifmovehadnoeffect BattleScript_SynchroBlastEnd
+	jumpifhasnohp BS_TARGET, BattleScript_SynchroBlastEnd
+	cureifburnedparalysedorpoisoned BattleScript_SynchroBlastEnd
 	printstring STRINGID_PKMNSTATUSNORMAL
 	waitmessage B_WAIT_TIME_LONG
 	updatestatusicon BS_TARGET
-	seteffectwithchance
+BattleScript_SynchroBlastEnd:
 	tryfaintmon BS_TARGET
 	goto BattleScript_MoveEnd
 BattleScript_EffectSynchroPoison::
 	setmoveeffect MOVE_EFFECT_POISON
-	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
-	goto BattleScript_HitFromAtkString
+	goto BattleScript_SynchroBlastSync
 BattleScript_EffectSynchroToxic::
 	setmoveeffect MOVE_EFFECT_TOXIC
-	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
-	goto BattleScript_HitFromCritCalc
+	goto BattleScript_SynchroBlastSync
 BattleScript_EffectSynchroBurn::
 	setmoveeffect MOVE_EFFECT_BURN
-	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
-	goto BattleScript_HitFromCritCalc
+	goto BattleScript_SynchroBlastSync
 BattleScript_EffectSynchroIgnite::
 	setmoveeffect MOVE_EFFECT_IGNITE
-	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
-	goto BattleScript_HitFromCritCalc
+	goto BattleScript_SynchroBlastSync
 BattleScript_EffectSynchroParalyze::
 	setmoveeffect MOVE_EFFECT_PARALYSIS
-	cureifburnedparalysedorpoisoned BattleScript_HitFromAtkString
+@ Clears the target's status so the user's can take its place, then hits (its 100% effect chance gives it the status)
+BattleScript_SynchroBlastSync:
+	cureifburnedparalysedorpoisoned BattleScript_HitFromCritCalc
 	goto BattleScript_HitFromCritCalc
 
 BattleScript_EffectSweetScent::
@@ -2036,7 +2067,6 @@ BattleScript_EffectEntwine::
 	effectivenesssound
 	jumpifstatus2 BS_TARGET, STATUS2_ESCAPE_PREVENTION, BattleScript_EntwineContinue
 	seteffectwithchance
-	jumpifmove MOVE_VICE_GRIP, SkipEntwineParalyze
 	setmoveeffect MOVE_EFFECT_PARALYSIS
 	seteffectwithchance
 SkipEntwineParalyze::
@@ -2101,7 +2131,7 @@ BoulderDashSpikes:
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
-BoulderDashDoubleDmg::
+BoulderDashDoubleDmg:: @ EX Boulder Dash curls up first, see BattleScript_ExBoulderDash
 	setdefensecurlbit
 	setbyte sDMG_MULTIPLIER, 2
 	goto BoulderDashContinue
@@ -2684,6 +2714,9 @@ BattleScript_TripleKickLoop::
 BattleScript_DoTripleKickAttack::
 	accuracycheck BattleScript_TripleKickNoMoreHits, ACC_CURR_MOVE
 	movevaluescleanup
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_EFFECT_EACH_HIT, BattleScript_TripleKickPower
+	copybyte cEFFECT_CHOOSER, sMULTIHIT_EFFECT @ EX Triple Kick
+BattleScript_TripleKickPower:
 	addbyte sTRIPLE_KICK_POWER, 20
 	addbyte sMULTIHIT_STRING + 4, 1
 	copyhword gDynamicBasePower, sTRIPLE_KICK_POWER
@@ -2701,6 +2734,9 @@ BattleScript_DoTripleKickAttack::
 	datahpupdate BS_TARGET
 	critmessage
 	waitmessage B_WAIT_TIME_LONG
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_EFFECT_EACH_HIT, BattleScript_TripleKickAfterEffect
+	seteffectwithchance @ Clears the effect, so the roll after the last kick (BattleScript_TripleKickEnd) does nothing
+BattleScript_TripleKickAfterEffect:
 	printstring STRINGID_EMPTYSTRING3
 	waitmessage 1
 	moveendto MOVEEND_NEXT_TARGET
@@ -2741,6 +2777,9 @@ BattleScript_TripleSlashLoop::
 BattleScript_DoTripleSlashAttack::
 	accuracycheck BattleScript_TripleSlashNoMoreHits, ACC_CURR_MOVE
 	movevaluescleanup
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_EFFECT_EACH_HIT, BattleScript_TripleSlashPower
+	copybyte cEFFECT_CHOOSER, sMULTIHIT_EFFECT @ EX Triple Slash
+BattleScript_TripleSlashPower:
 	addbyte sTRIPLE_KICK_POWER, 20
 	addbyte sMULTIHIT_STRING + 4, 1
 	copyhword gDynamicBasePower, sTRIPLE_KICK_POWER
@@ -2759,6 +2798,9 @@ BattleScript_DoTripleSlashAttack::
 	datahpupdate BS_TARGET
 	critmessage
 	waitmessage B_WAIT_TIME_LONG
+	jumpifword CMP_NO_COMMON_BITS, gExMoveFlags, EX_FLAG_EFFECT_EACH_HIT, BattleScript_TripleSlashAfterEffect
+	seteffectwithchance @ Clears the effect, so the roll after the last slash (BattleScript_TripleSlashEnd) does nothing
+BattleScript_TripleSlashAfterEffect:
 	printstring STRINGID_EMPTYSTRING3
 	waitmessage 1
 	moveendto MOVEEND_NEXT_TARGET
@@ -2997,6 +3039,10 @@ BattleScript_EffectForesight::
 	various BS_ATTACKER, VARIOUS_SET_SURE_CRIT
 	printstring STRINGID_PKMNAIMEDNEXTATTACK
 	waitmessage B_WAIT_TIME_LONG
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, BattleScript_MoveEnd
+	various BS_ATTACKER, VARIOUS_EX_FORESIGHT_PRIORITY @ EX Foresight: the user's next move goes first
+	printstring STRINGID_EXSEESITCOMING
+	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_MoveEnd
 
 @ Odor Sleuth instead sniffs out a trainer's next Pokémon in line, which Roar will then drag out
@@ -3178,10 +3224,23 @@ MindCrushSuccess::
 	goto BattleScript_MoveEnd
 
 
+@ Only a Ghost type can use it. Its accuracy rises as the target's HP falls (see AccuracyCalcHelper), and its
+@ animation only ends in its fiery finish if it knocks the target out
 BattleScript_EffectSpiritPurge::
-	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_EffectReturn
+	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_SpiritPurgeHit
 	attackstring
 	goto BattleScript_ButItFailed
+BattleScript_SpiritPurgeHit:
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	various BS_TARGET, VARIOUS_SET_ANIM_TURN_IF_KO
+	goto BattleScript_HitFromAtkAnimation
 BattleScript_EffectReturn::
 BattleScript_EffectFrustration::
 	attackcanceler
@@ -3275,8 +3334,14 @@ BattleScript_EffectRapidSpin::
 	tryfaintmon BS_TARGET
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPEED, MAX_STAT_STAGE, BattleScript_MoveEnd
 	setbyte sSTAT_ANIM_PLAYED, FALSE
+	jumpifexmove BattleScript_RapidSpinExSpeed
 	playstatchangeanimation BS_ATTACKER, BIT_SPEED, 0
 	setstatchanger STAT_SPEED, 1, FALSE
+	goto BattleScript_RapidSpinRaiseSpeed
+BattleScript_RapidSpinExSpeed: @ EX Rapid Spin sharply raises it
+	playstatchangeanimation BS_ATTACKER, BIT_SPEED, STAT_CHANGE_BY_TWO
+	setstatchanger STAT_SPEED, 2, FALSE
+BattleScript_RapidSpinRaiseSpeed:
 	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_MoveEnd
 	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_MoveEnd
 	printfromtable gStatUpStringIds
@@ -3304,6 +3369,18 @@ BattleScript_EffectKaleidoscope::
 	ppreduce
 	typecalc
 	bicbyte gMoveResultFlags, MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE
+@ A held crystal picks the effect instead of the user's types: the effect its types would give
+@ (VARIOUS_GET_HELD_CRYSTAL gives 1-9 for the crystals in item order, or 0)
+	various BS_ATTACKER, VARIOUS_GET_HELD_CRYSTAL
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 1, KaleidoscopeDamage    @ Star: Normal, Flying, Sound
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 2, KaleidoscopeFreeze    @ Aqua: Water, Ice, Dragon
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 3, KaleidoscopeBurn      @ Flare: Fire, Dragon
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 4, KaleidoscopeDrain     @ Land: Bug, Grass, Dragon
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 5, KaleidoscopeParalyze  @ Volt: Electric, Dragon
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 6, KaleidoscopeConfuse   @ Power: Rock, Ground, Fighting
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 7, KaleidoscopeDisable   @ Mind: Psychic, Ghost, Astral
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 8, KaleidoscopePoison    @ Shade: Dark, Poison
+	jumpifbyte CMP_EQUAL, gBattleCommunication, 9, KaleidoscopeFlinch    @ Metal: Steel, Blade
 @ lots of types, lots of necessary checks
 	jumpiftype BS_ATTACKER, TYPE_FIRE, KaleidoscopeBurn
 	jumpiftype BS_ATTACKER, TYPE_WATER, KaleidoscopeFreeze
@@ -3323,7 +3400,12 @@ BattleScript_EffectKaleidoscope::
 	jumpiftype BS_ATTACKER, TYPE_FLYING, KaleidoscopeDamage
 	jumpiftype BS_ATTACKER, TYPE_DARK, KaleidoscopePoison
 	jumpiftype BS_ATTACKER, TYPE_MYSTERY, KaleidoscopeUltimate
+	jumpiftype BS_ATTACKER, TYPE_BLADE, KaleidoscopeFlinch    @ Like Steel (Metal Crystal)
+	jumpiftype BS_ATTACKER, TYPE_ASTRAL, KaleidoscopeDisable  @ Like Psychic and Ghost (Mind Crystal)
+	jumpiftype BS_ATTACKER, TYPE_SOUND, KaleidoscopeDamage    @ Like Normal and Flying (Star Crystal)
 KaleidoscopeType2Check::
+	various BS_ATTACKER, VARIOUS_GET_HELD_CRYSTAL @ With a crystal, its effect is the only one
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, 0, KaleidoEnd
 	jumpiftype2 BS_ATTACKER, TYPE_STEEL, KaleidoscopeFlinch2
 	jumpiftype2 BS_ATTACKER, TYPE_FIGHTING, KaleidoscopeConfuse2
 	jumpiftype2 BS_ATTACKER, TYPE_GROUND, KaleidoscopeConfuse2
@@ -3338,6 +3420,8 @@ KaleidoscopeType2Check::
 	jumpiftype2 BS_ATTACKER, TYPE_ELECTRIC, KaleidoscopeParalyze2
 	jumpiftype2 BS_ATTACKER, TYPE_POISON, KaleidoscopePoison2
 	jumpiftype2 BS_ATTACKER, TYPE_DARK, KaleidoscopePoison2
+	jumpiftype2 BS_ATTACKER, TYPE_BLADE, KaleidoscopeFlinch2
+	jumpiftype2 BS_ATTACKER, TYPE_ASTRAL, KaleidoscopeDisable2
 	goto KaleidoEnd
 
 KaleidoscopeDamage::
@@ -3840,6 +3924,10 @@ BattleScript_Discharge::
 	selectfirstvalidtarget
 BattleScript_DischargeLoop::
 	movevaluescleanup
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, BattleScript_DischargeTryAbsorb
+	various BS_TARGET, VARIOUS_IS_ON_ATTACKER_SIDE
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, FALSE, BattleScript_DischargeSkipAlly @ EX Discharge spares the ally
+BattleScript_DischargeTryAbsorb:
 	various BS_TARGET, VARIOUS_TRY_SPREAD_ABSORB
 	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, 0, BattleScript_DischargeAbsorbed
 	setmoveeffect MOVE_EFFECT_PARALYSIS
@@ -3866,6 +3954,11 @@ BattleScript_DischargeLoop::
 	moveendto MOVEEND_NEXT_TARGET
 	jumpifnexttargetvalid BattleScript_DischargeLoop
 	end
+BattleScript_DischargeSkipAlly:
+	orbyte gMoveResultFlags, MOVE_RESULT_MISSED
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_DischargeLoop
+	end
 BattleScript_DischargeAbsorbed::
 	call BattleScript_SpreadMoveAbsorbed
 	moveendto MOVEEND_NEXT_TARGET
@@ -3881,6 +3974,67 @@ BattleScript_DischargeMissed::
 	jumpifnexttargetvalid BattleScript_DischargeLoop
 	end
 
+@ Surf hits everyone around the user, its ally too. Like Earthquake, it goes through each target in turn. A target
+@ underwater from Dive takes double damage. EX Surf washes away each target's stat changes, raised and lowered alike
+BattleScript_Surf::
+	attackcanceler
+	attackstring
+	ppreduce
+	selectfirstvalidtarget
+BattleScript_SurfLoop::
+	movevaluescleanup
+	various BS_TARGET, VARIOUS_TRY_SPREAD_ABSORB
+	jumpifbyte CMP_NOT_EQUAL, gBattleCommunication, 0, BattleScript_SurfAbsorbed
+	bicword gHitMarker, HITMARKER_IGNORE_UNDERWATER
+	jumpifnostatus3 BS_TARGET, STATUS3_UNDERWATER, BattleScript_SurfHit
+	orword gHitMarker, HITMARKER_IGNORE_UNDERWATER
+	setbyte sDMG_MULTIPLIER, 2
+BattleScript_SurfHit:
+	accuracycheck BattleScript_SurfMissed, ACC_CURR_MOVE
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, BattleScript_SurfNext
+	jumpifmovehadnoeffect BattleScript_SurfNext
+	jumpifhasnohp BS_TARGET, BattleScript_SurfNext
+	various BS_TARGET, VARIOUS_EX_RESET_ALL_STATS
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_SurfNext
+	printstring STRINGID_EXSTATSWASHEDAWAY
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_SurfNext:
+	printstring STRINGID_EMPTYSTRING3
+	waitmessage 1
+	tryfaintmon BS_TARGET
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_SurfLoop
+	end
+BattleScript_SurfAbsorbed:
+	call BattleScript_SpreadMoveAbsorbed
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_SurfLoop
+	end
+BattleScript_SurfMissed:
+	pause B_WAIT_TIME_SHORT
+	typecalc
+	effectivenesssound
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	moveendto MOVEEND_NEXT_TARGET
+	jumpifnexttargetvalid BattleScript_SurfLoop
+	end
+
 @ Feint hits through Protect and Detect, and lifts them
 BattleScript_Feint::
 	attackcanceler
@@ -3893,6 +4047,9 @@ BattleScript_TryFeintThenHit::
 	ppreduce
 	printstring STRINGID_PKMNFELLFORFEINT
 	waitmessage B_WAIT_TIME_LONG
+	jumpifnotmove MOVE_FEINT, BattleScript_HitFromCritCalc
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, BattleScript_HitFromCritCalc
+	setbyte sDMG_MULTIPLIER, 2 @ EX Feint does double damage when it lifts a Protect
 	goto BattleScript_HitFromCritCalc
 
 @ Heart Swap swaps all stat changes with the target, like EX Skill Swap's EX_BONUS_SWAP_STATS
@@ -4052,6 +4209,10 @@ BattleScript_BeatUpAttack::
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
+	jumpifbyte CMP_EQUAL, gBattleMoveIsEx, FALSE, BattleScript_BeatUpFaint
+	setmoveeffect MOVE_EFFECT_TRI_ATTACK @ EX Beat Up: each teammate's strike might burn, paralyze or freeze
+	seteffectwithchance
+BattleScript_BeatUpFaint:
 	tryfaintmon BS_TARGET
 	moveendto MOVEEND_NEXT_TARGET
 	goto BattleScript_BeatUpLoop
@@ -5084,7 +5245,6 @@ BattleScript_FaintTarget::
 	jumpifmove MOVE_BLAST_BURN, BattleScript_MoveEnd
 	jumpifmove MOVE_FRENZY_PLANT, BattleScript_MoveEnd
 	jumpifmove MOVE_SERENADE, BattleScript_SerenadeFaint
-	jumpifmove MOVE_VICE_GRIP, BattleScript_MoveEnd
 	jumpifmove MOVE_SOUL_STEAL, BattleScript_EffectSoulSteal
 	return
 

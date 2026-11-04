@@ -175,6 +175,13 @@ static const u8 sText_PkmnDugHole[] = _("{B_ATK_NAME_WITH_PREFIX} dug a hole!");
 static const u8 sText_PkmnHidUnderwater[] = _("{B_ATK_NAME_WITH_PREFIX} hid\nunderwater!");
 static const u8 sText_PkmnSprangUp[] = _("{B_ATK_NAME_WITH_PREFIX} sprang up!");
 static const u8 sText_PkmnSqueezedByBind[] = _("{B_DEF_NAME_WITH_PREFIX} was squeezed by\n{B_ATK_NAME_WITH_PREFIX}'s BIND!");
+static const u8 sText_ExSeesItComing[] = _("{B_ATK_NAME_WITH_PREFIX} sees what's coming,\nand will move first next!");
+static const u8 sText_ExGotItOutOfSystem[] = _("{B_ATK_NAME_WITH_PREFIX} got it all\nout of its system!");
+static const u8 sText_ExStatsKnockedAway[] = _("{B_DEF_NAME_WITH_PREFIX}'s stat changes\nwere knocked away!");
+static const u8 sText_ExStatsWashedAway[] = _("{B_DEF_NAME_WITH_PREFIX}'s stat changes\nwere washed away!");
+static const u8 sText_ExScreensBlownAway[] = _("The winds blew away\nthe foes' barriers!");
+static const u8 sText_ExKnockedOutOfSky[] =_("{B_DEF_NAME_WITH_PREFIX} was knocked\nout of the sky!");
+static const u8 sText_PkmnConstricted[] =_("{B_DEF_NAME_WITH_PREFIX} was squeezed by\n{B_ATK_NAME_WITH_PREFIX}'s CONSTRICT!");
 static const u8 sText_PkmnTrappedInVortex[] = _("{B_DEF_NAME_WITH_PREFIX} was trapped\nin the vortex!");
 static const u8 sText_PkmnTrappedBySandTomb[] = _("{B_DEF_NAME_WITH_PREFIX} was trapped\nby SAND TOMB!");
 static const u8 sText_PkmnWrappedBy[] = _("{B_DEF_NAME_WITH_PREFIX} was WRAPPED by\n{B_ATK_NAME_WITH_PREFIX}!");
@@ -1042,6 +1049,13 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PKMNCUTSALLYTEAMSACCURACY - BATTLESTRINGS_TABLE_START] = sText_PkmnCutsAllyTeamsAccuracy,
     [STRINGID_ATKSXINFATUATEDDEF - BATTLESTRINGS_TABLE_START] = sText_AtksXInfatuatedDef,
     [STRINGID_PKMNATEITSBERRY - BATTLESTRINGS_TABLE_START] = sText_PkmnAteItsBerry,
+    [STRINGID_PKMNCONSTRICTED - BATTLESTRINGS_TABLE_START] = sText_PkmnConstricted,
+    [STRINGID_EXKNOCKEDOUTOFSKY - BATTLESTRINGS_TABLE_START] = sText_ExKnockedOutOfSky,
+    [STRINGID_EXSCREENSBLOWNAWAY - BATTLESTRINGS_TABLE_START] = sText_ExScreensBlownAway,
+    [STRINGID_EXSTATSWASHEDAWAY - BATTLESTRINGS_TABLE_START] = sText_ExStatsWashedAway,
+    [STRINGID_EXSTATSKNOCKEDAWAY - BATTLESTRINGS_TABLE_START] = sText_ExStatsKnockedAway,
+    [STRINGID_EXGOTITOUTOFSYSTEM - BATTLESTRINGS_TABLE_START] = sText_ExGotItOutOfSystem,
+    [STRINGID_EXSEESITCOMING - BATTLESTRINGS_TABLE_START] = sText_ExSeesItComing,
 };
 
 const u16 gMissStringIds[] =
@@ -1083,6 +1097,15 @@ const u16 gSandStormHailDmgStringIds[] =
 {
     [B_MSG_SANDSTORM] = STRINGID_PKMNBUFFETEDBYSANDSTORM,
     [B_MSG_HAIL]      = STRINGID_PKMNPELTEDBYHAIL
+};
+
+// For EX Gust blowing away the weather (VARIOUS_EX_CLEAR_WEATHER)
+const u16 gExWeatherClearedStringIds[] =
+{
+    STRINGID_RAINSTOPPED,
+    STRINGID_SANDSTORMSUBSIDED,
+    STRINGID_SUNLIGHTFADED,
+    STRINGID_HAILSTOPPED,
 };
 
 const u16 gSandStormHailEndStringIds[] =
@@ -1203,7 +1226,10 @@ const u16 gWrappedStringIds[NUM_TRAPPING_MOVES] =
     STRINGID_PKMNTRAPPEDINVORTEX,  // MOVE_WHIRLPOOL
     STRINGID_PKMNTRAPPEDBYSANDTOMB, // MOVE_SAND_TOMB
     STRINGID_PKMNTRAPPEDBYSPROUT, // MOVE_SPROUT
-    STRINGID_PKMNPULLEDINTOBLACKHOLE // MOVE_BLACK_HOLE
+    STRINGID_PKMNPULLEDINTOBLACKHOLE, // MOVE_BLACK_HOLE
+    STRINGID_PKMNCONSTRICTED,        // MOVE_CONSTRICT, as EX Constrict traps
+    STRINGID_PKMNWRAPPEDBY,          // MOVE_VINE_WHIP, as EX Vine Whip traps
+    STRINGID_PKMNTRAPPEDINVORTEX,    // MOVE_TWISTER, as EX Twister traps
 };
 
 const u16 gMistUsedStringIds[] =
@@ -1440,6 +1466,9 @@ const u16 gTrappingMoves[NUM_TRAPPING_MOVES + 1] =
     MOVE_SAND_TOMB,
     MOVE_SPROUT,
     MOVE_BLACK_HOLE,
+    MOVE_CONSTRICT,
+    MOVE_VINE_WHIP,
+    MOVE_TWISTER,
     0xFFFF // Never read
 };
 

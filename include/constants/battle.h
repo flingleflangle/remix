@@ -314,7 +314,7 @@ enum BattlerId
 #define MOVE_EFFECT_EVS_MINUS_2         53
 #define MOVE_EFFECT_THRASH              54
 #define MOVE_EFFECT_KNOCK_OFF           55
-#define MOVE_EFFECT_NOTHING_37          56
+#define MOVE_EFFECT_ALL_STATS_DOWN      56 // Lowers all of the target's stats by 1 (EX Ancient Power)
 #define MOVE_EFFECT_NOTHING_38          57
 #define MOVE_EFFECT_NOTHING_39          58
 #define MOVE_EFFECT_NOTHING_3A          59

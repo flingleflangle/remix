@@ -797,6 +797,8 @@ static const u16 sMovesForbiddenToCopy[] =
     MOVE_COVET,
     MOVE_TRICK,
     MOVE_FOCUS_PUNCH,
+    MOVE_AIR_SLASH_EX, // Only for EX Air Slash
+    MOVE_DRAGON_PULSE_EX, // Only for EX Dragon Pulse
     METRONOME_FORBIDDEN_END
 };
 
@@ -1343,6 +1345,13 @@ static bool8 JumpIfMoveAffectedByProtect(u16 move)
 
 static bool8 AccuracyCalcHelper(u16 move)
 {
+    // EX Swift can't be evaded at all, not even by a Pokémon that's flown, dug, dived or vanished, or one using Dodge
+    if (move == MOVE_SWIFT && gBattleMoveIsEx)
+    {
+        JumpIfMoveFailed(7, move);
+        return TRUE;
+    }
+
     // EX_FLAG_SURE_HIT works like Lock-On, and so does an EX_FLAG_TRAP_LOCK_ON trap against the Pokémon that set it.
     // A Solid Rage holder can't dodge anything, even while flying or underground
     if ((gStatuses3[gBattlerTarget] & STATUS3_ALWAYS_HITS && gDisableStructs[gBattlerTarget].battlerWithSureHit == gBattlerAttacker)
@@ -1351,6 +1360,13 @@ static bool8 AccuracyCalcHelper(u16 move)
      || ((gExLockOnTrapBattlers & gBitTable[gBattlerTarget])
       && (gBattleMons[gBattlerTarget].status2 & STATUS2_WRAPPED)
       && gBattleStruct->wrappedBy[gBattlerTarget] == gBattlerAttacker))
+    {
+        JumpIfMoveFailed(7, move);
+        return TRUE;
+    }
+
+    // Spirit Purge can't miss a target whose HP is in the red
+    if (move == MOVE_SPIRIT_PURGE && GetHPBarLevel(gBattleMons[gBattlerTarget].hp, gBattleMons[gBattlerTarget].maxHP) == HP_BAR_RED)
     {
         JumpIfMoveFailed(7, move);
         return TRUE;
@@ -1476,6 +1492,15 @@ static void Cmd_accuracycheck(void)
             buff = MAX_STAT_STAGE;
 
         moveAcc = gBattleMoves[move].accuracy;
+        // Spirit Purge's accuracy rises from 25% at full HP to 100% as the target's HP reaches the red (1/5)
+        if (move == MOVE_SPIRIT_PURGE)
+        {
+            u32 maxHP = gBattleMons[gBattlerTarget].maxHP;
+            u32 lost = maxHP - gBattleMons[gBattlerTarget].hp;
+            u32 toRed = maxHP - maxHP / 5;
+
+            moveAcc = (toRed == 0 || lost >= toRed) ? 100 : moveAcc + (100 - moveAcc) * lost / toRed;
+        }
         // check Thunder on sunny weather
         if (WEATHER_HAS_EFFECT && gBattleWeather & B_WEATHER_SUN && gBattleMoves[move].effect == EFFECT_THUNDER)
             moveAcc = 50;
@@ -1633,6 +1658,10 @@ static void Cmd_critcalc(void)
 
     // Foresight makes the user's next damaging move a guaranteed critical hit (see gSureCritBattlers)
     if (gThisMoveSureCrit)
+        guaranteedCrit = TRUE;
+
+    // So do EX Slash (not EX Cut, which upgrades to a regular Slash) and EX Ice Slasher
+    if ((gCurrentMove == MOVE_SLASH || gCurrentMove == MOVE_ICE_SLASHER) && gBattleMoveIsEx && gBattleExUpgradedFrom == MOVE_NONE)
         guaranteedCrit = TRUE;
 
     // A foe's first hit on a battler left wide open by a failed Detect is always critical
@@ -1851,6 +1880,9 @@ static void Cmd_typecalc(void)
         ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
 
     if (gCurrentMove == MOVE_TOMBSTONER && (gBattleMons[gBattlerTarget].types[0] == TYPE_GHOST || gBattleMons[gBattlerTarget].types[1] == TYPE_GHOST))
+        ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
+
+    if (gCurrentMove == MOVE_TWISTER && (gBattleMons[gBattlerTarget].types[0] == TYPE_FLYING || gBattleMons[gBattlerTarget].types[1] == TYPE_FLYING))
         ModulateDmgByType(TYPE_MUL_SUPER_EFFECTIVE);
 
     if (gCurrentMove == MOVE_TRI_ATTACK && (
@@ -2565,6 +2597,11 @@ static void Cmd_datahpupdate(void)
                 if (gSpecialStatuses[gActiveBattler].shellBellDmg == 0 && !(gHitMarker & HITMARKER_PASSIVE_HP_UPDATE) && !shieldedByExCounter)
                     gSpecialStatuses[gActiveBattler].shellBellDmg = gHpDealt;
 
+                // EX Focus Punch keeps its focus through any hit but a super effective or critical one
+                if (!(gHitMarker & HITMARKER_PASSIVE_HP_UPDATE) && !shieldedByExCounter
+                 && ((gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE) || gCritMultiplier == 2))
+                    gProtectStructs[gActiveBattler].focusBroken = TRUE;
+
                 // Note: While physicalDmg/specialDmg below are only distinguished between for Counter/Mirror Coat, they are
                 //       used in combination as general damage trackers for other purposes. specialDmg is additionally used
                 //       to help determine if a fire move should defrost the target.
@@ -2872,6 +2909,16 @@ u8 GetBattlerTurnOrderNum(u8 battler)
 {                                               \
     gBattleCommunication[MOVE_EFFECT_BYTE] = 0; \
     return;                                     \
+}
+
+// Whether EX Thief can swap the user's held item for the target's, like Trick, instead of failing because the user
+// is already holding one. Not items Trick can't pass on
+static bool32 CanExThiefSwapItems(void)
+{
+    u16 item = gBattleMons[gBattlerAttacker].item;
+
+    return gCurrentMove == MOVE_THIEF && gBattleMoveIsEx
+        && item != ITEM_ENIGMA_BERRY && !IS_ITEM_MAIL(item) && !ITEM_CANT_BE_REMOVED(item);
 }
 
 void SetMoveEffect(bool8 primary, u8 certain)
@@ -3219,7 +3266,17 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 {
                     gBattleMons[gEffectBattler].status2 |= STATUS2_MULTIPLETURNS;
                     gLockedMoves[gEffectBattler] = gCurrentMove;
-                    gBattleMons[gEffectBattler].status2 |= STATUS2_UPROAR_TURN((Random() & 3) + 2); // 2-5 turns
+                    if (gBattleMoveIsEx)
+                    {
+                        // EX Uproar always lasts 5 turns, and pays off if it gets through them all (BattleScript_ExUproarEnds)
+                        gBattleMons[gEffectBattler].status2 |= STATUS2_UPROAR_TURN(5);
+                        gExUproarBattlers |= gBitTable[gEffectBattler];
+                    }
+                    else
+                    {
+                        gBattleMons[gEffectBattler].status2 |= STATUS2_UPROAR_TURN((Random() & 3) + 2); // 2-5 turns
+                        gExUproarBattlers &= ~gBitTable[gEffectBattler];
+                    }
 
                     BattleScriptPush(gBattlescriptCurrInstr + 1);
                     gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
@@ -3232,16 +3289,34 @@ void SetMoveEffect(bool8 primary, u8 certain)
             case MOVE_EFFECT_PAYDAY:
                 if (GET_BATTLER_SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
                 {
-                    u16 payday = gPaydayMoney;
-                    gPaydayMoney += (gBattleMons[gBattlerAttacker].level * 5);
-                    if (payday > gPaydayMoney)
-                        gPaydayMoney = 0xFFFF;
+                    u32 payday = gPaydayMoney + gBattleMons[gBattlerAttacker].level * 5;
+                    if (gBattleMoveIsEx && gCurrentMove == MOVE_PAY_DAY) // EX Pay Day scatters 5x the coins
+                        payday += gBattleMons[gBattlerAttacker].level * 20;
+                    gPaydayMoney = payday > 0xFFFF ? 0xFFFF : payday;
                 }
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
                 break;
             case MOVE_EFFECT_TRI_ATTACK:
-                if (gBattleMons[gEffectBattler].status1)
+                if (gBattleMoveIsEx && gCurrentMove == MOVE_TRI_ATTACK
+                 && (gBattleMons[gEffectBattler].status1 & (STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_FREEZE)))
+                {
+                    // EX Tri Attack rolls the target's status over to the next: burn to paralysis to freeze to burn.
+                    // If the next one can't take hold, the target keeps the one it had
+                    u32 oldStatus = gBattleMons[gEffectBattler].status1;
+
+                    if (oldStatus & STATUS1_BURN)
+                        gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+                    else if (oldStatus & STATUS1_PARALYSIS)
+                        gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_FREEZE;
+                    else
+                        gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_BURN;
+                    gBattleMons[gEffectBattler].status1 = 0;
+                    SetMoveEffect(FALSE, 0);
+                    if (gBattleMons[gEffectBattler].status1 == 0)
+                        gBattleMons[gEffectBattler].status1 = oldStatus;
+                }
+                else if (gBattleMons[gEffectBattler].status1)
                 {
                     gBattlescriptCurrInstr++;
                 }
@@ -3275,7 +3350,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 }
                 else
                 {
-                    if (gCurrentMove == MOVE_BLACK_HOLE)
+                    if (gCurrentMove == MOVE_BLACK_HOLE && gBattleMoveIsEx)
+                        gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN((Random() & 1) + 5); // EX: drains 4-5 turns
+                    else if (gCurrentMove == MOVE_BLACK_HOLE)
                         gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN((Random() & 1) + 3); // drains 2-3 turns, at 1/8
                     else
                         gBattleMons[gEffectBattler].status2 |= STATUS2_WRAPPED_TURN((Random() & 3) + 3); // 3-6 turns
@@ -3400,6 +3477,10 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 break;
             case MOVE_EFFECT_RAGE:
                 gBattleMons[gBattlerAttacker].status2 |= STATUS2_RAGE;
+                if (gBattleMoveIsEx)
+                    gExRageBattlers |= gBitTable[gBattlerAttacker];
+                else
+                    gExRageBattlers &= ~gBitTable[gBattlerAttacker];
                 gBattlescriptCurrInstr++;
                 break;
             case MOVE_EFFECT_STEAL_ITEM:
@@ -3441,7 +3522,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
                         gLastUsedAbility = gBattleMons[gBattlerTarget].ability;
                         RecordAbilityBattle(gBattlerTarget, gLastUsedAbility);
                     }
-                    else if (gBattleMons[gBattlerAttacker].item != ITEM_NONE
+                    else if ((gBattleMons[gBattlerAttacker].item != ITEM_NONE && !CanExThiefSwapItems())
                         || gBattleMons[gBattlerTarget].item == ITEM_ENIGMA_BERRY
                         || IS_ITEM_MAIL(gBattleMons[gBattlerTarget].item)
                         || ITEM_CANT_BE_REMOVED(gBattleMons[gBattlerTarget].item)
@@ -3453,7 +3534,14 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     {
                         u16 *changedItem = &gBattleStruct->changedItems[gBattlerAttacker];
                         gLastUsedItem = *changedItem = gBattleMons[gBattlerTarget].item;
-                        gBattleMons[gBattlerTarget].item = ITEM_NONE;
+                        // EX Thief swaps: the target gets the user's item, like Trick
+                        gBattleMons[gBattlerTarget].item = gBattleMons[gBattlerAttacker].item;
+                        if (gBattleMons[gBattlerAttacker].item != ITEM_NONE)
+                        {
+                            gBattleMons[gBattlerAttacker].item = ITEM_NONE;
+                            *(u8 *)((u8 *)(&gBattleStruct->choicedMove[gBattlerAttacker]) + 0) = 0;
+                            *(u8 *)((u8 *)(&gBattleStruct->choicedMove[gBattlerAttacker]) + 1) = 0;
+                        }
 
                         gActiveBattler = gBattlerAttacker;
                         BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_HELDITEM_BATTLE, 0, sizeof(gLastUsedItem), &gLastUsedItem);
@@ -3474,11 +3562,24 @@ void SetMoveEffect(bool8 primary, u8 certain)
             case MOVE_EFFECT_PREVENT_ESCAPE:
                 gBattleMons[gBattlerTarget].status2 |= STATUS2_ESCAPE_PREVENTION;
                 gDisableStructs[gBattlerTarget].battlerPreventingEscape = gBattlerAttacker;
-                gBattlescriptCurrInstr++;
+                // As an EX move's extra effect (EX Submission, EX Vice Grip), it says so
+                if (gBattleMoveIsEx && (gExExtraMoveEffect & ~MOVE_EFFECT_CERTAIN) == MOVE_EFFECT_PREVENT_ESCAPE)
+                {
+                    BattleScriptPush(gBattlescriptCurrInstr + 1);
+                    gBattlescriptCurrInstr = BattleScript_ExPinnedDown;
+                }
+                else
+                {
+                    gBattlescriptCurrInstr++;
+                }
                 break;
             case MOVE_EFFECT_NIGHTMARE:
                 gBattleMons[gBattlerTarget].status2 |= STATUS2_NIGHTMARE;
                 gBattlescriptCurrInstr++;
+                break;
+            case MOVE_EFFECT_ALL_STATS_DOWN:
+                BattleScriptPush(gBattlescriptCurrInstr + 1);
+                gBattlescriptCurrInstr = BattleScript_ExAllStatsDown;
                 break;
             case MOVE_EFFECT_ALL_STATS_UP:
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
@@ -3488,8 +3589,26 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = BattleScript_RapidSpinAway;
                 break;
-            case MOVE_EFFECT_REMOVE_PARALYSIS: // Smelling salts
-                if (!(gBattleMons[gBattlerTarget].status1 & STATUS1_PARALYSIS))
+            case MOVE_EFFECT_REMOVE_PARALYSIS: // Smelling Salt cures paralysis. Chisel uses it to thaw a frozen target instead
+                if (gCurrentMove == MOVE_CHISEL)
+                {
+                    if (!(gBattleMons[gBattlerTarget].status1 & STATUS1_FREEZE))
+                    {
+                        gBattlescriptCurrInstr++;
+                    }
+                    else
+                    {
+                        gBattleMons[gBattlerTarget].status1 &= ~STATUS1_FREEZE;
+
+                        gActiveBattler = gBattlerTarget;
+                        BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+                        MarkBattlerForControllerExec(gActiveBattler);
+
+                        BattleScriptPush(gBattlescriptCurrInstr + 1);
+                        gBattlescriptCurrInstr = BattleScript_TargetFRZHeal;
+                    }
+                }
+                else if (!(gBattleMons[gBattlerTarget].status1 & STATUS1_PARALYSIS))
                 {
                     gBattlescriptCurrInstr++;
                 }
@@ -3504,24 +3623,6 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     BattleScriptPush(gBattlescriptCurrInstr + 1);
                     gBattlescriptCurrInstr = BattleScript_TargetPRLZHeal;
                 }
-                if (gCurrentMove == MOVE_CHISEL) {
-					
-				if (!(gBattleMons[gBattlerTarget].status1 & STATUS1_FREEZE))
-                {
-                    gBattlescriptCurrInstr++;
-                }
-                else
-					{
-                    gBattleMons[gBattlerTarget].status1 &= ~STATUS1_FREEZE;
-
-                    gActiveBattler = gBattlerTarget;
-                    BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
-                    MarkBattlerForControllerExec(gActiveBattler);
-
-                    BattleScriptPush(gBattlescriptCurrInstr + 1);
-                    gBattlescriptCurrInstr = BattleScript_TargetFRZHeal;
-					}
-				}
                 break;
             case MOVE_EFFECT_ATK_DEF_DOWN: // SuperPower
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
@@ -5139,6 +5240,8 @@ static void Cmd_moveend(void)
                 && gBattleMons[gBattlerTarget].statStages[STAT_ATK] < MAX_STAT_STAGE)
             {
                 gBattleMons[gBattlerTarget].statStages[STAT_ATK]++;
+                if ((gExRageBattlers & gBitTable[gBattlerTarget]) && gBattleMons[gBattlerTarget].statStages[STAT_ATK] < MAX_STAT_STAGE)
+                    gBattleMons[gBattlerTarget].statStages[STAT_ATK]++; // EX Rage
                 BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
                 effect = TRUE;
@@ -7775,7 +7878,8 @@ static void Cmd_various(void)
         gBattleCommunication[0] = FALSE;
         for (i = 0; i < ARRAY_COUNT(sExMoveWeathers); i++)
         {
-            if (sExMoveWeathers[i].type == gBattleMoves[gCurrentMove].type)
+            // EX Geyser's steam brings rain
+            if (sExMoveWeathers[i].type == (gCurrentMove == MOVE_GEYSER ? TYPE_WATER : gBattleMoves[gCurrentMove].type))
             {
                 if (!(gBattleWeather & sExMoveWeathers[i].anyWeather))
                 {
@@ -8082,6 +8186,94 @@ static void Cmd_various(void)
     case VARIOUS_EX_NO_SWITCH_THIS_TURN:
         // EX_FLAG_NO_SWITCH_THIS_TURN (EX Pursuit): the battler can't switch out for the rest of the turn
         gExNoSwitchBattlers |= gBitTable[gActiveBattler];
+        break;
+    case VARIOUS_EX_KNOCK_OUT_OF_SKY:
+        // EX Sky Uppercut: the battler falls out of Fly or Bounce, and its move is cancelled. Its sprite comes back
+        // with MOVEEND_TARGET_VISIBLE
+        CancelMultiTurnMoves(gActiveBattler);
+        gStatuses3[gActiveBattler] &= ~STATUS3_SEMI_INVULNERABLE;
+        break;
+    case VARIOUS_EX_BLOW_AWAY_SCREENS:
+        // EX Air Cutter blows away the foes' Reflect and Light Screen. Unlike removelightscreenreflect (Brick Break), it
+        // leaves the animation counters alone, so the spread move's animation isn't skipped. gBattleCommunication is
+        // whether there were any
+        {
+            u8 side = BATTLE_OPPOSITE(GetBattlerSide(gActiveBattler));
+
+            gBattleCommunication[0] = (gSideStatuses[side] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)) != 0;
+            gSideStatuses[side] &= ~(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN);
+            gSideTimers[side].reflectTimer = 0;
+            gSideTimers[side].lightscreenTimer = 0;
+        }
+        break;
+    case VARIOUS_EX_CLEAR_WEATHER:
+        // EX Gust blows away the weather, even a permanent one, with its ending message (gExWeatherClearedStringIds).
+        // gBattleCommunication is whether there was any
+        gBattleCommunication[0] = (gBattleWeather & B_WEATHER_ANY) != 0;
+        if (gBattleWeather & B_WEATHER_RAIN)
+            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+        else if (gBattleWeather & B_WEATHER_SANDSTORM)
+            gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+        else if (gBattleWeather & B_WEATHER_SUN)
+            gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+        else
+            gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+        gBattleWeather = 0;
+        gWishFutureKnock.weatherDuration = 0;
+        break;
+    case VARIOUS_SET_ANIM_TURN_IF_KO:
+        // Spirit Purge's animation ends in its fiery finish only if the hit will knock the battler out (choosetwoturnanim)
+        gBattleScripting.animTurn = (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+                                  && !(gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE)
+                                  && gBattleMoveDamage >= gBattleMons[gActiveBattler].hp);
+        break;
+    case VARIOUS_IS_AT_ONE_HP:
+        // Sets gBattleCommunication[0] to whether the battler is down to its last HP (EX False Swipe)
+        gBattleCommunication[0] = (gBattleMons[gActiveBattler].hp == 1);
+        break;
+    case VARIOUS_EX_RESET_ALL_STATS:
+        // EX Surf washes away all of the battler's stat changes, raised and lowered alike. gBattleCommunication is
+        // whether it had any
+        gBattleCommunication[0] = FALSE;
+        for (i = 0; i < NUM_BATTLE_STATS; i++)
+        {
+            if (gBattleMons[gActiveBattler].statStages[i] != DEFAULT_STAT_STAGE)
+            {
+                gBattleMons[gActiveBattler].statStages[i] = DEFAULT_STAT_STAGE;
+                gBattleCommunication[0] = TRUE;
+            }
+        }
+        break;
+    case VARIOUS_IS_ON_ATTACKER_SIDE:
+        // Sets gBattleCommunication[0] to whether the battler is on the attacker's side (EX Discharge sparing the ally)
+        gBattleCommunication[0] = (GetBattlerSide(gActiveBattler) == GetBattlerSide(gBattlerAttacker));
+        break;
+    case VARIOUS_WAGER_COIN_FLIP:
+        // Wager wins half the time, always: gBattleCommunication is whether it does
+        gBattleCommunication[0] = Random() & 1;
+        break;
+    case VARIOUS_EX_UPROAR_RELIEF:
+        // After a full EX Uproar, the battler got it out of its system: its lowered stats return to normal, and its status
+        // is cured, even Ignite (so an Ignited user comes out the other side). Its stats are raised after this
+        for (i = 0; i < NUM_BATTLE_STATS; i++)
+        {
+            if (gBattleMons[gActiveBattler].statStages[i] < DEFAULT_STAT_STAGE)
+                gBattleMons[gActiveBattler].statStages[i] = DEFAULT_STAT_STAGE;
+        }
+        if (gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP)
+            gBattleMons[gActiveBattler].status2 &= ~STATUS2_NIGHTMARE;
+        gBattleMons[gActiveBattler].status1 = 0;
+        BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+        MarkBattlerForControllerExec(gActiveBattler);
+        break;
+    case VARIOUS_GET_HELD_CRYSTAL:
+        // Sets gBattleCommunication[0] to the battler's held crystal, 1-9 in item order (Star to Metal), or 0 (Kaleidoscope)
+        gBattleCommunication[0] = ITEM_IS_EX_CRYSTAL(gBattleMons[gActiveBattler].item)
+                                ? gBattleMons[gActiveBattler].item - ITEM_STAR_CRYSTAL + 1 : 0;
+        break;
+    case VARIOUS_EX_FORESIGHT_PRIORITY:
+        // EX Foresight: the battler's next move goes first (+1 priority, see GetBattlerMovePriority)
+        gExForesightBattlers |= gBitTable[gActiveBattler];
         break;
     case VARIOUS_EX_IS_NO_SWITCH_THIS_TURN:
         // Sets gBattleCommunication[0] to whether the battler can't switch out this turn (see above)
@@ -8437,6 +8629,12 @@ static void Cmd_setseeded(void)
         gBattleMons[gBattlerTarget].status2 &= ~STATUS2_ESCAPE_PREVENTION;
         gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_MULTIPLETURNS;
     }
+    // An amplified Echo spends its charge (checked before Leech Seed's conditions, which would fail it against a Grass
+    // type or a seeded target)
+    else if (gCurrentMove == MOVE_ECHO)
+    {
+        gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_DEFENSE_CURL;
+    }
     else if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT || gStatuses3[gBattlerTarget] & STATUS3_LEECHSEED)
     {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
@@ -8447,10 +8645,6 @@ static void Cmd_setseeded(void)
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_LEECH_SEED_FAIL;
     }
-    else if (gCurrentMove == MOVE_ECHO)
-        {
-        gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_DEFENSE_CURL;
-        }
     else
     {
         gStatuses3[gBattlerTarget] |= gBattlerAttacker;
@@ -8652,6 +8846,9 @@ static void Cmd_stockpiletohpheal(void)
 static void Cmd_negativedamage(void)
 {
     gBattleMoveDamage = -(gHpDealt / 2);
+    // EX Giga Drain drains all of it (not EX Mega Drain, which upgrades to a regular Giga Drain)
+    if (gCurrentMove == MOVE_GIGA_DRAIN && gBattleMoveIsEx && gBattleExUpgradedFrom == MOVE_NONE)
+        gBattleMoveDamage = -gHpDealt;
     if (gBattleMoveDamage == 0)
         gBattleMoveDamage = -1;
 
@@ -8984,6 +9181,10 @@ static void Cmd_setbide(void)
     gLockedMoves[gBattlerAttacker] = gCurrentMove;
     gBideDmg[gBattlerAttacker] = 0;
     gBattleMons[gBattlerAttacker].status2 |= STATUS2_BIDE_TURN(2);
+    if (gBattleMoveIsEx)
+        gExBideBattlers |= gBitTable[gBattlerAttacker];
+    else
+        gExBideBattlers &= ~gBitTable[gBattlerAttacker];
 
     gBattlescriptCurrInstr++;
 }
@@ -9954,6 +10155,8 @@ static void Cmd_metronome(void)
 static void Cmd_dmgtolevel(void)
 {
     gBattleMoveDamage = gBattleMons[gBattlerAttacker].level;
+    if ((gCurrentMove == MOVE_SEISMIC_TOSS || gCurrentMove == MOVE_NIGHT_SHADE) && gBattleMoveIsEx)
+        gBattleMoveDamage = gBattleMoveDamage * 6 / 5; // 1.2x, like the EX damage boost
     gBattlescriptCurrInstr++;
 }
 
@@ -9965,6 +10168,8 @@ static void Cmd_psywavedamageeffect(void)
 
     randDamage *= 10;
     gBattleMoveDamage = gBattleMons[gBattlerAttacker].level * (randDamage + 50) / 100;
+    if (gBattleMoveIsEx)
+        gBattleMoveDamage = gBattleMoveDamage * 6 / 5; // EX Psywave: 1.2x, like the EX damage boost
     gBattlescriptCurrInstr++;
 }
 
@@ -10371,12 +10576,16 @@ static void SetNebulaCrashPower(void)
     gDynamicBasePower = (power < 1) ? 1 : power;
 }
 
+// EX Nebula Crash only clears the user's lowered stats, keeping its raised ones
 static void ResetAttackerStatStages(void)
 {
     u32 i;
 
     for (i = STAT_ATK; i < NUM_BATTLE_STATS; i++)
-        gBattleMons[gBattlerAttacker].statStages[i] = DEFAULT_STAT_STAGE;
+    {
+        if (!gBattleMoveIsEx || gBattleMons[gBattlerAttacker].statStages[i] < DEFAULT_STAT_STAGE)
+            gBattleMons[gBattlerAttacker].statStages[i] = DEFAULT_STAT_STAGE;
+    }
 }
 
 // Sets the power of moves that depend on HP. Flail and Reversal get stronger the lower the
@@ -10757,8 +10966,6 @@ static void Cmd_friendshiptodamagecalculation(void)
 {
     if (gBattleMoves[gCurrentMove].effect == EFFECT_RETURN)
         gDynamicBasePower = 10 * (gBattleMons[gBattlerAttacker].friendship) / 25;
-    else if (gBattleMoves[gCurrentMove].effect == EFFECT_SPIRIT_PURGE)
-        gDynamicBasePower = 10 * (gBattleMons[gBattlerTarget].friendship) / 18;
     else // EFFECT_FRUSTRATION
         gDynamicBasePower = 10 * (MAX_FRIENDSHIP - gBattleMons[gBattlerAttacker].friendship) / 25;
 
@@ -10768,6 +10975,10 @@ static void Cmd_friendshiptodamagecalculation(void)
 static void Cmd_presentdamagecalculation(void)
 {
     s32 rand = Random() & 0xFF;
+
+    // EX Present loses its randomness: the best present for a foe, and a heal for an ally
+    if (gBattleMoveIsEx)
+        rand = GetBattlerSide(gBattlerTarget) == GetBattlerSide(gBattlerAttacker) ? 204 : 178;
 
     if (rand < 102)
     {
@@ -11372,35 +11583,37 @@ static void Cmd_callenvironmentattack(void)
 }
 
 // Refresh
+// Cures a status, jumping if there's none to cure. The cured battler is gEffectBattler, for STRINGID_PKMNSTATUSNORMAL.
+// Refresh cures the user's burn, poison, paralysis or Ignite. Synchro Blast cures the target of any status, so it can
+// give it the user's instead (or leave it healthy, matching a healthy user). Anything else (EX Recover, EX Facade)
+// cures the user's burn, poison or paralysis, but not Ignite, which isn't a bad status
 static void Cmd_cureifburnedparalysedorpoisoned(void)
 {
-if (gCurrentMove == MOVE_REFRESH) {
-    if (gBattleMons[gBattlerAttacker].status1 & (STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON | STATUS1_IGNITE))
-        {
-            gBattleMons[gBattlerAttacker].status1 = 0;
-            gBattlescriptCurrInstr += 5;
-            gActiveBattler = gBattlerAttacker;
-            BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
-            MarkBattlerForControllerExec(gActiveBattler);
-        }
-        else
-        {
-            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-        }
+    u32 statuses = STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON;
+    u8 battler = gBattlerAttacker;
+
+    if (gCurrentMove == MOVE_REFRESH)
+    {
+        statuses |= STATUS1_IGNITE;
     }
-if (gCurrentMove == MOVE_SYNCHRO_BLAST) {
-    if (gBattleMons[gBattlerTarget].status1 & (STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON | STATUS1_IGNITE))
-        {
-            gBattleMons[gBattlerTarget].status1 = 0;
-            gBattlescriptCurrInstr += 5;
-            gActiveBattler = gBattlerTarget;
-            BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
-            MarkBattlerForControllerExec(gActiveBattler);
-        }
-        else
-        {
-            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-        }
+    else if (gCurrentMove == MOVE_SYNCHRO_BLAST)
+    {
+        statuses = STATUS1_ANY;
+        battler = gBattlerTarget;
+    }
+
+    if (gBattleMons[battler].status1 & statuses)
+    {
+        gBattleMons[battler].status1 &= ~statuses;
+        gEffectBattler = battler;
+        gActiveBattler = battler;
+        BtlController_EmitSetMonData(B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, sizeof(gBattleMons[gActiveBattler].status1), &gBattleMons[gActiveBattler].status1);
+        MarkBattlerForControllerExec(gActiveBattler);
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     }
 }
 
@@ -11419,7 +11632,10 @@ static void Cmd_settorment(void)
 
 static void Cmd_jumpifnodamage(void)
 {
-    if (gProtectStructs[gBattlerAttacker].physicalDmg || gProtectStructs[gBattlerAttacker].specialDmg)
+    // EX Focus Punch only loses its focus to a super effective or critical hit
+    if (gCurrentMove == MOVE_FOCUS_PUNCH && gBattleMoveIsEx && !gProtectStructs[gBattlerAttacker].focusBroken)
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    else if (gProtectStructs[gBattlerAttacker].physicalDmg || gProtectStructs[gBattlerAttacker].specialDmg)
         gBattlescriptCurrInstr += 5;
     else
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -11620,14 +11836,14 @@ static void Cmd_doubledamagedealtifdamaged(void)
     if (gCurrentMove == MOVE_ASSURANCE)
     {
         if (gProtectStructs[gBattlerTarget].physicalDmg != 0 || gProtectStructs[gBattlerTarget].specialDmg != 0)
-            gBattleScripting.dmgMultiplier = 2;
+            gBattleScripting.dmgMultiplier = gBattleMoveIsEx ? 3 : 2; // EX Assurance triples
     }
     else if ((gProtectStructs[gBattlerAttacker].physicalDmg != 0
          && gProtectStructs[gBattlerAttacker].physicalBattlerId == gBattlerTarget)
         || (gProtectStructs[gBattlerAttacker].specialDmg != 0
             && gProtectStructs[gBattlerAttacker].specialBattlerId == gBattlerTarget))
     {
-        gBattleScripting.dmgMultiplier = 2;
+        gBattleScripting.dmgMultiplier = (gCurrentMove == MOVE_REVENGE && gBattleMoveIsEx) ? 3 : 2; // EX Revenge triples
     }
 
     gBattlescriptCurrInstr++;

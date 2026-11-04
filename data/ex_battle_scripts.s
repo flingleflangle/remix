@@ -122,7 +122,178 @@ gExMoves::
 	exmove MOVE_METRONOME, flags=EX_FLAG_WEAKNESS_CALL @ See gExMetronomeMoves below
 	exmove MOVE_SELF_DESTRUCT, BattleScript_ExSelfDestruct
 	exmove MOVE_EXPLOSION, BattleScript_ExExplosion
+	@ Normal
+	exmove MOVE_BODY_SLAM, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_TRI_ATTACK, flags=EX_FLAG_SURE_EFFECT @ Rolls a status over to the next, see MOVE_EFFECT_TRI_ATTACK in SetMoveEffect
+	exmove MOVE_SLAM, flags=EX_FLAG_IGNORE_PROTECT
+	exmove MOVE_STRENGTH, flags=EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_SMELLING_SALT, BattleScript_ExSmellingSalt
+	exmove MOVE_SECRET_POWER, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_HEADBUTT, flags=EX_FLAG_SURE_EFFECT, extraEffect=MOVE_EFFECT_RECOIL_25 | MOVE_EFFECT_AFFECTS_USER
+	exmove MOVE_STOMP, extraEffect=MOVE_EFFECT_SPD_MINUS_1
+	exmove MOVE_HORN_ATTACK, extraEffect=MOVE_EFFECT_DEF_MINUS_1
+	exmove MOVE_PAY_DAY, extraEffect=MOVE_EFFECT_ACC_MINUS_1 @ And 5x the money, see MOVE_EFFECT_PAYDAY in SetMoveEffect
+	exmove MOVE_COVET, flags=EX_FLAG_SURE_HIT, extraEffect=MOVE_EFFECT_ATK_MINUS_1
+	exmove MOVE_CONSTRICT, flags=EX_FLAG_SURE_EFFECT, extraEffect=MOVE_EFFECT_WRAP
+	exmove MOVE_FEINT, extraEffect=MOVE_EFFECT_DEF_MINUS_1 @ And 2x damage if it lifts a Protect, see BattleScript_TryFeintThenHit
+	exmove MOVE_DOUBLE_SLAP, flags=EX_FLAG_FOUR_HITS, extraEffect=MOVE_EFFECT_CONFUSION @ See BattleScript_MultiHitEnd
+	exmove MOVE_RAPID_SPIN @ Raises Speed by 2 instead of 1, see BattleScript_EffectRapidSpin
+	exmove MOVE_RAGE, BattleScript_ExRage
+	exmove MOVE_PRESENT @ Always 120 power at a foe, or heals an ally 1/4 of its max HP, see Cmd_presentdamagecalculation
+	exmove MOVE_BIDE @ Unleashes 3x the damage instead of 2x (gExBideBattlers)
+	exmove MOVE_SHRED @ Hits Ghost types too, see BattleScript_EffectShred
+	@ Fighting
+	exmove MOVE_FOCUS_PUNCH @ Keeps its focus unless a hit was super effective or critical, see Cmd_jumpifnodamage
+	exmove MOVE_MEGA_KICK, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_HI_JUMP_KICK, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_MEGA_PUNCH, flags=EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_SKY_UPPERCUT, BattleScript_ExSkyUppercut
+	exmove MOVE_SUBMISSION, flags=EX_FLAG_SURE_HIT, extraEffect=MOVE_EFFECT_PREVENT_ESCAPE
+	exmove MOVE_BRICK_BREAK, flags=EX_FLAG_IGNORE_PROTECT
+	exmove MOVE_REVENGE, extraEffect=MOVE_EFFECT_ATK_PLUS_1 | MOVE_EFFECT_AFFECTS_USER @ And 3x instead of 2x, see Cmd_doubledamagedealtifdamaged
+	exmove MOVE_MACH_PUNCH, BattleScript_ExHitTwicePlain
+	exmove MOVE_ROCK_SMASH, flags=EX_FLAG_SURE_EFFECT | EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_ARM_THRUST, flags=EX_FLAG_FOUR_HITS, extraEffect=MOVE_EFFECT_DEF_MINUS_1 @ See BattleScript_MultiHitEnd
+	exmove MOVE_TRIPLE_KICK, BattleScript_ExTripleKick, flags=EX_FLAG_SURE_HIT | EX_FLAG_EFFECT_EACH_HIT
+	exmove MOVE_SEISMIC_TOSS @ 1.2x the user's level, see Cmd_dmgtolevel
+	@ Flying
+	exmove MOVE_AIR_CUTTER, BattleScript_ExAirCutter
+	exmove MOVE_WING_ATTACK, BattleScript_ExHitTwicePlain
+	exmove MOVE_AERIAL_ACE @ +1 priority, see GetBattlerMovePriority
+	exmove MOVE_GUST, BattleScript_ExGust
+	exmove MOVE_PANIC, extraEffect=MOVE_EFFECT_CONFUSION @ See BattleScript_EffectPanic
+	exmove MOVE_FURY_ATTACK, flags=EX_FLAG_FOUR_HITS, extraEffect=MOVE_EFFECT_DEF_MINUS_1 @ See BattleScript_MultiHitEnd
+	@ Poison
+	exmove MOVE_SLUDGE_BOMB, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_POISON_JAB, flags=EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_POISON_FANG, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_ACID, flags=EX_FLAG_SURE_EFFECT | EX_FLAG_IGNORE_IMMUNITY, extraEffect=MOVE_EFFECT_DEF_MINUS_1 @ Its own drop plus this one: -2
+	exmove MOVE_VENOM_FANG, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_POISON_STING, flags=EX_FLAG_SURE_EFFECT | EX_FLAG_POISON_ANY_TYPE | EX_FLAG_IGNORE_RESISTANCES @ Regular poison, even on Poison and Steel types
+	@ Ground
+	exmove MOVE_GEYSER, flags=EX_FLAG_SET_WEATHER @ Rain, not sandstorm, see VARIOUS_EX_SET_WEATHER
+	exmove MOVE_BONE_CLUB, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_BONEMERANG, BattleScript_ExBonemerang, flags=EX_FLAG_IGNORE_IMMUNITY
+	exmove MOVE_BONE_RUSH, BattleScript_ExBoneRush, flags=EX_FLAG_FOUR_HITS
+	@ Rock
+	exmove MOVE_ROCK_SLIDE, extraEffect=MOVE_EFFECT_SPD_MINUS_1
+	exmove MOVE_ANCIENT_POWER, BattleScript_ExAncientPower
+	exmove MOVE_BOULDER_DASH, BattleScript_ExBoulderDash, flags=EX_FLAG_SPIKES @ See BattleScript_EffectBoulderDash
+	exmove MOVE_ROCK_BLAST, flags=EX_FLAG_FOUR_HITS | EX_FLAG_SURE_HIT
+	@ Bug
+	exmove MOVE_SCISSOR_KICK, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_SIGNAL_BEAM, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_U_TURN, flags=EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_REVOLVER, flags=EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_FLY_SWAT, flags=EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_AROUND_TOWN, flags=EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_SILVER_WIND, BattleScript_ExAncientPower
+	exmove MOVE_VICE_GRIP, extraEffect=MOVE_EFFECT_PREVENT_ESCAPE
+	@ Ghost
+	exmove MOVE_SHADOW_BALL, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_SHADOW_PUNCH, flags=EX_FLAG_IGNORE_IMMUNITY
+	exmove MOVE_ASTONISH, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_LICK, flags=EX_FLAG_SURE_EFFECT | EX_FLAG_IGNORE_IMMUNITY
+	exmove MOVE_NIGHT_SHADE @ 1.2x the user's level, see Cmd_dmgtolevel
+	@ Steel
+	exmove MOVE_SHIELD_BASH, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_CHISEL, extraEffect=MOVE_EFFECT_DEF_MINUS_1
+	exmove MOVE_BULLET_PUNCH, BattleScript_ExHitTwicePlain
+	@ Blade
+	exmove MOVE_SLASH @ Always a critical hit, see Cmd_critcalc
+	exmove MOVE_WIDE_SLASH, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_PIERCE, flags=EX_FLAG_SURE_EFFECT | EX_FLAG_IGNORE_PROTECT
+	exmove MOVE_FALSE_SWIPE, BattleScript_ExFalseSwipe
+	exmove MOVE_QUICK_DRAW, extraEffect=MOVE_EFFECT_SPD_MINUS_1
+	exmove MOVE_TRIPLE_SLASH, BattleScript_ExTripleSlash, flags=EX_FLAG_SURE_HIT | EX_FLAG_EFFECT_EACH_HIT
+	exmove MOVE_VACUUM_CUT @ 42 damage instead of 35, see VacuumCut
+	@ Fire
+	exmove MOVE_FLAMETHROWER, BattleScript_ExFlamethrower
+	exmove MOVE_OVERHEAT, BattleScript_ExOverheat
+	exmove MOVE_FIRE_BLAST, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_HEAT_WAVE, flags=EX_FLAG_SET_WEATHER
+	exmove MOVE_GLORY_BLAZE @ Leaves harsh sunlight, see BattleScript_GloryBlazeEnd
+	exmove MOVE_FLAME_WHEEL, BattleScript_ExFlameWheel
+	@ Water
+	exmove MOVE_HYDRO_PUMP, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_SURF @ Washes away each target's stat changes, see BattleScript_Surf
+	exmove MOVE_WATERFALL, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_SCALD, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_OCTAZOOKA, flags=EX_FLAG_SURE_EFFECT, extraEffect=MOVE_EFFECT_ACC_MINUS_1 @ Its own drop plus this one: -2
+	exmove MOVE_BUBBLE_BEAM, flags=EX_FLAG_SURE_EFFECT, extraEffect=MOVE_EFFECT_ACC_MINUS_1
+	exmove MOVE_AQUA_JET, BattleScript_ExHitTwicePlain
+	@ Grass
+	exmove MOVE_LEAF_STORM, BattleScript_ExOverheat
+	exmove MOVE_SPROUT, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_EGG_BOMB, extraEffect=MOVE_EFFECT_ACC_MINUS_1
+	exmove MOVE_GIGA_DRAIN @ Drains all the damage dealt, see Cmd_negativedamage
+	exmove MOVE_MAGICAL_LEAF, flags=EX_FLAG_IGNORE_PROTECT | EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_ENTWINE, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_VINE_WHIP, BattleScript_ExHitTwicePlain, extraEffect=MOVE_EFFECT_WRAP @ Lashes twice, then wraps the target up
+	@ Electric
+	exmove MOVE_THUNDER, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_ZAP_CANNON, flags=EX_FLAG_IGNORE_IMMUNITY
+	exmove MOVE_DISCHARGE @ Spares the user's ally, see BattleScript_DischargeLoop
+	exmove MOVE_SPARK, BattleScript_ExSpark
+	@ Psychic
+	exmove MOVE_PSYCHIC, BattleScript_ExPsychic
+	exmove MOVE_EXTRASENSORY, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_LUSTER_PURGE, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_MIST_BALL, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_PSYBEAM, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_BARRAGE, flags=EX_FLAG_FOUR_HITS, extraEffect=MOVE_EFFECT_SP_DEF_MINUS_1 @ See BattleScript_MultiHitEnd
+	exmove MOVE_PSYWAVE @ 1.2x, see Cmd_psywavedamageeffect
+	exmove MOVE_SYNCHRO_BLAST, flags=EX_FLAG_IGNORE_IMMUNITY @ Works on Dark types, see BattleScript_EffectSynchroBlast
+	@ Ice
+	exmove MOVE_BLIZZARD, flags=EX_FLAG_SET_WEATHER
+	exmove MOVE_ICE_BEAM, BattleScript_ExIceBeam, extraEffect=MOVE_EFFECT_SPD_MINUS_1
+	exmove MOVE_ICE_SLASHER @ Always a critical hit, see Cmd_critcalc
+	exmove MOVE_ICY_WIND, extraEffect=MOVE_EFFECT_SPD_MINUS_1 @ Its own drop plus this one: -2
+	@ Dragon
+	exmove MOVE_DRAGON_CLAW, flags=EX_FLAG_IGNORE_RESISTANCES
+	exmove MOVE_DRAGON_BREATH, flags=EX_FLAG_SURE_EFFECT
+	exmove MOVE_TWISTER, extraEffect=MOVE_EFFECT_WRAP @ Traps both foes in the vortex
+	exmove MOVE_DRAGON_RAGE @ 48 damage instead of 40, see DragonRage
+	@ Dark
+	exmove MOVE_SUCKER_PUNCH, extraEffect=MOVE_EFFECT_ATK_MINUS_1
+	exmove MOVE_FAINT_ATTACK, flags=EX_FLAG_IGNORE_PROTECT
+	exmove MOVE_ASSURANCE @ 3x instead of 2x, see Cmd_doubledamagedealtifdamaged
+	exmove MOVE_THIEF @ Swaps items if the user is holding one, see CanExThiefSwapItems
+	exmove MOVE_FURY_SWIPES, flags=EX_FLAG_FOUR_HITS, extraEffect=MOVE_EFFECT_SP_DEF_MINUS_1 @ See BattleScript_MultiHitEnd
+	exmove MOVE_BEAT_UP, BattleScript_ExBeatUp
+	exmove MOVE_KNOCK_OFF, BattleScript_ExKnockOff
+	@ Astral
+	exmove MOVE_COSMIC_FLARE, flags=EX_FLAG_SURE_HIT
+	exmove MOVE_SWIFT, flags=EX_FLAG_IGNORE_PROTECT | EX_FLAG_IGNORE_RESISTANCES @ And can't be evaded at all, see AccuracyCalcHelper
+	exmove MOVE_BLACK_HOLE @ Drains 4-5 turns instead of 2-3, see MOVE_EFFECT_WRAP in SetMoveEffect
+	exmove MOVE_NEBULA_CRASH @ Keeps the user's raised stats, see ResetAttackerStatStages
+	exmove MOVE_STAR_BARRAGE, flags=EX_FLAG_FOUR_HITS @ Kept for its attacking turn
+	@ Sound
+	exmove MOVE_UPROAR @ Lasts 5 turns, and pays off if it gets through them, see BattleScript_ExUproarEnds
+	exmove MOVE_ECHO, BattleScript_ExEcho
+	exmove MOVE_SNORE, flags=EX_FLAG_SURE_EFFECT | EX_FLAG_IGNORE_PROTECT
+	exmove MOVE_SONIC_BOOM @ 30 damage instead of 20, see SonicBoom
+	@ Status
+	exmove MOVE_FORESIGHT @ The user's next move goes first, see BattleScript_EffectForesight
 	exmove MOVE_NONE @ End of list, keep this last
+
+@ Moves with no EX version at all, even for a species that lists them or has its own EX version of them.
+@ They can't be used as EX moves (see CanBattlerUseExMove). For moves too specialized, or with damage that's
+@ fixed or all-or-nothing, where an EX version wouldn't add anything
+	.align 1
+gExMoveExemptions::
+	.2byte MOVE_HORN_DRILL, MOVE_GUILLOTINE, MOVE_FISSURE, MOVE_SHEER_COLD, MOVE_ABYSS @ One-hit KOs
+	.2byte MOVE_SUPER_FANG, MOVE_ENDEAVOR
+	.2byte MOVE_FAKE_OUT, MOVE_WEATHER_BALL
+	.2byte MOVE_STAGGER, MOVE_YOGA_LOOP
+	.2byte MOVE_AEROBLAST, MOVE_FLYING_KNEE
+	.2byte MOVE_SHADOW_FORCE, MOVE_SPIRIT_PURGE, MOVE_SOUL_STEAL
+	.2byte MOVE_DOOM_DESIRE, MOVE_SACRED_FIRE
+	.2byte MOVE_FUTURE_SIGHT, MOVE_PSYCHO_BOOST
+	.2byte MOVE_WAGER @ All or nothing
+	.2byte MOVE_SERENADE, MOVE_KALEIDOSCOPE
+	.2byte MOVE_CURSE, MOVE_BELLY_DRUM, MOVE_HOTWIRE @ Status moves with nothing to add
+	.2byte MOVE_NONE @ End of list, keep this last
 
 @ EX upgrades. Instead of an EX script, these moves become a stronger, closely related move when
 @ used as an EX move: they use that move's power, type, accuracy, and effect, and its animation after
@@ -151,10 +322,7 @@ gExMoveUpgrades::
 	exupgrade MOVE_QUICK_ATTACK, MOVE_EXTREME_SPEED
 	exupgrade MOVE_CONFUSION, MOVE_EXTRASENSORY
 	exupgrade MOVE_EMBER, MOVE_FIRE_SPIN
-	exupgrade MOVE_FLAMETHROWER, MOVE_FIRE_BLAST
-	exupgrade MOVE_FLAME_WHEEL, MOVE_FIRE_CRASH
-	exupgrade MOVE_SPARK, MOVE_THUNDER_CRASH
-	exupgrade MOVE_WATER_GUN, MOVE_WHIRLPOOL
+	exupgrade MOVE_WATER_GUN, MOVE_WATER_PULSE
 	exupgrade MOVE_WATER_PULSE, MOVE_HYDRO_PUMP
 	exupgrade MOVE_BUBBLE, MOVE_BUBBLE_BEAM
 	exupgrade MOVE_THUNDER_SHOCK, MOVE_SHOCK_WAVE
@@ -174,6 +342,8 @@ gExMoveUpgrades::
 	exupgrade MOVE_ROCK_THROW, MOVE_ROCK_SLIDE
 	exupgrade MOVE_COMET_PUNCH, MOVE_METEOR_MASH
 	exupgrade MOVE_ROCK_TOMB, MOVE_TOMBSTONER
+	exupgrade MOVE_AIR_SLASH, MOVE_AIR_SLASH_EX @ Hits both foes in a double battle
+	exupgrade MOVE_DRAGON_PULSE, MOVE_DRAGON_PULSE_EX @ Hits both foes in a double battle
 	exupgrade MOVE_NONE, MOVE_NONE @ End of list, keep this last
 
 @ EX Metronome (EX_FLAG_WEAKNESS_CALL) calls a random one of these moves that a foe is weak to, at that foe:
@@ -343,6 +513,7 @@ gExMoveBonuses::
 	exstatup MOVE_RAZOR_WIND, STAT_ATK, 1 @ On their charging turn
 	exstatup MOVE_SKY_ATTACK, STAT_ATK, 1
 	exstatup MOVE_SOLAR_BEAM, STAT_SPATK, 1 @ On its charging turn, or right before it fires in sunlight
+	exstatup MOVE_SKULL_BASH, STAT_DEF, 1 @ On its charging turn, on top of its own Defense raise
 	exheal MOVE_AROMATHERAPY, 2
 	exheal MOVE_CONVERSION_2, 4 @ 25%, as it has 30 PP
 	exheal MOVE_HAZE, 4 @ 25%, as it has 30 PP
@@ -647,6 +818,11 @@ BattleScript_ExBlazeKick::
 	setbyte sMULTIHIT_EFFECT, MOVE_EFFECT_BURN
 	goto BattleScript_ExHitTwice
 
+@ Hits twice, with no effect: Mach Punch's one-two, Wing Attack's two wings, Bullet Punch's burst, Aqua Jet's splash
+BattleScript_ExHitTwicePlain::
+	setbyte sMULTIHIT_EFFECT, 0
+	goto BattleScript_ExHitTwice
+
 BattleScript_ExCrushClaw::
 	setbyte sMULTIHIT_EFFECT, MOVE_EFFECT_DEF_MINUS_1
 @ Hits twice, with the move effect in sMULTIHIT_EFFECT
@@ -658,6 +834,314 @@ BattleScript_ExHitTwice:
 	setmultihitcounter 2
 	initmultihitstring
 	goto BattleScript_MultiHitLoop
+
+@ Still does double damage to a paralyzed target, but doesn't cure its paralysis
+BattleScript_ExSmellingSalt::
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_EffectHit
+	jumpifstatus BS_TARGET, STATUS1_PARALYSIS, BattleScript_ExSmellingSaltDoubleDmg
+	goto BattleScript_EffectHit
+BattleScript_ExSmellingSaltDoubleDmg:
+	setbyte sDMG_MULTIPLIER, 2
+	goto BattleScript_EffectHit
+
+@ Raises the user's Attack, then hits like Rage. While its rage builds, each hit it takes raises its
+@ Attack by 2 instead of 1 (gExRageBattlers, set by MOVE_EFFECT_RAGE)
+BattleScript_ExRage::
+	attackcanceler
+	accuracycheck BattleScript_RageMiss, ACC_CURR_MOVE
+	setmoveeffect MOVE_EFFECT_RAGE
+	seteffectprimary
+	setmoveeffect 0
+	attackstring
+	ppreduce
+	setstatchanger STAT_ATK, 1, FALSE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_HitFromCritCalc
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_HitFromCritCalc
+	setgraphicalstatchangevalues
+	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
+	printfromtable gStatUpStringIds
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_HitFromCritCalc
+
+@ Every kick lands (EX_FLAG_SURE_HIT), and each has Tri Attack's chance to burn, paralyze or freeze
+@ (EX_FLAG_EFFECT_EACH_HIT, see BattleScript_TripleKickLoop)
+BattleScript_ExTripleKick::
+	setbyte sMULTIHIT_EFFECT, MOVE_EFFECT_TRI_ATTACK
+	setbyte gExEffectChance, 30 @ Tri Attack's
+	goto BattleScript_EffectTripleKick
+
+@ A regular hit, from critcalc to its secondary effect, for EX scripts that do something after it
+BattleScript_ExDoHit:
+	critcalc
+	damagecalc
+	typecalc
+	adjustnormaldamage
+	attackanimation
+	waitanimation
+	effectivenesssound
+	hitanimation BS_TARGET
+	waitstate
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	critmessage
+	waitmessage B_WAIT_TIME_LONG
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+	seteffectwithchance
+	return
+
+@ Fuel to the fire: always burns a target that isn't burned yet, and does double damage to one that is
+@ (not through a Substitute, like Smelling Salt)
+BattleScript_ExFlamethrower::
+	setmoveeffect MOVE_EFFECT_BURN | MOVE_EFFECT_CERTAIN
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_EffectHit
+	jumpifstatus BS_TARGET, STATUS1_BURN, BattleScript_ExFlamethrowerFuel
+	goto BattleScript_EffectHit
+BattleScript_ExFlamethrowerFuel:
+	setmoveeffect 0
+	setbyte sDMG_MULTIPLIER, 2
+	goto BattleScript_EffectHit
+
+@ Knocks off the target's item like Knock Off, then knocks away all its stat changes, raised and lowered alike
+@ (not through a Substitute)
+BattleScript_ExKnockOff::
+	setmoveeffect MOVE_EFFECT_KNOCK_OFF
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	call BattleScript_ExDoHit
+	jumpifmovehadnoeffect BattleScript_ExKnockOffEnd
+	jumpifhasnohp BS_TARGET, BattleScript_ExKnockOffEnd
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_ExKnockOffEnd
+	various BS_TARGET, VARIOUS_EX_RESET_ALL_STATS
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_ExKnockOffEnd
+	printstring STRINGID_EXSTATSKNOCKEDAWAY
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_ExKnockOffEnd:
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
+
+@ Always amplified, as if the last Echo had missed
+BattleScript_ExEcho::
+	attackcanceler
+	goto EchoAmped
+
+@ From the end of the turn, when an EX Uproar runs its full 5 turns: the user got it all out of its system. Its
+@ lowered stats return to normal and its status is cured, even Ignite (VARIOUS_EX_UPROAR_RELIEF), then all its stats rise
+BattleScript_ExUproarEnds::
+	printfromtable gUproarOverTurnStringIds
+	waitmessage B_WAIT_TIME_LONG
+	jumpifhasnohp BS_ATTACKER, BattleScript_ExUproarEndsEnd
+	various BS_ATTACKER, VARIOUS_EX_UPROAR_RELIEF
+	updatestatusicon BS_ATTACKER
+	printstring STRINGID_EXGOTITOUTOFSYSTEM
+	waitmessage B_WAIT_TIME_LONG
+	call BattleScript_AllStatsUp
+BattleScript_ExUproarEndsEnd:
+	end2
+
+@ Each teammate's strike has a 10% chance to burn, paralyze or freeze, like Tri Attack (see BattleScript_BeatUpLoop)
+BattleScript_ExBeatUp::
+	setbyte gExEffectChance, 10
+	goto BattleScript_EffectBeatUp
+
+@ Cold snap: the target is chilled stiff, always losing Speed (its extra effect), and its freeze chance doubles to 20%
+BattleScript_ExIceBeam::
+	setbyte gExEffectChance, 20
+	goto BattleScript_EffectFreezeHit
+
+@ Telekinetic reach: always lowers the target's Sp. Def, and its damage reaches past a Substitute to the Pokémon behind
+@ it (the Substitute still blocks the Sp. Def drop)
+BattleScript_ExPsychic::
+	setmoveeffect MOVE_EFFECT_SP_DEF_MINUS_1 | MOVE_EFFECT_CERTAIN
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE
+	goto BattleScript_EffectHit
+
+@ Always gets its Defense Curl double damage, as if the user had curled up (and it stays curled up, like EX Rollout)
+BattleScript_ExSpark::
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	goto SparkDoubleDmg
+
+@ Overheat and Leaf Storm without the Sp. Atk drop
+BattleScript_ExOverheat::
+	setmoveeffect 0
+	goto BattleScript_EffectHit
+
+@ Always gets its Defense Curl double damage, as if the user had curled up (and it stays curled up, like EX Rollout)
+BattleScript_ExFlameWheel::
+	setmoveeffect MOVE_EFFECT_BURN
+	goto FlameWheelDoubleDmg
+
+@ Sets the weather of the move's type (VARIOUS_EX_SET_WEATHER), with its animation and message. For scripts that
+@ can't use EX_FLAG_SET_WEATHER's hook in BattleScript_HitFromAtkAnimation (EX Glory Blaze)
+BattleScript_ExTrySetWeather::
+	various BS_ATTACKER, VARIOUS_EX_SET_WEATHER
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_ExTrySetWeatherRet
+	playanimation_var BS_ATTACKER, sB_ANIM_ARG1
+	printfromtable gMoveWeatherChangeStringIds
+	waitmessage B_WAIT_TIME_LONG
+	call BattleScript_WeatherFormChanges
+BattleScript_ExTrySetWeatherRet:
+	return
+
+@ Every slash lands (EX_FLAG_SURE_HIT), and each has Tri Attack's chance to burn, paralyze or freeze
+@ (EX_FLAG_EFFECT_EACH_HIT, see BattleScript_TripleSlashLoop)
+BattleScript_ExTripleSlash::
+	setbyte sMULTIHIT_EFFECT, MOVE_EFFECT_TRI_ATTACK
+	setbyte gExEffectChance, 30 @ Tri Attack's
+	goto BattleScript_EffectTripleSlash
+
+@ Leaves the target with at least 1 HP, like False Swipe. If it's left at 1 HP, it falls asleep
+BattleScript_ExFalseSwipe::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	call BattleScript_ExDoHit
+	jumpifmovehadnoeffect BattleScript_ExFalseSwipeEnd
+	various BS_TARGET, VARIOUS_IS_AT_ONE_HP
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_ExFalseSwipeEnd
+	setmoveeffect MOVE_EFFECT_SLEEP | MOVE_EFFECT_CERTAIN
+	seteffectprimary
+BattleScript_ExFalseSwipeEnd:
+	goto BattleScript_MoveEnd
+
+@ Against a target up in the air from Fly or Bounce, does double damage and knocks it out of the sky:
+@ its move is cancelled, and it flinches if it hasn't moved yet
+BattleScript_ExSkyUppercut::
+	orword gHitMarker, HITMARKER_IGNORE_ON_AIR
+	jumpifnostatus3 BS_TARGET, STATUS3_ON_AIR, BattleScript_EffectHit
+	setbyte sDMG_MULTIPLIER, 2
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	call BattleScript_ExDoHit
+	call BattleScript_ExTryKnockOutOfSky
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
+
+@ Knocks the target out of Fly or Bounce: its move is cancelled, and it flinches if it hasn't moved yet. After EX Sky
+@ Uppercut and EX Bonemerang hit (see BattleScript_MultiHitEnd). Nothing if it isn't up there, fainted, or wasn't hit
+BattleScript_ExTryKnockOutOfSky::
+	jumpifmovehadnoeffect BattleScript_ExTryKnockOutOfSkyRet
+	jumpifhasnohp BS_TARGET, BattleScript_ExTryKnockOutOfSkyRet
+	jumpifnostatus3 BS_TARGET, STATUS3_ON_AIR, BattleScript_ExTryKnockOutOfSkyRet
+	various BS_TARGET, VARIOUS_EX_KNOCK_OUT_OF_SKY
+	printstring STRINGID_EXKNOCKEDOUTOFSKY
+	waitmessage B_WAIT_TIME_LONG
+	setmoveeffect MOVE_EFFECT_FLINCH | MOVE_EFFECT_CERTAIN
+	seteffectprimary
+BattleScript_ExTryKnockOutOfSkyRet:
+	return
+
+@ Hits Flying types (EX_FLAG_IGNORE_IMMUNITY), and a Pokémon up in the air from Fly or Bounce, which it knocks out of the sky
+BattleScript_ExBonemerang::
+	orword gHitMarker, HITMARKER_IGNORE_ON_AIR
+	goto BattleScript_EffectDoubleHit
+
+@ Always hits 4 times (EX_FLAG_FOUR_HITS), with a 30% chance to confuse the target after the last hit
+BattleScript_ExBoneRush::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	setmultihitcounter 0
+	initmultihitstring
+	setbyte sMULTIHIT_EFFECT, MOVE_EFFECT_CONFUSION
+	setbyte gExEffectChance, 30
+	goto BattleScript_MultiHitLoop
+
+@ After it hits, its cutting winds blow away the foes' Reflect and Light Screen
+BattleScript_ExAirCutter::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	call BattleScript_ExDoHit
+	jumpifmovehadnoeffect BattleScript_ExAirCutterEnd
+	various BS_ATTACKER, VARIOUS_EX_BLOW_AWAY_SCREENS
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_ExAirCutterEnd
+	printstring STRINGID_EXSCREENSBLOWNAWAY
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_ExAirCutterEnd:
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
+
+@ Hits like Gust, then blows away the weather, whatever it is
+BattleScript_ExGust::
+	jumpifnostatus3 BS_TARGET, STATUS3_ON_AIR, BattleScript_ExGustHit
+	orword gHitMarker, HITMARKER_IGNORE_ON_AIR
+	setbyte sDMG_MULTIPLIER, 2
+BattleScript_ExGustHit:
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	call BattleScript_ExDoHit
+	jumpifmovehadnoeffect BattleScript_ExGustEnd
+	various BS_ATTACKER, VARIOUS_EX_CLEAR_WEATHER
+	jumpifbyte CMP_EQUAL, gBattleCommunication, FALSE, BattleScript_ExGustEnd
+	printfromtable gExWeatherClearedStringIds
+	waitmessage B_WAIT_TIME_LONG
+	call BattleScript_WeatherFormChanges
+BattleScript_ExGustEnd:
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
+
+@ Ancient Power and Silver Wind: their usual 10% chance to raise all the user's stats, then a second 10% chance to
+@ lower all the target's
+BattleScript_ExAncientPower::
+	setmoveeffect MOVE_EFFECT_ALL_STATS_UP | MOVE_EFFECT_AFFECTS_USER
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	call BattleScript_ExDoHit
+	setmoveeffect MOVE_EFFECT_ALL_STATS_DOWN
+	seteffectwithchance
+	tryfaintmon BS_TARGET
+	goto BattleScript_MoveEnd
+
+@ From MOVE_EFFECT_ALL_STATS_DOWN: lowers each of the target's stats by 1, with one animation for them all
+BattleScript_ExAllStatsDown::
+	setbyte sSTAT_ANIM_PLAYED, FALSE
+	playstatchangeanimation BS_TARGET, BIT_ATK | BIT_DEF | BIT_SPEED | BIT_SPATK | BIT_SPDEF, STAT_CHANGE_NEGATIVE
+	setstatchanger STAT_ATK, 1, TRUE
+	call BattleScript_ExLowerStatQuietly
+	setstatchanger STAT_DEF, 1, TRUE
+	call BattleScript_ExLowerStatQuietly
+	setstatchanger STAT_SPEED, 1, TRUE
+	call BattleScript_ExLowerStatQuietly
+	setstatchanger STAT_SPATK, 1, TRUE
+	call BattleScript_ExLowerStatQuietly
+	setstatchanger STAT_SPDEF, 1, TRUE
+	call BattleScript_ExLowerStatQuietly
+	return
+
+@ Lowers the target's stat with its message, but no animation, after playstatchangeanimation already played one
+BattleScript_ExLowerStatQuietly:
+	statbuffchange STAT_CHANGE_ALLOW_PTR, BattleScript_ExLowerStatQuietlyRet
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_DECREASE, BattleScript_ExLowerStatQuietlyRet
+	printfromtable gStatDownStringIds
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_ExLowerStatQuietlyRet:
+	return
+
+@ Curls up first, so it does Defense Curl's double damage, like EX Rollout. It always scatters Spikes (EX_FLAG_SPIKES)
+BattleScript_ExBoulderDash::
+	attackcanceler
+	accuracycheck BattleScript_PrintMoveMissed, ACC_CURR_MOVE
+	attackstring
+	ppreduce
+	goto BoulderDashDoubleDmg
+
+@ From MOVE_EFFECT_PREVENT_ESCAPE, as an EX move's extra effect (EX Submission, EX Vice Grip)
+BattleScript_ExPinnedDown::
+	printstring STRINGID_TARGETCANTESCAPENOW
+	waitmessage B_WAIT_TIME_LONG
+	return
 
 @ Curls up first, so the whole Rollout does Defense Curl's double damage. It stays curled up, like after Defense Curl
 BattleScript_ExRollout::

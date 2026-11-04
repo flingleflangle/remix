@@ -152,6 +152,17 @@
 #define VARIOUS_CAN_BATCH_SPREAD_STAT           70
 #define VARIOUS_SPREAD_STAT_NEXT_TARGET         71
 #define VARIOUS_FRUIT_FEAST_NEXT_STAT           72
+#define VARIOUS_EX_KNOCK_OUT_OF_SKY             73
+#define VARIOUS_EX_BLOW_AWAY_SCREENS            74
+#define VARIOUS_EX_CLEAR_WEATHER                75
+#define VARIOUS_SET_ANIM_TURN_IF_KO             76
+#define VARIOUS_IS_AT_ONE_HP                    77
+#define VARIOUS_EX_RESET_ALL_STATS              78
+#define VARIOUS_IS_ON_ATTACKER_SIDE             79
+#define VARIOUS_WAGER_COIN_FLIP                 80
+#define VARIOUS_EX_UPROAR_RELIEF                81
+#define VARIOUS_GET_HELD_CRYSTAL                82
+#define VARIOUS_EX_FORESIGHT_PRIORITY           83
 
 // EX move flags, for what an EX move does on top of its regular script (see exmove in data/ex_battle_scripts.s).
 // They last for the move that set them (gExMoveFlags)

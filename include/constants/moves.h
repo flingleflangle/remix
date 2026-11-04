@@ -440,9 +440,11 @@
 #define MOVE_SHADOW_FORCE 436
 #define MOVE_HEART_SWAP 437
 #define MOVE_NATURAL_GIFT 438
+#define MOVE_AIR_SLASH_EX 439 // EX Air Slash's upgrade (gExMoveUpgrades), hitting both foes. Can't be learned
+#define MOVE_DRAGON_PULSE_EX 440 // EX Dragon Pulse's upgrade, hitting both foes. Can't be learned
 
 
-#define MOVES_COUNT 439
+#define MOVES_COUNT 441
 
 // Used for checks for moves affected by Disable, Mimic, etc.
 #define MOVE_UNAVAILABLE 0xFFFF

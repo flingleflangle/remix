@@ -1475,7 +1475,7 @@ static const u8 sIceSlasherDescription[] = _(
 	
 static const u8 sSpiritPurgeDescription[] = _(
     "Only usable by GHOST type.\n"
-    "More damage on loyal foes.");
+    "Surer to hit weakened foes.");
 	
 static const u8 sUTurnDescription[] = _(
     "User switches with ally\n"
@@ -2194,4 +2194,6 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] =
     [MOVE_SHADOW_FORCE - 1] = sShadowForceDescription,
     [MOVE_HEART_SWAP - 1] = sHeartSwapDescription,
     [MOVE_NATURAL_GIFT - 1] = sNaturalGiftDescription,
+    [MOVE_AIR_SLASH_EX - 1] = sAirSlashDescription,
+    [MOVE_DRAGON_PULSE_EX - 1] = sDragonPulseDescription,
 };

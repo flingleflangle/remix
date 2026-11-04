@@ -190,6 +190,7 @@ void HandleAction_UseMove(void)
     u8 redirectAbility;
 
     gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
+    gExForesightBattlers &= ~gBitTable[gBattlerAttacker]; // Its +1 priority was for this move's place in the turn order
 
     if (*(&gBattleStruct->absentBattlerFlags) & gBitTable[gBattlerAttacker])
     {
@@ -1372,6 +1373,14 @@ s8 GetBattlerMovePriority(u8 battler, u16 move)
     if (gBattleMons[battler].ability == ABILITY_VENDETTA
      && (gBattleMons[battler].status1 & STATUS1_ANY))
         priority++;
+
+    // EX Aerial Ace moves first
+    if (move == MOVE_AERIAL_ACE && (gExMoveChosenBits & gBitTable[battler]))
+        priority++;
+
+    // So does the move after EX Foresight
+    if (gExForesightBattlers & gBitTable[battler])
+        priority++;
     return priority;
 }
 
@@ -2050,7 +2059,15 @@ u8 DoBattlerEndTurnEffects(void)
                             gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_UPROAR_ENDS;
                             CancelMultiTurnMoves(gActiveBattler);
                         }
-                        BattleScriptExecute(BattleScript_PrintUproarOverTurns);
+                        // An EX Uproar that ran its full course pays off
+                        if (gBattleCommunication[MULTISTRING_CHOOSER] == B_MSG_UPROAR_ENDS
+                         && !WasUnableToUseMove(gActiveBattler)
+                         && (gExUproarBattlers & gBitTable[gActiveBattler]))
+                            BattleScriptExecute(BattleScript_ExUproarEnds);
+                        else
+                            BattleScriptExecute(BattleScript_PrintUproarOverTurns);
+                        if (gBattleCommunication[MULTISTRING_CHOOSER] == B_MSG_UPROAR_ENDS)
+                            gExUproarBattlers &= ~gBitTable[gActiveBattler];
                         effect = 1;
                     }
                 }
@@ -2672,7 +2689,7 @@ u8 AtkCanceller_UnableToUseMove(void)
                     if (gBideDmg[gBattlerAttacker])
                     {
                         gCurrentMove = MOVE_BIDE;
-                        *bideDmg = gBideDmg[gBattlerAttacker] * 2;
+                        *bideDmg = gBideDmg[gBattlerAttacker] * ((gExBideBattlers & gBitTable[gBattlerAttacker]) ? 3 : 2);
                         gBattlerTarget = gBideTarget[gBattlerAttacker];
                         if (gAbsentBattlerFlags & gBitTable[gBattlerTarget])
                             gBattlerTarget = GetMoveTarget(MOVE_BIDE, MOVE_TARGET_SELECTED + 1);
@@ -3972,6 +3989,7 @@ struct ExMoveUpgrade
 
 extern const struct ExMove gExMoves[];
 extern const struct ExMoveUpgrade gExMoveUpgrades[];
+extern const u16 gExMoveExemptions[];
 
 // Pokémon with these abilities can always use the EX moves in the ability's list, like an EX form's
 // .exMoves (see data/pokemon/ex_forms.h). Each list ends with MOVE_NONE. For example:
@@ -4041,6 +4059,19 @@ const struct ExMove *GetExMove(u16 move)
 bool32 IsExMove(u16 move)
 {
     return GetExMove(move) != NULL;
+}
+
+// Whether the move has no EX version at all (gExMoveExemptions in data/ex_battle_scripts.s)
+static bool32 IsExMoveExempt(u16 move)
+{
+    u32 i;
+
+    for (i = 0; gExMoveExemptions[i] != MOVE_NONE; i++)
+    {
+        if (gExMoveExemptions[i] == move)
+            return TRUE;
+    }
+    return FALSE;
 }
 
 // The stronger move this one becomes when used as an EX move, or MOVE_NONE.
@@ -4359,6 +4390,8 @@ static bool32 CanMoveGetDefaultExBoost(u16 move)
 // Whether the move has an EX version: its own EX script, an upgrade, a bonus, or just the EX damage boost
 bool32 CanMoveBeUsedAsEx(u16 move)
 {
+    if (IsExMoveExempt(move))
+        return FALSE;
     return HasExMoveEffect(move) || CanMoveGetDefaultExBoost(move);
 }
 
@@ -4475,6 +4508,11 @@ bool32 BattlerHasExMoveEffect(u8 battler, u16 move)
 // its held contest scarf's contest category
 bool32 CanBattlerUseExMove(u8 battler, u16 move)
 {
+    if (IsExMoveExempt(move))
+        return FALSE;
+    // The move after EX Foresight already goes first with a sure critical hit, so it can't be an EX move too
+    if (gExForesightBattlers & gBitTable[battler])
+        return FALSE;
     if (GetSpeciesExMove(battler, move) != NULL)
         return TRUE;
     if (!CanMoveBeUsedAsEx(move))

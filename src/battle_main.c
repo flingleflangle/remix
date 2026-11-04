@@ -196,6 +196,10 @@ EWRAM_DATA u8 gExEffectChance = 0;     // If set, the current move's secondary e
 EWRAM_DATA u8 gExCalmRampageBattlers = 0; // Battlers whose rampage won't confuse them when it ends (EX_FLAG_CALM_RAMPAGE)
 EWRAM_DATA u8 gExLeechSeedTurns[MAX_BATTLERS_COUNT] = {0}; // Each seeded battler's EX Leech Seed turn (1-15), or 0 for a regular one (EX_FLAG_GROWING_SEED)
 EWRAM_DATA u8 gExLockOnTrapBattlers = 0; // Battlers trapped by an EX_FLAG_TRAP_LOCK_ON move, which can't dodge the Pokémon trapping them
+EWRAM_DATA u8 gExRageBattlers = 0; // Battlers whose rage is from EX Rage, so each hit raises their Attack by 2
+EWRAM_DATA u8 gExBideBattlers = 0; // Battlers whose Bide is EX Bide, so it unleashes 3x the damage
+EWRAM_DATA u8 gExUproarBattlers = 0; // Battlers whose uproar is EX Uproar, which pays off if it runs its full course
+EWRAM_DATA u8 gExForesightBattlers = 0; // Battlers whose next move goes first (+1 priority), after EX Foresight
 // Who was behind Protect, Detect or an EX screen as the turn ended. Those drop as the end of the turn starts, before
 // Echo's rebound lands, which they still block (see HandleWishPerishSongOnTurnEnd)
 EWRAM_DATA u8 gTurnEndShieldedBattlers = 0;
@@ -3385,6 +3389,7 @@ void SwitchInClearSetData(void)
     EndExLastingTaunts(gActiveBattler);
     gExLockOnTrapBattlers &= ~gBitTable[gActiveBattler];
     gExNoSwitchBattlers &= ~gBitTable[gActiveBattler];
+    gExForesightBattlers &= ~gBitTable[gActiveBattler];
 
     if (gBattleMoves[gCurrentMove].effect != EFFECT_BATON_PASS)
     {

@@ -125,8 +125,8 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_MUK]          = { .exMoves = { MOVE_NONE } }, // 500: 1 EX slot
     [SPECIES_SHELLDER]     = { .exMoves = { MOVE_ICICLE_SPEAR, MOVE_CLAMP, MOVE_NONE } }, // 305: 3 EX slots
     [SPECIES_CLOYSTER]     = { .exMoves = { MOVE_ICICLE_SPEAR } }, // 525: 1 EX slot
-    [SPECIES_GASTLY]       = { .exMoves = { MOVE_LICK, MOVE_CURSE, MOVE_CONFUSE_RAY } }, // 310: 3 EX slots
-    [SPECIES_HAUNTER]      = { .exMoves = { MOVE_LICK, MOVE_CURSE } }, // 405: 2 EX slots
+    [SPECIES_GASTLY]       = { .exMoves = { MOVE_LICK, MOVE_NONE, MOVE_CONFUSE_RAY } }, // 310: 3 EX slots
+    [SPECIES_HAUNTER]      = { .exMoves = { MOVE_LICK, MOVE_NONE } }, // 405: 2 EX slots
     [SPECIES_GENGAR]       = { .exMoves = { MOVE_LICK } }, // 500: 1 EX slot
     [SPECIES_ONIX]         = { .exMoves = { MOVE_NONE, MOVE_NONE, MOVE_NONE } }, // 385: 3 EX slots
     [SPECIES_DROWZEE]      = { .exMoves = { MOVE_DREAM_EATER, MOVE_NONE, MOVE_NONE } }, // 328: 3 EX slots
@@ -293,7 +293,7 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_LUGIA]        = { .exMoves = { MOVE_AEROBLAST } }, // 680: 1 EX slot
     [SPECIES_HO_OH]        = { .exMoves = { MOVE_SACRED_FIRE } }, // 680: 1 EX slot
     [SPECIES_CELEBI]       = { .exMoves = { MOVE_NONE } }, // 600: 1 EX slot
-    [SPECIES_TREECKO]      = { .exMoves = { MOVE_BULLET_SEED, MOVE_ENDEAVOR, MOVE_AGILITY } }, // 310: 3 EX slots
+    [SPECIES_TREECKO]      = { .exMoves = { MOVE_BULLET_SEED, MOVE_NONE, MOVE_AGILITY } }, // 310: 3 EX slots
     [SPECIES_GROVYLE]      = { .exMoves = { MOVE_BULLET_SEED, MOVE_FURY_CUTTER } }, // 405: 2 EX slots
     [SPECIES_SCEPTILE]     = { .exMoves = { MOVE_LEAF_BLADE } }, // 530: 1 EX slot
     [SPECIES_TORCHIC]      = { .exMoves = { MOVE_PECK, MOVE_QUICK_ATTACK, MOVE_FOCUS_ENERGY } }, // 310: 3 EX slots
@@ -304,8 +304,8 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_SWAMPERT]     = { .exMoves = { MOVE_MUDDY_WATER } }, // 535: 1 EX slot
     [SPECIES_POOCHYENA]    = { .exMoves = { MOVE_ROAR, MOVE_CRUNCH, MOVE_HYPER_FANG } }, // 220: 3 EX slots
     [SPECIES_MIGHTYENA]    = { .exMoves = { MOVE_ROAR, MOVE_CRUNCH } }, // 420: 2 EX slots
-    [SPECIES_ZIGZAGOON]    = { .exMoves = { MOVE_BELLY_DRUM, MOVE_EXTREME_SPEED, MOVE_COVET } }, // 240: 3 EX slots
-    [SPECIES_LINOONE]      = { .exMoves = { MOVE_BELLY_DRUM, MOVE_EXTREME_SPEED } }, // 420: 2 EX slots
+    [SPECIES_ZIGZAGOON]    = { .exMoves = { MOVE_NONE, MOVE_EXTREME_SPEED, MOVE_COVET } }, // 240: 3 EX slots
+    [SPECIES_LINOONE]      = { .exMoves = { MOVE_NONE, MOVE_EXTREME_SPEED } }, // 420: 2 EX slots
     [SPECIES_WURMPLE]      = { .exMoves = { MOVE_POISON_STING, MOVE_STRING_SHOT, MOVE_TACKLE } }, // 195: 3 EX slots
     [SPECIES_SILCOON]      = { .exMoves = { MOVE_POISON_STING, MOVE_STRING_SHOT, MOVE_HARDEN } }, // 205: 3 EX slots
     [SPECIES_BEAUTIFLY]    = { .exMoves = { MOVE_SILVER_WIND, MOVE_SLEEP_POWDER } }, // 395: 2 EX slots
@@ -438,7 +438,7 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_RAYQUAZA]     = { .exMoves = { MOVE_NONE } }, // 680: 1 EX slot
     [SPECIES_LATIAS]       = { .exMoves = { MOVE_MIST_BALL } }, // 600: 1 EX slot
     [SPECIES_LATIOS]       = { .exMoves = { MOVE_LUSTER_PURGE } }, // 600: 1 EX slot
-    [SPECIES_JIRACHI]      = { .exMoves = { MOVE_DOOM_DESIRE } }, // 600: 1 EX slot
+    [SPECIES_JIRACHI]      = { .exMoves = { MOVE_METEOR_MASH } }, // 600: 1 EX slot
     [SPECIES_DEOXYS]       = { .exMoves = { MOVE_PSYCHO_BOOST } }, // 600: 1 EX slot
     [SPECIES_PHIONE]       = { .exMoves = { MOVE_NONE } }, // 480: 1 EX slot
     [SPECIES_MANAPHY]      = { .exMoves = { MOVE_NONE } }, // 600: 1 EX slot
