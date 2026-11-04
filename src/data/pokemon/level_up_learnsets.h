@@ -951,6 +951,7 @@ static const u16 sPoliwrathLevelUpLearnset[] = {
 static const u16 sAbraLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 1, MOVE_TELEPORT),
     LEVEL_UP_MOVE( 8, MOVE_PSYWAVE),
+    LEVEL_UP_MOVE(10, MOVE_BARRIER), // Just past wild Abra's levels (7-9), so wild ones stick to Teleport
     LEVEL_UP_END
 };
 
@@ -3151,6 +3152,7 @@ static const u16 sAipomLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 6, MOVE_SAND_ATTACK),
     LEVEL_UP_MOVE(13, MOVE_ASTONISH),
     LEVEL_UP_MOVE(18, MOVE_BATON_PASS),
+    LEVEL_UP_MOVE(22, MOVE_KNOCK_OFF),
     LEVEL_UP_MOVE(25, MOVE_TICKLE),
     LEVEL_UP_MOVE(31, MOVE_FURY_SWIPES),
     LEVEL_UP_MOVE(38, MOVE_SWIFT),
@@ -7089,6 +7091,7 @@ static const u16 sChinglingLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 4, MOVE_GROWL),
     LEVEL_UP_MOVE( 7, MOVE_ASTONISH),
     LEVEL_UP_MOVE(10, MOVE_CONFUSION),
+    LEVEL_UP_MOVE(13, MOVE_ECHO),
     LEVEL_UP_MOVE(16, MOVE_UPROAR),
     LEVEL_UP_MOVE(19, MOVE_YAWN),
     LEVEL_UP_END
@@ -7100,6 +7103,7 @@ static const u16 sChimechoLevelUpLearnset[] = {
     LEVEL_UP_MOVE( 7, MOVE_ASTONISH),
     LEVEL_UP_MOVE(10, MOVE_CONFUSION),
     LEVEL_UP_MOVE(13, MOVE_TAKE_DOWN),
+    LEVEL_UP_MOVE(13, MOVE_ECHO),
     LEVEL_UP_MOVE(16, MOVE_UPROAR),
     LEVEL_UP_MOVE(19, MOVE_YAWN),
     LEVEL_UP_MOVE(22, MOVE_PSYWAVE),

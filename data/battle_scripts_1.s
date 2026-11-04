@@ -4167,11 +4167,13 @@ BattleScript_EffectThunder::
 	orword gHitMarker, HITMARKER_IGNORE_ON_AIR
 	goto BattleScript_EffectHit
 
+@ In a trainer battle, where it can't flee, the user teleports out and switches to another Pokémon instead
+@ (BattleScript_ExSwitchOutUser, which ignores trapping like Baton Pass). It fails with no Pokémon to switch to
 BattleScript_EffectTeleport::
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifbattletype BATTLE_TYPE_TRAINER, BattleScript_ButItFailed
+	jumpifbattletype BATTLE_TYPE_TRAINER, BattleScript_TeleportSwitch
 	getifcantrunfrombattle BS_ATTACKER
 	jumpifbyte CMP_EQUAL, gBattleCommunication, BATTLE_RUN_FORBIDDEN, BattleScript_ButItFailed
 	jumpifbyte CMP_EQUAL, gBattleCommunication, BATTLE_RUN_FAILURE, BattleScript_PrintAbilityMadeIneffective
@@ -4181,6 +4183,12 @@ BattleScript_EffectTeleport::
 	waitmessage B_WAIT_TIME_LONG
 	setoutcomeonteleport BS_ATTACKER
 	goto BattleScript_MoveEnd
+BattleScript_TeleportSwitch:
+	jumpifbattletype BATTLE_TYPE_ARENA, BattleScript_ButItFailed
+	jumpifcantswitch SWITCH_IGNORE_ESCAPE_PREVENTION | BS_ATTACKER, BattleScript_ButItFailed
+	attackanimation
+	waitanimation
+	goto BattleScript_ExSwitchOutUser
 
 BattleScript_EffectBeatUp::
 	attackcanceler

@@ -275,6 +275,7 @@ gExMoves::
 	exmove MOVE_SONIC_BOOM @ 30 damage instead of 20, see SonicBoom
 	@ Status
 	exmove MOVE_FORESIGHT @ The user's next move goes first, see BattleScript_EffectForesight
+	exmove MOVE_GLARE, BattleScript_ExGlare
 	exmove MOVE_NONE @ End of list, keep this last
 
 @ Moves with no EX version at all, even for a species that lists them or has its own EX version of them.
@@ -440,7 +441,7 @@ gExMoveBonuses::
 	exstatup MOVE_TAIL_WHIP, STAT_ATK, 1
 	exstatup MOVE_WILL_O_WISP, STAT_ATK, 1
 	exbonus MOVE_MIRROR_MOVE, EX_BONUS_COPY_STATS
-	exstatsup MOVE_SPLASH, STAT_ATK, 3
+	exstatup MOVE_SPLASH, STAT_ATK, 3
 	exstatup MOVE_BLOCK, STAT_DEF, 1
 	exstatup MOVE_CHARM, STAT_DEF, 1
 	exstatup MOVE_FEATHER_DANCE, STAT_DEF, 1
@@ -467,10 +468,9 @@ gExMoveBonuses::
 	exbonus MOVE_NIGHTMARE, EX_BONUS_DEEPER_SLEEP
 	exbonus MOVE_DREAM_EATER, EX_BONUS_DEEPER_SLEEP
 	exstatup MOVE_SWEET_KISS, STAT_SPATK, 1
-	exstatup MOVE_TEETER_DANCE, BIT_ATK | BIT_SPATK | BIT_SPEED, 1
+	exstatsup MOVE_TEETER_DANCE, BIT_ATK | BIT_SPATK | BIT_SPEED, 1
 	exstatup MOVE_COSMIC_POWER, STAT_SPDEF, 1
 	exbonus MOVE_FLATTER, EX_BONUS_TAUNT
-	exstatup MOVE_GLARE, STAT_SPDEF, 1
 	exstatup MOVE_INGRAIN, STAT_SPDEF, 1
 	exstatup MOVE_MEAN_LOOK, STAT_SPDEF, 1
 	exstatup MOVE_MUD_SPORT, STAT_SPDEF, 1
@@ -922,6 +922,33 @@ BattleScript_ExKnockOffEnd:
 	tryfaintmon BS_TARGET
 	goto BattleScript_MoveEnd
 
+@ Paralyzes like Glare, and the glare also pins the target down like Mean Look, even if it can't be paralyzed
+@ (already has a status, Limber, Safeguard). Not through a Substitute, or if the target already can't escape
+BattleScript_ExGlare::
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifstatus2 BS_TARGET, STATUS2_SUBSTITUTE, BattleScript_ButItFailed
+	typecalc
+	jumpifmovehadnoeffect BattleScript_ButItFailed
+	accuracycheck BattleScript_ButItFailed, ACC_CURR_MOVE
+	attackanimation
+	waitanimation
+	jumpifability BS_TARGET, ABILITY_LIMBER, BattleScript_ExGlareTrap
+	jumpifstatus BS_TARGET, STATUS1_ANY, BattleScript_ExGlareTrap
+	jumpifsideaffecting BS_TARGET, SIDE_STATUS_SAFEGUARD, BattleScript_ExGlareTrap
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	seteffectprimary
+	resultmessage
+	waitmessage B_WAIT_TIME_LONG
+BattleScript_ExGlareTrap:
+	jumpifstatus2 BS_TARGET, STATUS2_ESCAPE_PREVENTION, BattleScript_MoveEnd
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffectprimary
+	printstring STRINGID_TARGETCANTESCAPENOW
+	waitmessage B_WAIT_TIME_LONG
+	goto BattleScript_MoveEnd
+
 @ Always amplified, as if the last Echo had missed
 BattleScript_ExEcho::
 	attackcanceler
@@ -1335,8 +1362,9 @@ BattleScript_ExSelfDestructEnd:
 
 @ A regular Explosion that, after hitting each target (including its ally), gives it effects for each of the
 @ user's types, like Kaleidoscope: Fire burns, Water/Ice freeze, Electric paralyzes, Poison/Dark badly poison,
-@ Grass/Bug put to sleep (instead of Kaleidoscope's drain, as the user has fainted), Psychic/Ghost disable,
-@ Fighting/Ground/Rock confuse, Steel flinches, and ??? lowers all its stats. Normal, Dragon and Flying add nothing
+@ Grass/Bug put to sleep (instead of Kaleidoscope's drain, as the user has fainted), Psychic/Ghost/Astral disable,
+@ Fighting/Ground/Rock confuse, Steel/Blade flinch, and ??? lowers all its stats. Normal, Dragon, Flying
+@ and Sound add nothing
 BattleScript_ExExplosion::
 	attackcanceler
 	attackstring
@@ -1403,11 +1431,13 @@ BattleScript_ExExplosionTryConfuse:
 	jumpiftype BS_ATTACKER, TYPE_ROCK, BattleScript_ExExplosionConfuse
 BattleScript_ExExplosionTryFlinch:
 	jumpiftype BS_ATTACKER, TYPE_STEEL, BattleScript_ExExplosionFlinch
+	jumpiftype BS_ATTACKER, TYPE_BLADE, BattleScript_ExExplosionFlinch
 BattleScript_ExExplosionTryLowerStats:
 	jumpiftype BS_ATTACKER, TYPE_MYSTERY, BattleScript_ExExplosionLowerStats
 BattleScript_ExExplosionTryDisable:
 	jumpiftype BS_ATTACKER, TYPE_PSYCHIC, BattleScript_ExExplosionDisable
 	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_ExExplosionDisable
+	jumpiftype BS_ATTACKER, TYPE_ASTRAL, BattleScript_ExExplosionDisable
 BattleScript_ExExplosionTypeEffectsEnd:
 	return
 
