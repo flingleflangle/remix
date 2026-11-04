@@ -11,7 +11,7 @@ Route126_OnTransition:
 	call_if_set FLAG_SYS_WEATHER_CTRL, Common_EventScript_SetAbnormalWeather
 	setflag FLAG_HIDE_ROUTE_126_RIVAL
 	call Common_EventScript_SetupRivalSurfingGfxId
-	call_if_eq VAR_ROUTE126_RIVAL, 0, Route126_EventScript_TryArmRival
+@ DEMO	call_if_eq VAR_ROUTE126_RIVAL, 0, Route126_EventScript_TryArmRival
 	end
 
 @ During the SOOTOPOLIS crisis, the rival (MAY, or BRENDAN for a female player) surfs up to the player

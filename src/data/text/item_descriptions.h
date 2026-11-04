@@ -434,9 +434,9 @@ static const u8 sVSpDefDesc[] = _(
     "battle.");
 
 static const u8 sPokeDollDesc[] = _(
-    "Use in battle to\n"
-    "make a decoy with\n"
-    "60 HP to take hits.");
+    "Use to drop a decoy\n"
+    "to defend from \n"
+    "a foe's attacks.");
 
 static const u8 sFluffyTailDesc[] = _(
     "Use to flee from\n"

@@ -427,11 +427,11 @@ Route110_EventScript_MayDefeated::
 	msgbox Route110_Text_MayTakeThis, MSGBOX_DEFAULT
 	call Route110_EventScript_GiveItemfinder
 	msgbox Route110_Text_MayExplainItemfinder, MSGBOX_DEFAULT
-	checkfollower
-	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_RivalExit @ someone's already following the player
-	msgbox Route110_Text_MayAskMunchlax, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, YES, Route110_EventScript_MayStartsFollowing
-	msgbox Route110_Text_MayLookOnMyOwn, MSGBOX_DEFAULT
+@ DEMO	checkfollower
+@ DEMO	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_RivalExit @ someone's already following the player
+@ DEMO	msgbox Route110_Text_MayAskMunchlax, MSGBOX_YESNO
+@ DEMO	goto_if_eq VAR_RESULT, YES, Route110_EventScript_MayStartsFollowing
+@ DEMO	msgbox Route110_Text_MayLookOnMyOwn, MSGBOX_DEFAULT
 	goto Route110_EventScript_RivalExit
 	end
 

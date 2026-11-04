@@ -1557,6 +1557,76 @@ static void OpponentHandleYesNoBox(void)
     OpponentBufferExecCompleted();
 }
 
+// The trainer class of the trainer sending out this battler, or TRAINER_CLASS_PKMN_TRAINER_1 if there's none to go by
+static u8 GetOpponentTrainerClass(u8 battler)
+{
+    u16 trainerId = gTrainerBattleOpponent_A;
+
+    if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_SECRET_BASE | BATTLE_TYPE_EREADER_TRAINER)
+     || gTrainerBattleOpponent_A == TRAINER_UNION_ROOM)
+        return TRAINER_CLASS_PKMN_TRAINER_1;
+    if ((gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) && GetBattlerPosition(battler) == B_POSITION_OPPONENT_RIGHT)
+        trainerId = gTrainerBattleOpponent_B;
+
+    if (trainerId == TRAINER_FRONTIER_BRAIN)
+        return GetFrontierBrainTrainerClass();
+    if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+        return GetFrontierOpponentClass(trainerId);
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_HILL)
+        return GetTrainerHillOpponentClass(trainerId);
+    return gTrainers[trainerId].trainerClass;
+}
+
+// Out of 100, how often a trainer of this class uses a move as an EX move when it can.
+// Wild Pokémon and every class not listed here never do
+static u8 GetTrainerClassExMoveChance(u8 trainerClass)
+{
+    switch (trainerClass)
+    {
+    case TRAINER_CLASS_LEADER:
+    case TRAINER_CLASS_ELITE_FOUR:
+    case TRAINER_CLASS_CHAMPION:
+    case TRAINER_CLASS_AQUA_LEADER:
+    case TRAINER_CLASS_MAGMA_LEADER:
+    case TRAINER_CLASS_CRYSTAL_DUKE:
+    case TRAINER_CLASS_RS_PROTAG:
+    case TRAINER_CLASS_SALON_MAIDEN:
+    case TRAINER_CLASS_DOME_ACE:
+    case TRAINER_CLASS_PALACE_MAVEN:
+    case TRAINER_CLASS_ARENA_TYCOON:
+    case TRAINER_CLASS_FACTORY_HEAD:
+    case TRAINER_CLASS_PIKE_QUEEN:
+    case TRAINER_CLASS_PYRAMID_KING:
+        return 50;
+    case TRAINER_CLASS_COOLTRAINER:
+    case TRAINER_CLASS_COOLTRAINER_2:
+    case TRAINER_CLASS_EXPERT:
+    case TRAINER_CLASS_DRAGON_TAMER:
+    case TRAINER_CLASS_AQUA_ADMIN:
+    case TRAINER_CLASS_MAGMA_ADMIN:
+        return 25;
+    default:
+        return 0;
+    }
+}
+
+// Whether the trainer AI uses its chosen move as an EX move: only certain higher-level trainer classes ever do,
+// now and then, when the move is in a slot that isn't locked, has the 2 PP, and the battler has EX access to it
+static bool32 ShouldOpponentUseExMove(u8 slot)
+{
+    u8 chance;
+
+    if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || slot >= MAX_MON_MOVES)
+        return FALSE;
+    chance = GetTrainerClassExMoveChance(GetOpponentTrainerClass(gActiveBattler));
+    if (chance == 0
+     || gBattleMons[gActiveBattler].pp[slot] < 2
+     || (gExMoveUsedSlots[gActiveBattler] & gBitTable[slot])
+     || !CanBattlerUseExMove(gActiveBattler, gBattleMons[gActiveBattler].moves[slot]))
+        return FALSE;
+    return (Random() % 100) < chance;
+}
+
 static void OpponentHandleChooseMove(void)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_PALACE)
@@ -1595,6 +1665,8 @@ static void OpponentHandleChooseMove(void)
                     if (gAbsentBattlerFlags & gBitTable[gBattlerTarget])
                         gBattlerTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
                 }
+                if (ShouldOpponentUseExMove(chosenMoveId))
+                    chosenMoveId |= CHOSEN_MOVE_EX_FLAG;
                 BtlController_EmitTwoReturnValues(B_COMM_TO_ENGINE, 10, (chosenMoveId) | (gBattlerTarget << 8));
                 break;
             }

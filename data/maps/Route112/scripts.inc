@@ -19,7 +19,7 @@ Route112_OnTransition:
 	setvar VAR_JAGGED_PASS_ASH_WEATHER, 0
 	setflag FLAG_HIDE_ROUTE_112_RIVAL
 	call Common_EventScript_SetupRivalGfxId
-	call_if_eq VAR_ROUTE112_RIVAL, 0, Route112_EventScript_TryArmRival
+@ DEMO	call_if_eq VAR_ROUTE112_RIVAL, 0, Route112_EventScript_TryArmRival
 	end
 
 Route112_OnFrame:

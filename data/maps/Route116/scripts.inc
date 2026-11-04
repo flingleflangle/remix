@@ -10,7 +10,8 @@ Route116_OnTransition:
 	call_if_eq VAR_SHOULD_END_ABNORMAL_WEATHER, 1, AbnormalWeather_EventScript_HideMapNamePopup
 	call_if_eq VAR_ABNORMAL_WEATHER_LOCATION, ABNORMAL_WEATHER_ROUTE_116_NORTH, AbnormalWeather_StartGroudonWeather
 	call_if_eq VAR_ABNORMAL_WEATHER_LOCATION, ABNORMAL_WEATHER_ROUTE_116_SOUTH, AbnormalWeather_StartGroudonWeather
-	call Route116_EventScript_TryShowWally
+	setflag FLAG_HIDE_ROUTE_116_WALLY @ DEMO: delete this line when restoring the call below
+@ DEMO	call Route116_EventScript_TryShowWally
 	end
 
 @ WALLY (once his family in VERDANTURF has said he left, until the player's 5th badge) is trying to
