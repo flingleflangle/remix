@@ -1320,6 +1320,40 @@ bool32 IsMoveBlockedByBlackHole(u8 battler, u16 move)
     return gBattleMoves[move].effect == EFFECT_SEMI_INVULNERABLE || GetBattlerMovePriority(battler, move) > 0;
 }
 
+// A bit for each battler the move will hit, for Ruthless. Spread moves hit every foe
+// (plus the ally for Earthquake-style moves); other moves hit the chosen target.
+static u8 GetMoveTargetBits(u8 battler, u16 move)
+{
+    u8 i, bits = 0;
+    u8 target = gBattleMoves[move].target;
+
+    if (!(target & (MOVE_TARGET_BOTH | MOVE_TARGET_FOES_AND_ALLY)))
+        return gBitTable[gBattleStruct->moveTarget[battler]];
+
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (i == battler || (gAbsentBattlerFlags & gBitTable[i]))
+            continue;
+        if (GetBattlerSide(i) == GetBattlerSide(battler) && !(target & MOVE_TARGET_FOES_AND_ALLY))
+            continue;
+        bits |= gBitTable[i];
+    }
+    return bits;
+}
+
+// Ruthless: TRUE if any battler the move will hit is poisoned
+static bool8 RuthlessTargetPoisoned(u8 battler, u16 move)
+{
+    u8 i, bits = GetMoveTargetBits(battler, move);
+
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if ((bits & gBitTable[i]) && (gBattleMons[i].status1 & STATUS1_PSN_ANY))
+            return TRUE;
+    }
+    return FALSE;
+}
+
 // Early Bird gives +1 priority to damaging moves of 60 power or less. Moves listed with 1 power
 // (variable power or fixed damage, like Low Kick or Seismic Toss) don't count.
 s8 GetBattlerMovePriority(u8 battler, u16 move)
@@ -1328,6 +1362,15 @@ s8 GetBattlerMovePriority(u8 battler, u16 move)
 
     if (gBattleMons[battler].ability == ABILITY_EARLY_BIRD
      && gBattleMoves[move].power > 1 && gBattleMoves[move].power <= 60)
+        priority++;
+
+    if (gBattleMons[battler].ability == ABILITY_RUTHLESS
+     && RuthlessTargetPoisoned(battler, move))
+        priority++;
+
+    // Vendetta: +1 priority while statused
+    if (gBattleMons[battler].ability == ABILITY_VENDETTA
+     && (gBattleMons[battler].status1 & STATUS1_ANY))
         priority++;
     return priority;
 }
@@ -2882,37 +2925,28 @@ static const u8 *ForecastSetWeather(u8 battler)
     return BattleScript_ForecastClearsSkies;
 }
 
+// The gender of the battler's party Pokémon, for Cute Charm. Reading party data decrypts it, which is slow, so
+// AbilityBattleEffects only does this when Cute Charm actually checks, not on every call (the AI's damage
+// estimates make many of those calls, through WEATHER_HAS_EFFECT2 and the other on-field checks)
+static u8 GetBattlerPartyMonGender(u8 battler)
+{
+    struct Pokemon *mon;
+
+    if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+        mon = &gPlayerParty[gBattlerPartyIndexes[battler]];
+    else
+        mon = &gEnemyParty[gBattlerPartyIndexes[battler]];
+    return GetGenderFromSpeciesAndPersonality(GetMonData(mon, MON_DATA_SPECIES), GetMonData(mon, MON_DATA_PERSONALITY));
+}
+
 u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveArg)
 {
     u8 effect = 0;
-    struct Pokemon *pokeAtk;
-    struct Pokemon *pokeDef;
-    u16 speciesAtk;
-    u16 speciesDef;
-    u32 pidAtk;
-    u32 pidDef;
 
     if (gBattlerAttacker >= gBattlersCount)
         gBattlerAttacker = battler;
-
-    if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
-        pokeAtk = &gPlayerParty[gBattlerPartyIndexes[gBattlerAttacker]];
-    else
-        pokeAtk = &gEnemyParty[gBattlerPartyIndexes[gBattlerAttacker]];
-
     if (gBattlerTarget >= gBattlersCount)
         gBattlerTarget = battler;
-
-    if (GetBattlerSide(gBattlerTarget) == B_SIDE_PLAYER)
-        pokeDef = &gPlayerParty[gBattlerPartyIndexes[gBattlerTarget]];
-    else
-        pokeDef = &gEnemyParty[gBattlerPartyIndexes[gBattlerTarget]];
-
-    speciesAtk = GetMonData(pokeAtk, MON_DATA_SPECIES);
-    pidAtk = GetMonData(pokeAtk, MON_DATA_PERSONALITY);
-
-    speciesDef = GetMonData(pokeDef, MON_DATA_SPECIES);
-    pidDef = GetMonData(pokeDef, MON_DATA_PERSONALITY);
 
     if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI)) // Why isn't that check done at the beginning?
     {
@@ -3511,10 +3545,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 battler, u8 ability, u8 special, u16 moveA
                  && (Random() % 3) == 0
                  && gBattleMons[gBattlerAttacker].ability != ABILITY_OBLIVIOUS
                  && gBattleMons[gBattlerAttacker].ability != ABILITY_HEARTBROKEN
-                 && GetGenderFromSpeciesAndPersonality(speciesAtk, pidAtk) != GetGenderFromSpeciesAndPersonality(speciesDef, pidDef)
+                 && GetBattlerPartyMonGender(gBattlerAttacker) != GetBattlerPartyMonGender(gBattlerTarget)
                  && !(gBattleMons[gBattlerAttacker].status2 & STATUS2_INFATUATION)
-                 && GetGenderFromSpeciesAndPersonality(speciesAtk, pidAtk) != MON_GENDERLESS
-                 && GetGenderFromSpeciesAndPersonality(speciesDef, pidDef) != MON_GENDERLESS)
+                 && GetBattlerPartyMonGender(gBattlerAttacker) != MON_GENDERLESS
+                 && GetBattlerPartyMonGender(gBattlerTarget) != MON_GENDERLESS)
                 {
                     gBattleMons[gBattlerAttacker].status2 |= STATUS2_INFATUATED_WITH(gBattlerTarget);
                     BattleScriptPushCursor();

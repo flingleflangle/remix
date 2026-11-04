@@ -99,6 +99,9 @@ static const u8 sTechnicianDescription[] = _("Powers up weak moves.");
 static const u8 sTintedLensDescription[] = _("Ups resisted moves.");
 static const u8 sScrappyDescription[] = _("NORMAL/FIGHT hit any type.");
 static const u8 sStormDrainDescription[] = _("Draws in WATER moves.");
+static const u8 sRuthlessDescription[] = _("Goes after poisoned foes.");
+static const u8 sVendettaDescription[] = _("Status makes it quick.");
+static const u8 sFestiveDescription[] = _("Gives out gifts.");
 
 const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
 {
@@ -203,6 +206,9 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     [ABILITY_SCRAPPY] = _("SCRAPPY"),
     [ABILITY_STORM_DRAIN] = _("STORM DRAIN"),
     [ABILITY_FIESTA] = _("FIESTA"),
+    [ABILITY_RUTHLESS] = _("RUTHLESS"),
+    [ABILITY_VENDETTA] = _("VENDETTA"),
+    [ABILITY_FESTIVE] = _("FESTIVE"),
 };
 
 const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
@@ -308,4 +314,7 @@ const u8 *const gAbilityDescriptionPointers[ABILITIES_COUNT] =
     [ABILITY_SCRAPPY] = sScrappyDescription,
     [ABILITY_STORM_DRAIN] = sStormDrainDescription,
     [ABILITY_FIESTA] = sFiestaDescription,
+    [ABILITY_RUTHLESS] = sRuthlessDescription,
+    [ABILITY_VENDETTA] = sVendettaDescription,
+    [ABILITY_FESTIVE] = sFestiveDescription,
 };

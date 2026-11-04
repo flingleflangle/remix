@@ -145,6 +145,30 @@ static const u16 sTropiusExMoves[] =
     MOVE_WHIRLWIND,
     MOVE_NATURAL_GIFT,
     MOVE_LEAF_STORM,
+    MOVE_AIR_SLASH,
+    MOVE_RECYCLE,
+    MOVE_NONE,
+};
+
+static const u16 sZangooseExMoves[] =
+{
+    MOVE_SHRED,
+    MOVE_CRUSH_CLAW,
+    MOVE_CLOSE_COMBAT,
+    MOVE_FURY_CUTTER,
+    MOVE_SLASH,
+    MOVE_SLICE,
+    MOVE_NONE,
+};
+
+static const u16 sSeviperExMoves[] =
+{
+    MOVE_VENOM_FANG,
+    MOVE_VILE_CUTTER,
+    MOVE_POISON_TAIL,
+    MOVE_POISON_FANG,
+    MOVE_SUPER_FANG,
+    MOVE_CRUNCH,
     MOVE_NONE,
 };
 
@@ -223,6 +247,28 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
         .unlockStat = MON_DATA_FRIENDSHIP,
         .exMoves = sTropiusExMoves,
     },
+
+    [SPECIES_ZANGOOSE] =
+    {
+        .baseHP = +25,
+        .baseAttack = +5,
+        .types = { TYPE_NORMAL, TYPE_FIGHTING },
+        .ability = ABILITY_VENDETTA,
+        .unlockStat = MON_DATA_HP_EV,
+        .exMoves = sZangooseExMoves,
+    },
+
+    [SPECIES_SEVIPER] =
+    {
+        .baseDefense   = +25,
+        .baseSpeed     = -20,
+        .baseSpDefense = +25,
+        .types = { TYPE_POISON, TYPE_DARK },
+        .ability = ABILITY_RUTHLESS,
+        .unlockStat = MON_DATA_SPEED_EV,
+        .exMoves = sSeviperExMoves,
+    },
+
 
     // Planned EX forms, not made yet:
     // [SPECIES_MAGNEMITE] =

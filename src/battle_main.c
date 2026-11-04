@@ -234,6 +234,7 @@ EWRAM_DATA u16 gChosenMoveByBattler[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gMoveResultFlags = 0;
 EWRAM_DATA u32 gHitMarker = 0;
 EWRAM_DATA static u8 sUnusedBattlersArray[MAX_BATTLERS_COUNT] = {0};
+EWRAM_DATA static bool8 sPartnerMsgBoxCleared = FALSE; // The in-game partner blanked the message box before choosing
 EWRAM_DATA u8 gBideTarget[MAX_BATTLERS_COUNT] = {0};
 EWRAM_DATA u8 gBattleEnvironmentBackup = 0;
 EWRAM_DATA u16 gSideStatuses[NUM_BATTLE_SIDES] = {0};
@@ -3239,6 +3240,7 @@ static void BattleStartClearSetData(void)
     memset(gExLeechSeedTurns, 0, sizeof(gExLeechSeedTurns));
     gExLockOnTrapBattlers = 0;
     memset(gExLastingTauntBy, 0, sizeof(gExLastingTauntBy));
+    sPartnerMsgBoxCleared = FALSE;
     memset(gExMoveUsedSlots, 0, sizeof(gExMoveUsedSlots));
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
@@ -4499,11 +4501,33 @@ static void HandleTurnActionSelectionState(void)
         case STATE_BEFORE_ACTION_CHOSEN: // Choose an action.
             *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
             gExMoveChosenBits &= ~gBitTable[gActiveBattler];
-            if (gBattleTypeFlags & BATTLE_TYPE_MULTI
+            // An in-game partner waits for the player to choose, as in doubles. Its AI takes a few frames,
+            // which would otherwise stall the player's action menu and drop button presses.
+            if ((gBattleTypeFlags & BATTLE_TYPE_MULTI
+                 && !((gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) && GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER))
                 || (position & BIT_FLANK) == B_FLANK_LEFT
                 || gBattleStruct->absentBattlerFlags & gBitTable[GetBattlerAtPosition(BATTLE_PARTNER(position))]
                 || gBattleCommunication[GetBattlerAtPosition(BATTLE_PARTNER(position))] == STATE_WAIT_ACTION_CONFIRMED)
             {
+                // Before the partner's AI stalls for a few frames, swap the player's menu for a blank message box,
+                // and give it a frame to reach the screen
+                if ((gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) && GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER
+                 && (position & BIT_FLANK) != B_FLANK_LEFT
+                 && !(gBattleStruct->absentBattlerFlags & gBitTable[gActiveBattler]))
+                {
+                    if (!sPartnerMsgBoxCleared)
+                    {
+                        BattlePutTextOnWindow(gText_EmptyString3, B_WIN_MSG);
+                        gBattle_BG0_X = 0;
+                        gBattle_BG0_Y = 0;
+                        sPartnerMsgBoxCleared = TRUE;
+                        break;
+                    }
+                    if (IsDma3ManagerBusyWithBgCopy())
+                        break;
+                    sPartnerMsgBoxCleared = FALSE;
+                }
+
                 if (gBattleStruct->absentBattlerFlags & gBitTable[gActiveBattler])
                 {
                     gChosenActionByBattler[gActiveBattler] = B_ACTION_NOTHING_FAINTED;

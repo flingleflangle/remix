@@ -153,6 +153,11 @@ static void Cmd_if_holds_item(void);
 // ewram
 EWRAM_DATA const u8 *gAIScriptPtr = NULL;
 EWRAM_DATA static u8 sBattler_AI = 0;
+// get_how_powerful_move_is estimates the damage of all 4 moves to compare against. The estimates are the same for
+// each move it considers against one target, so they're worked out once per BattleAI_SetupAIData (which picks the
+// target and rolls the simulated damage spread) instead of once per move
+EWRAM_DATA static s32 sMoveDmgs[MAX_MON_MOVES] = {0};
+EWRAM_DATA static bool8 sMoveDmgsCalculated = FALSE;
 
 // const rom data
 typedef void (*BattleAICmdFunc)(void);
@@ -344,6 +349,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 
     gBattleResources->AI_ScriptsStack->size = 0;
     sBattler_AI = gActiveBattler;
+    sMoveDmgsCalculated = FALSE;
 
     // Decide a random target battler in doubles.
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
@@ -1175,7 +1181,7 @@ static void Cmd_get_considered_move_power(void)
 static void Cmd_get_how_powerful_move_is(void)
 {
     s32 i, checkedMove;
-    s32 moveDmgs[MAX_MON_MOVES];
+    s32 *moveDmgs = sMoveDmgs;
 
     for (i = 0; sIgnoredPowerfulMoveEffects[i] != IGNORED_MOVES_END; i++)
     {
@@ -1193,8 +1199,8 @@ static void Cmd_get_how_powerful_move_is(void)
         gCritMultiplier = 1;
 
         // Considered move has power and is not in sIgnoredPowerfulMoveEffects
-        // Check all other moves and calculate their power
-        for (checkedMove = 0; checkedMove < MAX_MON_MOVES; checkedMove++)
+        // Check all other moves and calculate their power (once per target, see sMoveDmgs)
+        for (checkedMove = 0; checkedMove < MAX_MON_MOVES && !sMoveDmgsCalculated; checkedMove++)
         {
             for (i = 0; sIgnoredPowerfulMoveEffects[i] != IGNORED_MOVES_END; i++)
             {
@@ -1218,6 +1224,7 @@ static void Cmd_get_how_powerful_move_is(void)
                 moveDmgs[checkedMove] = 0;
             }
         }
+        sMoveDmgsCalculated = TRUE;
 
         // Is the considered move the most powerful move available?
         for (checkedMove = 0; checkedMove < MAX_MON_MOVES; checkedMove++)

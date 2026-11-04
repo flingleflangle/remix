@@ -956,6 +956,79 @@ static u16 GetFiestaBerry(u8 level)
     return sFiestaTiers[tier].berries[Random() % sFiestaTiers[tier].count];
 }
 
+
+
+// Festive is like Fiesta and Pickup, but with more variety
+static const u16 sFestiveGiftsCommon[] =
+{
+    ITEM_LAVA_COOKIE, ITEM_POKE_DOLL, ITEM_PP_MAX, ITEM_BUBBLE_COAT, ITEM_WHITE_HERB, ITEM_AIR_BALLOON,
+};
+
+static const u16 sFestiveGiftsUncommon[] =
+{
+    ITEM_HP_UP, ITEM_PROTEIN, ITEM_IRON, ITEM_CARBOS, ITEM_CALCIUM, ITEM_ZINC,
+    ITEM_NUGGET, ITEM_BIG_PEARL, ITEM_STAR_PIECE,
+};
+
+static const u16 sFestiveGiftsRare[] =
+{
+    ITEM_TM_EARTHQUAKE, ITEM_TM_FLAMETHROWER, ITEM_TM_THUNDERBOLT, ITEM_TM_ICE_BEAM, ITEM_TM_ROCK_SLIDE,
+    ITEM_TM_TRI_ATTACK, ITEM_TM_PSYCHIC, ITEM_TM_GIGA_DRAIN, ITEM_TM_BRICK_BREAK, ITEM_TM_TOXIC,
+};
+
+static const u16 sFestiveGiftsVeryRare[] =
+{
+    ITEM_SUN_STONE, ITEM_MOON_STONE, ITEM_FIRE_STONE, ITEM_WATER_STONE, ITEM_LEAF_STONE, ITEM_THUNDER_STONE,
+    ITEM_DAWN_STONE, ITEM_DUSK_STONE, ITEM_SHINY_STONE,
+};
+
+static const u16 sFestiveGiftsRarest[] =
+{
+    ITEM_STAR_CRYSTAL, ITEM_FLARE_CRYSTAL, ITEM_AQUA_CRYSTAL, ITEM_VOLT_CRYSTAL, ITEM_LAND_CRYSTAL,
+    ITEM_MIND_CRYSTAL, ITEM_SHADE_CRYSTAL, ITEM_POWER_CRYSTAL, ITEM_METAL_CRYSTAL, ITEM_MASTER_BALL,
+};
+
+static const struct
+{
+    const u16 *gifts;
+    u8 count;
+} sFestiveTiers[] =
+{
+    {sFestiveGiftsCommon,   ARRAY_COUNT(sFestiveGiftsCommon)},
+    {sFestiveGiftsUncommon, ARRAY_COUNT(sFestiveGiftsUncommon)},
+    {sFestiveGiftsRare,     ARRAY_COUNT(sFestiveGiftsRare)},
+    {sFestiveGiftsVeryRare, ARRAY_COUNT(sFestiveGiftsVeryRare)},
+    {sFestiveGiftsRarest,   ARRAY_COUNT(sFestiveGiftsRarest)},
+};
+
+// Chance out of 100 of each tier above, for levels 1-20, 21-40, 41-60, 61-80 and 81-100
+static const u8 sFestiveTierChances[][ARRAY_COUNT(sFestiveTiers)] =
+{
+    {80, 20,  0,  0,  0},
+    {55, 35, 10,  0,  0},
+    {35, 35, 22,  7,  1},
+    {20, 30, 30, 15,  5},
+    {10, 25, 30, 25, 10},
+};
+
+static u16 GetFestiveGift(u8 level)
+{
+    const u8 *chances = sFestiveTierChances[min((level - 1) / 20, ARRAY_COUNT(sFestiveTierChances) - 1)];
+    s32 rand = Random() % 100;
+    u32 tier;
+
+    for (tier = 0; tier < ARRAY_COUNT(sFestiveTiers) - 1; tier++)
+    {
+        if (rand < chances[tier])
+            break;
+        rand -= chances[tier];
+    }
+    return sFestiveTiers[tier].gifts[Random() % sFestiveTiers[tier].count];
+}
+
+
+
+
 static const u8 sEnvironmentToType[] =
 {
     [BATTLE_ENVIRONMENT_GRASS]      = TYPE_BUG,
@@ -3532,6 +3605,7 @@ static void Cmd_seteffectwithchance(void)
     u32 percentChance = gExEffectChance ? gExEffectChance : gBattleMoves[gCurrentMove].secondaryEffectChance;
 
     if (gBattleMons[gBattlerAttacker].ability == ABILITY_SERENE_GRACE
+     || gBattleMons[gBattlerAttacker].ability == ABILITY_FESTIVE
      || gBattleMons[gBattlerAttacker].ability == ABILITY_WISHMAKER) // Works like Serene Grace too
         percentChance *= 2;
     // Chroma Scale triples added-effect chances in any weather, except flinching
@@ -11977,6 +12051,15 @@ static void Cmd_pickup(void)
                 heldItem = GetFiestaBerry(GetMonData(&gPlayerParty[i], MON_DATA_LEVEL));
                 SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &heldItem);
             }
+            else if (species != SPECIES_NONE
+                && species != SPECIES_EGG
+                && heldItem == ITEM_NONE
+                && GetMonAbility(&gPlayerParty[i]) == ABILITY_FESTIVE
+                && (Random() % 10) == 0)
+            {
+                heldItem = GetFestiveGift(GetMonData(&gPlayerParty[i], MON_DATA_LEVEL));
+                SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &heldItem);
+            }
 			else if (species == SPECIES_SHUCKLE
                && heldItem >= FIRST_BERRY_INDEX
                && heldItem <= LAST_BERRY_INDEX)
@@ -12108,7 +12191,8 @@ static void Cmd_settypetoenvironment(void)
     }
 }
 
-// Turns the user into a pure type, picked by the move. If it already is that pure type, jumps to failInstr
+// Turns the user into a pure type, picked by the move (EX Self-Destruct instead drops the Normal type).
+// If it already is that pure type, or EX Self-Destruct's user isn't Normal type, jumps to failInstr
 static void Cmd_settypewithmove(void)
 {
     u8 type;
@@ -12122,8 +12206,20 @@ static void Cmd_settypewithmove(void)
         type = TYPE_PSYCHIC;
         break;
     case MOVE_ATTUNEMENT:
-    case MOVE_SELF_DESTRUCT: // Banette's EX Self-Destruct (BattleScript_ExSelfDestructBanette)
         type = TYPE_GHOST;
+        break;
+    case MOVE_SELF_DESTRUCT: // EX Self-Destruct (BattleScript_ExSelfDestruct): drops the Normal type, pure Normal becomes ???
+        if (gBattleMons[gBattlerAttacker].types[0] == TYPE_NORMAL)
+            type = gBattleMons[gBattlerAttacker].types[1];
+        else if (gBattleMons[gBattlerAttacker].types[1] == TYPE_NORMAL)
+            type = gBattleMons[gBattlerAttacker].types[0];
+        else
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+            return;
+        }
+        if (type == TYPE_NORMAL)
+            type = TYPE_MYSTERY;
         break;
     default:
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);

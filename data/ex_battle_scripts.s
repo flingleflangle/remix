@@ -120,6 +120,8 @@ gExMoves::
 	exmove MOVE_MIRROR_COAT, flags=EX_FLAG_COUNTER_SHIELD
 	exmove MOVE_PURSUIT, flags=EX_FLAG_NO_SWITCH_THIS_TURN @ Also stops a switch it catches, see BattleScript_ActionSwitch
 	exmove MOVE_METRONOME, flags=EX_FLAG_WEAKNESS_CALL @ See gExMetronomeMoves below
+	exmove MOVE_SELF_DESTRUCT, BattleScript_ExSelfDestruct
+	exmove MOVE_EXPLOSION, BattleScript_ExExplosion
 	exmove MOVE_NONE @ End of list, keep this last
 
 @ EX upgrades. Instead of an EX script, these moves become a stronger, closely related move when
@@ -172,7 +174,6 @@ gExMoveUpgrades::
 	exupgrade MOVE_ROCK_THROW, MOVE_ROCK_SLIDE
 	exupgrade MOVE_COMET_PUNCH, MOVE_METEOR_MASH
 	exupgrade MOVE_ROCK_TOMB, MOVE_TOMBSTONER
-	exupgrade MOVE_SELF_DESTRUCT, MOVE_EXPLOSION
 	exupgrade MOVE_NONE, MOVE_NONE @ End of list, keep this last
 
 @ EX Metronome (EX_FLAG_WEAKNESS_CALL) calls a random one of these moves that a foe is weak to, at that foe:
@@ -796,34 +797,32 @@ BattleScript_ExWeatherAfterHit::
 	call BattleScript_WeatherFormChanges
 	goto BattleScript_HitTryLockOn
 
-@ Species EX scripts. These are only for the species that list them in src/data/pokemon/ex_species_moves.h,
-@ and replace whatever EX version the move has for everyone else.
-
-@ Banette: while it's Normal type, it survives its Self-Destruct, but loses its Normal type to become pure Ghost.
-@ Once it isn't Normal type, its EX Self-Destruct is the usual one, which upgrades to Explosion
-BattleScript_ExSelfDestructBanette::
-	jumpiftype BS_ATTACKER, TYPE_NORMAL, BattleScript_ExSelfDestructBanetteNoCost
-	various BS_ATTACKER, VARIOUS_EX_USE_USUAL_VERSION
-BattleScript_ExSelfDestructBanetteNoCost:
+@ While its user is Normal type, it survives its Self-Destruct, but loses its Normal type
+@ (Normal/Ghost becomes Ghost, Normal/Electric becomes Electric, pure Normal becomes ???).
+@ A user that isn't Normal type uses a regular Self-Destruct (with the EX boost) and faints
+BattleScript_ExSelfDestruct::
+	jumpiftype BS_ATTACKER, TYPE_NORMAL, BattleScript_ExSelfDestructNoCost
+	goto BattleScript_EffectExplosion
+BattleScript_ExSelfDestructNoCost:
 	orword gExMoveFlags, EX_FLAG_NO_HP_COST
 	attackcanceler
 	attackstring
 	ppreduce
 	tryexplosion
 	waitstate
-	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_ExSelfDestructBanetteDoAnim
+	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_ExSelfDestructDoAnim
 	call BattleScript_PreserveMissedBitDoMoveAnim
-	goto BattleScript_ExSelfDestructBanetteLoop
-BattleScript_ExSelfDestructBanetteDoAnim:
+	goto BattleScript_ExSelfDestructLoop
+BattleScript_ExSelfDestructDoAnim:
 	attackanimation
 	waitanimation
-BattleScript_ExSelfDestructBanetteLoop:
+BattleScript_ExSelfDestructLoop:
 	movevaluescleanup
 	critcalc
 	damagecalc
 	typecalc
 	adjustnormaldamage
-	accuracycheck BattleScript_ExSelfDestructBanetteMissed, ACC_CURR_MOVE
+	accuracycheck BattleScript_ExSelfDestructMissed, ACC_CURR_MOVE
 	effectivenesssound
 	hitanimation BS_TARGET
 	waitstate
@@ -835,50 +834,45 @@ BattleScript_ExSelfDestructBanetteLoop:
 	waitmessage B_WAIT_TIME_LONG
 	tryfaintmon BS_TARGET
 	moveendto MOVEEND_NEXT_TARGET
-	jumpifnexttargetvalid BattleScript_ExSelfDestructBanetteLoop
-	goto BattleScript_ExSelfDestructBanetteBecomeGhost
-BattleScript_ExSelfDestructBanetteMissed:
+	jumpifnexttargetvalid BattleScript_ExSelfDestructLoop
+	goto BattleScript_ExSelfDestructDropType
+BattleScript_ExSelfDestructMissed:
 	effectivenesssound
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	moveendto MOVEEND_NEXT_TARGET
-	jumpifnexttargetvalid BattleScript_ExSelfDestructBanetteLoop
-BattleScript_ExSelfDestructBanetteBecomeGhost:
-	settypewithmove BattleScript_ExSelfDestructBanetteEnd @ Like Attunement
+	jumpifnexttargetvalid BattleScript_ExSelfDestructLoop
+BattleScript_ExSelfDestructDropType:
+	settypewithmove BattleScript_ExSelfDestructEnd @ Like Attunement
 	printstring STRINGID_PKMNCHANGEDTYPE
 	waitmessage B_WAIT_TIME_LONG
-BattleScript_ExSelfDestructBanetteEnd:
+BattleScript_ExSelfDestructEnd:
 	end
 
-@ Glalie: a regular Explosion that always freezes everything it hits, including its ally
-BattleScript_ExExplosionGlalie::
-	setbyte sMULTIHIT_EFFECT, MOVE_EFFECT_FREEZE | MOVE_EFFECT_CERTAIN
-	goto BattleScript_ExExplosionWithEffect
-
-@ Voltorb and Electrode: a regular Explosion that always paralyzes everything it hits, including its ally
-BattleScript_ExExplosionVoltorb::
-	setbyte sMULTIHIT_EFFECT, MOVE_EFFECT_PARALYSIS | MOVE_EFFECT_CERTAIN
-@ A regular Explosion, with the move effect in sMULTIHIT_EFFECT on everything it hits
-BattleScript_ExExplosionWithEffect:
+@ A regular Explosion that, after hitting each target (including its ally), gives it effects for each of the
+@ user's types, like Kaleidoscope: Fire burns, Water/Ice freeze, Electric paralyzes, Poison/Dark badly poison,
+@ Grass/Bug put to sleep (instead of Kaleidoscope's drain, as the user has fainted), Psychic/Ghost disable,
+@ Fighting/Ground/Rock confuse, Steel flinches, and ??? lowers all its stats. Normal, Dragon and Flying add nothing
+BattleScript_ExExplosion::
 	attackcanceler
 	attackstring
 	ppreduce
 	tryexplosion
 	setatkhptozero
 	waitstate
-	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_ExExplosionWithEffectDoAnim
+	jumpifbyte CMP_NO_COMMON_BITS, gMoveResultFlags, MOVE_RESULT_MISSED, BattleScript_ExExplosionDoAnim
 	call BattleScript_PreserveMissedBitDoMoveAnim
-	goto BattleScript_ExExplosionWithEffectLoop
-BattleScript_ExExplosionWithEffectDoAnim:
+	goto BattleScript_ExExplosionLoop
+BattleScript_ExExplosionDoAnim:
 	attackanimation
 	waitanimation
-BattleScript_ExExplosionWithEffectLoop:
+BattleScript_ExExplosionLoop:
 	movevaluescleanup
 	critcalc
 	damagecalc
 	typecalc
 	adjustnormaldamage
-	accuracycheck BattleScript_ExExplosionWithEffectMissed, ACC_CURR_MOVE
+	accuracycheck BattleScript_ExExplosionMissed, ACC_CURR_MOVE
 	effectivenesssound
 	hitanimation BS_TARGET
 	waitstate
@@ -888,21 +882,98 @@ BattleScript_ExExplosionWithEffectLoop:
 	waitmessage B_WAIT_TIME_LONG
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
-	copybyte cEFFECT_CHOOSER, sMULTIHIT_EFFECT
-	seteffectwithchance
+	call BattleScript_ExExplosionTypeEffects
 	tryfaintmon BS_TARGET
 	moveendto MOVEEND_NEXT_TARGET
-	jumpifnexttargetvalid BattleScript_ExExplosionWithEffectLoop
+	jumpifnexttargetvalid BattleScript_ExExplosionLoop
 	tryfaintmon BS_ATTACKER
 	end
-BattleScript_ExExplosionWithEffectMissed:
+BattleScript_ExExplosionMissed:
 	effectivenesssound
 	resultmessage
 	waitmessage B_WAIT_TIME_LONG
 	moveendto MOVEEND_NEXT_TARGET
-	jumpifnexttargetvalid BattleScript_ExExplosionWithEffectLoop
+	jumpifnexttargetvalid BattleScript_ExExplosionLoop
 	tryfaintmon BS_ATTACKER
 	end
+
+@ Each effect is checked once, so a type pair sharing an effect (Psychic/Ghost) only applies it once
+BattleScript_ExExplosionTypeEffects:
+	jumpifmovehadnoeffect BattleScript_ExExplosionTypeEffectsEnd
+	jumpifhasnohp BS_TARGET, BattleScript_ExExplosionTypeEffectsEnd
+	jumpiftype BS_ATTACKER, TYPE_FIRE, BattleScript_ExExplosionBurn
+BattleScript_ExExplosionTryFreeze:
+	jumpiftype BS_ATTACKER, TYPE_WATER, BattleScript_ExExplosionFreeze
+	jumpiftype BS_ATTACKER, TYPE_ICE, BattleScript_ExExplosionFreeze
+BattleScript_ExExplosionTryParalyze:
+	jumpiftype BS_ATTACKER, TYPE_ELECTRIC, BattleScript_ExExplosionParalyze
+BattleScript_ExExplosionTryPoison:
+	jumpiftype BS_ATTACKER, TYPE_POISON, BattleScript_ExExplosionPoison
+	jumpiftype BS_ATTACKER, TYPE_DARK, BattleScript_ExExplosionPoison
+BattleScript_ExExplosionTrySleep:
+	jumpiftype BS_ATTACKER, TYPE_GRASS, BattleScript_ExExplosionSleep
+	jumpiftype BS_ATTACKER, TYPE_BUG, BattleScript_ExExplosionSleep
+BattleScript_ExExplosionTryConfuse:
+	jumpiftype BS_ATTACKER, TYPE_FIGHTING, BattleScript_ExExplosionConfuse
+	jumpiftype BS_ATTACKER, TYPE_GROUND, BattleScript_ExExplosionConfuse
+	jumpiftype BS_ATTACKER, TYPE_ROCK, BattleScript_ExExplosionConfuse
+BattleScript_ExExplosionTryFlinch:
+	jumpiftype BS_ATTACKER, TYPE_STEEL, BattleScript_ExExplosionFlinch
+BattleScript_ExExplosionTryLowerStats:
+	jumpiftype BS_ATTACKER, TYPE_MYSTERY, BattleScript_ExExplosionLowerStats
+BattleScript_ExExplosionTryDisable:
+	jumpiftype BS_ATTACKER, TYPE_PSYCHIC, BattleScript_ExExplosionDisable
+	jumpiftype BS_ATTACKER, TYPE_GHOST, BattleScript_ExExplosionDisable
+BattleScript_ExExplosionTypeEffectsEnd:
+	return
+
+BattleScript_ExExplosionBurn:
+	setmoveeffect MOVE_EFFECT_BURN | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	goto BattleScript_ExExplosionTryFreeze
+BattleScript_ExExplosionFreeze:
+	setmoveeffect MOVE_EFFECT_FREEZE | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	goto BattleScript_ExExplosionTryParalyze
+BattleScript_ExExplosionParalyze:
+	setmoveeffect MOVE_EFFECT_PARALYSIS | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	goto BattleScript_ExExplosionTryPoison
+BattleScript_ExExplosionPoison:
+	setmoveeffect MOVE_EFFECT_TOXIC | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	goto BattleScript_ExExplosionTrySleep
+BattleScript_ExExplosionSleep:
+	setmoveeffect MOVE_EFFECT_SLEEP | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	goto BattleScript_ExExplosionTryConfuse
+BattleScript_ExExplosionConfuse:
+	setmoveeffect MOVE_EFFECT_CONFUSION | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	goto BattleScript_ExExplosionTryFlinch
+BattleScript_ExExplosionFlinch:
+	setmoveeffect MOVE_EFFECT_FLINCH | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	goto BattleScript_ExExplosionTryLowerStats
+BattleScript_ExExplosionLowerStats:
+	setmoveeffect MOVE_EFFECT_ATK_MINUS_1 | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_DEF_MINUS_1 | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_SPD_MINUS_1 | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_SP_ATK_MINUS_1 | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_SP_DEF_MINUS_1 | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	setmoveeffect MOVE_EFFECT_ACC_MINUS_1 | MOVE_EFFECT_CERTAIN
+	seteffectwithchance
+	goto BattleScript_ExExplosionTryDisable
+BattleScript_ExExplosionDisable:
+	disablelastusedattack BattleScript_ExExplosionTypeEffectsEnd
+	printstring STRINGID_PKMNMOVEWASDISABLED
+	waitmessage B_WAIT_TIME_LONG
+	return
 
 @ A Pokémon unlocked its EX form through training, after gaining EXP (see Cmd_getexp).
 @ If it's on the field it glows and turns into its EX form (B_ANIM_EX_MASTERY), then its message shows.

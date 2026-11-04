@@ -302,9 +302,6 @@ extern const u8 BattleScript_ExBonusProtect[];
 extern const u8 BattleScript_ExBonusSwapStats[];
 extern const u8 BattleScript_ExHealReplacement[];
 extern const u8 BattleScript_ExTrainingUnlock[];
-extern const u8 BattleScript_ExExplosionVoltorb[];
-extern const u8 BattleScript_ExSelfDestructBanette[];
-extern const u8 BattleScript_ExExplosionGlalie[];
 extern const u8 BattleScript_NorthStarActivates[];
 
 #endif // GUARD_BATTLE_SCRIPTS_H
