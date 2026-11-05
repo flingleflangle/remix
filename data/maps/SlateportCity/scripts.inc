@@ -486,6 +486,7 @@ SlateportCity_EventScript_DollClerk::
 
 	.align 2
 SlateportCity_PokemartDecor_Dolls:
+	.2byte ITEM_POKE_DOLL
 	.2byte DECOR_AZURILL_DOLL
 	.2byte DECOR_MARILL_DOLL
 	.2byte DECOR_SKITTY_DOLL
@@ -708,11 +709,13 @@ SlateportCity_EventScript_Gabby::
 @ An EX tutor with his own lines about the lighthouse (see data/scripts/ex_tutor.inc), if the
 @ player has a Pokémon he can awaken. Otherwise he just talks about the lighthouse
 SlateportCity_EventScript_Man3::
+	msgbox SlateportCity_Text_WonderIfLighthouseStartlesPokemon, MSGBOX_NPC
+	end
+
+@ Commented out for now, putbefore the message box to bring the EX tutor back.
 	setvar VAR_0x8005, SPECIES_NONE
 	special DoesPartyHaveExTutorMon
 	goto_if_eq VAR_RESULT, TRUE, SlateportCity_EventScript_LighthouseExTutor
-	msgbox SlateportCity_Text_WonderIfLighthouseStartlesPokemon, MSGBOX_NPC
-	end
 
 SlateportCity_EventScript_LighthouseExTutor::
 	lock

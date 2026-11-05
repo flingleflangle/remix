@@ -561,3 +561,4 @@ gSpecials::
 	def_special FollowerStop_StayInPlace
 	def_special FollowerStop_PrepareStepOff
 	def_special HealPlayerPC
+	def_special InitClockForNewGame

@@ -78,6 +78,14 @@ static void ReturnFromStartWallClock(void)
     SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
 }
 
+// No RTC, so the intro no longer has the player set the wall clock. The time starts at 10:00
+// (the wall clock's default) when the player spawns in the truck.
+void InitClockForNewGame(void)
+{
+    FakeTimeReset(10, 0);
+    InitTimeBasedEvents();
+}
+
 void StartWallClock(void)
 {
     SetMainCallback2(CB2_StartWallClock);

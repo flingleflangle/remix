@@ -172,8 +172,9 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
             input->heldDirection2 = TRUE;
         }
 		
-		if (newKeys & R_BUTTON)
-            input->pressedRButton = TRUE;
+		// Only used by the disabled R-to-switch-bike block in ProcessPlayerFieldInput
+		// if (newKeys & R_BUTTON)
+        //     input->pressedRButton = TRUE;
     }
 
     if (forcedMove == FALSE)
@@ -245,6 +246,7 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     if (input->pressedSelectButton && UseRegisteredKeyItemOnField() == TRUE)
         return TRUE;
 
+#if 0 // R-to-switch-bike disabled for vanilla one-bike behavior; reuse for a future "Ultimate Bike" unlock
 	if (input->pressedRButton && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
     {
 		ObjectEventClearHeldMovementIfActive(&gObjectEvents[gPlayerAvatar.objectEventId]);
@@ -263,6 +265,7 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
             PlaySE(SE_BIKE_BELL);
         }
     }
+#endif
     return FALSE;
 }
 

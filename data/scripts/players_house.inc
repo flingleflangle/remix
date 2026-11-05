@@ -69,6 +69,30 @@ PlayersHouse_2F_EventScript_WallClock::
 	releaseall
 	end
 
+@ No RTC, so there's no clock to set. Mom follows the player up the first time they reach their room instead.
+PlayersHouse_2F_EventScript_MomFollowsUpstairs::
+	lockall
+	setvar VAR_LITTLEROOT_INTRO_STATE, 6
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_PLAYERS_HOUSE_VIGOROTH_1
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_PLAYERS_HOUSE_VIGOROTH_2
+	applymovement LOCALID_PLAYER, PlayersHouse_2F_Movement_PlayerStepOffStairs
+	waitmovement 0
+	delay 20
+	addobject LOCALID_PLAYERS_HOUSE_2F_MOM
+	delay 8
+	msgbox PlayersHouse_2F_Text_HowDoYouLikeYourRoom, MSGBOX_DEFAULT
+	closemessage
+	playse SE_EXIT
+	removeobject LOCALID_PLAYERS_HOUSE_2F_MOM
+	releaseall
+	end
+
+PlayersHouse_2F_Movement_PlayerStepOffStairs:
+	walk_down
+	delay_8
+	walk_in_place_faster_up
+	step_end
+
 PlayersHouse_2F_EventScript_MomComesUpstairsMale::
 	setvar VAR_0x8008, LOCALID_PLAYERS_HOUSE_2F_MOM
 	addobject VAR_0x8008

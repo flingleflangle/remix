@@ -2613,7 +2613,15 @@ u8 AtkCanceller_UnableToUseMove(void)
         case CANCELLER_CONFUSED: // confusion
             if (gBattleMons[gBattlerAttacker].status2 & STATUS2_CONFUSION)
             {
-                gBattleMons[gBattlerAttacker].status2 -= STATUS2_CONFUSION_TURN(1);
+                u8 toSub;
+                if (gBattleMons[gBattlerAttacker].ability == ABILITY_INNER_FOCUS)
+                    toSub = 2;
+                else
+                    toSub = 1;
+                if ((gBattleMons[gBattlerAttacker].status2 & STATUS2_CONFUSION) < STATUS2_CONFUSION_TURN(toSub))
+                    gBattleMons[gBattlerAttacker].status2 &= ~STATUS2_CONFUSION;
+                else
+                    gBattleMons[gBattlerAttacker].status2 -= STATUS2_CONFUSION_TURN(toSub);
                 if (gBattleMons[gBattlerAttacker].status2 & STATUS2_CONFUSION)
                 {
                     if (Random() & 1)
