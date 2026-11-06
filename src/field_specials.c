@@ -1,6 +1,7 @@
 #include "global.h"
 #include "malloc.h"
 #include "battle.h"
+#include "battle_setup.h"
 #include "battle_tower.h"
 #include "cable_club.h"
 #include "data.h"
@@ -3628,6 +3629,10 @@ u32 GetMartEmployeeObjectEventId(void)
 bool32 IsTrainerRegistered(void)
 {
     int index = GetRematchIdxByTrainerIdx(gSpecialVar_0x8004);
+
+    // A paid-off trainer wasn't beaten, so talking to them can't register them
+    if (IsTrainerIdPaidOff(gSpecialVar_0x8004))
+        return TRUE;
     if (index >= 0)
     {
         if (FlagGet(TRAINER_REGISTERED_FLAGS_START + index) == TRUE)

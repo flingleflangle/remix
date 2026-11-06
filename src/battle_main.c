@@ -9,6 +9,7 @@
 #include "battle_main.h"
 #include "battle_message.h"
 #include "battle_pyramid.h"
+#include "battle_script_commands.h"
 #include "battle_scripts.h"
 #include "battle_setup.h"
 #include "battle_tower.h"
@@ -30,6 +31,7 @@
 #include "main.h"
 #include "malloc.h"
 #include "m4a.h"
+#include "money.h"
 #include "palette.h"
 #include "party_menu.h"
 #include "pokeball.h"
@@ -119,6 +121,7 @@ static void HandleEndTurn_ContinueBattle(void);
 static void HandleEndTurn_BattleWon(void);
 static void HandleEndTurn_BattleLost(void);
 static void HandleEndTurn_RanFromBattle(void);
+static void HandleEndTurn_PaidOff(void);
 static void HandleEndTurn_MonFled(void);
 static void HandleEndTurn_FinishBattle(void);
 static void SpriteCB_UnusedBattleInit(struct Sprite *sprite);
@@ -158,6 +161,7 @@ EWRAM_DATA bool8 gPlayerDoesNotWantToEvolveLeft = FALSE;
 EWRAM_DATA bool8 gPlayerDoesNotWantToEvolveRight = FALSE;
 EWRAM_DATA struct MultiPartnerMenuPokemon gMultiPartnerParty[MULTI_PARTY_SIZE] = {0};
 EWRAM_DATA static struct MultiPartnerMenuPokemon *sMultiPartnerPartyBuffer = NULL;
+EWRAM_DATA static bool8 sPayOffPriceToRaise = FALSE; // a double_payoff trainer cuts in if the player agrees to pay
 EWRAM_DATA u8 *gBattleAnimBgTileBuffer = NULL;
 EWRAM_DATA u8 *gBattleAnimBgTilemapBuffer = NULL;
 EWRAM_DATA u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200] = {0};
@@ -745,6 +749,7 @@ static void (*const sEndTurnFuncsTable[])(void) =
     [B_OUTCOME_NO_SAFARI_BALLS]   = HandleEndTurn_FinishBattle,
     [B_OUTCOME_FORFEITED]         = HandleEndTurn_FinishBattle,
     [B_OUTCOME_MON_TELEPORTED]    = HandleEndTurn_FinishBattle,
+    [B_OUTCOME_PAID_OFF]          = HandleEndTurn_PaidOff,
 };
 
 const u8 gStatusConditionString_PoisonJpn[] = _("どく$$$$$");
@@ -4723,6 +4728,29 @@ static void HandleTurnActionSelectionState(void)
                          && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK))
                          && gBattleBufferB[gActiveBattler][1] == B_ACTION_RUN)
                 {
+                    // Trainers who accept it can be paid their prize money to end the battle,
+                    // even if the player is trapped (they recall their Pokémon)
+                    if (CanPayOffTrainerBattle())
+                    {
+                        u32 cost = GetTrainerPayOffCost(FALSE);
+
+                        PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff1, 6, cost);
+                        if (IsEnoughMoney(&gSaveBlock1Ptr->money, cost))
+                        {
+                            // A double_payoff trainer cuts in with a higher price if the player agrees
+                            sPayOffPriceToRaise = (GetPayOffPriceRaiser() != -1);
+                            gSelectionBattleScripts[gActiveBattler] = BattleScript_AskIfWantsToPayOffTrainer;
+                            gBattleCommunication[gActiveBattler] = STATE_SELECTION_SCRIPT_MAY_RUN;
+                        }
+                        else
+                        {
+                            gSelectionBattleScripts[gActiveBattler] = BattleScript_PrintCantAffordPayOff;
+                            gBattleCommunication[gActiveBattler] = STATE_SELECTION_SCRIPT;
+                        }
+                        *(gBattleStruct->selectionScriptFinished + gActiveBattler) = FALSE;
+                        *(gBattleStruct->stateIdAfterSelScript + gActiveBattler) = STATE_BEFORE_ACTION_CHOSEN;
+                        return;
+                    }
                     BattleScriptExecute(BattleScript_PrintCantRunFromTrainer);
                     gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
                 }
@@ -4907,6 +4935,28 @@ static void HandleTurnActionSelectionState(void)
         case STATE_SELECTION_SCRIPT_MAY_RUN:
             if (*(gBattleStruct->selectionScriptFinished + gActiveBattler))
             {
+                if (gBattleBufferB[gActiveBattler][1] == B_ACTION_NOTHING_FAINTED && sPayOffPriceToRaise)
+                {
+                    // The player agreed to pay a double_payoff trainer, who now asks for twice as much
+                    u32 cost = GetTrainerPayOffCost(TRUE);
+
+                    sPayOffPriceToRaise = FALSE;
+                    PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff1, 6, cost);
+                    // Pressing B on a yes/no box leaves its old answer behind, so forget the first "yes"
+                    gBattleBufferB[gActiveBattler][1] = 0;
+                    if (IsEnoughMoney(&gSaveBlock1Ptr->money, cost))
+                    {
+                        gSelectionBattleScripts[gActiveBattler] = (GetPayOffPriceRaiser() == 0) ? BattleScript_PayOffPriceRaised1 : BattleScript_PayOffPriceRaised2;
+                    }
+                    else
+                    {
+                        gSelectionBattleScripts[gActiveBattler] = (GetPayOffPriceRaiser() == 0) ? BattleScript_PayOffPriceRaisedCantAfford1 : BattleScript_PayOffPriceRaisedCantAfford2;
+                        gBattleCommunication[gActiveBattler] = STATE_SELECTION_SCRIPT;
+                    }
+                    *(gBattleStruct->selectionScriptFinished + gActiveBattler) = FALSE;
+                    break;
+                }
+                sPayOffPriceToRaise = FALSE;
                 if (gBattleBufferB[gActiveBattler][1] == B_ACTION_NOTHING_FAINTED)
                 {
                     gHitMarker |= HITMARKER_RUN;
@@ -5512,6 +5562,12 @@ static void HandleEndTurn_BattleLost(void)
             gBattleOutcome &= ~B_OUTCOME_LINK_BATTLE_RAN;
         }
     }
+    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && IsNoWhiteoutTrainerBattle())
+    {
+        // A trainer with a lose_script: no white-out or lost money, they just have their say
+        gBattleOutcome = B_OUTCOME_LOST_NO_WHITEOUT;
+        gBattlescriptCurrInstr = BattleScript_LocalBattleLostNoWhiteout;
+    }
     else
     {
         gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
@@ -5551,6 +5607,14 @@ static void HandleEndTurn_RanFromBattle(void)
         }
     }
 
+    gBattleMainFunc = HandleEndTurn_FinishBattle;
+}
+
+// The player paid the trainers to end the battle (HandleAction_Run)
+static void HandleEndTurn_PaidOff(void)
+{
+    gCurrentActionFuncId = 0;
+    gBattlescriptCurrInstr = BattleScript_PaidOffTrainer;
     gBattleMainFunc = HandleEndTurn_FinishBattle;
 }
 

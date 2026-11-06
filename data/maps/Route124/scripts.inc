@@ -21,17 +21,17 @@ Route124_EventScript_HuntersHouseSign::
 	end
 
 Route124_EventScript_Spencer::
-	trainerbattle_single TRAINER_SPENCER, Route124_Text_SpencerIntro, Route124_Text_SpencerDefeat
+	trainerbattle_single TRAINER_SPENCER, Route124_Text_SpencerIntro, Route124_Text_SpencerDefeat, forfeit_text=Route124_Text_SpencerForfeit
 	msgbox Route124_Text_SpencerPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route124_EventScript_Roland::
-	trainerbattle_single TRAINER_ROLAND, Route124_Text_RolandIntro, Route124_Text_RolandDefeat
+	trainerbattle_single TRAINER_ROLAND, Route124_Text_RolandIntro, Route124_Text_RolandDefeat, forfeit_text=Route124_Text_RolandForfeit
 	msgbox Route124_Text_RolandPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route124_EventScript_Jenny::
-	trainerbattle_single TRAINER_JENNY_1, Route124_Text_JennyIntro, Route124_Text_JennyDefeat, Route124_EventScript_RegisterJenny
+	trainerbattle_single TRAINER_JENNY_1, Route124_Text_JennyIntro, Route124_Text_JennyDefeat, Route124_EventScript_RegisterJenny, forfeit_text=Route124_Text_JennyForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route124_EventScript_RematchJenny
 	msgbox Route124_Text_JennyPostBattle, MSGBOX_DEFAULT
@@ -47,22 +47,22 @@ Route124_EventScript_RegisterJenny::
 	end
 
 Route124_EventScript_RematchJenny::
-	trainerbattle_rematch TRAINER_JENNY_1, Route124_Text_JennyRematchIntro, Route124_Text_JennyRematchDefeat
+	trainerbattle_rematch TRAINER_JENNY_1, Route124_Text_JennyRematchIntro, Route124_Text_JennyRematchDefeat, forfeit_text=Route124_Text_JennyRematchForfeit
 	msgbox Route124_Text_JennyPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route124_EventScript_Grace::
-	trainerbattle_single TRAINER_GRACE, Route124_Text_GraceIntro, Route124_Text_GraceDefeat
+	trainerbattle_single TRAINER_GRACE, Route124_Text_GraceIntro, Route124_Text_GraceDefeat, forfeit_text=Route124_Text_GraceForfeit
 	msgbox Route124_Text_GracePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route124_EventScript_Chad::
-	trainerbattle_single TRAINER_CHAD, Route124_Text_ChadIntro, Route124_Text_ChadDefeat
+	trainerbattle_single TRAINER_CHAD, Route124_Text_ChadIntro, Route124_Text_ChadDefeat, forfeit_text=Route124_Text_ChadForfeit
 	msgbox Route124_Text_ChadPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route124_EventScript_Lila::
-	trainerbattle_double TRAINER_LILA_AND_ROY_1, Route124_Text_LilaIntro, Route124_Text_LilaDefeat, Route124_Text_LilaNotEnoughMons, Route124_EventScript_RegisterLila
+	trainerbattle_double TRAINER_LILA_AND_ROY_1, Route124_Text_LilaIntro, Route124_Text_LilaDefeat, Route124_Text_LilaNotEnoughMons, Route124_EventScript_RegisterLila, forfeit_text=Route124_Text_LilaForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route124_EventScript_RematchLila
 	msgbox Route124_Text_LilaPostBattle, MSGBOX_DEFAULT
@@ -76,12 +76,12 @@ Route124_EventScript_RegisterLila::
 	end
 
 Route124_EventScript_RematchLila::
-	trainerbattle_rematch_double TRAINER_LILA_AND_ROY_1, Route124_Text_LilaRematchIntro, Route124_Text_LilaRematchDefeat, Route124_Text_LilaRematchNotEnoughMons
+	trainerbattle_rematch_double TRAINER_LILA_AND_ROY_1, Route124_Text_LilaRematchIntro, Route124_Text_LilaRematchDefeat, Route124_Text_LilaRematchNotEnoughMons, forfeit_text=Route124_Text_LilaRematchForfeit
 	msgbox Route124_Text_LilaPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route124_EventScript_Roy::
-	trainerbattle_double TRAINER_LILA_AND_ROY_1, Route124_Text_RoyIntro, Route124_Text_RoyDefeat, Route124_Text_RoyNotEnoughMons, Route124_EventScript_RegisterRoy
+	trainerbattle_double TRAINER_LILA_AND_ROY_1, Route124_Text_RoyIntro, Route124_Text_RoyDefeat, Route124_Text_RoyNotEnoughMons, Route124_EventScript_RegisterRoy, forfeit_text=Route124_Text_RoyForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route124_EventScript_RematchRoy
 	msgbox Route124_Text_RoyPostBattle, MSGBOX_DEFAULT
@@ -95,12 +95,12 @@ Route124_EventScript_RegisterRoy::
 	end
 
 Route124_EventScript_RematchRoy::
-	trainerbattle_rematch_double TRAINER_LILA_AND_ROY_1, Route124_Text_RoyRematchIntro, Route124_Text_RoyRematchDefeat, Route124_Text_RoyRematchNotEnoughMons
+	trainerbattle_rematch_double TRAINER_LILA_AND_ROY_1, Route124_Text_RoyRematchIntro, Route124_Text_RoyRematchDefeat, Route124_Text_RoyRematchNotEnoughMons, forfeit_text=Route124_Text_RoyRematchForfeit
 	msgbox Route124_Text_RoyPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route124_EventScript_Declan::
-	trainerbattle_single TRAINER_DECLAN, Route124_Text_DeclanIntro, Route124_Text_DeclanDefeat
+	trainerbattle_single TRAINER_DECLAN, Route124_Text_DeclanIntro, Route124_Text_DeclanDefeat, forfeit_text=Route124_Text_DeclanForfeit
 	msgbox Route124_Text_DeclanPostBattle, MSGBOX_AUTOCLOSE
 	end
 

@@ -310,7 +310,7 @@ Route110_TrickHousePuzzle7_EventScript_Alvaro::
 	end
 
 Route110_TrickHousePuzzle7_EventScript_Everett::
-	trainerbattle_single TRAINER_EVERETT, Route110_TrickHousePuzzle7_Text_EverettIntro, Route110_TrickHousePuzzle7_Text_EverettDefeat
+	trainerbattle_single TRAINER_EVERETT, Route110_TrickHousePuzzle7_Text_EverettIntro, Route110_TrickHousePuzzle7_Text_EverettDefeat, forfeit_text=Route110_TrickHousePuzzle7_Text_EverettForfeit
 	msgbox Route110_TrickHousePuzzle7_Text_EverettPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -385,6 +385,10 @@ Route110_TrickHousePuzzle7_Text_EverettIntro:
 
 Route110_TrickHousePuzzle7_Text_EverettDefeat:
 	.string "Oh, yes, strong you are.$"
+
+Route110_TrickHousePuzzle7_Text_EverettForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_TrickHousePuzzle7_Text_EverettPostBattle:
 	.string "I was hoping to switch places with you\n"

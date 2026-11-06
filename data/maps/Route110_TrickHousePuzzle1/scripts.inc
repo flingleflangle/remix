@@ -22,17 +22,17 @@ Route110_TrickHousePuzzle1_EventScript_FoundScroll::
 	end
 
 Route110_TrickHousePuzzle1_EventScript_Sally::
-	trainerbattle_single TRAINER_SALLY, Route110_TrickHousePuzzle1_Text_SallyIntro, Route110_TrickHousePuzzle1_Text_SallyDefeat
+	trainerbattle_single TRAINER_SALLY, Route110_TrickHousePuzzle1_Text_SallyIntro, Route110_TrickHousePuzzle1_Text_SallyDefeat, forfeit_text=Route110_TrickHousePuzzle1_Text_SallyForfeit
 	msgbox Route110_TrickHousePuzzle1_Text_SallyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_TrickHousePuzzle1_EventScript_Eddie::
-	trainerbattle_single TRAINER_EDDIE, Route110_TrickHousePuzzle1_Text_EddieIntro, Route110_TrickHousePuzzle1_Text_EddieDefeat
+	trainerbattle_single TRAINER_EDDIE, Route110_TrickHousePuzzle1_Text_EddieIntro, Route110_TrickHousePuzzle1_Text_EddieDefeat, forfeit_text=Route110_TrickHousePuzzle1_Text_EddieForfeit
 	msgbox Route110_TrickHousePuzzle1_Text_EddiePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_TrickHousePuzzle1_EventScript_Robin::
-	trainerbattle_single TRAINER_ROBIN, Route110_TrickHousePuzzle1_Text_RobinIntro, Route110_TrickHousePuzzle1_Text_RobinDefeat
+	trainerbattle_single TRAINER_ROBIN, Route110_TrickHousePuzzle1_Text_RobinIntro, Route110_TrickHousePuzzle1_Text_RobinDefeat, forfeit_text=Route110_TrickHousePuzzle1_Text_RobinForfeit
 	msgbox Route110_TrickHousePuzzle1_Text_RobinPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -50,6 +50,10 @@ Route110_TrickHousePuzzle1_Text_SallyIntro:
 Route110_TrickHousePuzzle1_Text_SallyDefeat:
 	.string "Why are you so serious?$"
 
+Route110_TrickHousePuzzle1_Text_SallyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_TrickHousePuzzle1_Text_SallyPostBattle:
 	.string "I never get tired of hacking\n"
 	.string "and slashing!$"
@@ -61,6 +65,10 @@ Route110_TrickHousePuzzle1_Text_EddieIntro:
 Route110_TrickHousePuzzle1_Text_EddieDefeat:
 	.string "And now I've lost…$"
 
+Route110_TrickHousePuzzle1_Text_EddieForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_TrickHousePuzzle1_Text_EddiePostBattle:
 	.string "I lost my way, I lost a battle, and I'm\n"
 	.string "now even more lost… I can't get out…$"
@@ -70,6 +78,10 @@ Route110_TrickHousePuzzle1_Text_RobinIntro:
 
 Route110_TrickHousePuzzle1_Text_RobinDefeat:
 	.string "I lost while I was lost in thought!$"
+
+Route110_TrickHousePuzzle1_Text_RobinForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_TrickHousePuzzle1_Text_RobinPostBattle:
 	.string "You're strong!\n"

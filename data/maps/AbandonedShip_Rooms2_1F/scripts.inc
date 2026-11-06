@@ -2,7 +2,7 @@ AbandonedShip_Rooms2_1F_MapScripts::
 	.byte 0
 
 AbandonedShip_Rooms2_1F_EventScript_Dan::
-	trainerbattle_double TRAINER_KIRA_AND_DAN_1, AbandonedShip_Rooms2_1F_Text_DanIntro, AbandonedShip_Rooms2_1F_Text_DanDefeat, AbandonedShip_Rooms2_1F_Text_DanNotEnoughMons, AbandonedShip_Rooms2_1F_EventScript_RegisterDan
+	trainerbattle_double TRAINER_KIRA_AND_DAN_1, AbandonedShip_Rooms2_1F_Text_DanIntro, AbandonedShip_Rooms2_1F_Text_DanDefeat, AbandonedShip_Rooms2_1F_Text_DanNotEnoughMons, AbandonedShip_Rooms2_1F_EventScript_RegisterDan, forfeit_text=AbandonedShip_Rooms2_1F_Text_DanForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, AbandonedShip_Rooms2_1F_EventScript_DanRematch
 	msgbox AbandonedShip_Rooms2_1F_Text_DanPostBattle, MSGBOX_DEFAULT
@@ -16,12 +16,12 @@ AbandonedShip_Rooms2_1F_EventScript_RegisterDan::
 	end
 
 AbandonedShip_Rooms2_1F_EventScript_DanRematch::
-	trainerbattle_rematch_double TRAINER_KIRA_AND_DAN_1, AbandonedShip_Rooms2_1F_Text_DanRematchIntro, AbandonedShip_Rooms2_1F_Text_DanRematchDefeat, AbandonedShip_Rooms2_1F_Text_DanRematchNotEnoughMons
+	trainerbattle_rematch_double TRAINER_KIRA_AND_DAN_1, AbandonedShip_Rooms2_1F_Text_DanRematchIntro, AbandonedShip_Rooms2_1F_Text_DanRematchDefeat, AbandonedShip_Rooms2_1F_Text_DanRematchNotEnoughMons, forfeit_text=AbandonedShip_Rooms2_1F_Text_DanRematchForfeit
 	msgbox AbandonedShip_Rooms2_1F_Text_DanPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 AbandonedShip_Rooms2_1F_EventScript_Kira::
-	trainerbattle_double TRAINER_KIRA_AND_DAN_1, AbandonedShip_Rooms2_1F_Text_KiraIntro, AbandonedShip_Rooms2_1F_Text_KiraDefeat, AbandonedShip_Rooms2_1F_Text_KiraNotEnoughMons, AbandonedShip_Rooms2_1F_EventScript_RegisterKira
+	trainerbattle_double TRAINER_KIRA_AND_DAN_1, AbandonedShip_Rooms2_1F_Text_KiraIntro, AbandonedShip_Rooms2_1F_Text_KiraDefeat, AbandonedShip_Rooms2_1F_Text_KiraNotEnoughMons, AbandonedShip_Rooms2_1F_EventScript_RegisterKira, forfeit_text=AbandonedShip_Rooms2_1F_Text_KiraForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, AbandonedShip_Rooms2_1F_EventScript_KiraRematch
 	msgbox AbandonedShip_Rooms2_1F_Text_KiraPostBattle, MSGBOX_DEFAULT
@@ -35,17 +35,17 @@ AbandonedShip_Rooms2_1F_EventScript_RegisterKira::
 	end
 
 AbandonedShip_Rooms2_1F_EventScript_KiraRematch::
-	trainerbattle_rematch_double TRAINER_KIRA_AND_DAN_1, AbandonedShip_Rooms2_1F_Text_KiraRematchIntro, AbandonedShip_Rooms2_1F_Text_KiraRematchDefeat, AbandonedShip_Rooms2_1F_Text_KiraRematchNotEnoughMons
+	trainerbattle_rematch_double TRAINER_KIRA_AND_DAN_1, AbandonedShip_Rooms2_1F_Text_KiraRematchIntro, AbandonedShip_Rooms2_1F_Text_KiraRematchDefeat, AbandonedShip_Rooms2_1F_Text_KiraRematchNotEnoughMons, forfeit_text=AbandonedShip_Rooms2_1F_Text_KiraRematchForfeit
 	msgbox AbandonedShip_Rooms2_1F_Text_KiraPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 AbandonedShip_Rooms2_1F_EventScript_Jani::
-	trainerbattle_single TRAINER_JANI, AbandonedShip_Rooms2_1F_Text_JaniIntro, AbandonedShip_Rooms2_1F_Text_JaniDefeat
+	trainerbattle_single TRAINER_JANI, AbandonedShip_Rooms2_1F_Text_JaniIntro, AbandonedShip_Rooms2_1F_Text_JaniDefeat, forfeit_text=AbandonedShip_Rooms2_1F_Text_JaniForfeit
 	msgbox AbandonedShip_Rooms2_1F_Text_JaniPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 AbandonedShip_Rooms2_1F_EventScript_Garrison::
-	trainerbattle_single TRAINER_GARRISON, AbandonedShip_Rooms2_1F_Text_GarrisonIntro, AbandonedShip_Rooms2_1F_Text_GarrisonDefeat
+	trainerbattle_single TRAINER_GARRISON, AbandonedShip_Rooms2_1F_Text_GarrisonIntro, AbandonedShip_Rooms2_1F_Text_GarrisonDefeat, forfeit_text=AbandonedShip_Rooms2_1F_Text_GarrisonForfeit
 	msgbox AbandonedShip_Rooms2_1F_Text_GarrisonPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -56,6 +56,10 @@ AbandonedShip_Rooms2_1F_Text_DanIntro:
 AbandonedShip_Rooms2_1F_Text_DanDefeat:
 	.string "DAN: We couldn't win even though\n"
 	.string "we worked together…$"
+
+AbandonedShip_Rooms2_1F_Text_DanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 AbandonedShip_Rooms2_1F_Text_DanPostBattle:
 	.string "DAN: We can't find any treasures…\n"
@@ -72,6 +76,10 @@ AbandonedShip_Rooms2_1F_Text_KiraIntro:
 
 AbandonedShip_Rooms2_1F_Text_KiraDefeat:
 	.string "KIRA: Ooh, so strong!$"
+
+AbandonedShip_Rooms2_1F_Text_KiraForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 AbandonedShip_Rooms2_1F_Text_KiraPostBattle:
 	.string "KIRA: Where could the treasures be?\p"
@@ -95,6 +103,10 @@ AbandonedShip_Rooms2_1F_Text_DanRematchIntro:
 AbandonedShip_Rooms2_1F_Text_DanRematchDefeat:
 	.string "DAN: You're strong, as usual!$"
 
+AbandonedShip_Rooms2_1F_Text_DanRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 AbandonedShip_Rooms2_1F_Text_DanPostRematch:
 	.string "DAN: We can't find any treasures,\n"
 	.string "we lose at POKéMON…\p"
@@ -115,6 +127,10 @@ AbandonedShip_Rooms2_1F_Text_KiraRematchIntro:
 AbandonedShip_Rooms2_1F_Text_KiraRematchDefeat:
 	.string "KIRA: Oh, we lost again…$"
 
+AbandonedShip_Rooms2_1F_Text_KiraRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 AbandonedShip_Rooms2_1F_Text_KiraPostRematch:
 	.string "KIRA: We're not leaving until we raise\n"
 	.string "our POKéMON some more and we find\l"
@@ -132,6 +148,10 @@ AbandonedShip_Rooms2_1F_Text_JaniDefeat:
 	.string "Oops.\n"
 	.string "That didn't go very well.$"
 
+AbandonedShip_Rooms2_1F_Text_JaniForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 AbandonedShip_Rooms2_1F_Text_JaniPostBattle:
 	.string "Walking around barefoot in this ship\n"
 	.string "is kind of gross.$"
@@ -143,6 +163,10 @@ AbandonedShip_Rooms2_1F_Text_GarrisonIntro:
 AbandonedShip_Rooms2_1F_Text_GarrisonDefeat:
 	.string "Ah, there is something about you\n"
 	.string "that sparkles.$"
+
+AbandonedShip_Rooms2_1F_Text_GarrisonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 AbandonedShip_Rooms2_1F_Text_GarrisonPostBattle:
 	.string "In a cabin somewhere on board,\n"

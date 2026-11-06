@@ -115,27 +115,27 @@ Route126_EventScript_RivalGone::
 
 
 Route126_EventScript_Barry::
-	trainerbattle_single TRAINER_BARRY, Route126_Text_BarryIntro, Route126_Text_BarryDefeat
+	trainerbattle_single TRAINER_BARRY, Route126_Text_BarryIntro, Route126_Text_BarryDefeat, forfeit_text=Route126_Text_BarryForfeit
 	msgbox Route126_Text_BarryPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route126_EventScript_Dean::
-	trainerbattle_single TRAINER_DEAN, Route126_Text_DeanIntro, Route126_Text_DeanDefeat
+	trainerbattle_single TRAINER_DEAN, Route126_Text_DeanIntro, Route126_Text_DeanDefeat, forfeit_text=Route126_Text_DeanForfeit
 	msgbox Route126_Text_DeanPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route126_EventScript_Nikki::
-	trainerbattle_single TRAINER_NIKKI, Route126_Text_NikkiIntro, Route126_Text_NikkiDefeat
+	trainerbattle_single TRAINER_NIKKI, Route126_Text_NikkiIntro, Route126_Text_NikkiDefeat, forfeit_text=Route126_Text_NikkiForfeit
 	msgbox Route126_Text_NikkiPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route126_EventScript_Brenda::
-	trainerbattle_single TRAINER_BRENDA, Route126_Text_BrendaIntro, Route126_Text_BrendaDefeat
+	trainerbattle_single TRAINER_BRENDA, Route126_Text_BrendaIntro, Route126_Text_BrendaDefeat, forfeit_text=Route126_Text_BrendaForfeit
 	msgbox Route126_Text_BrendaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route126_EventScript_Leonardo::
-	trainerbattle_single TRAINER_LEONARDO, Route126_Text_LeonardoIntro, Route126_Text_LeonardoDefeat
+	trainerbattle_single TRAINER_LEONARDO, Route126_Text_LeonardoIntro, Route126_Text_LeonardoDefeat, forfeit_text=Route126_Text_LeonardoForfeit
 	msgbox Route126_Text_LeonardoPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -145,12 +145,12 @@ Route126_EventScript_Isobel::
 	end
 
 Route126_EventScript_Sienna::
-	trainerbattle_single TRAINER_SIENNA, Route126_Text_SiennaIntro, Route126_Text_SiennaDefeat
+	trainerbattle_single TRAINER_SIENNA, Route126_Text_SiennaIntro, Route126_Text_SiennaDefeat, forfeit_text=Route126_Text_SiennaForfeit
 	msgbox Route126_Text_SiennaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route126_EventScript_Pablo::
-	trainerbattle_single TRAINER_PABLO_1, Route126_Text_PabloIntro, Route126_Text_PabloDefeat, Route126_EventScript_RegisterPablo
+	trainerbattle_single TRAINER_PABLO_1, Route126_Text_PabloIntro, Route126_Text_PabloDefeat, Route126_EventScript_RegisterPablo, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route126_EventScript_RematchPablo
 	msgbox Route126_Text_PabloPostBattle, MSGBOX_DEFAULT

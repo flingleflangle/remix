@@ -465,7 +465,7 @@ MtChimney_EventScript_RouteSign::
 	end
 
 MtChimney_EventScript_Shelby::
-	trainerbattle_single TRAINER_SHELBY_1, MtChimney_Text_ShelbyIntro, MtChimney_Text_ShelbyDefeat, MtChimney_EventScript_DefeatedShelby
+	trainerbattle_single TRAINER_SHELBY_1, MtChimney_Text_ShelbyIntro, MtChimney_Text_ShelbyDefeat, MtChimney_EventScript_DefeatedShelby, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, MtChimney_EventScript_RematchShelby
 	msgbox MtChimney_Text_ShelbyPostBattle, MSGBOX_DEFAULT
@@ -486,17 +486,17 @@ MtChimney_EventScript_RematchShelby::
 	end
 
 MtChimney_EventScript_Melissa::
-	trainerbattle_single TRAINER_MELISSA, MtChimney_Text_MelissaIntro, MtChimney_Text_MelissaDefeat
+	trainerbattle_single TRAINER_MELISSA, MtChimney_Text_MelissaIntro, MtChimney_Text_MelissaDefeat, forfeit_text=MtChimney_Text_MelissaForfeit
 	msgbox MtChimney_Text_MelissaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 MtChimney_EventScript_Sheila::
-	trainerbattle_single TRAINER_SHEILA, MtChimney_Text_SheilaIntro, MtChimney_Text_SheilaDefeat
+	trainerbattle_single TRAINER_SHEILA, MtChimney_Text_SheilaIntro, MtChimney_Text_SheilaDefeat, forfeit_text=MtChimney_Text_SheilaForfeit
 	msgbox MtChimney_Text_SheilaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 MtChimney_EventScript_Shirley::
-	trainerbattle_single TRAINER_SHIRLEY, MtChimney_Text_ShirleyIntro, MtChimney_Text_ShirleyDefeat
+	trainerbattle_single TRAINER_SHIRLEY, MtChimney_Text_ShirleyIntro, MtChimney_Text_ShirleyDefeat, forfeit_text=MtChimney_Text_ShirleyForfeit
 	msgbox MtChimney_Text_ShirleyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -506,7 +506,7 @@ MtChimney_EventScript_Grunt1::
 	end
 
 MtChimney_EventScript_Sawyer::
-	trainerbattle_single TRAINER_SAWYER_1, MtChimney_Text_SawyerIntro, MtChimney_Text_SawyerDefeat, MtChimney_EventScript_SawyerDefeated
+	trainerbattle_single TRAINER_SAWYER_1, MtChimney_Text_SawyerIntro, MtChimney_Text_SawyerDefeat, MtChimney_EventScript_SawyerDefeated, forfeit_text=MtChimney_Text_SawyerForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, MtChimney_EventScript_SawyerRematch
 	msgbox MtChimney_Text_SawyerPostBattle, MSGBOX_DEFAULT
@@ -522,7 +522,7 @@ MtChimney_EventScript_SawyerDefeated::
 	end
 
 MtChimney_EventScript_SawyerRematch::
-	trainerbattle_rematch TRAINER_SAWYER_1, MtChimney_Text_SawyerRematchIntro, MtChimney_Text_SawyerRematchDefeat
+	trainerbattle_rematch TRAINER_SAWYER_1, MtChimney_Text_SawyerRematchIntro, MtChimney_Text_SawyerRematchDefeat, forfeit_text=MtChimney_Text_SawyerRematchForfeit
 	msgbox MtChimney_Text_SawyerPostRematch, MSGBOX_AUTOCLOSE
 	end
 
@@ -777,6 +777,10 @@ MtChimney_Text_MelissaIntro:
 MtChimney_Text_MelissaDefeat:
 	.string "Ooh, that was a scorching-hot match!$"
 
+MtChimney_Text_MelissaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 MtChimney_Text_MelissaPostBattle:
 	.string "The heat of MT. CHIMNEY warms\n"
 	.string "me up, baby!$"
@@ -788,6 +792,10 @@ MtChimney_Text_SheilaIntro:
 MtChimney_Text_SheilaDefeat:
 	.string "The way you battle…\n"
 	.string "It's like a MT. CHIMNEY eruption!$"
+
+MtChimney_Text_SheilaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 MtChimney_Text_SheilaPostBattle:
 	.string "Like I said, I've finally made it to\n"
@@ -805,6 +813,10 @@ MtChimney_Text_ShirleyDefeat:
 	.string "Yowch!\n"
 	.string "I'm getting a chill out of the water.$"
 
+MtChimney_Text_ShirleyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 MtChimney_Text_ShirleyPostBattle:
 	.string "I'll have to take another dip in the\n"
 	.string "hot springs. Want to join me?\p"
@@ -816,6 +828,10 @@ MtChimney_Text_SawyerIntro:
 
 MtChimney_Text_SawyerDefeat:
 	.string "Oh, you're a real firebrand, too!$"
+
+MtChimney_Text_SawyerForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 MtChimney_Text_SawyerPostBattle:
 	.string "I think I need a dip in LAVARIDGE\n"
@@ -832,6 +848,10 @@ MtChimney_Text_SawyerRematchIntro:
 MtChimney_Text_SawyerRematchDefeat:
 	.string "Gosh, you're still the same\n"
 	.string "firebrand as before!$"
+
+MtChimney_Text_SawyerRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 MtChimney_Text_SawyerPostRematch:
 	.string "Actually, it really is hot here.\n"

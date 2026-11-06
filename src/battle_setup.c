@@ -91,6 +91,7 @@ static void CB2_GiveStarter(void);
 static void CB2_StartFirstBattle(void);
 static void CB2_EndFirstBattle(void);
 static void CB2_EndTrainerBattle(void);
+static void CB2_EndRematchBattle(void);
 static bool32 IsPlayerDefeated(u32 battleOutcome);
 static u16 GetRematchTrainerId(u16 trainerId);
 static void RegisterTrainerInMatchCall(void);
@@ -107,6 +108,15 @@ EWRAM_DATA static u8 *sTrainerAIntroSpeech = NULL;
 EWRAM_DATA static u8 *sTrainerBIntroSpeech = NULL;
 EWRAM_DATA static u8 *sTrainerADefeatSpeech = NULL;
 EWRAM_DATA static u8 *sTrainerBDefeatSpeech = NULL;
+EWRAM_DATA static u8 *sTrainerAForfeitSpeech = NULL; // said when the player pays them to end the battle
+EWRAM_DATA static u8 *sTrainerBForfeitSpeech = NULL;
+// lose_script: losing to the trainer doesn't white the player out; they say their victory speech
+// and the script runs once back on the field
+EWRAM_DATA static u8 *sTrainerAVictorySpeech = NULL;
+EWRAM_DATA static u8 *sTrainerBVictorySpeech = NULL;
+EWRAM_DATA static u8 *sTrainerALoseScript = NULL;
+EWRAM_DATA static u8 *sTrainerBLoseScript = NULL;
+EWRAM_DATA static bool8 sLostWithoutWhiteout = FALSE; // the last battle ended in B_OUTCOME_LOST_NO_WHITEOUT
 EWRAM_DATA static u8 *sTrainerVictorySpeech = NULL;
 EWRAM_DATA static u8 *sTrainerCannotBattleSpeech = NULL;
 EWRAM_DATA static u8 *sTrainerBattleEndScript = NULL;
@@ -114,6 +124,89 @@ EWRAM_DATA static u8 *sTrainerABattleScriptRetAddr = NULL;
 EWRAM_DATA static u8 *sTrainerBBattleScriptRetAddr = NULL;
 EWRAM_DATA static bool8 sShouldCheckTrainerBScript = FALSE;
 EWRAM_DATA static u8 sNoOfPossibleTrainerRetScripts = 0;
+
+// Paying trainers to end a battle (see IsPayOffAllowed). A paid-off trainer acts as beaten until
+// the player leaves the map; after PAYOFF_LIST_SIZE pay-offs, every other trainer on the map who
+// would take money gives up on the player too.
+#define PAYOFF_LIST_SIZE 8
+EWRAM_DATA static u16 sTrainerAPayOffId = 0; // the trainer ID in the script (rematches use their first ID)
+EWRAM_DATA static u16 sTrainerBPayOffId = 0;
+EWRAM_DATA static bool8 sTrainerAPayOffAllowed = FALSE;
+EWRAM_DATA static bool8 sTrainerBPayOffAllowed = FALSE;
+EWRAM_DATA static bool8 sTrainerAPayOffDouble = FALSE; // double_payoff: costs 10x the prize money, not 5x
+EWRAM_DATA static bool8 sTrainerBPayOffDouble = FALSE;
+EWRAM_DATA static u16 sPaidOffTrainers[PAYOFF_LIST_SIZE] = {0};
+EWRAM_DATA static u8 sNumPaidOffTrainers = 0;
+
+// Maps whose trainers refuse to be paid off. Every other map's trainers accept, unless their
+// trainerbattle line has a payoff= exception
+static const u16 sNoPayOffMaps[] =
+{
+    MAP_RUSTBORO_CITY_GYM,
+    MAP_DEWFORD_TOWN_GYM,
+    MAP_MAUVILLE_CITY_GYM,
+    MAP_LAVARIDGE_TOWN_GYM_1F,
+    MAP_LAVARIDGE_TOWN_GYM_B1F,
+    MAP_PETALBURG_CITY_GYM,
+    MAP_FORTREE_CITY_GYM,
+    MAP_MOSSDEEP_CITY_GYM,
+    MAP_SOOTOPOLIS_CITY_GYM_1F,
+    MAP_SOOTOPOLIS_CITY_GYM_B1F,
+};
+
+// Trainer classes that refuse to be paid off anywhere, even with payoff=PAYOFF_ALLOW
+static const u8 sNoPayOffTrainerClasses[] =
+{
+    TRAINER_CLASS_DRAGON_TAMER,
+    TRAINER_CLASS_EXPERT,
+    TRAINER_CLASS_OLD_COUPLE,
+    TRAINER_CLASS_NINJA_BOY,
+    TRAINER_CLASS_BUG_MANIAC,
+    TRAINER_CLASS_COLLECTOR,
+    TRAINER_CLASS_POKEMANIAC,
+    TRAINER_CLASS_HEX_MANIAC,
+    TRAINER_CLASS_WINSTRATE,
+    TRAINER_CLASS_RICH_BOY,
+    TRAINER_CLASS_TRIATHLETE,
+    TRAINER_CLASS_COOLTRAINER,
+    TRAINER_CLASS_COOLTRAINER_2,
+    TRAINER_CLASS_BLACK_BELT,
+    TRAINER_CLASS_BATTLE_GIRL,
+    TRAINER_CLASS_PSYCHIC,
+    TRAINER_CLASS_CRYSTAL_DUKE,
+    TRAINER_CLASS_AQUA_LEADER,
+    TRAINER_CLASS_MAGMA_LEADER,
+    TRAINER_CLASS_TEAM_AQUA,
+    TRAINER_CLASS_TEAM_MAGMA,
+    TRAINER_CLASS_AQUA_ADMIN,
+    TRAINER_CLASS_MAGMA_ADMIN,
+    TRAINER_CLASS_LEADER,
+    TRAINER_CLASS_CHAMPION,
+    TRAINER_CLASS_RIVAL,
+    TRAINER_CLASS_ELITE_FOUR,
+};
+
+// Trainer classes that always raise their pay-off price, as if given double_payoff=TRUE
+static const u8 sDoublePayOffTrainerClasses[] =
+{
+    TRAINER_CLASS_BEAUTY,
+    TRAINER_CLASS_GUITARIST,
+    TRAINER_CLASS_FISHERMAN,
+};
+
+static bool32 IsDoublePayOffTrainer(u8 modeByte, u16 trainerId)
+{
+    u32 i;
+
+    if (modeByte & TRAINER_BATTLE_PAYOFF_DOUBLE)
+        return TRUE;
+    for (i = 0; i < ARRAY_COUNT(sDoublePayOffTrainerClasses); i++)
+    {
+        if (sDoublePayOffTrainerClasses[i] == gTrainers[trainerId].trainerClass)
+            return TRUE;
+    }
+    return FALSE;
+}
 
 // The first transition is used if the enemy Pokémon are lower level than our Pokémon.
 // Otherwise, the second transition is used.
@@ -170,7 +263,10 @@ static const struct TrainerBattleParameter sOrdinaryBattleParams[] =
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_A,     TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerObjectEventLocalId,   TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerAIntroSpeech,         TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAForfeitSpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAVictorySpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerALoseScript,          TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAIntroSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerADefeatSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerVictorySpeech,        TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,   TRAINER_PARAM_CLEAR_VAL_32BIT},
@@ -183,7 +279,10 @@ static const struct TrainerBattleParameter sContinueScriptBattleParams[] =
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_A,     TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerObjectEventLocalId,   TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerAIntroSpeech,         TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAForfeitSpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAVictorySpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerALoseScript,          TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAIntroSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerADefeatSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerVictorySpeech,        TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,   TRAINER_PARAM_CLEAR_VAL_32BIT},
@@ -196,7 +295,10 @@ static const struct TrainerBattleParameter sDoubleBattleParams[] =
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_A,     TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerObjectEventLocalId,   TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerAIntroSpeech,         TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAForfeitSpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAVictorySpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerALoseScript,          TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAIntroSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerADefeatSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerVictorySpeech,        TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,   TRAINER_PARAM_LOAD_VAL_32BIT},
@@ -209,7 +311,10 @@ static const struct TrainerBattleParameter sOrdinaryNoIntroBattleParams[] =
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_A,     TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerObjectEventLocalId,   TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerAIntroSpeech,         TRAINER_PARAM_CLEAR_VAL_32BIT},
+    {&sTrainerAForfeitSpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAVictorySpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerALoseScript,          TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAIntroSpeech,        TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerADefeatSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerVictorySpeech,        TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,   TRAINER_PARAM_CLEAR_VAL_32BIT},
@@ -222,7 +327,10 @@ static const struct TrainerBattleParameter sContinueScriptDoubleBattleParams[] =
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_A,     TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerObjectEventLocalId,   TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerAIntroSpeech,         TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAForfeitSpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAVictorySpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerALoseScript,          TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerAIntroSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerADefeatSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerVictorySpeech,        TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,   TRAINER_PARAM_LOAD_VAL_32BIT},
@@ -235,7 +343,10 @@ static const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_B,     TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerObjectEventLocalId,   TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerBIntroSpeech,         TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerBForfeitSpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerBVictorySpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerBLoseScript,          TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerBIntroSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerBDefeatSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerVictorySpeech,        TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,   TRAINER_PARAM_CLEAR_VAL_32BIT},
@@ -248,7 +359,10 @@ static const struct TrainerBattleParameter sTrainerBContinueScriptBattleParams[]
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_B,     TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerObjectEventLocalId,   TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerBIntroSpeech,         TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerBForfeitSpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerBVictorySpeech,       TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerBLoseScript,          TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerBIntroSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerBDefeatSpeech,        TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerVictorySpeech,        TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,   TRAINER_PARAM_CLEAR_VAL_32BIT},
@@ -1063,14 +1177,21 @@ static void InitTrainerBattleVariables(void)
     {
         sTrainerAIntroSpeech = NULL;
         sTrainerADefeatSpeech = NULL;
+        sTrainerAForfeitSpeech = NULL;
+        sTrainerAVictorySpeech = NULL;
+        sTrainerALoseScript = NULL;
         sTrainerABattleScriptRetAddr = NULL;
     }
     else
     {
         sTrainerBIntroSpeech = NULL;
         sTrainerBDefeatSpeech = NULL;
+        sTrainerBForfeitSpeech = NULL;
+        sTrainerBVictorySpeech = NULL;
+        sTrainerBLoseScript = NULL;
         sTrainerBBattleScriptRetAddr = NULL;
     }
+    sLostWithoutWhiteout = FALSE;
     sTrainerObjectEventLocalId = 0;
     sTrainerVictorySpeech = NULL;
     sTrainerCannotBattleSpeech = NULL;
@@ -1141,10 +1262,174 @@ void SetMapVarsToTrainer(void)
     }
 }
 
-const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
+// Whether a trainer accepts payment to end the battle, from their trainerbattle mode byte
+static bool32 IsPayOffAllowed(u8 modeByte, u16 trainerId)
+{
+    u32 i;
+    u16 map;
+    u8 mode = modeByte & TRAINER_BATTLE_MODE_MASK;
+    u8 exception = (modeByte >> TRAINER_BATTLE_PAYOFF_SHIFT) & TRAINER_BATTLE_PAYOFF_MASK;
+
+    // The Frontier and Trainer Hill have their own forfeit
+    if (mode == TRAINER_BATTLE_PYRAMID || mode == TRAINER_BATTLE_HILL)
+        return FALSE;
+    // Some trainer classes never accept payment, whatever their script says
+    for (i = 0; i < ARRAY_COUNT(sNoPayOffTrainerClasses); i++)
+    {
+        if (sNoPayOffTrainerClasses[i] == gTrainers[trainerId].trainerClass)
+            return FALSE;
+    }
+
+    if (exception == PAYOFF_ALLOW)
+        return TRUE;
+    if (exception == PAYOFF_FORBID)
+        return FALSE;
+
+    switch (mode)
+    {
+    // Story battles
+    case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT:
+    case TRAINER_BATTLE_SET_TRAINER_A:
+    case TRAINER_BATTLE_SET_TRAINER_B:
+    // Their post-battle scripts often give rewards or move the story on. Paying never runs
+    // them (see BattleSetup_GetTrainerPostBattleScript), but they still refuse unless allowed
+    case TRAINER_BATTLE_CONTINUE_SCRIPT:
+    case TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC:
+    case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE:
+    case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC:
+        return FALSE;
+    }
+
+    map = (gSaveBlock1Ptr->location.mapGroup << 8) | gSaveBlock1Ptr->location.mapNum;
+    for (i = 0; i < ARRAY_COUNT(sNoPayOffMaps); i++)
+    {
+        if (sNoPayOffMaps[i] == map)
+            return FALSE;
+    }
+    return TRUE;
+}
+
+static bool32 IsOnPaidOffList(u16 trainerId)
+{
+    u32 i;
+
+    for (i = 0; i < sNumPaidOffTrainers; i++)
+    {
+        if (sPaidOffTrainers[i] == trainerId)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+// A paid-off trainer acts as beaten: they don't spot the player and give their post-battle line
+static bool32 IsTrainerPaidOff(u16 trainerId, bool32 payOffAllowed)
+{
+    if (IsOnPaidOffList(trainerId))
+        return TRUE;
+    return payOffAllowed && sNumPaidOffTrainers >= PAYOFF_LIST_SIZE;
+}
+
+// For scripts after trainerbattle: whether this trainer is acting as paid off
+bool32 IsTrainerIdPaidOff(u16 trainerId)
+{
+    if (trainerId == sTrainerAPayOffId)
+        return IsTrainerPaidOff(trainerId, sTrainerAPayOffAllowed);
+    return IsOnPaidOffList(trainerId);
+}
+
+static void AddPaidOffTrainer(u16 trainerId)
+{
+    if (sNumPaidOffTrainers < PAYOFF_LIST_SIZE && !IsOnPaidOffList(trainerId))
+        sPaidOffTrainers[sNumPaidOffTrainers++] = trainerId;
+}
+
+// Called on every map change: paid-off trainers challenge the player again
+void ClearPaidOffTrainers(void)
+{
+    sNumPaidOffTrainers = 0;
+}
+
+// Whether the player can pay to end the current trainer battle. With two trainers, both must accept
+bool32 CanPayOffTrainerBattle(void)
+{
+    // Only battles set up by trainerbattle end in CB2_EndTrainerBattle/CB2_EndRematchBattle,
+    // which handle B_OUTCOME_PAID_OFF
+    if (gMain.savedCallback != CB2_EndTrainerBattle && gMain.savedCallback != CB2_EndRematchBattle)
+        return FALSE;
+    if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_FRONTIER
+                          | BATTLE_TYPE_TRAINER_HILL | BATTLE_TYPE_EREADER_TRAINER))
+        return FALSE;
+    if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
+        return FALSE;
+    if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+        return sTrainerAPayOffAllowed && sTrainerBPayOffAllowed;
+    return sTrainerAPayOffAllowed;
+}
+
+// Whether losing the current trainer battle skips the white-out (a trainer in it has a lose_script)
+bool32 IsNoWhiteoutTrainerBattle(void)
+{
+    if (gMain.savedCallback != CB2_EndTrainerBattle && gMain.savedCallback != CB2_EndRematchBattle)
+        return FALSE;
+    if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK | BATTLE_TYPE_FRONTIER
+                          | BATTLE_TYPE_TRAINER_HILL | BATTLE_TYPE_EREADER_TRAINER))
+        return FALSE;
+    if (sTrainerALoseScript != NULL)
+        return TRUE;
+    return (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) && sTrainerBLoseScript != NULL;
+}
+
+// What a trainer says after beating the player in a no-white-out battle (their victory_text),
+// or NULL if they have none
+const u8 *GetTrainerVictoryText(bool32 trainerB)
+{
+    const u8 *string = trainerB ? sTrainerBVictorySpeech : sTrainerAVictorySpeech;
+
+    if (string == NULL)
+        return NULL;
+    StringExpandPlaceholders(gStringVar4, string);
+    return gStringVar4;
+}
+
+// After a no-white-out loss every fainted Pokémon is revived to 20% HP (fainting already cleared their status)
+static void RevivePartyAfterNoWhiteoutLoss(void)
+{
+    u32 i;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gPlayerParty[i];
+        u16 hp;
+
+        if (GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE || GetMonData(mon, MON_DATA_IS_EGG)
+         || GetMonData(mon, MON_DATA_HP) != 0)
+            continue;
+        hp = max(GetMonData(mon, MON_DATA_MAX_HP) / 5, 1);
+        SetMonData(mon, MON_DATA_HP, &hp);
+    }
+}
+
+// Paying a trainer off costs 5x their prize money. A double_payoff trainer first agrees to that,
+// then cuts in to raise it to 10x (raised = TRUE)
+u32 GetTrainerPayOffMultiplier(bool32 trainerB, bool32 raised)
+{
+    return (raised && (trainerB ? sTrainerBPayOffDouble : sTrainerAPayOffDouble)) ? 10 : 5;
+}
+
+// Which trainer in the battle raises the pay-off price (0 for A, 1 for B), or -1 if none does
+s32 GetPayOffPriceRaiser(void)
+{
+    if (sTrainerAPayOffDouble)
+        return 0;
+    if ((gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) && sTrainerBPayOffDouble)
+        return 1;
+    return -1;
+}
+
+static const u8 *ConfigureTrainerBattle(const u8 *data)
 {
     InitTrainerBattleVariables();
-    sTrainerBattleMode = TrainerBattleLoadArg8(data);
+    sTrainerBattleMode = TrainerBattleLoadArg8(data) & TRAINER_BATTLE_MODE_MASK;
 
     switch (sTrainerBattleMode)
     {
@@ -1231,6 +1516,31 @@ const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
     }
 }
 
+const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
+{
+    u8 modeByte = TrainerBattleLoadArg8(data);
+    u16 trainerId = TrainerBattleLoadArg16(data + 1);
+    const u8 *script = ConfigureTrainerBattle(data);
+
+    // TrainerBattleLoadArgs loads the whole mode byte, pay-off bits included
+    sTrainerBattleMode &= TRAINER_BATTLE_MODE_MASK;
+
+    if (sTrainerBattleMode == TRAINER_BATTLE_SET_TRAINER_B
+     || (gApproachingTrainerId != 0 && sTrainerBattleMode != TRAINER_BATTLE_SET_TRAINER_A))
+    {
+        sTrainerBPayOffId = trainerId;
+        sTrainerBPayOffAllowed = IsPayOffAllowed(modeByte, trainerId);
+        sTrainerBPayOffDouble = IsDoublePayOffTrainer(modeByte, trainerId);
+    }
+    else
+    {
+        sTrainerAPayOffId = trainerId;
+        sTrainerAPayOffAllowed = IsPayOffAllowed(modeByte, trainerId);
+        sTrainerAPayOffDouble = IsDoublePayOffTrainer(modeByte, trainerId);
+    }
+    return script;
+}
+
 void ConfigureAndSetUpOneTrainerBattle(u8 trainerObjEventId, const u8 *trainerScript)
 {
     gSelectedObjectEvent = trainerObjEventId;
@@ -1256,7 +1566,7 @@ void SetUpTwoTrainersBattle(void)
 bool32 GetTrainerFlagFromScriptPointer(const u8 *data)
 {
     u32 flag = TrainerBattleLoadArg16(data + 2);
-    return FlagGet(TRAINER_FLAGS_START + flag);
+    return FlagGet(TRAINER_FLAGS_START + flag) || IsTrainerPaidOff(flag, IsPayOffAllowed(data[1], flag));
 }
 
 // Set trainer's movement type so they stop and remain facing that direction
@@ -1280,7 +1590,7 @@ bool8 GetTrainerFlag(void)
     else if (InTrainerHill())
         return GetHillTrainerFlag(gSelectedObjectEvent);
     else
-        return FlagGet(GetTrainerAFlag());
+        return FlagGet(GetTrainerAFlag()) || IsTrainerPaidOff(sTrainerAPayOffId, sTrainerAPayOffAllowed);
 }
 
 static void SetBattledTrainersFlags(void)
@@ -1372,6 +1682,21 @@ static void CB2_EndTrainerBattle(void)
     {
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
     }
+    else if (gBattleOutcome == B_OUTCOME_PAID_OFF)
+    {
+        // Not beaten: no trainer flag or Match Call, they just leave the player alone on this map
+        SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+        AddPaidOffTrainer(sTrainerAPayOffId);
+        if (gTrainerBattleOpponent_B != 0)
+            AddPaidOffTrainer(sTrainerBPayOffId);
+    }
+    else if (gBattleOutcome == B_OUTCOME_LOST_NO_WHITEOUT)
+    {
+        // A scripted loss: no white-out, no money lost and no trainer flag; the lose_script carries on
+        RevivePartyAfterNoWhiteoutLoss();
+        sLostWithoutWhiteout = TRUE;
+        SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+    }
     else if (IsPlayerDefeated(gBattleOutcome) == TRUE)
     {
         if (CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE || InTrainerHillChallenge())
@@ -1395,6 +1720,17 @@ static void CB2_EndRematchBattle(void)
     FollowerBattle_RestoreParty();
     if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
     {
+        SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+    }
+    else if (gBattleOutcome == B_OUTCOME_PAID_OFF)
+    {
+        // The rematch stays ready for when the player comes back
+        SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+        AddPaidOffTrainer(sTrainerAPayOffId);
+    }
+    else if (gBattleOutcome == B_OUTCOME_LOST_NO_WHITEOUT)
+    {
+        RevivePartyAfterNoWhiteoutLoss();
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
     }
     else if (IsPlayerDefeated(gBattleOutcome) == TRUE)
@@ -1446,6 +1782,9 @@ void ShowTrainerIntroSpeech(void)
 
 const u8 *BattleSetup_GetScriptAddrAfterBattle(void)
 {
+    // After a no-white-out loss, the lose_script runs in place of what follows the trainerbattle line
+    if (sLostWithoutWhiteout && sTrainerALoseScript != NULL)
+        return sTrainerALoseScript;
     if (sTrainerBattleEndScript != NULL)
         return sTrainerBattleEndScript;
     else
@@ -1454,6 +1793,33 @@ const u8 *BattleSetup_GetScriptAddrAfterBattle(void)
 
 const u8 *BattleSetup_GetTrainerPostBattleScript(void)
 {
+    // A paid-off trainer wasn't beaten, so their continue script (rewards, Match Call, story) never runs
+    if (gBattleOutcome == B_OUTCOME_PAID_OFF)
+    {
+        sShouldCheckTrainerBScript = FALSE;
+        return EventScript_TryGetTrainerScript;
+    }
+
+    // After a no-white-out loss each trainer's lose_script runs in place of their continue script
+    if (sLostWithoutWhiteout)
+    {
+        if (sShouldCheckTrainerBScript)
+        {
+            sShouldCheckTrainerBScript = FALSE;
+            if (sTrainerBLoseScript != NULL)
+            {
+                gWhichTrainerToFaceAfterBattle = 1;
+                return sTrainerBLoseScript;
+            }
+        }
+        else if (sTrainerALoseScript != NULL)
+        {
+            gWhichTrainerToFaceAfterBattle = 0;
+            return sTrainerALoseScript;
+        }
+        return EventScript_TryGetTrainerScript;
+    }
+
     if (sShouldCheckTrainerBScript)
     {
         sShouldCheckTrainerBScript = FALSE;
@@ -1573,6 +1939,17 @@ const u8 *GetTrainerALoseText(void)
 const u8 *GetTrainerBLoseText(void)
 {
     StringExpandPlaceholders(gStringVar4, ReturnEmptyStringIfNull(sTrainerBDefeatSpeech));
+    return gStringVar4;
+}
+
+// What a paid-off trainer says (their trainerbattle line's forfeit_text), or NULL if they have none
+const u8 *GetTrainerForfeitText(bool32 trainerB)
+{
+    const u8 *string = trainerB ? sTrainerBForfeitSpeech : sTrainerAForfeitSpeech;
+
+    if (string == NULL)
+        return NULL;
+    StringExpandPlaceholders(gStringVar4, string);
     return gStringVar4;
 }
 
@@ -1908,6 +2285,8 @@ u16 GetLastBeatenRematchTrainerId(u16 trainerId)
 
 bool8 ShouldTryRematchBattle(void)
 {
+    if (IsTrainerPaidOff(sTrainerAPayOffId, sTrainerAPayOffAllowed))
+        return FALSE;
     if (IsFirstTrainerIdReadyForRematch(gRematchTable, gTrainerBattleOpponent_A))
         return TRUE;
 

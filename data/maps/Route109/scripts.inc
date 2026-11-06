@@ -375,27 +375,27 @@ Route109_EventScript_TrainerTipsSign::
 	end
 
 Route109_EventScript_David::
-	trainerbattle_single TRAINER_DAVID, Route109_Text_DavidIntro, Route109_Text_DavidDefeated
+	trainerbattle_single TRAINER_DAVID, Route109_Text_DavidIntro, Route109_Text_DavidDefeated, forfeit_text=Route109_Text_DavidForfeit
 	msgbox Route109_Text_DavidPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Alice::
-	trainerbattle_single TRAINER_ALICE, Route109_Text_AliceIntro, Route109_Text_AliceDefeated
+	trainerbattle_single TRAINER_ALICE, Route109_Text_AliceIntro, Route109_Text_AliceDefeated, forfeit_text=Route109_Text_AliceForfeit
 	msgbox Route109_Text_AlicePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Huey::
-	trainerbattle_single TRAINER_HUEY, Route109_Text_HueyIntro, Route109_Text_HueyDefeated
+	trainerbattle_single TRAINER_HUEY, Route109_Text_HueyIntro, Route109_Text_HueyDefeated, forfeit_text=Route109_Text_HueyForfeit
 	msgbox Route109_Text_HueyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Edmond::
-	trainerbattle_single TRAINER_EDMOND, Route109_Text_EdmondIntro, Route109_Text_EdmondDefeated
+	trainerbattle_single TRAINER_EDMOND, Route109_Text_EdmondIntro, Route109_Text_EdmondDefeated, forfeit_text=Route109_Text_EdmondForfeit
 	msgbox Route109_Text_EdmondPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Ricky::
-	trainerbattle_single TRAINER_RICKY_1, Route109_Text_RickyIntro, Route109_Text_RickyDefeated, Route109_EventScript_RickyRegisterMatchCallAfterBattle
+	trainerbattle_single TRAINER_RICKY_1, Route109_Text_RickyIntro, Route109_Text_RickyDefeated, Route109_EventScript_RickyRegisterMatchCallAfterBattle, forfeit_text=Route109_Text_RickyForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route109_EventScript_RickyRematch
 	msgbox Route109_Text_RickyPostBattle, MSGBOX_DEFAULT
@@ -411,12 +411,12 @@ Route109_EventScript_RickyRegisterMatchCallAfterBattle::
 	end
 
 Route109_EventScript_RickyRematch::
-	trainerbattle_rematch TRAINER_RICKY_1, Route109_Text_RickyRematchIntro, Route109_Text_RickyRematchDefeated
+	trainerbattle_rematch TRAINER_RICKY_1, Route109_Text_RickyRematchIntro, Route109_Text_RickyRematchDefeated, forfeit_text=Route109_Text_RickyRematchForfeit
 	msgbox Route109_Text_RickyRematchPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Lola::
-	trainerbattle_single TRAINER_LOLA_1, Route109_Text_LolaIntro, Route109_Text_LolaDefeated, Route109_EventScript_LolaRegisterMatchCallAfterBattle
+	trainerbattle_single TRAINER_LOLA_1, Route109_Text_LolaIntro, Route109_Text_LolaDefeated, Route109_EventScript_LolaRegisterMatchCallAfterBattle, forfeit_text=Route109_Text_LolaForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route109_EventScript_LolaRematch
 	msgbox Route109_Text_LolaPostBattle, MSGBOX_DEFAULT
@@ -432,47 +432,47 @@ Route109_EventScript_LolaRegisterMatchCallAfterBattle::
 	end
 
 Route109_EventScript_LolaRematch::
-	trainerbattle_rematch TRAINER_LOLA_1, Route109_Text_LolaRematchIntro, Route109_Text_LolaRematchDefeated
+	trainerbattle_rematch TRAINER_LOLA_1, Route109_Text_LolaRematchIntro, Route109_Text_LolaRematchDefeated, forfeit_text=Route109_Text_LolaRematchForfeit
 	msgbox Route109_Text_LolaRematchPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Austina::
-	trainerbattle_single TRAINER_AUSTINA, Route109_Text_AustinaIntro, Route109_Text_AustinaDefeated
+	trainerbattle_single TRAINER_AUSTINA, Route109_Text_AustinaIntro, Route109_Text_AustinaDefeated, forfeit_text=Route109_Text_AustinaForfeit
 	msgbox Route109_Text_AustinaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Gwen::
-	trainerbattle_single TRAINER_GWEN, Route109_Text_GwenIntro, Route109_Text_GwenDefeated
+	trainerbattle_single TRAINER_GWEN, Route109_Text_GwenIntro, Route109_Text_GwenDefeated, forfeit_text=Route109_Text_GwenForfeit
 	msgbox Route109_Text_GwenPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Carter::
-	trainerbattle_single TRAINER_CARTER, Route109_Text_CarterIntro, Route109_Text_CarterDefeated
+	trainerbattle_single TRAINER_CARTER, Route109_Text_CarterIntro, Route109_Text_CarterDefeated, forfeit_text=Route109_Text_CarterForfeit
 	msgbox Route109_Text_CarterPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Paul::
-	trainerbattle_double TRAINER_MEL_AND_PAUL, Route109_Text_PaulIntro, Route109_Text_PaulDefeated, Route109_Text_PaulNotEnoughPokemon
+	trainerbattle_double TRAINER_MEL_AND_PAUL, Route109_Text_PaulIntro, Route109_Text_PaulDefeated, Route109_Text_PaulNotEnoughPokemon, forfeit_text=Route109_Text_PaulForfeit
 	msgbox Route109_Text_PaulPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Mel::
-	trainerbattle_double TRAINER_MEL_AND_PAUL, Route109_Text_MelIntro, Route109_Text_MelDefeated, Route109_Text_MelNotEnoughPokemon
+	trainerbattle_double TRAINER_MEL_AND_PAUL, Route109_Text_MelIntro, Route109_Text_MelDefeated, Route109_Text_MelNotEnoughPokemon, forfeit_text=Route109_Text_MelForfeit
 	msgbox Route109_Text_MelPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Chandler::
-	trainerbattle_single TRAINER_CHANDLER, Route109_Text_ChandlerIntro, Route109_Text_ChandlerDefeated
+	trainerbattle_single TRAINER_CHANDLER, Route109_Text_ChandlerIntro, Route109_Text_ChandlerDefeated, forfeit_text=Route109_Text_ChandlerForfeit
 	msgbox Route109_Text_ChandlerPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Hailey::
-	trainerbattle_single TRAINER_HAILEY, Route109_Text_HaileyIntro, Route109_Text_HaileyDefeated
+	trainerbattle_single TRAINER_HAILEY, Route109_Text_HaileyIntro, Route109_Text_HaileyDefeated, forfeit_text=Route109_Text_HaileyForfeit
 	msgbox Route109_Text_HaileyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route109_EventScript_Elijah::
-	trainerbattle_single TRAINER_ELIJAH, Route109_Text_ElijahIntro, Route109_Text_ElijahDefeated
+	trainerbattle_single TRAINER_ELIJAH, Route109_Text_ElijahIntro, Route109_Text_ElijahDefeated, forfeit_text=Route109_Text_ElijahForfeit
 	msgbox Route109_Text_ElijahPostBattle, MSGBOX_AUTOCLOSE
 	end
 

@@ -7,17 +7,17 @@ Route134_OnResume:
 	end
 
 Route134_EventScript_Jack::
-	trainerbattle_single TRAINER_JACK, Route134_Text_JackIntro, Route134_Text_JackDefeat
+	trainerbattle_single TRAINER_JACK, Route134_Text_JackIntro, Route134_Text_JackDefeat, forfeit_text=Route134_Text_JackForfeit
 	msgbox Route134_Text_JackPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route134_EventScript_Laurel::
-	trainerbattle_single TRAINER_LAUREL, Route134_Text_LaurelIntro, Route134_Text_LaurelDefeat
+	trainerbattle_single TRAINER_LAUREL, Route134_Text_LaurelIntro, Route134_Text_LaurelDefeat, forfeit_text=Route134_Text_LaurelForfeit
 	msgbox Route134_Text_LaurelPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route134_EventScript_Alex::
-	trainerbattle_single TRAINER_ALEX, Route134_Text_AlexIntro, Route134_Text_AlexDefeat
+	trainerbattle_single TRAINER_ALEX, Route134_Text_AlexIntro, Route134_Text_AlexDefeat, forfeit_text=Route134_Text_AlexForfeit
 	msgbox Route134_Text_AlexPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -32,7 +32,7 @@ Route134_EventScript_Hitoshi::
 	end
 
 Route134_EventScript_Hudson::
-	trainerbattle_single TRAINER_HUDSON, Route134_Text_HudsonIntro, Route134_Text_HudsonDefeat
+	trainerbattle_single TRAINER_HUDSON, Route134_Text_HudsonIntro, Route134_Text_HudsonDefeat, forfeit_text=Route134_Text_HudsonForfeit
 	msgbox Route134_Text_HudsonPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -47,7 +47,7 @@ Route134_EventScript_Marley::
 	end
 
 Route134_EventScript_Kelvin::
-	trainerbattle_single TRAINER_KELVIN, Route134_Text_KelvinIntro, Route134_Text_KelvinDefeat
+	trainerbattle_single TRAINER_KELVIN, Route134_Text_KelvinIntro, Route134_Text_KelvinDefeat, forfeit_text=Route134_Text_KelvinForfeit
 	msgbox Route134_Text_KelvinPostBattle, MSGBOX_AUTOCLOSE
 	end
 

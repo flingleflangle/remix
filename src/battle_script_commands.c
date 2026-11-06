@@ -6782,6 +6782,28 @@ static u32 GetTrainerMoneyToGive(u16 trainerId)
     return moneyReward;
 }
 
+// The prize money a trainer would give, without the Amulet Coin, times their pay-off multiplier
+// (5x, or 10x for a double_payoff trainer once they've raised the price)
+static u32 GetTrainerPayOffCostOf(u16 trainerId, bool32 trainerB, bool32 raised)
+{
+    u32 money = GetTrainerMoneyToGive(trainerId);
+
+    if (gBattleStruct->moneyMultiplier > 1)
+        money /= gBattleStruct->moneyMultiplier;
+    return money * GetTrainerPayOffMultiplier(trainerB, raised);
+}
+
+// What paying the trainers to end the battle costs: the price first asked, or the raised one
+// a double_payoff trainer cuts in with (what's actually paid)
+u32 GetTrainerPayOffCost(bool32 raised)
+{
+    u32 money = GetTrainerPayOffCostOf(gTrainerBattleOpponent_A, FALSE, raised);
+
+    if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+        money += GetTrainerPayOffCostOf(gTrainerBattleOpponent_B, TRUE, raised);
+    return money;
+}
+
 // On a win, gives the trainer's prize money. On a loss, takes the white-out money instead.
 static void Cmd_getmoneyreward(void)
 {

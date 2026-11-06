@@ -66,12 +66,12 @@ Route121_Movement_Grunt3Exit:
 	step_end
 
 Route121_EventScript_Vanessa::
-	trainerbattle_single TRAINER_VANESSA, Route121_Text_VanessaIntro, Route121_Text_VanessaDefeat
+	trainerbattle_single TRAINER_VANESSA, Route121_Text_VanessaIntro, Route121_Text_VanessaDefeat, forfeit_text=Route121_Text_VanessaForfeit
 	msgbox Route121_Text_VanessaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route121_EventScript_Walter::
-	trainerbattle_single TRAINER_WALTER_1, Route121_Text_WalterIntro, Route121_Text_WalterDefeat, Route121_EventScript_RegisterWalter
+	trainerbattle_single TRAINER_WALTER_1, Route121_Text_WalterIntro, Route121_Text_WalterDefeat, Route121_EventScript_RegisterWalter, forfeit_text=Route121_Text_WalterForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route121_EventScript_RematchWalter
 	msgbox Route121_Text_WalterPostBattle, MSGBOX_DEFAULT
@@ -87,7 +87,7 @@ Route121_EventScript_RegisterWalter::
 	end
 
 Route121_EventScript_RematchWalter::
-	trainerbattle_rematch TRAINER_WALTER_1, Route121_Text_WalterRematchIntro, Route121_Text_WalterRematchDefeat
+	trainerbattle_rematch TRAINER_WALTER_1, Route121_Text_WalterRematchIntro, Route121_Text_WalterRematchDefeat, forfeit_text=Route121_Text_WalterRematchForfeit
 	msgbox Route121_Text_WalterPostRematch, MSGBOX_AUTOCLOSE
 	end
 
@@ -97,17 +97,17 @@ Route121_EventScript_Tammy::
 	end
 
 Route121_EventScript_Kate::
-	trainerbattle_double TRAINER_KATE_AND_JOY, Route121_Text_KateIntro, Route121_Text_KateDefeat, Route121_Text_KateNotEnoughMons
+	trainerbattle_double TRAINER_KATE_AND_JOY, Route121_Text_KateIntro, Route121_Text_KateDefeat, Route121_Text_KateNotEnoughMons, forfeit_text=Route121_Text_KateForfeit
 	msgbox Route121_Text_KatePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route121_EventScript_Joy::
-	trainerbattle_double TRAINER_KATE_AND_JOY, Route121_Text_JoyIntro, Route121_Text_JoyDefeat, Route121_Text_JoyNotEnoughMons
+	trainerbattle_double TRAINER_KATE_AND_JOY, Route121_Text_JoyIntro, Route121_Text_JoyDefeat, Route121_Text_JoyNotEnoughMons, forfeit_text=Route121_Text_JoyForfeit
 	msgbox Route121_Text_JoyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route121_EventScript_Jessica::
-	trainerbattle_single TRAINER_JESSICA_1, Route121_Text_JessicaIntro, Route121_Text_JessicaDefeat, Route121_EventScript_RegisterJessica
+	trainerbattle_single TRAINER_JESSICA_1, Route121_Text_JessicaIntro, Route121_Text_JessicaDefeat, Route121_EventScript_RegisterJessica, payoff=PAYOFF_ALLOW, forfeit_text=Route121_Text_JessicaForfeit
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route121_EventScript_RematchJessica
 	msgbox Route121_Text_JessicaPostBattle, MSGBOX_DEFAULT
@@ -123,7 +123,7 @@ Route121_EventScript_RegisterJessica::
 	end
 
 Route121_EventScript_RematchJessica::
-	trainerbattle_rematch TRAINER_JESSICA_1, Route121_Text_JessicaRematchIntro, Route121_Text_JessicaRematchDefeat
+	trainerbattle_rematch TRAINER_JESSICA_1, Route121_Text_JessicaRematchIntro, Route121_Text_JessicaRematchDefeat, forfeit_text=Route121_Text_JessicaRematchForfeit
 	msgbox Route121_Text_JessicaPostRematch, MSGBOX_AUTOCLOSE
 	end
 
@@ -133,12 +133,12 @@ Route121_EventScript_Cale::
 	end
 
 Route121_EventScript_Myles::
-	trainerbattle_single TRAINER_MYLES, Route121_Text_MylesIntro, Route121_Text_MylesDefeat
+	trainerbattle_single TRAINER_MYLES, Route121_Text_MylesIntro, Route121_Text_MylesDefeat, forfeit_text=Route121_Text_MylesForfeit
 	msgbox Route121_Text_MylesPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route121_EventScript_Pat::
-	trainerbattle_single TRAINER_PAT, Route121_Text_PatIntro, Route121_Text_PatDefeat
+	trainerbattle_single TRAINER_PAT, Route121_Text_PatIntro, Route121_Text_PatDefeat, forfeit_text=Route121_Text_PatForfeit
 	msgbox Route121_Text_PatPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -148,7 +148,7 @@ Route121_EventScript_Marcel::
 	end
 
 Route121_EventScript_Cristin::
-	trainerbattle_single TRAINER_CRISTIN_1, Route121_Text_CristinIntro, Route121_Text_CristinDefeat, Route121_EventScript_RegisterCristin
+	trainerbattle_single TRAINER_CRISTIN_1, Route121_Text_CristinIntro, Route121_Text_CristinDefeat, Route121_EventScript_RegisterCristin, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route121_EventScript_RematchCristin
 	msgbox Route121_Text_CristinPostBattle, MSGBOX_DEFAULT

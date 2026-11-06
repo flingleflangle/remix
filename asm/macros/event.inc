@@ -687,11 +687,21 @@
 	.endm
 
 	@ Configures the arguments for a trainer battle, then jumps to the appropriate script in scripts/trainer_battle.inc
-	.macro trainerbattle type:req, trainer:req, local_id:req, pointer1:req, pointer2, pointer3, pointer4
+	@ payoff (PAYOFF_DEFAULT/ALLOW/FORBID) is the trainer's exception to the map's pay-off policy,
+	@ stored in the top bits of the type byte. forfeit_text is what they say when the player pays them
+	@ to end the battle (0 uses the shared line in battle_message.c). double_payoff=TRUE makes paying
+	@ them cost 10x their prize money instead of 5x.
+	@ lose_script makes losing to the trainer not white the player out: they say victory_text (0 uses
+	@ the shared line in battle_message.c), the party is revived to 20% HP, and lose_script runs in
+	@ place of what follows a win
+	.macro trainerbattle type:req, trainer:req, local_id:req, pointer1:req, pointer2, pointer3, pointer4, payoff=PAYOFF_DEFAULT, forfeit_text=0, double_payoff=FALSE, victory_text=0, lose_script=0
 	.byte SCR_OP_TRAINERBATTLE
-	.byte \type
+	.byte \type | (\payoff << TRAINER_BATTLE_PAYOFF_SHIFT) | (\double_payoff * TRAINER_BATTLE_PAYOFF_DOUBLE)
 	.2byte \trainer
 	.2byte \local_id
+	.4byte \forfeit_text
+	.4byte \victory_text
+	.4byte \lose_script
 	.if \type == TRAINER_BATTLE_SINGLE
 		.4byte \pointer1 @ text
 		.4byte \pointer2 @ text
@@ -748,48 +758,57 @@
 	@ choose_party=TRUE lets the player pick their 3 Pokémon if a follower fights beside them (for bosses;
 	@ otherwise the first 3 usable ones fight). Only for talked-to trainers: it puts a special before the
 	@ trainerbattle command, which trainers that spot the player can't have
-	.macro trainerbattle_single trainer:req, intro_text:req, lose_text:req, event_script=FALSE, music=TRUE, choose_party=FALSE
+	@ payoff=PAYOFF_ALLOW/PAYOFF_FORBID overrides the map's policy on paying the trainer to end the
+	@ battle (all trainerbattle_* macros take it; battles with an event_script refuse unless given
+	@ PAYOFF_ALLOW, and paying never runs that script).
+	@ forfeit_text is what the trainer says when paid, and double_payoff=TRUE makes paying them cost
+	@ 10x their prize money instead of 5x; every trainerbattle_* macro takes both.
+	@ lose_script=Label makes losing not white the player out (for story battles): the trainer says
+	@ victory_text, the party is revived to 20% HP and lose_script runs in place of what follows a
+	@ win. trainerbattle_single, _double and _no_intro take both
+	.macro trainerbattle_single trainer:req, intro_text:req, lose_text:req, event_script=FALSE, music=TRUE, choose_party=FALSE, payoff=PAYOFF_DEFAULT, forfeit_text=0, double_payoff=FALSE, victory_text=0, lose_script=0
 	.if \choose_party == TRUE
 	special FollowerBattle_ChooseNextParty
 	.endif
 	.if \event_script == FALSE
-	trainerbattle TRAINER_BATTLE_SINGLE, \trainer, LOCALID_NONE, \intro_text, \lose_text
+	trainerbattle TRAINER_BATTLE_SINGLE, \trainer, LOCALID_NONE, \intro_text, \lose_text, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff, victory_text=\victory_text, lose_script=\lose_script
 	.elseif \music == TRUE
-	trainerbattle TRAINER_BATTLE_CONTINUE_SCRIPT, \trainer, LOCALID_NONE, \intro_text, \lose_text, \event_script
+	trainerbattle TRAINER_BATTLE_CONTINUE_SCRIPT, \trainer, LOCALID_NONE, \intro_text, \lose_text, \event_script, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff, victory_text=\victory_text, lose_script=\lose_script
 	.else
-	trainerbattle TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC, \trainer, LOCALID_NONE, \intro_text, \lose_text, \event_script
+	trainerbattle TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC, \trainer, LOCALID_NONE, \intro_text, \lose_text, \event_script, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff, victory_text=\victory_text, lose_script=\lose_script
 	.endif
 	.endm
 
 	@ Starts a double trainer battle. Takes a trainer, intro text, loss text, text for when you have too few pokemon
 	@ and an optional event script. When used with an event script you can pass in an optional flag to disable music
-	@ choose_party=TRUE works as in trainerbattle_single
-	.macro trainerbattle_double trainer:req, intro_text:req, lose_text:req, not_enough_pkmn_text:req, event_script=FALSE, music=TRUE, choose_party=FALSE
+	@ choose_party=TRUE, payoff and lose_script work as in trainerbattle_single
+	.macro trainerbattle_double trainer:req, intro_text:req, lose_text:req, not_enough_pkmn_text:req, event_script=FALSE, music=TRUE, choose_party=FALSE, payoff=PAYOFF_DEFAULT, forfeit_text=0, double_payoff=FALSE, victory_text=0, lose_script=0
 	.if \choose_party == TRUE
 	special FollowerBattle_ChooseNextParty
 	.endif
 	.if \event_script == FALSE
-	trainerbattle TRAINER_BATTLE_DOUBLE, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text
+	trainerbattle TRAINER_BATTLE_DOUBLE, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff, victory_text=\victory_text, lose_script=\lose_script
 	.elseif \music == TRUE
-	trainerbattle TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text, \event_script
+	trainerbattle TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text, \event_script, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff, victory_text=\victory_text, lose_script=\lose_script
 	.else
-	trainerbattle TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text, \event_script
+	trainerbattle TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text, \event_script, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff, victory_text=\victory_text, lose_script=\lose_script
 	.endif
 	.endm
 
 	@ Starts a rematch battle. Takes a trainer, intro text and loss text
-	.macro trainerbattle_rematch trainer:req, intro_text:req, lose_text:req
-	trainerbattle TRAINER_BATTLE_REMATCH, \trainer, LOCALID_NONE, \intro_text, \lose_text
+	.macro trainerbattle_rematch trainer:req, intro_text:req, lose_text:req, payoff=PAYOFF_DEFAULT, forfeit_text=0, double_payoff=FALSE
+	trainerbattle TRAINER_BATTLE_REMATCH, \trainer, LOCALID_NONE, \intro_text, \lose_text, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff
 	.endm
 
 	@ Starts a rematch double battle. Takes a trainer, intro text, loss text, and text for when you have too few pokemon
-	.macro trainerbattle_rematch_double trainer:req, intro_text:req, lose_text:req, not_enough_pkmn_text:req
-	trainerbattle TRAINER_BATTLE_REMATCH_DOUBLE, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text
+	.macro trainerbattle_rematch_double trainer:req, intro_text:req, lose_text:req, not_enough_pkmn_text:req, payoff=PAYOFF_DEFAULT, forfeit_text=0, double_payoff=FALSE
+	trainerbattle TRAINER_BATTLE_REMATCH_DOUBLE, \trainer, LOCALID_NONE, \intro_text, \lose_text, \not_enough_pkmn_text, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff
 	.endm
 
 	@ Starts a trainer battle, skipping intro text. Takes a trainer and loss text
-	.macro trainerbattle_no_intro trainer:req, lose_text:req
-	trainerbattle TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT, \trainer, LOCALID_NONE, \lose_text
+	@ (a story battle: it refuses payment unless given payoff=PAYOFF_ALLOW)
+	.macro trainerbattle_no_intro trainer:req, lose_text:req, payoff=PAYOFF_DEFAULT, forfeit_text=0, double_payoff=FALSE, victory_text=0, lose_script=0
+	trainerbattle TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT, \trainer, LOCALID_NONE, \lose_text, payoff=\payoff, forfeit_text=\forfeit_text, double_payoff=\double_payoff, victory_text=\victory_text, lose_script=\lose_script
 	.endm
 
 

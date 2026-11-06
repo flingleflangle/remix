@@ -531,22 +531,22 @@ Route119_EventScript_Taylor::
 	end
 
 Route119_EventScript_Doug::
-	trainerbattle_single TRAINER_DOUG, Route119_Text_DougIntro, Route119_Text_DougDefeat
+	trainerbattle_single TRAINER_DOUG, Route119_Text_DougIntro, Route119_Text_DougDefeat, forfeit_text=Route119_Text_DougForfeit
 	msgbox Route119_Text_DougPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Greg::
-	trainerbattle_single TRAINER_GREG, Route119_Text_GregIntro, Route119_Text_GregDefeat
+	trainerbattle_single TRAINER_GREG, Route119_Text_GregIntro, Route119_Text_GregDefeat, forfeit_text=Route119_Text_GregForfeit
 	msgbox Route119_Text_GregPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Kent::
-	trainerbattle_single TRAINER_KENT, Route119_Text_KentIntro, Route119_Text_KentDefeat
+	trainerbattle_single TRAINER_KENT, Route119_Text_KentIntro, Route119_Text_KentDefeat, forfeit_text=Route119_Text_KentForfeit
 	msgbox Route119_Text_KentPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Jackson::
-	trainerbattle_single TRAINER_JACKSON_1, Route119_Text_JacksonIntro, Route119_Text_JacksonDefeat, Route119_EventScript_RegisterJackson
+	trainerbattle_single TRAINER_JACKSON_1, Route119_Text_JacksonIntro, Route119_Text_JacksonDefeat, Route119_EventScript_RegisterJackson, forfeit_text=Route119_Text_JacksonForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route119_EventScript_RematchJackson
 	msgbox Route119_Text_JacksonPostBattle, MSGBOX_DEFAULT
@@ -562,12 +562,12 @@ Route119_EventScript_RegisterJackson::
 	end
 
 Route119_EventScript_RematchJackson::
-	trainerbattle_rematch TRAINER_JACKSON_1, Route119_Text_JacksonRematchIntro, Route119_Text_JacksonRematchDefeat
+	trainerbattle_rematch TRAINER_JACKSON_1, Route119_Text_JacksonRematchIntro, Route119_Text_JacksonRematchDefeat, forfeit_text=Route119_Text_JacksonRematchForfeit
 	msgbox Route119_Text_JacksonPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Catherine::
-	trainerbattle_single TRAINER_CATHERINE_1, Route119_Text_CatherineIntro, Route119_Text_CatherineDefeat, Route119_EventScript_RegisterCatherine
+	trainerbattle_single TRAINER_CATHERINE_1, Route119_Text_CatherineIntro, Route119_Text_CatherineDefeat, Route119_EventScript_RegisterCatherine, forfeit_text=Route119_Text_CatherineForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route119_EventScript_RematchCatherine
 	msgbox Route119_Text_CatherinePostBattle, MSGBOX_DEFAULT
@@ -583,17 +583,17 @@ Route119_EventScript_RegisterCatherine::
 	end
 
 Route119_EventScript_RematchCatherine::
-	trainerbattle_rematch TRAINER_CATHERINE_1, Route119_Text_CatherineRematchIntro, Route119_Text_CatherineRematchDefeat
+	trainerbattle_rematch TRAINER_CATHERINE_1, Route119_Text_CatherineRematchIntro, Route119_Text_CatherineRematchDefeat, forfeit_text=Route119_Text_CatherineRematchForfeit
 	msgbox Route119_Text_CatherinePostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Hugh::
-	trainerbattle_single TRAINER_HUGH, Route119_Text_HughIntro, Route119_Text_HughDefeat
+	trainerbattle_single TRAINER_HUGH, Route119_Text_HughIntro, Route119_Text_HughDefeat, forfeit_text=Route119_Text_HughForfeit
 	msgbox Route119_Text_HughPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Phil::
-	trainerbattle_single TRAINER_PHIL, Route119_Text_PhilIntro, Route119_Text_PhilDefeat
+	trainerbattle_single TRAINER_PHIL, Route119_Text_PhilIntro, Route119_Text_PhilDefeat, forfeit_text=Route119_Text_PhilForfeit
 	msgbox Route119_Text_PhilPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -613,22 +613,22 @@ Route119_EventScript_Hideo::
 	end
 
 Route119_EventScript_Chris::
-	trainerbattle_single TRAINER_CHRIS, Route119_Text_ChrisIntro, Route119_Text_ChrisDefeat
+	trainerbattle_single TRAINER_CHRIS, Route119_Text_ChrisIntro, Route119_Text_ChrisDefeat, forfeit_text=Route119_Text_ChrisForfeit
 	msgbox Route119_Text_ChrisPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Fabian::
-	trainerbattle_single TRAINER_FABIAN, Route119_Text_FabianIntro, Route119_Text_FabianDefeat
+	trainerbattle_single TRAINER_FABIAN, Route119_Text_FabianIntro, Route119_Text_FabianDefeat, forfeit_text=Route119_Text_FabianForfeit
 	msgbox Route119_Text_FabianPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Dayton::
-	trainerbattle_single TRAINER_DAYTON, Route119_Text_DaytonIntro, Route119_Text_DaytonDefeat
+	trainerbattle_single TRAINER_DAYTON, Route119_Text_DaytonIntro, Route119_Text_DaytonDefeat, forfeit_text=Route119_Text_DaytonForfeit
 	msgbox Route119_Text_DaytonPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route119_EventScript_Rachel::
-	trainerbattle_single TRAINER_RACHEL, Route119_Text_RachelIntro, Route119_Text_RachelDefeat
+	trainerbattle_single TRAINER_RACHEL, Route119_Text_RachelIntro, Route119_Text_RachelDefeat, forfeit_text=Route119_Text_RachelForfeit
 	msgbox Route119_Text_RachelPostBattle, MSGBOX_AUTOCLOSE
 	end
 

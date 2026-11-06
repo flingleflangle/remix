@@ -4,6 +4,7 @@
 #include "battle_anim.h"
 #include "battle_arena.h"
 #include "battle_pyramid.h"
+#include "battle_setup.h"
 #include "battle_util.h"
 #include "battle_script_commands.h"
 #include "pokemon.h"
@@ -27,6 +28,7 @@
 #include "event_data.h"
 #include "link.h"
 #include "field_weather.h"
+#include "money.h"
 #include "constants/abilities.h"
 #include "constants/battle_anim.h"
 #include "constants/battle_move_effects.h"
@@ -678,7 +680,18 @@ void HandleAction_Run(void)
     }
     else
     {
-        if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
+        if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER
+         && gBattleTypeFlags & BATTLE_TYPE_TRAINER && CanPayOffTrainerBattle())
+        {
+            // Paying the trainers always works: the money was checked when Run was chosen
+            u32 cost = GetTrainerPayOffCost(TRUE);
+
+            RemoveMoney(&gSaveBlock1Ptr->money, cost);
+            PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff1, 6, cost);
+            gCurrentTurnActionNumber = gBattlersCount;
+            gBattleOutcome = B_OUTCOME_PAID_OFF;
+        }
+        else if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
         {
             if (!TryRunFromBattle(gBattlerAttacker)) // failed to run away
             {

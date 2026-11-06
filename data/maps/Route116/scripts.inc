@@ -389,17 +389,17 @@ Route116_Movement_GlassesManExitEast:
 	step_end
 
 Route116_EventScript_Joey::
-	trainerbattle_single TRAINER_JOEY, Route116_Text_JoeyIntro, Route116_Text_JoeyDefeat
+	trainerbattle_single TRAINER_JOEY, Route116_Text_JoeyIntro, Route116_Text_JoeyDefeat, forfeit_text=Route116_Text_JoeyForfeit
 	msgbox Route116_Text_JoeyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route116_EventScript_Jose::
-	trainerbattle_single TRAINER_JOSE, Route116_Text_JoseIntro, Route116_Text_JoseDefeat
+	trainerbattle_single TRAINER_JOSE, Route116_Text_JoseIntro, Route116_Text_JoseDefeat, forfeit_text=Route116_Text_JoseForfeit
 	msgbox Route116_Text_JosePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route116_EventScript_Jerry::
-	trainerbattle_single TRAINER_JERRY_1, Route116_Text_JerryIntro, Route116_Text_JerryDefeat, Route116_EventScript_TryRegisterJerryAfterBattle
+	trainerbattle_single TRAINER_JERRY_1, Route116_Text_JerryIntro, Route116_Text_JerryDefeat, Route116_EventScript_TryRegisterJerryAfterBattle, forfeit_text=Route116_Text_JerryForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route116_EventScript_RematchJerry
 	setvar VAR_0x8004, TRAINER_JERRY_1
@@ -435,22 +435,22 @@ Route116_EventScript_RegisterJerry::
 	end
 
 Route116_EventScript_RematchJerry::
-	trainerbattle_rematch TRAINER_JERRY_1, Route116_Text_JerryRematchIntro, Route116_Text_JerryRematchDefeat
+	trainerbattle_rematch TRAINER_JERRY_1, Route116_Text_JerryRematchIntro, Route116_Text_JerryRematchDefeat, forfeit_text=Route116_Text_JerryRematchForfeit
 	msgbox Route116_Text_JerryPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route116_EventScript_Clark::
-	trainerbattle_single TRAINER_CLARK, Route116_Text_ClarkIntro, Route116_Text_ClarkDefeat
+	trainerbattle_single TRAINER_CLARK, Route116_Text_ClarkIntro, Route116_Text_ClarkDefeat, forfeit_text=Route116_Text_ClarkForfeit
 	msgbox Route116_Text_ClarkPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route116_EventScript_Janice::
-	trainerbattle_single TRAINER_JANICE, Route116_Text_JaniceIntro, Route116_Text_JaniceDefeat
+	trainerbattle_single TRAINER_JANICE, Route116_Text_JaniceIntro, Route116_Text_JaniceDefeat, forfeit_text=Route116_Text_JaniceForfeit
 	msgbox Route116_Text_JanicePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route116_EventScript_Karen::
-	trainerbattle_single TRAINER_KAREN_1, Route116_Text_KarenIntro, Route116_Text_KarenDefeat, Route116_EventScript_TryRegisterKarenAfterBattle
+	trainerbattle_single TRAINER_KAREN_1, Route116_Text_KarenIntro, Route116_Text_KarenDefeat, Route116_EventScript_TryRegisterKarenAfterBattle, forfeit_text=Route116_Text_KarenForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route116_EventScript_RematchKaren
 	setvar VAR_0x8004, TRAINER_KAREN_1
@@ -486,12 +486,12 @@ Route116_EventScript_RegisterKaren::
 	end
 
 Route116_EventScript_RematchKaren::
-	trainerbattle_rematch TRAINER_KAREN_1, Route116_Text_KarenRematchIntro, Route116_Text_KarenRematchDefeat
+	trainerbattle_rematch TRAINER_KAREN_1, Route116_Text_KarenRematchIntro, Route116_Text_KarenRematchDefeat, forfeit_text=Route116_Text_KarenRematchForfeit
 	msgbox Route116_Text_KarenPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route116_EventScript_Sarah::
-	trainerbattle_single TRAINER_SARAH, Route116_Text_SarahIntro, Route116_Text_SarahDefeat
+	trainerbattle_single TRAINER_SARAH, Route116_Text_SarahIntro, Route116_Text_SarahDefeat, forfeit_text=Route116_Text_SarahForfeit
 	msgbox Route116_Text_SarahPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -501,12 +501,12 @@ Route116_EventScript_Dawson::
 	end
 
 Route116_EventScript_Devan::
-	trainerbattle_single TRAINER_DEVAN, Route116_Text_DevanIntro, Route116_Text_DevanDefeat
+	trainerbattle_single TRAINER_DEVAN, Route116_Text_DevanIntro, Route116_Text_DevanDefeat, forfeit_text=Route116_Text_DevanForfeit
 	msgbox Route116_Text_DevanPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route116_EventScript_Johnson::
-	trainerbattle_single TRAINER_JOHNSON, Route116_Text_JohnsonIntro, Route116_Text_JohnsonDefeat
+	trainerbattle_single TRAINER_JOHNSON, Route116_Text_JohnsonIntro, Route116_Text_JohnsonDefeat, forfeit_text=Route116_Text_JohnsonForfeit
 	msgbox Route116_Text_JohnsonPostBattle, MSGBOX_AUTOCLOSE
 	end
 

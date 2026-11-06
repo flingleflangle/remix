@@ -28,17 +28,17 @@ Route110_TrickHousePuzzle6_EventScript_FoundScroll::
 	end
 
 Route110_TrickHousePuzzle6_EventScript_Sophia::
-	trainerbattle_single TRAINER_SOPHIA, Route110_TrickHousePuzzle6_Text_SophiaIntro, Route110_TrickHousePuzzle6_Text_SophiaDefeat
+	trainerbattle_single TRAINER_SOPHIA, Route110_TrickHousePuzzle6_Text_SophiaIntro, Route110_TrickHousePuzzle6_Text_SophiaDefeat, forfeit_text=Route110_TrickHousePuzzle6_Text_SophiaForfeit
 	msgbox Route110_TrickHousePuzzle6_Text_SophiaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_TrickHousePuzzle6_EventScript_Benny::
-	trainerbattle_single TRAINER_BENNY, Route110_TrickHousePuzzle6_Text_BennyIntro, Route110_TrickHousePuzzle6_Text_BennyDefeat
+	trainerbattle_single TRAINER_BENNY, Route110_TrickHousePuzzle6_Text_BennyIntro, Route110_TrickHousePuzzle6_Text_BennyDefeat, forfeit_text=Route110_TrickHousePuzzle6_Text_BennyForfeit
 	msgbox Route110_TrickHousePuzzle6_Text_BennyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_TrickHousePuzzle6_EventScript_Sebastian::
-	trainerbattle_single TRAINER_SEBASTIAN, Route110_TrickHousePuzzle6_Text_SebastianIntro, Route110_TrickHousePuzzle6_Text_SebastianDefeat
+	trainerbattle_single TRAINER_SEBASTIAN, Route110_TrickHousePuzzle6_Text_SebastianIntro, Route110_TrickHousePuzzle6_Text_SebastianDefeat, forfeit_text=Route110_TrickHousePuzzle6_Text_SebastianForfeit
 	msgbox Route110_TrickHousePuzzle6_Text_SebastianPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -56,6 +56,10 @@ Route110_TrickHousePuzzle6_Text_SophiaIntro:
 Route110_TrickHousePuzzle6_Text_SophiaDefeat:
 	.string "I've discovered a tough TRAINER!$"
 
+Route110_TrickHousePuzzle6_Text_SophiaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_TrickHousePuzzle6_Text_SophiaPostBattle:
 	.string "I'm sure having a good time checking\n"
 	.string "this place out.\p"
@@ -69,6 +73,10 @@ Route110_TrickHousePuzzle6_Text_BennyIntro:
 Route110_TrickHousePuzzle6_Text_BennyDefeat:
 	.string "Gwaaah! I blew it!$"
 
+Route110_TrickHousePuzzle6_Text_BennyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_TrickHousePuzzle6_Text_BennyPostBattle:
 	.string "Ehehehe… I guess I lost because\n"
 	.string "I was trying to cheat.$"
@@ -80,6 +88,10 @@ Route110_TrickHousePuzzle6_Text_SebastianIntro:
 Route110_TrickHousePuzzle6_Text_SebastianDefeat:
 	.string "Everything's spinning around and\n"
 	.string "around. I can't take this anymore…$"
+
+Route110_TrickHousePuzzle6_Text_SebastianForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_TrickHousePuzzle6_Text_SebastianPostBattle:
 	.string "You don't seem to be affected at all.\n"

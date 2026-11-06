@@ -270,12 +270,12 @@ PetalburgWoods_EventScript_Sign2::
 	end
 
 PetalburgWoods_EventScript_Lyle::
-	trainerbattle_single TRAINER_LYLE, PetalburgWoods_Text_GoBugPokemonTeam, PetalburgWoods_Text_ICouldntWin
+	trainerbattle_single TRAINER_LYLE, PetalburgWoods_Text_GoBugPokemonTeam, PetalburgWoods_Text_ICouldntWin, forfeit_text=PetalburgWoods_Text_ICouldntWinForfeit
 	msgbox PetalburgWoods_Text_ImOutOfPokeBalls, MSGBOX_AUTOCLOSE
 	end
 
 PetalburgWoods_EventScript_James::
-	trainerbattle_single TRAINER_JAMES_1, PetalburgWoods_Text_InstantlyPopularWithBugPokemon, PetalburgWoods_Text_CantBePopularIfILose, PetalburgWoods_EventScript_TryRegisterJames
+	trainerbattle_single TRAINER_JAMES_1, PetalburgWoods_Text_InstantlyPopularWithBugPokemon, PetalburgWoods_Text_CantBePopularIfILose, PetalburgWoods_EventScript_TryRegisterJames, forfeit_text=PetalburgWoods_Text_CantBePopularIfILoseForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, PetalburgWoods_EventScript_JamesRematch
 	setvar VAR_0x8004, TRAINER_JAMES_1
@@ -311,7 +311,7 @@ PetalburgWoods_EventScript_RegisterJames2::
 	end
 
 PetalburgWoods_EventScript_JamesRematch::
-	trainerbattle_rematch TRAINER_JAMES_1, PetalburgWoods_Text_MyPokemonHaveGrown, PetalburgWoods_Text_CantBePopularIfLose
+	trainerbattle_rematch TRAINER_JAMES_1, PetalburgWoods_Text_MyPokemonHaveGrown, PetalburgWoods_Text_CantBePopularIfLose, forfeit_text=PetalburgWoods_Text_CantBePopularIfLoseForfeit
 	msgbox PetalburgWoods_Text_IveBeenTrainingHard, MSGBOX_AUTOCLOSE
 	end
 
@@ -389,6 +389,10 @@ PetalburgWoods_Text_ICouldntWin:
 	.string "I have all these POKéMON,\n"
 	.string "but I couldn't win…$"
 
+PetalburgWoods_Text_ICouldntWinForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 PetalburgWoods_Text_ImOutOfPokeBalls:
 	.string "I caught a bunch of POKéMON.\n"
 	.string "Now I'm out of POKé BALLS.$"
@@ -399,6 +403,10 @@ PetalburgWoods_Text_InstantlyPopularWithBugPokemon:
 
 PetalburgWoods_Text_CantBePopularIfILose:
 	.string "I can't be popular if I lose.$"
+
+PetalburgWoods_Text_CantBePopularIfILoseForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 PetalburgWoods_Text_PeopleRespectYou:
 	.string "If you have a big BUG POKéMON,\n"
@@ -420,6 +428,10 @@ PetalburgWoods_Text_MyPokemonHaveGrown:
 
 PetalburgWoods_Text_CantBePopularIfLose:
 	.string "I can't be popular if I lose.$"
+
+PetalburgWoods_Text_CantBePopularIfLoseForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 PetalburgWoods_Text_IveBeenTrainingHard:
 	.string "You get to be popular if you have\n"

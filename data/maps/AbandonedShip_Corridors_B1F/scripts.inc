@@ -49,7 +49,7 @@ AbandonedShip_Corridors_B1F_EventScript_DoorIsUnlocked::
 	end
 
 AbandonedShip_Corridors_B1F_EventScript_Duncan::
-	trainerbattle_single TRAINER_DUNCAN, AbandonedShip_Corridors_B1F_Text_DuncanIntro, AbandonedShip_Corridors_B1F_Text_DuncanDefeat
+	trainerbattle_single TRAINER_DUNCAN, AbandonedShip_Corridors_B1F_Text_DuncanIntro, AbandonedShip_Corridors_B1F_Text_DuncanDefeat, forfeit_text=AbandonedShip_Corridors_B1F_Text_DuncanForfeit
 	msgbox AbandonedShip_Corridors_B1F_Text_DuncanPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -60,6 +60,10 @@ AbandonedShip_Corridors_B1F_Text_DuncanIntro:
 
 AbandonedShip_Corridors_B1F_Text_DuncanDefeat:
 	.string "Whoops, I'm sunk!$"
+
+AbandonedShip_Corridors_B1F_Text_DuncanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 AbandonedShip_Corridors_B1F_Text_DuncanPostBattle:
 	.string "The ship's bottom has sunk into the\n"

@@ -107,6 +107,8 @@ enum BattlerId
 #define B_OUTCOME_NO_SAFARI_BALLS      8
 #define B_OUTCOME_FORFEITED            9
 #define B_OUTCOME_MON_TELEPORTED       10
+#define B_OUTCOME_PAID_OFF             11 // the player paid the trainers their prize money to end the battle
+#define B_OUTCOME_LOST_NO_WHITEOUT     12 // lost a trainer battle with a lose_script: no white-out, the script runs
 #define B_OUTCOME_LINK_BATTLE_RAN      (1 << 7) // 128
 
 // Non-volatile status conditions

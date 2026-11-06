@@ -312,9 +312,11 @@ static u8 CheckTrainer(u8 objectEventId)
 
     if (approachDistance != 0)
     {
-        if (scriptPtr[1] == TRAINER_BATTLE_DOUBLE
-            || scriptPtr[1] == TRAINER_BATTLE_REMATCH_DOUBLE
-            || scriptPtr[1] == TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE)
+        u8 mode = scriptPtr[1] & TRAINER_BATTLE_MODE_MASK; // the top bits are the pay-off exception
+
+        if (mode == TRAINER_BATTLE_DOUBLE
+            || mode == TRAINER_BATTLE_REMATCH_DOUBLE
+            || mode == TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE)
         {
             if (GetMonsStateToDoubles_2() != PLAYER_HAS_TWO_USABLE_MONS)
                 return 0;

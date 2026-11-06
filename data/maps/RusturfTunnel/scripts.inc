@@ -413,7 +413,7 @@ RusturfTunnel_Movement_PeekoExit:
 	step_end
 
 RusturfTunnel_EventScript_Mike::
-	trainerbattle_single TRAINER_MIKE_2, RusturfTunnel_Text_MikeIntro, RusturfTunnel_Text_MikeDefeat
+	trainerbattle_single TRAINER_MIKE_2, RusturfTunnel_Text_MikeIntro, RusturfTunnel_Text_MikeDefeat, forfeit_text=RusturfTunnel_Text_MikeForfeit
 	msgbox RusturfTunnel_Text_MikePostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -518,6 +518,10 @@ RusturfTunnel_Text_MikeIntro:
 RusturfTunnel_Text_MikeDefeat:
 	.string "My POKéMON…\n"
 	.string "Ran out of power…$"
+
+RusturfTunnel_Text_MikeForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 RusturfTunnel_Text_MikePostBattle:
 	.string "They halted development here to\n"

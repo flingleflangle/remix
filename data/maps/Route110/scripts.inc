@@ -172,7 +172,7 @@ Route110_EventScript_Jaclyn::
 	end
 
 Route110_EventScript_Edwin::
-	trainerbattle_single TRAINER_EDWIN_1, Route110_Text_EdwinIntro, Route110_Text_EdwinDefeated, Route110_EventScript_EdwinRegisterMatchCallAfterBattle
+	trainerbattle_single TRAINER_EDWIN_1, Route110_Text_EdwinIntro, Route110_Text_EdwinDefeated, Route110_EventScript_EdwinRegisterMatchCallAfterBattle, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_EdwinRematch
 	msgbox Route110_Text_EdwinPostBattle, MSGBOX_DEFAULT
@@ -193,7 +193,7 @@ Route110_EventScript_EdwinRematch::
 	end
 
 Route110_EventScript_Dale::
-	trainerbattle_single TRAINER_DALE, Route110_Text_DaleIntro, Route110_Text_DaleDefeated
+	trainerbattle_single TRAINER_DALE, Route110_Text_DaleIntro, Route110_Text_DaleDefeated, forfeit_text=Route110_Text_DaleForfeit
 	msgbox Route110_Text_DalePostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -208,7 +208,7 @@ Route110_EventScript_Anthony::
 	end
 
 Route110_EventScript_Benjamin::
-	trainerbattle_single TRAINER_BENJAMIN_1, Route110_Text_BenjaminIntro, Route110_Text_BenjaminDefeated, Route110_EventScript_BenjaminRegisterMatchCallAfterBattle
+	trainerbattle_single TRAINER_BENJAMIN_1, Route110_Text_BenjaminIntro, Route110_Text_BenjaminDefeated, Route110_EventScript_BenjaminRegisterMatchCallAfterBattle, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_BenjaminRematch
 	msgbox Route110_Text_BenjaminPostBattle, MSGBOX_DEFAULT
@@ -234,7 +234,7 @@ Route110_EventScript_Jasmine::
 	end
 
 Route110_EventScript_Abigail::
-	trainerbattle_single TRAINER_ABIGAIL_1, Route110_Text_AbigailIntro, Route110_Text_AbigailDefeated, Route110_EventScript_AbigailRegisterMatchCallAfterBattle
+	trainerbattle_single TRAINER_ABIGAIL_1, Route110_Text_AbigailIntro, Route110_Text_AbigailDefeated, Route110_EventScript_AbigailRegisterMatchCallAfterBattle, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_AbigailRematch
 	msgbox Route110_Text_AbigailPostBattle, MSGBOX_DEFAULT
@@ -255,7 +255,7 @@ Route110_EventScript_AbigailRematch::
 	end
 
 Route110_EventScript_Isabel::
-	trainerbattle_single TRAINER_ISABEL_1, Route110_Text_IsabelIntro, Route110_Text_IsabelDefeated, Route110_EventScript_IsabelRegisterMatchCallAfterBattle
+	trainerbattle_single TRAINER_ISABEL_1, Route110_Text_IsabelIntro, Route110_Text_IsabelDefeated, Route110_EventScript_IsabelRegisterMatchCallAfterBattle, forfeit_text=Route110_Text_IsabelForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route110_EventScript_IsabelRematch
 	msgbox Route110_Text_IsabelPostBattle, MSGBOX_DEFAULT
@@ -271,12 +271,12 @@ Route110_EventScript_IsabelRegisterMatchCallAfterBattle::
 	end
 
 Route110_EventScript_IsabelRematch::
-	trainerbattle_rematch TRAINER_ISABEL_1, Route110_Text_IsabelRematchIntro, Route110_Text_IsabelRematchDefeated
+	trainerbattle_rematch TRAINER_ISABEL_1, Route110_Text_IsabelRematchIntro, Route110_Text_IsabelRematchDefeated, forfeit_text=Route110_Text_IsabelRematchForfeit
 	msgbox Route110_Text_IsabelRematchPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_EventScript_Timmy::
-	trainerbattle_single TRAINER_TIMMY, Route110_Text_TimmyIntro, Route110_Text_TimmyDefeated
+	trainerbattle_single TRAINER_TIMMY, Route110_Text_TimmyIntro, Route110_Text_TimmyDefeated, forfeit_text=Route110_Text_TimmyForfeit
 	msgbox Route110_Text_TimmyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -284,12 +284,12 @@ Route110_EventScript_Unused::
 	end
 
 Route110_EventScript_Kaleb::
-	trainerbattle_single TRAINER_KALEB, Route110_Text_KalebIntro, Route110_Text_KalebDefeated
+	trainerbattle_single TRAINER_KALEB, Route110_Text_KalebIntro, Route110_Text_KalebDefeated, forfeit_text=Route110_Text_KalebForfeit
 	msgbox Route110_Text_KalebPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_EventScript_Joseph::
-	trainerbattle_single TRAINER_JOSEPH, Route110_Text_JosephIntro, Route110_Text_JosephDefeated
+	trainerbattle_single TRAINER_JOSEPH, Route110_Text_JosephIntro, Route110_Text_JosephDefeated, forfeit_text=Route110_Text_JosephForfeit
 	msgbox Route110_Text_JosephPostBattle, MSGBOX_AUTOCLOSE
 	end
 

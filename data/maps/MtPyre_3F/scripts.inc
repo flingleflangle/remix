@@ -12,7 +12,7 @@ MtPyre_3F_EventScript_Kayla::
 	end
 
 MtPyre_3F_EventScript_Gabrielle::
-	trainerbattle_single TRAINER_GABRIELLE_1, MtPyre_3F_Text_GabrielleIntro, MtPyre_3F_Text_GabrielleDefeat, MtPyre_3F_EventScript_RegisterGabrielle
+	trainerbattle_single TRAINER_GABRIELLE_1, MtPyre_3F_Text_GabrielleIntro, MtPyre_3F_Text_GabrielleDefeat, MtPyre_3F_EventScript_RegisterGabrielle, forfeit_text=MtPyre_3F_Text_GabrielleForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, MtPyre_3F_EventScript_RematchGabrielle
 	msgbox MtPyre_3F_Text_GabriellePostBattle, MSGBOX_DEFAULT
@@ -28,7 +28,7 @@ MtPyre_3F_EventScript_RegisterGabrielle::
 	end
 
 MtPyre_3F_EventScript_RematchGabrielle::
-	trainerbattle_rematch TRAINER_GABRIELLE_1, MtPyre_3F_Text_GabrielleRematchIntro, MtPyre_3F_Text_GabrielleRematchDefeat
+	trainerbattle_rematch TRAINER_GABRIELLE_1, MtPyre_3F_Text_GabrielleRematchIntro, MtPyre_3F_Text_GabrielleRematchDefeat, forfeit_text=MtPyre_3F_Text_GabrielleRematchForfeit
 	msgbox MtPyre_3F_Text_GabriellePostRematch, MSGBOX_AUTOCLOSE
 	end
 
@@ -67,6 +67,10 @@ MtPyre_3F_Text_GabrielleDefeat:
 	.string "That was amazing!\n"
 	.string "You're a very special TRAINER.$"
 
+MtPyre_3F_Text_GabrielleForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 MtPyre_3F_Text_GabriellePostBattle:
 	.string "POKéMON no longer of this world.\n"
 	.string "POKéMON that are with you now.\p"
@@ -88,6 +92,10 @@ MtPyre_3F_Text_GabrielleRematchIntro:
 MtPyre_3F_Text_GabrielleRematchDefeat:
 	.string "How amazing!\n"
 	.string "You are a special person.$"
+
+MtPyre_3F_Text_GabrielleRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 MtPyre_3F_Text_GabriellePostRematch:
 	.string "POKéMON no longer of this world.\n"

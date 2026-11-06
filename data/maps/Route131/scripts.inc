@@ -16,32 +16,32 @@ Route131_EventScript_CheckSetAbnormalWeather::
 	return
 
 Route131_EventScript_Richard::
-	trainerbattle_single TRAINER_RICHARD, Route131_Text_RichardIntro, Route131_Text_RichardDefeat
+	trainerbattle_single TRAINER_RICHARD, Route131_Text_RichardIntro, Route131_Text_RichardDefeat, forfeit_text=Route131_Text_RichardForfeit
 	msgbox Route131_Text_RichardPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route131_EventScript_Herman::
-	trainerbattle_single TRAINER_HERMAN, Route131_Text_HermanIntro, Route131_Text_HermanDefeat
+	trainerbattle_single TRAINER_HERMAN, Route131_Text_HermanIntro, Route131_Text_HermanDefeat, forfeit_text=Route131_Text_HermanForfeit
 	msgbox Route131_Text_HermanPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route131_EventScript_Susie::
-	trainerbattle_single TRAINER_SUSIE, Route131_Text_SusieIntro, Route131_Text_SusieDefeat
+	trainerbattle_single TRAINER_SUSIE, Route131_Text_SusieIntro, Route131_Text_SusieDefeat, forfeit_text=Route131_Text_SusieForfeit
 	msgbox Route131_Text_SusiePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route131_EventScript_Kara::
-	trainerbattle_single TRAINER_KARA, Route131_Text_KaraIntro, Route131_Text_KaraDefeat
+	trainerbattle_single TRAINER_KARA, Route131_Text_KaraIntro, Route131_Text_KaraDefeat, forfeit_text=Route131_Text_KaraForfeit
 	msgbox Route131_Text_KaraPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route131_EventScript_Reli::
-	trainerbattle_double TRAINER_RELI_AND_IAN, Route131_Text_ReliIntro, Route131_Text_ReliDefeat, Route131_Text_ReliNotEnoughMons
+	trainerbattle_double TRAINER_RELI_AND_IAN, Route131_Text_ReliIntro, Route131_Text_ReliDefeat, Route131_Text_ReliNotEnoughMons, forfeit_text=Route131_Text_ReliForfeit
 	msgbox Route131_Text_ReliPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route131_EventScript_Ian::
-	trainerbattle_double TRAINER_RELI_AND_IAN, Route131_Text_IanIntro, Route131_Text_IanDefeat, Route131_Text_IanNotEnoughMons
+	trainerbattle_double TRAINER_RELI_AND_IAN, Route131_Text_IanIntro, Route131_Text_IanDefeat, Route131_Text_IanNotEnoughMons, forfeit_text=Route131_Text_IanForfeit
 	msgbox Route131_Text_IanPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -51,7 +51,7 @@ Route131_EventScript_Talia::
 	end
 
 Route131_EventScript_Kevin::
-	trainerbattle_single TRAINER_KEVIN, Route131_Text_KevinIntro, Route131_Text_KevinDefeat
+	trainerbattle_single TRAINER_KEVIN, Route131_Text_KevinIntro, Route131_Text_KevinDefeat, forfeit_text=Route131_Text_KevinForfeit
 	msgbox Route131_Text_KevinPostBattle, MSGBOX_AUTOCLOSE
 	end
 

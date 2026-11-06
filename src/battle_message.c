@@ -55,6 +55,12 @@ EWRAM_DATA struct BattleMsgData *gBattleMsgDataPtr = NULL;
 // todo: make some of those names less vague: attacker/target vs pkmn, etc.
 
 static const u8 sText_Trainer1LoseText[] = _("{B_TRAINER1_LOSE_TEXT}");
+// What a trainer says after the player pays them to end the battle (BattleScript_PaidOffTrainer),
+// if their trainerbattle line has no forfeit_text
+static const u8 sText_TrainerPaidOffText[] = _("Hah! Thanks for the cash!\nCome back when you're ready.");
+// What a trainer says after beating the player in a no-white-out battle (BattleScript_LocalBattleLostNoWhiteout),
+// if their trainerbattle line has no victory_text
+static const u8 sText_TrainerVictoryText[] = _("Looks like I win this time!");
 static const u8 sText_PkmnGainedEXP[] = _("{B_BUFF1} gained{B_BUFF2}\n{B_BUFF3} EXP. Points!\p");
 static const u8 sText_EmptyString4[] = _("");
 static const u8 sText_PkmnTrappedBySprout[] = _("{B_DEF_NAME_WITH_PREFIX} was trapped\nby SPROUT!");
@@ -82,6 +88,12 @@ static const u8 sText_PlayerWhiteout2[] = _("{B_PLAYER_NAME} panicked and lost\n
 static const u8 sText_PlayerWhiteoutNoMoney[] = _("… … … …\p{B_PLAYER_NAME} whited out!{PAUSE_UNTIL_PRESS}");
 static const u8 sText_PlayerLostToEnemyTrainer[] = _("{B_PLAYER_NAME} is out of\nusable POKéMON!\p{B_PLAYER_NAME} lost against\n{B_TRAINER1_CLASS} {B_TRAINER1_NAME}!{PAUSE_UNTIL_PRESS}");
 static const u8 sText_PlayerPaidPrizeMoney[] = _("{B_PLAYER_NAME} paid ¥{B_BUFF1}\nas the prize money…\p… … … …\p{B_PLAYER_NAME} whited out!{PAUSE_UNTIL_PRESS}");
+static const u8 sText_QuestionPayOffTrainer[] = _("Forfeit the battle and pay ¥{B_BUFF1}?");
+static const u8 sText_CantAffordPayOff[] = _("You don't have the ¥{B_BUFF1}\nneeded to end the battle!\p");
+// A double_payoff trainer cutting in after the player agrees to pay (gBattleTextBuff1: the raised cost)
+static const u8 sText_Trainer1RaisesPayOff[] = _("{B_TRAINER1_CLASS} {B_TRAINER1_NAME}: Hold on!\nMake that ¥{B_BUFF1}!");
+static const u8 sText_Trainer2RaisesPayOff[] = _("{B_TRAINER2_CLASS} {B_TRAINER2_NAME}: Hold on!\nMake that ¥{B_BUFF1}!");
+static const u8 sText_PlayerPaidOffTrainer[] = _("{B_PLAYER_NAME} paid ¥{B_BUFF1}\nto end the battle!");
 static const u8 sText_PreventsEscape[] = _("{B_SCR_ACTIVE_NAME_WITH_PREFIX} prevents\nescape with {B_SCR_ACTIVE_ABILITY}!\p");
 static const u8 sText_CantEscape2[] = _("Can't escape!\p");
 static const u8 sText_AttackerCantEscape[] = _("{B_ATK_NAME_WITH_PREFIX} can't escape!");
@@ -1062,6 +1074,15 @@ const u8 *const gBattleStringsTable[BATTLESTRINGS_COUNT - BATTLESTRINGS_TABLE_ST
     [STRINGID_PLAYERLOSTTOENEMYTRAINER - BATTLESTRINGS_TABLE_START] = sText_PlayerLostToEnemyTrainer,
     [STRINGID_PLAYERPAIDPRIZEMONEY - BATTLESTRINGS_TABLE_START] = sText_PlayerPaidPrizeMoney,
     [STRINGID_PLAYERWHITEOUT_NOMONEY - BATTLESTRINGS_TABLE_START] = sText_PlayerWhiteoutNoMoney,
+    [STRINGID_QUESTIONPAYOFFTRAINER - BATTLESTRINGS_TABLE_START] = sText_QuestionPayOffTrainer,
+    [STRINGID_CANTAFFORDPAYOFF - BATTLESTRINGS_TABLE_START] = sText_CantAffordPayOff,
+    [STRINGID_PLAYERPAIDOFFTRAINER - BATTLESTRINGS_TABLE_START] = sText_PlayerPaidOffTrainer,
+    [STRINGID_TRAINER1PAIDOFFTEXT - BATTLESTRINGS_TABLE_START] = sText_TrainerPaidOffText,
+    [STRINGID_TRAINER2PAIDOFFTEXT - BATTLESTRINGS_TABLE_START] = sText_TrainerPaidOffText,
+    [STRINGID_TRAINER1VICTORYTEXT - BATTLESTRINGS_TABLE_START] = sText_TrainerVictoryText,
+    [STRINGID_TRAINER2VICTORYTEXT - BATTLESTRINGS_TABLE_START] = sText_TrainerVictoryText,
+    [STRINGID_TRAINER1RAISESPAYOFF - BATTLESTRINGS_TABLE_START] = sText_Trainer1RaisesPayOff,
+    [STRINGID_TRAINER2RAISESPAYOFF - BATTLESTRINGS_TABLE_START] = sText_Trainer2RaisesPayOff,
 };
 
 const u16 gMissStringIds[] =
@@ -1493,7 +1514,7 @@ const u8 gText_MoveInterfaceType[] = _("TYPE/");
 const u8 gText_MoveInterfacePpType[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW DYNAMIC_COLOR4 DYNAMIC_COLOR5 DYNAMIC_COLOR6}PP\nTYPE/");
 const u8 gText_MoveInterfaceDynamicColors[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW DYNAMIC_COLOR4 DYNAMIC_COLOR5 DYNAMIC_COLOR6}");
 const u8 gText_WhichMoveToForget4[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW DYNAMIC_COLOR4 DYNAMIC_COLOR5 DYNAMIC_COLOR6}Which move should\nbe forgotten?");
-const u8 gText_BattleYesNoChoice[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW DYNAMIC_COLOR4 DYNAMIC_COLOR5 DYNAMIC_COLOR6}Yes\nNo");
+const u8 gText_BattleYesNoChoice[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW DYNAMIC_COLOR4 DYNAMIC_COLOR5 DYNAMIC_COLOR6}YES\nNO");
 const u8 gText_BattleSwitchWhich[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW DYNAMIC_COLOR4 DYNAMIC_COLOR5 DYNAMIC_COLOR6}Switch\nwhich?");
 const u8 gText_BattleSwitchWhich2[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW DYNAMIC_COLOR4 DYNAMIC_COLOR5 DYNAMIC_COLOR6}");
 const u8 gText_BattleSwitchWhich3[] = _("{UP_ARROW}");
@@ -2481,6 +2502,18 @@ void BufferStringBattle(u16 stringID)
         break;
     case STRINGID_CANTESCAPE:
         stringPtr = sText_CantEscape;
+        break;
+    case STRINGID_TRAINER1PAIDOFFTEXT:
+    case STRINGID_TRAINER2PAIDOFFTEXT:
+        stringPtr = GetTrainerForfeitText(stringID == STRINGID_TRAINER2PAIDOFFTEXT);
+        if (stringPtr == NULL)
+            stringPtr = sText_TrainerPaidOffText;
+        break;
+    case STRINGID_TRAINER1VICTORYTEXT:
+    case STRINGID_TRAINER2VICTORYTEXT:
+        stringPtr = GetTrainerVictoryText(stringID == STRINGID_TRAINER2VICTORYTEXT);
+        if (stringPtr == NULL)
+            stringPtr = sText_TrainerVictoryText;
         break;
     default: // load a string from the table
         if (stringID >= BATTLESTRINGS_COUNT)

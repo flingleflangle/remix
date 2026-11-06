@@ -28,27 +28,27 @@ SSTidalRooms_EventScript_Bed::
 	end
 
 SSTidalRooms_EventScript_Colton::
-	trainerbattle_single TRAINER_COLTON, SSTidalRooms_Text_ColtonIntro, SSTidalRooms_Text_ColtonDefeat
+	trainerbattle_single TRAINER_COLTON, SSTidalRooms_Text_ColtonIntro, SSTidalRooms_Text_ColtonDefeat, forfeit_text=SSTidalRooms_Text_ColtonForfeit
 	msgbox SSTidalRooms_Text_ColtonPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 SSTidalRooms_EventScript_Micah::
-	trainerbattle_single TRAINER_MICAH, SSTidalRooms_Text_MicahIntro, SSTidalRooms_Text_MicahDefeat
+	trainerbattle_single TRAINER_MICAH, SSTidalRooms_Text_MicahIntro, SSTidalRooms_Text_MicahDefeat, forfeit_text=SSTidalRooms_Text_MicahForfeit
 	msgbox SSTidalRooms_Text_MicahPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 SSTidalRooms_EventScript_Thomas::
-	trainerbattle_single TRAINER_THOMAS, SSTidalRooms_Text_ThomasIntro, SSTidalRooms_Text_ThomasDefeat
+	trainerbattle_single TRAINER_THOMAS, SSTidalRooms_Text_ThomasIntro, SSTidalRooms_Text_ThomasDefeat, forfeit_text=SSTidalRooms_Text_ThomasForfeit
 	msgbox SSTidalRooms_Text_ThomasPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 SSTidalRooms_EventScript_Jed::
-	trainerbattle_double TRAINER_LEA_AND_JED, SSTidalRooms_Text_JedIntro, SSTidalRooms_Text_JedDefeat, SSTidalRooms_Text_JedNotEnoughMons
+	trainerbattle_double TRAINER_LEA_AND_JED, SSTidalRooms_Text_JedIntro, SSTidalRooms_Text_JedDefeat, SSTidalRooms_Text_JedNotEnoughMons, forfeit_text=SSTidalRooms_Text_JedForfeit
 	msgbox SSTidalRooms_Text_JedPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 SSTidalRooms_EventScript_Lea::
-	trainerbattle_double TRAINER_LEA_AND_JED, SSTidalRooms_Text_LeaIntro, SSTidalRooms_Text_LeaDefeat, SSTidalRooms_Text_LeaNotEnoughMons
+	trainerbattle_double TRAINER_LEA_AND_JED, SSTidalRooms_Text_LeaIntro, SSTidalRooms_Text_LeaDefeat, SSTidalRooms_Text_LeaNotEnoughMons, forfeit_text=SSTidalRooms_Text_LeaForfeit
 	msgbox SSTidalRooms_Text_LeaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -58,7 +58,7 @@ SSTidalRooms_EventScript_Garret::
 	end
 
 SSTidalRooms_EventScript_Naomi::
-	trainerbattle_single TRAINER_NAOMI, SSTidalRooms_Text_NaomiIntro, SSTidalRooms_Text_NaomiDefeat
+	trainerbattle_single TRAINER_NAOMI, SSTidalRooms_Text_NaomiIntro, SSTidalRooms_Text_NaomiDefeat, forfeit_text=SSTidalRooms_Text_NaomiForfeit
 	msgbox SSTidalRooms_Text_NaomiPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -74,6 +74,10 @@ SSTidalRooms_Text_ColtonIntro:
 SSTidalRooms_Text_ColtonDefeat:
 	.string "That was an enjoyable match!$"
 
+SSTidalRooms_Text_ColtonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 SSTidalRooms_Text_ColtonPostBattle:
 	.string "I get so excited imagining what kinds\n"
 	.string "of POKéMON I'll get to see in the next\l"
@@ -84,6 +88,10 @@ SSTidalRooms_Text_MicahIntro:
 
 SSTidalRooms_Text_MicahDefeat:
 	.string "Your friends are, indeed, strong.$"
+
+SSTidalRooms_Text_MicahForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 SSTidalRooms_Text_MicahPostBattle:
 	.string "Friends need not be human.\n"
@@ -97,6 +105,10 @@ SSTidalRooms_Text_ThomasDefeat:
 	.string "A loss is to be accepted without haste\n"
 	.string "or panic.$"
 
+SSTidalRooms_Text_ThomasForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 SSTidalRooms_Text_ThomasPostBattle:
 	.string "To be never ruffled in any situation is\n"
 	.string "the GENTLEMAN's code of conduct.$"
@@ -107,6 +119,10 @@ SSTidalRooms_Text_JedIntro:
 
 SSTidalRooms_Text_JedDefeat:
 	.string "JED: Sigh…$"
+
+SSTidalRooms_Text_JedForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 SSTidalRooms_Text_JedPostBattle:
 	.string "JED: It's the first time that our lovey-\n"
@@ -123,6 +139,10 @@ SSTidalRooms_Text_LeaIntro:
 
 SSTidalRooms_Text_LeaDefeat:
 	.string "LEA: Oh, boo!$"
+
+SSTidalRooms_Text_LeaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 SSTidalRooms_Text_LeaPostBattle:
 	.string "LEA: I can't believe it!\n"
@@ -154,6 +174,10 @@ SSTidalRooms_Text_NaomiIntro:
 SSTidalRooms_Text_NaomiDefeat:
 	.string "I see.\n"
 	.string "You're the active sort.$"
+
+SSTidalRooms_Text_NaomiForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 SSTidalRooms_Text_NaomiPostBattle:
 	.string "A world cruise on a luxury liner has its\n"

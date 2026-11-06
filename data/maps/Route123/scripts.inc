@@ -53,12 +53,12 @@ Route123_EventScript_Braxton::
 	end
 
 Route123_EventScript_Violet::
-	trainerbattle_single TRAINER_VIOLET, Route123_Text_VioletIntro, Route123_Text_VioletDefeat
+	trainerbattle_single TRAINER_VIOLET, Route123_Text_VioletIntro, Route123_Text_VioletDefeat, forfeit_text=Route123_Text_VioletForfeit
 	msgbox Route123_Text_VioletPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route123_EventScript_Cameron::
-	trainerbattle_single TRAINER_CAMERON_1, Route123_Text_CameronIntro, Route123_Text_CameronDefeat, Route123_EventScript_RegisterCameron
+	trainerbattle_single TRAINER_CAMERON_1, Route123_Text_CameronIntro, Route123_Text_CameronDefeat, Route123_EventScript_RegisterCameron, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route123_EventScript_RematchCameron
 	msgbox Route123_Text_CameronPostBattle, MSGBOX_DEFAULT
@@ -79,7 +79,7 @@ Route123_EventScript_RematchCameron::
 	end
 
 Route123_EventScript_Jacki::
-	trainerbattle_single TRAINER_JACKI_1, Route123_Text_JackiIntro, Route123_Text_JackiDefeat, Route123_EventScript_RegisterJacki
+	trainerbattle_single TRAINER_JACKI_1, Route123_Text_JackiIntro, Route123_Text_JackiDefeat, Route123_EventScript_RegisterJacki, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route123_EventScript_RematchJacki
 	msgbox Route123_Text_JackiPostBattle, MSGBOX_DEFAULT
@@ -100,12 +100,12 @@ Route123_EventScript_RematchJacki::
 	end
 
 Route123_EventScript_Miu::
-	trainerbattle_double TRAINER_MIU_AND_YUKI, Route123_Text_MiuIntro, Route123_Text_MiuDefeat, Route123_Text_MiuNotEnoughMons
+	trainerbattle_double TRAINER_MIU_AND_YUKI, Route123_Text_MiuIntro, Route123_Text_MiuDefeat, Route123_Text_MiuNotEnoughMons, forfeit_text=Route123_Text_MiuForfeit
 	msgbox Route123_Text_MiuPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route123_EventScript_Yuki::
-	trainerbattle_double TRAINER_MIU_AND_YUKI, Route123_Text_YukiIntro, Route123_Text_YukiDefeat, Route123_Text_YukiNotEnoughMons
+	trainerbattle_double TRAINER_MIU_AND_YUKI, Route123_Text_YukiIntro, Route123_Text_YukiDefeat, Route123_Text_YukiNotEnoughMons, forfeit_text=Route123_Text_YukiForfeit
 	msgbox Route123_Text_YukiPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -120,7 +120,7 @@ Route123_EventScript_Frederick::
 	end
 
 Route123_EventScript_Alberto::
-	trainerbattle_single TRAINER_ALBERTO, Route123_Text_AlbertoIntro, Route123_Text_AlbertoDefeat
+	trainerbattle_single TRAINER_ALBERTO, Route123_Text_AlbertoIntro, Route123_Text_AlbertoDefeat, forfeit_text=Route123_Text_AlbertoForfeit
 	msgbox Route123_Text_AlbertoPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -130,7 +130,7 @@ Route123_EventScript_Ed::
 	end
 
 Route123_EventScript_Kayley::
-	trainerbattle_single TRAINER_KAYLEY, Route123_Text_KayleyIntro, Route123_Text_KayleyDefeat
+	trainerbattle_single TRAINER_KAYLEY, Route123_Text_KayleyIntro, Route123_Text_KayleyDefeat, forfeit_text=Route123_Text_KayleyForfeit
 	msgbox Route123_Text_KayleyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -145,12 +145,12 @@ Route123_EventScript_Jazmyn::
 	end
 
 Route123_EventScript_Davis::
-	trainerbattle_single TRAINER_DAVIS, Route123_Text_DavisIntro, Route123_Text_DavisDefeat
+	trainerbattle_single TRAINER_DAVIS, Route123_Text_DavisIntro, Route123_Text_DavisDefeat, forfeit_text=Route123_Text_DavisForfeit
 	msgbox Route123_Text_DavisPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route123_EventScript_Fernando::
-	trainerbattle_single TRAINER_FERNANDO_1, Route123_Text_FernandoIntro, Route123_Text_FernandoDefeat, Route123_EventScript_RegisterFernando
+	trainerbattle_single TRAINER_FERNANDO_1, Route123_Text_FernandoIntro, Route123_Text_FernandoDefeat, Route123_EventScript_RegisterFernando, payoff=PAYOFF_ALLOW, forfeit_text=Route123_Text_FernandoForfeit
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route123_EventScript_RematchFernando
 	msgbox Route123_Text_FernandoPostBattle, MSGBOX_DEFAULT
@@ -166,7 +166,7 @@ Route123_EventScript_RegisterFernando::
 	end
 
 Route123_EventScript_RematchFernando::
-	trainerbattle_rematch TRAINER_FERNANDO_1, Route123_Text_FernandoRematchIntro, Route123_Text_FernandoRematchDefeat
+	trainerbattle_rematch TRAINER_FERNANDO_1, Route123_Text_FernandoRematchIntro, Route123_Text_FernandoRematchDefeat, forfeit_text=Route123_Text_FernandoRematchForfeit
 	msgbox Route123_Text_FernandoPostRematch, MSGBOX_AUTOCLOSE
 	end
 

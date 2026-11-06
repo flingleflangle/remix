@@ -93,12 +93,12 @@ JaggedPass_EventScript_GuardDefeated::
 	end
 
 JaggedPass_EventScript_Eric::
-	trainerbattle_single TRAINER_ERIC, JaggedPass_Text_EricIntro, JaggedPass_Text_EricDefeat
+	trainerbattle_single TRAINER_ERIC, JaggedPass_Text_EricIntro, JaggedPass_Text_EricDefeat, forfeit_text=JaggedPass_Text_EricForfeit
 	msgbox JaggedPass_Text_EricPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 JaggedPass_EventScript_Diana::
-	trainerbattle_single TRAINER_DIANA_1, JaggedPass_Text_DianaIntro, JaggedPass_Text_DianaDefeat, JaggedPass_EventScript_RegisterDiana
+	trainerbattle_single TRAINER_DIANA_1, JaggedPass_Text_DianaIntro, JaggedPass_Text_DianaDefeat, JaggedPass_EventScript_RegisterDiana, forfeit_text=JaggedPass_Text_DianaForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, JaggedPass_EventScript_DianaRematch
 	msgbox JaggedPass_Text_DianaPostBattle, MSGBOX_DEFAULT
@@ -113,12 +113,12 @@ JaggedPass_EventScript_RegisterDiana::
 	end
 
 JaggedPass_EventScript_DianaRematch::
-	trainerbattle_rematch TRAINER_DIANA_1, JaggedPass_Text_DianaRematchIntro, JaggedPass_Text_DianaRematchDefeat
+	trainerbattle_rematch TRAINER_DIANA_1, JaggedPass_Text_DianaRematchIntro, JaggedPass_Text_DianaRematchDefeat, forfeit_text=JaggedPass_Text_DianaRematchForfeit
 	msgbox JaggedPass_Text_DianaPostRematch, MSGBOX_AUTOCLOSE
 	end
 
 JaggedPass_EventScript_Ethan::
-	trainerbattle_single TRAINER_ETHAN_1, JaggedPass_Text_EthanIntro, JaggedPass_Text_EthanDefeat, JaggedPass_EventScript_RegisterEthan
+	trainerbattle_single TRAINER_ETHAN_1, JaggedPass_Text_EthanIntro, JaggedPass_Text_EthanDefeat, JaggedPass_EventScript_RegisterEthan, forfeit_text=JaggedPass_Text_EthanForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, JaggedPass_EventScript_EthanRematch
 	msgbox JaggedPass_Text_EthanPostBattle, MSGBOX_DEFAULT
@@ -133,7 +133,7 @@ JaggedPass_EventScript_RegisterEthan::
 	end
 
 JaggedPass_EventScript_EthanRematch::
-	trainerbattle_rematch TRAINER_ETHAN_1, JaggedPass_Text_EthanRematchIntro, JaggedPass_Text_EthanRematchDefeat
+	trainerbattle_rematch TRAINER_ETHAN_1, JaggedPass_Text_EthanRematchIntro, JaggedPass_Text_EthanRematchDefeat, forfeit_text=JaggedPass_Text_EthanRematchForfeit
 	msgbox JaggedPass_Text_EthanPostRematch, MSGBOX_AUTOCLOSE
 	end
 
@@ -143,7 +143,7 @@ JaggedPass_EventScript_Julio::
 	end
 
 JaggedPass_EventScript_Autumn::
-	trainerbattle_single TRAINER_AUTUMN, JaggedPass_Text_AutumnIntro, JaggedPass_Text_AutumnDefeat
+	trainerbattle_single TRAINER_AUTUMN, JaggedPass_Text_AutumnIntro, JaggedPass_Text_AutumnDefeat, forfeit_text=JaggedPass_Text_AutumnForfeit
 	msgbox JaggedPass_Text_AutumnPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -157,6 +157,10 @@ JaggedPass_Text_EricIntro:
 JaggedPass_Text_EricDefeat:
 	.string "Losing left me bitter!$"
 
+JaggedPass_Text_EricForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 JaggedPass_Text_EricPostBattle:
 	.string "Yes, I did lose at POKéMON…\p"
 	.string "But, when it comes to the love of\n"
@@ -169,6 +173,10 @@ JaggedPass_Text_DianaIntro:
 JaggedPass_Text_DianaDefeat:
 	.string "Ohhh, no!\n"
 	.string "The ground is too bumpy…$"
+
+JaggedPass_Text_DianaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 JaggedPass_Text_DianaPostBattle:
 	.string "Did you know?\p"
@@ -187,6 +195,10 @@ JaggedPass_Text_DianaRematchDefeat:
 	.string "I only lost because the ground is\n"
 	.string "too bumpy!$"
 
+JaggedPass_Text_DianaRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 JaggedPass_Text_DianaPostRematch:
 	.string "I'll forget about losing and just\n"
 	.string "enjoy this bumpy hike.$"
@@ -198,6 +210,10 @@ JaggedPass_Text_EthanIntro:
 JaggedPass_Text_EthanDefeat:
 	.string "It was all over while we were still\n"
 	.string "trying to find a good footing…$"
+
+JaggedPass_Text_EthanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 JaggedPass_Text_EthanPostBattle:
 	.string "If I had an ACRO BIKE, I'd be able to\n"
@@ -215,6 +231,10 @@ JaggedPass_Text_EthanRematchIntro:
 JaggedPass_Text_EthanRematchDefeat:
 	.string "It's still not easy to battle on this\n"
 	.string "bumpy ground…$"
+
+JaggedPass_Text_EthanRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 JaggedPass_Text_EthanPostRematch:
 	.string "I should get an ACRO BIKE from RYDEL\n"
@@ -259,6 +279,10 @@ JaggedPass_Text_AutumnIntro:
 JaggedPass_Text_AutumnDefeat:
 	.string "Hmm…\n"
 	.string "What went wrong?$"
+
+JaggedPass_Text_AutumnForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 JaggedPass_Text_AutumnPostBattle:
 	.string "What is that odd rock protrusion\n"

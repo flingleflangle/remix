@@ -7288,6 +7288,8 @@ void ClearBattleMonForms(void)
         gBattleMonForms[i] = 0;
 }
 
+static u16 GetTrainerClassBattleBGM(u8 trainerClass);
+
 u16 GetBattleBGM(void)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_KYOGRE_GROUDON)
@@ -7313,66 +7315,69 @@ u16 GetBattleBGM(void)
         else
             trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
 
-        switch (trainerClass)
-        {
-        case TRAINER_CLASS_DRAGON_TAMER:
-        case TRAINER_CLASS_EXPERT:
-        case TRAINER_CLASS_OLD_COUPLE:  
-            return MUS_TROMBE;
-        case TRAINER_CLASS_BUG_MANIAC:
-        case TRAINER_CLASS_COLLECTOR:
-        case TRAINER_CLASS_POKEMANIAC:
-            return MUS_RG_VS_TRAINER;
-        case TRAINER_CLASS_WINSTRATE:
-            return MUS_RG_VS_GYM_LEADER;
-        case TRAINER_CLASS_BEAUTY:
-        case TRAINER_CLASS_RICH_BOY:
-        case TRAINER_CLASS_GUITARIST:
-        case TRAINER_CLASS_TRIATHLETE:
-            return MUS_DD_MUSEUM;
-        case TRAINER_CLASS_COOLTRAINER:
-        case TRAINER_CLASS_COOLTRAINER_2:
-        case TRAINER_CLASS_BLACK_BELT:
-        case TRAINER_CLASS_BATTLE_GIRL:
-        case TRAINER_CLASS_PSYCHIC:
-            return MUS_DD_DRILL_MISSILE;
-        case TRAINER_CLASS_CRYSTAL_DUKE:
-            return MUS_T_MARIONETTE;
-        case TRAINER_CLASS_AQUA_LEADER:
-        case TRAINER_CLASS_MAGMA_LEADER:
-            return MUS_VS_AQUA_MAGMA_LEADER;
-        case TRAINER_CLASS_TEAM_AQUA:
-        case TRAINER_CLASS_TEAM_MAGMA:
-        case TRAINER_CLASS_AQUA_ADMIN:
-        case TRAINER_CLASS_MAGMA_ADMIN:
-            return MUS_VS_AQUA_MAGMA;
-        case TRAINER_CLASS_LEADER:
-            return MUS_VS_GYM_LEADER;
-        case TRAINER_CLASS_CHAMPION:
-            return MUS_VS_CHAMPION;
-        case TRAINER_CLASS_RIVAL:
-            if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
-                return MUS_VS_RIVAL;
-            if (!StringCompare(gTrainers[gTrainerBattleOpponent_A].trainerName, gText_BattleWallyName))
-                return MUS_VS_TRAINER;
-            return MUS_VS_RIVAL;
-        case TRAINER_CLASS_ELITE_FOUR:
-            return MUS_VS_ELITE_FOUR;
-        case TRAINER_CLASS_SALON_MAIDEN:
-        case TRAINER_CLASS_DOME_ACE:
-        case TRAINER_CLASS_PALACE_MAVEN:
-        case TRAINER_CLASS_ARENA_TYCOON:
-        case TRAINER_CLASS_FACTORY_HEAD:
-        case TRAINER_CLASS_PIKE_QUEEN:
-        case TRAINER_CLASS_PYRAMID_KING:
-            return MUS_VS_FRONTIER_BRAIN;
-        default:
-            return MUS_VS_TRAINER;
-        }
+        return GetTrainerClassBattleBGM(trainerClass);
     }
     else
     {
         return MUS_VS_WILD;
+    }
+}
+
+static u16 GetTrainerClassBattleBGM(u8 trainerClass)
+{
+    switch (trainerClass)
+    {
+    case TRAINER_CLASS_DRAGON_TAMER:
+    case TRAINER_CLASS_EXPERT:
+    case TRAINER_CLASS_OLD_COUPLE:
+    case TRAINER_CLASS_NINJA_BOY:
+        return MUS_TROMBE;
+    case TRAINER_CLASS_BUG_MANIAC:
+    case TRAINER_CLASS_COLLECTOR:
+    case TRAINER_CLASS_POKEMANIAC:
+    case TRAINER_CLASS_HEX_MANIAC:
+        return MUS_RG_VS_TRAINER;
+    case TRAINER_CLASS_WINSTRATE:
+        return MUS_RG_VS_GYM_LEADER;
+    case TRAINER_CLASS_BEAUTY:
+    case TRAINER_CLASS_RICH_BOY:
+    case TRAINER_CLASS_GUITARIST:
+    case TRAINER_CLASS_TRIATHLETE:
+        return MUS_DD_MUSEUM;
+    case TRAINER_CLASS_COOLTRAINER:
+    case TRAINER_CLASS_COOLTRAINER_2:
+    case TRAINER_CLASS_BLACK_BELT:
+    case TRAINER_CLASS_BATTLE_GIRL:
+    case TRAINER_CLASS_PSYCHIC:
+        return MUS_DD_DRILL_MISSILE;
+    case TRAINER_CLASS_CRYSTAL_DUKE:
+        return MUS_T_MARIONETTE;
+    case TRAINER_CLASS_AQUA_LEADER:
+    case TRAINER_CLASS_MAGMA_LEADER:
+        return MUS_VS_AQUA_MAGMA_LEADER;
+    case TRAINER_CLASS_TEAM_AQUA:
+    case TRAINER_CLASS_TEAM_MAGMA:
+    case TRAINER_CLASS_AQUA_ADMIN:
+    case TRAINER_CLASS_MAGMA_ADMIN:
+        return MUS_VS_AQUA_MAGMA;
+    case TRAINER_CLASS_LEADER:
+        return MUS_VS_GYM_LEADER;
+    case TRAINER_CLASS_CHAMPION:
+        return MUS_VS_CHAMPION;
+    case TRAINER_CLASS_RIVAL:
+        return MUS_VS_RIVAL;
+    case TRAINER_CLASS_ELITE_FOUR:
+        return MUS_VS_ELITE_FOUR;
+    case TRAINER_CLASS_SALON_MAIDEN:
+    case TRAINER_CLASS_DOME_ACE:
+    case TRAINER_CLASS_PALACE_MAVEN:
+    case TRAINER_CLASS_ARENA_TYCOON:
+    case TRAINER_CLASS_FACTORY_HEAD:
+    case TRAINER_CLASS_PIKE_QUEEN:
+    case TRAINER_CLASS_PYRAMID_KING:
+        return MUS_VS_FRONTIER_BRAIN;
+    default:
+        return MUS_VS_TRAINER;
     }
 }
 

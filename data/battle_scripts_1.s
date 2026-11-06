@@ -7574,6 +7574,86 @@ BattleScript_PrintPlayerForfeitedLinkBattle::
 	waitmessage B_WAIT_TIME_LONG
 	end2
 
+@ Run in a trainer battle whose trainers accept payment (see CanPayOffTrainerBattle);
+@ gBattleTextBuff1 holds the cost
+BattleScript_AskIfWantsToPayOffTrainer::
+	printselectionstring STRINGID_QUESTIONPAYOFFTRAINER
+	forfeityesnobox BS_ATTACKER
+	endselectionscript
+
+BattleScript_PrintCantAffordPayOff::
+	printselectionstring STRINGID_CANTAFFORDPAYOFF
+	endselectionscript
+
+@ The player agreed to pay a double_payoff trainer, who cuts in asking for twice as much
+@ (1/2: which trainer speaks). gBattleTextBuff1 holds the raised cost. A short pause, then the
+@ question comes back with the new price
+BattleScript_PayOffPriceRaised1::
+	printselectionstring STRINGID_TRAINER1RAISESPAYOFF
+	waitmessage B_WAIT_TIME_MED
+	goto BattleScript_AskIfWantsToPayOffTrainer
+
+BattleScript_PayOffPriceRaised2::
+	printselectionstring STRINGID_TRAINER2RAISESPAYOFF
+	waitmessage B_WAIT_TIME_MED
+	goto BattleScript_AskIfWantsToPayOffTrainer
+
+BattleScript_PayOffPriceRaisedCantAfford1::
+	printselectionstring STRINGID_TRAINER1RAISESPAYOFF
+	waitmessage B_WAIT_TIME_MED
+	goto BattleScript_PrintCantAffordPayOff
+
+BattleScript_PayOffPriceRaisedCantAfford2::
+	printselectionstring STRINGID_TRAINER2RAISESPAYOFF
+	waitmessage B_WAIT_TIME_MED
+	goto BattleScript_PrintCantAffordPayOff
+
+@ The money was taken in HandleAction_Run. The message comes first so it replaces the pay-off
+@ question at once; then the trainers recall their Pokémon and slide in to speak, as after a win
+BattleScript_PaidOffTrainer::
+	printstring STRINGID_PLAYERPAIDOFFTRAINER
+	waitmessage B_WAIT_TIME_MED
+	returnopponentmon1toball BS_ATTACKER
+	waitstate
+	returnopponentmon2toball BS_ATTACKER
+	waitstate
+	trainerslidein B_POSITION_OPPONENT_LEFT
+	waitstate
+	printstring STRINGID_TRAINER1PAIDOFFTEXT
+	waitmessage B_WAIT_TIME_MED
+	jumpifnotbattletype BATTLE_TYPE_TWO_OPPONENTS, BattleScript_PaidOffTrainerEnd
+	trainerslideout B_POSITION_OPPONENT_LEFT
+	waitstate
+	trainerslidein B_POSITION_OPPONENT_RIGHT
+	waitstate
+	printstring STRINGID_TRAINER2PAIDOFFTEXT
+	waitmessage B_WAIT_TIME_MED
+BattleScript_PaidOffTrainerEnd::
+	end2
+
+@ Losing to a trainer with a lose_script (see IsNoWhiteoutTrainerBattle): no money is lost; the
+@ trainers recall their Pokémon and slide in to say their victory_text
+BattleScript_LocalBattleLostNoWhiteout::
+	printstring STRINGID_PLAYERLOSTTOENEMYTRAINER
+	waitmessage B_WAIT_TIME_MED
+	returnopponentmon1toball BS_ATTACKER
+	waitstate
+	returnopponentmon2toball BS_ATTACKER
+	waitstate
+	trainerslidein B_POSITION_OPPONENT_LEFT
+	waitstate
+	printstring STRINGID_TRAINER1VICTORYTEXT
+	waitmessage B_WAIT_TIME_MED
+	jumpifnotbattletype BATTLE_TYPE_TWO_OPPONENTS, BattleScript_LocalBattleLostNoWhiteoutEnd
+	trainerslideout B_POSITION_OPPONENT_LEFT
+	waitstate
+	trainerslidein B_POSITION_OPPONENT_RIGHT
+	waitstate
+	printstring STRINGID_TRAINER2VICTORYTEXT
+	waitmessage B_WAIT_TIME_MED
+BattleScript_LocalBattleLostNoWhiteoutEnd::
+	end2
+
 @ A follower helping catch a wild Pokémon (follower_parties.c): their line from the map script,
 @ said once before the first turn
 BattleScript_FollowerHelpCatchLine::

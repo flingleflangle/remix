@@ -23,12 +23,12 @@ MtPyre_2F_EventScript_Mark::
 	end
 
 MtPyre_2F_EventScript_Luke::
-	trainerbattle_double TRAINER_DEZ_AND_LUKE, MtPyre_2F_Text_LukeIntro, MtPyre_2F_Text_LukeDefeat, MtPyre_2F_Text_LukeNotEnoughMons
+	trainerbattle_double TRAINER_DEZ_AND_LUKE, MtPyre_2F_Text_LukeIntro, MtPyre_2F_Text_LukeDefeat, MtPyre_2F_Text_LukeNotEnoughMons, forfeit_text=MtPyre_2F_Text_LukeForfeit
 	msgbox MtPyre_2F_Text_LukePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 MtPyre_2F_EventScript_Dez::
-	trainerbattle_double TRAINER_DEZ_AND_LUKE, MtPyre_2F_Text_DezIntro, MtPyre_2F_Text_DezDefeat, MtPyre_2F_Text_DezNotEnoughMons
+	trainerbattle_double TRAINER_DEZ_AND_LUKE, MtPyre_2F_Text_DezIntro, MtPyre_2F_Text_DezDefeat, MtPyre_2F_Text_DezNotEnoughMons, forfeit_text=MtPyre_2F_Text_DezForfeit
 	msgbox MtPyre_2F_Text_DezPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -74,6 +74,10 @@ MtPyre_2F_Text_LukeIntro:
 MtPyre_2F_Text_LukeDefeat:
 	.string "LUKE: Whoopsie!$"
 
+MtPyre_2F_Text_LukeForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 MtPyre_2F_Text_LukePostBattle:
 	.string "LUKE: Well, we lost but that's okay!\n"
 	.string "I'm right here by your side.\l"
@@ -95,6 +99,10 @@ MtPyre_2F_Text_DezIntro:
 
 MtPyre_2F_Text_DezDefeat:
 	.string "DEZ: Waaaah! I'm scared!$"
+
+MtPyre_2F_Text_DezForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 MtPyre_2F_Text_DezPostBattle:
 	.string "DEZ: We're lovey-dovey, so we don't\n"

@@ -85,17 +85,17 @@ Route110_TrickHousePuzzle2_EventScript_PressButton4::
 	return
 
 Route110_TrickHousePuzzle2_EventScript_Ted::
-	trainerbattle_single TRAINER_TED, Route110_TrickHousePuzzle2_Text_TedIntro, Route110_TrickHousePuzzle2_Text_TedDefeat
+	trainerbattle_single TRAINER_TED, Route110_TrickHousePuzzle2_Text_TedIntro, Route110_TrickHousePuzzle2_Text_TedDefeat, forfeit_text=Route110_TrickHousePuzzle2_Text_TedForfeit
 	msgbox Route110_TrickHousePuzzle2_Text_TedPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_TrickHousePuzzle2_EventScript_Paul::
-	trainerbattle_single TRAINER_PAUL, Route110_TrickHousePuzzle2_Text_PaulIntro, Route110_TrickHousePuzzle2_Text_PaulDefeat
+	trainerbattle_single TRAINER_PAUL, Route110_TrickHousePuzzle2_Text_PaulIntro, Route110_TrickHousePuzzle2_Text_PaulDefeat, forfeit_text=Route110_TrickHousePuzzle2_Text_PaulForfeit
 	msgbox Route110_TrickHousePuzzle2_Text_PaulPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_TrickHousePuzzle2_EventScript_Georgia::
-	trainerbattle_single TRAINER_GEORGIA, Route110_TrickHousePuzzle2_Text_GeorgiaIntro, Route110_TrickHousePuzzle2_Text_GeorgiaDefeat
+	trainerbattle_single TRAINER_GEORGIA, Route110_TrickHousePuzzle2_Text_GeorgiaIntro, Route110_TrickHousePuzzle2_Text_GeorgiaDefeat, forfeit_text=Route110_TrickHousePuzzle2_Text_GeorgiaForfeit
 	msgbox Route110_TrickHousePuzzle2_Text_GeorgiaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -113,6 +113,10 @@ Route110_TrickHousePuzzle2_Text_TedDefeat:
 	.string "After that battle, I'm even more\n"
 	.string "confused!$"
 
+Route110_TrickHousePuzzle2_Text_TedForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_TrickHousePuzzle2_Text_TedPostBattle:
 	.string "Can I get you to push all the buttons\n"
 	.string "for me?$"
@@ -124,6 +128,10 @@ Route110_TrickHousePuzzle2_Text_PaulIntro:
 Route110_TrickHousePuzzle2_Text_PaulDefeat:
 	.string "You're good at battling too?$"
 
+Route110_TrickHousePuzzle2_Text_PaulForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_TrickHousePuzzle2_Text_PaulPostBattle:
 	.string "The TRICK MASTER rigged all the tricks\n"
 	.string "in this house all by himself.$"
@@ -134,6 +142,10 @@ Route110_TrickHousePuzzle2_Text_GeorgiaIntro:
 
 Route110_TrickHousePuzzle2_Text_GeorgiaDefeat:
 	.string "I didn't study battling enough!$"
+
+Route110_TrickHousePuzzle2_Text_GeorgiaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_TrickHousePuzzle2_Text_GeorgiaPostBattle:
 	.string "You're strong, aren't you?\n"

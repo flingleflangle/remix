@@ -826,6 +826,7 @@ void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
     LoadObjEventTemplatesFromHeader();
     TrySetMapSaveWarpStatus();
     ClearTempFieldEventData();
+    ClearPaidOffTrainers();
     ResetCyclingRoadChallengeData();
     RestartWildEncounterImmunitySteps();
     TryUpdateRandomTrainerRematches(mapGroup, mapNum);
@@ -878,6 +879,7 @@ static void LoadMapFromWarp(bool32 a1)
     CheckLeftFriendsSecretBase();
     TrySetMapSaveWarpStatus();
     ClearTempFieldEventData();
+    ClearPaidOffTrainers();
     ResetCyclingRoadChallengeData();
     RestartWildEncounterImmunitySteps();
     TryUpdateRandomTrainerRematches(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum);

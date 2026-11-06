@@ -287,17 +287,17 @@ Route110_TrickHousePuzzle3_EventScript_FoundScroll::
 	end
 
 Route110_TrickHousePuzzle3_EventScript_Justin::
-	trainerbattle_single TRAINER_JUSTIN, Route110_TrickHousePuzzle3_Text_JustinIntro, Route110_TrickHousePuzzle3_Text_JustinDefeat
+	trainerbattle_single TRAINER_JUSTIN, Route110_TrickHousePuzzle3_Text_JustinIntro, Route110_TrickHousePuzzle3_Text_JustinDefeat, forfeit_text=Route110_TrickHousePuzzle3_Text_JustinForfeit
 	msgbox Route110_TrickHousePuzzle3_Text_JustinPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_TrickHousePuzzle3_EventScript_Martha::
-	trainerbattle_single TRAINER_MARTHA, Route110_TrickHousePuzzle3_Text_MarthaIntro, Route110_TrickHousePuzzle3_Text_MarthaDefeat
+	trainerbattle_single TRAINER_MARTHA, Route110_TrickHousePuzzle3_Text_MarthaIntro, Route110_TrickHousePuzzle3_Text_MarthaDefeat, forfeit_text=Route110_TrickHousePuzzle3_Text_MarthaForfeit
 	msgbox Route110_TrickHousePuzzle3_Text_MarthaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route110_TrickHousePuzzle3_EventScript_Alan::
-	trainerbattle_single TRAINER_ALAN, Route110_TrickHousePuzzle3_Text_AlanIntro, Route110_TrickHousePuzzle3_Text_AlanDefeat
+	trainerbattle_single TRAINER_ALAN, Route110_TrickHousePuzzle3_Text_AlanIntro, Route110_TrickHousePuzzle3_Text_AlanDefeat, forfeit_text=Route110_TrickHousePuzzle3_Text_AlanForfeit
 	msgbox Route110_TrickHousePuzzle3_Text_AlanPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -315,6 +315,10 @@ Route110_TrickHousePuzzle3_Text_JustinDefeat:
 	.string "I'm already having trouble, and then\n"
 	.string "you have to beat me? It's not fair!$"
 
+Route110_TrickHousePuzzle3_Text_JustinForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_TrickHousePuzzle3_Text_JustinPostBattle:
 	.string "It's full of doors here!\n"
 	.string "It's too small and dark in here! Help!$"
@@ -325,6 +329,10 @@ Route110_TrickHousePuzzle3_Text_MarthaIntro:
 
 Route110_TrickHousePuzzle3_Text_MarthaDefeat:
 	.string "You… You're awful!$"
+
+Route110_TrickHousePuzzle3_Text_MarthaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_TrickHousePuzzle3_Text_MarthaPostBattle:
 	.string "I know I'm weak!\n"
@@ -337,6 +345,10 @@ Route110_TrickHousePuzzle3_Text_AlanIntro:
 Route110_TrickHousePuzzle3_Text_AlanDefeat:
 	.string "I don't get it.\n"
 	.string "How did I lose?$"
+
+Route110_TrickHousePuzzle3_Text_AlanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_TrickHousePuzzle3_Text_AlanPostBattle:
 	.string "I don't get it.\n"

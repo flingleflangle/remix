@@ -80,27 +80,27 @@ Route114_EventScript_LanettesHouseSign::
 	end
 
 Route114_EventScript_Lenny::
-	trainerbattle_single TRAINER_LENNY, Route114_Text_LennyIntro, Route114_Text_LennyDefeat
+	trainerbattle_single TRAINER_LENNY, Route114_Text_LennyIntro, Route114_Text_LennyDefeat, forfeit_text=Route114_Text_LennyForfeit
 	msgbox Route114_Text_LennyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Lucas::
-	trainerbattle_single TRAINER_LUCAS_1, Route114_Text_LucasIntro, Route114_Text_LucasDefeat
+	trainerbattle_single TRAINER_LUCAS_1, Route114_Text_LucasIntro, Route114_Text_LucasDefeat, forfeit_text=Route114_Text_LucasForfeit
 	msgbox Route114_Text_LucasPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Shane::
-	trainerbattle_single TRAINER_SHANE, Route114_Text_ShaneIntro, Route114_Text_ShaneDefeat
+	trainerbattle_single TRAINER_SHANE, Route114_Text_ShaneIntro, Route114_Text_ShaneDefeat, forfeit_text=Route114_Text_ShaneForfeit
 	msgbox Route114_Text_ShanePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Nancy::
-	trainerbattle_single TRAINER_NANCY, Route114_Text_NancyIntro, Route114_Text_NancyDefeat
+	trainerbattle_single TRAINER_NANCY, Route114_Text_NancyIntro, Route114_Text_NancyDefeat, forfeit_text=Route114_Text_NancyForfeit
 	msgbox Route114_Text_NancyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Steve::
-	trainerbattle_single TRAINER_STEVE_1, Route114_Text_SteveIntro, Route114_Text_SteveDefeat, Route114_EventScript_RegisterSteve
+	trainerbattle_single TRAINER_STEVE_1, Route114_Text_SteveIntro, Route114_Text_SteveDefeat, Route114_EventScript_RegisterSteve, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route114_EventScript_RematchSteve
 	msgbox Route114_Text_StevePostBattle, MSGBOX_DEFAULT
@@ -121,7 +121,7 @@ Route114_EventScript_RematchSteve::
 	end
 
 Route114_EventScript_Bernie::
-	trainerbattle_single TRAINER_BERNIE_1, Route114_Text_BernieIntro, Route114_Text_BernieDefeat, Route114_EventScript_RegisterBernie
+	trainerbattle_single TRAINER_BERNIE_1, Route114_Text_BernieIntro, Route114_Text_BernieDefeat, Route114_EventScript_RegisterBernie, forfeit_text=Route114_Text_BernieForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route114_EventScript_RematchBernie
 	msgbox Route114_Text_BerniePostBattle, MSGBOX_DEFAULT
@@ -137,42 +137,42 @@ Route114_EventScript_RegisterBernie::
 	end
 
 Route114_EventScript_RematchBernie::
-	trainerbattle_rematch TRAINER_BERNIE_1, Route114_Text_BernieRematchIntro, Route114_Text_BernieRematchDefeat
+	trainerbattle_rematch TRAINER_BERNIE_1, Route114_Text_BernieRematchIntro, Route114_Text_BernieRematchDefeat, forfeit_text=Route114_Text_BernieRematchForfeit
 	msgbox Route114_Text_BerniePostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Claude::
-	trainerbattle_single TRAINER_CLAUDE, Route114_Text_ClaudeIntro, Route114_Text_ClaudeDefeat
+	trainerbattle_single TRAINER_CLAUDE, Route114_Text_ClaudeIntro, Route114_Text_ClaudeDefeat, forfeit_text=Route114_Text_ClaudeForfeit
 	msgbox Route114_Text_ClaudePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Nolan::
-	trainerbattle_single TRAINER_NOLAN, Route114_Text_NolanIntro, Route114_Text_NolanDefeat
+	trainerbattle_single TRAINER_NOLAN, Route114_Text_NolanIntro, Route114_Text_NolanDefeat, forfeit_text=Route114_Text_NolanForfeit
 	msgbox Route114_Text_NolanPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Tyra::
-	trainerbattle_double TRAINER_TYRA_AND_IVY, Route114_Text_TyraIntro, Route114_Text_TyraDefeat, Route114_Text_TyraNotEnoughMons
+	trainerbattle_double TRAINER_TYRA_AND_IVY, Route114_Text_TyraIntro, Route114_Text_TyraDefeat, Route114_Text_TyraNotEnoughMons, forfeit_text=Route114_Text_TyraForfeit
 	msgbox Route114_Text_TyraPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Ivy::
-	trainerbattle_double TRAINER_TYRA_AND_IVY, Route114_Text_IvyIntro, Route114_Text_IvyDefeat, Route114_Text_IvyNotEnoughMons
+	trainerbattle_double TRAINER_TYRA_AND_IVY, Route114_Text_IvyIntro, Route114_Text_IvyDefeat, Route114_Text_IvyNotEnoughMons, forfeit_text=Route114_Text_IvyForfeit
 	msgbox Route114_Text_IvyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Angelina::
-	trainerbattle_single TRAINER_ANGELINA, Route114_Text_AngelinaIntro, Route114_Text_AngelinaDefeat
+	trainerbattle_single TRAINER_ANGELINA, Route114_Text_AngelinaIntro, Route114_Text_AngelinaDefeat, forfeit_text=Route114_Text_AngelinaForfeit
 	msgbox Route114_Text_AngelinaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Charlotte::
-	trainerbattle_single TRAINER_CHARLOTTE, Route114_Text_CharlotteIntro, Route114_Text_CharlotteDefeat
+	trainerbattle_single TRAINER_CHARLOTTE, Route114_Text_CharlotteIntro, Route114_Text_CharlotteDefeat, forfeit_text=Route114_Text_CharlotteForfeit
 	msgbox Route114_Text_CharlottePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route114_EventScript_Kai::
-	trainerbattle_single TRAINER_KAI, Route114_Text_KaiIntro, Route114_Text_KaiDefeat
+	trainerbattle_single TRAINER_KAI, Route114_Text_KaiIntro, Route114_Text_KaiDefeat, forfeit_text=Route114_Text_KaiForfeit
 	msgbox Route114_Text_KaiPostBattle, MSGBOX_AUTOCLOSE
 	end
 

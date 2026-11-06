@@ -247,12 +247,12 @@ Route112_EventScript_Hiker::
 	end
 
 Route112_EventScript_Brice::
-	trainerbattle_single TRAINER_BRICE, Route112_Text_BriceIntro, Route112_Text_BriceDefeat
+	trainerbattle_single TRAINER_BRICE, Route112_Text_BriceIntro, Route112_Text_BriceDefeat, forfeit_text=Route112_Text_BriceForfeit
 	msgbox Route112_Text_BricePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route112_EventScript_Trent::
-	trainerbattle_single TRAINER_TRENT_1, Route112_Text_TrentIntro, Route112_Text_TrentDefeat, Route112_EventScript_RegisterTrent
+	trainerbattle_single TRAINER_TRENT_1, Route112_Text_TrentIntro, Route112_Text_TrentDefeat, Route112_EventScript_RegisterTrent, forfeit_text=Route112_Text_TrentForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route112_EventScript_RematchTrent
 	msgbox Route112_Text_TrentPostBattle, MSGBOX_DEFAULT
@@ -268,27 +268,27 @@ Route112_EventScript_RegisterTrent::
 	end
 
 Route112_EventScript_RematchTrent::
-	trainerbattle_rematch TRAINER_TRENT_1, Route112_Text_TrentRematchIntro, Route112_Text_TrentRematchDefeat
+	trainerbattle_rematch TRAINER_TRENT_1, Route112_Text_TrentRematchIntro, Route112_Text_TrentRematchDefeat, forfeit_text=Route112_Text_TrentRematchForfeit
 	msgbox Route112_Text_TrentRematchPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route112_EventScript_Larry::
-	trainerbattle_single TRAINER_LARRY, Route112_Text_LarryIntro, Route112_Text_LarryDefeat
+	trainerbattle_single TRAINER_LARRY, Route112_Text_LarryIntro, Route112_Text_LarryDefeat, forfeit_text=Route112_Text_LarryForfeit
 	msgbox Route112_Text_LarryPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route112_EventScript_Carol::
-	trainerbattle_single TRAINER_CAROL, Route112_Text_CarolIntro, Route112_Text_CarolDefeat
+	trainerbattle_single TRAINER_CAROL, Route112_Text_CarolIntro, Route112_Text_CarolDefeat, forfeit_text=Route112_Text_CarolForfeit
 	msgbox Route112_Text_CarolPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route112_EventScript_Bryant::
-	trainerbattle_single TRAINER_BRYANT, Route112_Text_BryantIntro, Route112_Text_BryantDefeat
+	trainerbattle_single TRAINER_BRYANT, Route112_Text_BryantIntro, Route112_Text_BryantDefeat, forfeit_text=Route112_Text_BryantForfeit
 	msgbox Route112_Text_BryantPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route112_EventScript_Shayla::
-	trainerbattle_single TRAINER_SHAYLA, Route112_Text_ShaylaIntro, Route112_Text_ShaylaDefeat
+	trainerbattle_single TRAINER_SHAYLA, Route112_Text_ShaylaIntro, Route112_Text_ShaylaDefeat, forfeit_text=Route112_Text_ShaylaForfeit
 	msgbox Route112_Text_ShaylaPostBattle, MSGBOX_AUTOCLOSE
 	end
 

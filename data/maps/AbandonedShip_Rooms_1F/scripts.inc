@@ -6,12 +6,12 @@ AbandonedShip_Rooms_1F_EventScript_Gentleman::
 	end
 
 AbandonedShip_Rooms_1F_EventScript_Demetrius::
-	trainerbattle_single TRAINER_DEMETRIUS, AbandonedShip_Rooms_1F_Text_DemetriusIntro, AbandonedShip_Rooms_1F_Text_DemetriusDefeat
+	trainerbattle_single TRAINER_DEMETRIUS, AbandonedShip_Rooms_1F_Text_DemetriusIntro, AbandonedShip_Rooms_1F_Text_DemetriusDefeat, forfeit_text=AbandonedShip_Rooms_1F_Text_DemetriusForfeit
 	msgbox AbandonedShip_Rooms_1F_Text_DemetriusPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 AbandonedShip_Rooms_1F_EventScript_Thalia::
-	trainerbattle_single TRAINER_THALIA_1, AbandonedShip_Rooms_1F_Text_ThaliaIntro, AbandonedShip_Rooms_1F_Text_ThaliaDefeat, AbandonedShip_Rooms_1F_EventScript_RegisterThalia
+	trainerbattle_single TRAINER_THALIA_1, AbandonedShip_Rooms_1F_Text_ThaliaIntro, AbandonedShip_Rooms_1F_Text_ThaliaDefeat, AbandonedShip_Rooms_1F_EventScript_RegisterThalia, payoff=PAYOFF_ALLOW, forfeit_text=AbandonedShip_Rooms_1F_Text_ThaliaForfeit
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, AbandonedShip_Rooms_1F_EventScript_ThaliaRematch
 	msgbox AbandonedShip_Rooms_1F_Text_ThaliaPostBattle, MSGBOX_DEFAULT
@@ -27,7 +27,7 @@ AbandonedShip_Rooms_1F_EventScript_RegisterThalia::
 	end
 
 AbandonedShip_Rooms_1F_EventScript_ThaliaRematch::
-	trainerbattle_rematch TRAINER_THALIA_1, AbandonedShip_Rooms_1F_Text_ThaliaRematchIntro, AbandonedShip_Rooms_1F_Text_ThaliaRematchDefeat
+	trainerbattle_rematch TRAINER_THALIA_1, AbandonedShip_Rooms_1F_Text_ThaliaRematchIntro, AbandonedShip_Rooms_1F_Text_ThaliaRematchDefeat, forfeit_text=AbandonedShip_Rooms_1F_Text_ThaliaRematchForfeit
 	msgbox AbandonedShip_Rooms_1F_Text_ThaliaPostRematch, MSGBOX_AUTOCLOSE
 	end
 
@@ -43,6 +43,10 @@ AbandonedShip_Rooms_1F_Text_ThaliaIntro:
 
 AbandonedShip_Rooms_1F_Text_ThaliaDefeat:
 	.string "Not just curious, but also strong…$"
+
+AbandonedShip_Rooms_1F_Text_ThaliaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 AbandonedShip_Rooms_1F_Text_ThaliaPostBattle:
 	.string "The man next door…\p"
@@ -60,6 +64,10 @@ AbandonedShip_Rooms_1F_Text_ThaliaRematchIntro:
 AbandonedShip_Rooms_1F_Text_ThaliaRematchDefeat:
 	.string "Aren't you too strong?$"
 
+AbandonedShip_Rooms_1F_Text_ThaliaRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 AbandonedShip_Rooms_1F_Text_ThaliaPostRematch:
 	.string "I'm sure that man's up to something!\n"
 	.string "He just acts so suspiciously!$"
@@ -70,6 +78,10 @@ AbandonedShip_Rooms_1F_Text_DemetriusIntro:
 
 AbandonedShip_Rooms_1F_Text_DemetriusDefeat:
 	.string "Oh, you're not my mom.$"
+
+AbandonedShip_Rooms_1F_Text_DemetriusForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 AbandonedShip_Rooms_1F_Text_DemetriusPostBattle:
 	.string "I'm in trouble with my mom, so I ran.\n"

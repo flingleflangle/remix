@@ -34,17 +34,17 @@ Route130_EventScript_CheckSetAbnormalWeather::
 	return
 
 Route130_EventScript_Rodney::
-	trainerbattle_single TRAINER_RODNEY, Route130_Text_RodneyIntro, Route130_Text_RodneyDefeat
+	trainerbattle_single TRAINER_RODNEY, Route130_Text_RodneyIntro, Route130_Text_RodneyDefeat, forfeit_text=Route130_Text_RodneyForfeit
 	msgbox Route130_Text_RodneyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route130_EventScript_Katie::
-	trainerbattle_single TRAINER_KATIE, Route130_Text_KatieIntro, Route130_Text_KatieDefeat
+	trainerbattle_single TRAINER_KATIE, Route130_Text_KatieIntro, Route130_Text_KatieDefeat, forfeit_text=Route130_Text_KatieForfeit
 	msgbox Route130_Text_KatiePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route130_EventScript_Santiago::
-	trainerbattle_single TRAINER_SANTIAGO, Route130_Text_SantiagoIntro, Route130_Text_SantiagoDefeat
+	trainerbattle_single TRAINER_SANTIAGO, Route130_Text_SantiagoIntro, Route130_Text_SantiagoDefeat, forfeit_text=Route130_Text_SantiagoForfeit
 	msgbox Route130_Text_SantiagoPostBattle, MSGBOX_AUTOCLOSE
 	end
 

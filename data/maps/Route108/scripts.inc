@@ -2,22 +2,22 @@ Route108_MapScripts::
 	.byte 0
 
 Route108_EventScript_Jerome::
-	trainerbattle_single TRAINER_JEROME, Route108_Text_JeromeIntro, Route108_Text_JeromeDefeated
+	trainerbattle_single TRAINER_JEROME, Route108_Text_JeromeIntro, Route108_Text_JeromeDefeated, forfeit_text=Route108_Text_JeromeForfeit
 	msgbox Route108_Text_JeromePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route108_EventScript_Matthew::
-	trainerbattle_single TRAINER_MATTHEW, Route108_Text_MatthewIntro, Route108_Text_MatthewDefeated
+	trainerbattle_single TRAINER_MATTHEW, Route108_Text_MatthewIntro, Route108_Text_MatthewDefeated, forfeit_text=Route108_Text_MatthewForfeit
 	msgbox Route108_Text_MatthewPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route108_EventScript_Tara::
-	trainerbattle_single TRAINER_TARA, Route108_Text_TaraIntro, Route108_Text_TaraDefeated
+	trainerbattle_single TRAINER_TARA, Route108_Text_TaraIntro, Route108_Text_TaraDefeated, forfeit_text=Route108_Text_TaraForfeit
 	msgbox Route108_Text_TaraPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route108_EventScript_Missy::
-	trainerbattle_single TRAINER_MISSY, Route108_Text_MissyIntro, Route108_Text_MissyDefeated
+	trainerbattle_single TRAINER_MISSY, Route108_Text_MissyIntro, Route108_Text_MissyDefeated, forfeit_text=Route108_Text_MissyForfeit
 	msgbox Route108_Text_MissyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -27,7 +27,7 @@ Route108_EventScript_Carolina::
 	end
 
 Route108_EventScript_Cory::
-	trainerbattle_single TRAINER_CORY_1, Route108_Text_CoryIntro, Route108_Text_CoryDefeated, Route108_EventScript_CoryRegisterMatchCallAfterBattle
+	trainerbattle_single TRAINER_CORY_1, Route108_Text_CoryIntro, Route108_Text_CoryDefeated, Route108_EventScript_CoryRegisterMatchCallAfterBattle, forfeit_text=Route108_Text_CoryForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route108_EventScript_CoryRematch
 	msgbox Route108_Text_CoryPostBattle, MSGBOX_DEFAULT
@@ -43,7 +43,7 @@ Route108_EventScript_CoryRegisterMatchCallAfterBattle::
 	end
 
 Route108_EventScript_CoryRematch::
-	trainerbattle_rematch TRAINER_CORY_1, Route108_Text_CoryRematchIntro, Route108_Text_CoryRematchDefeated
+	trainerbattle_rematch TRAINER_CORY_1, Route108_Text_CoryRematchIntro, Route108_Text_CoryRematchDefeated, forfeit_text=Route108_Text_CoryRematchForfeit
 	msgbox Route108_Text_CoryRematchPostBattle, MSGBOX_AUTOCLOSE
 	end
 

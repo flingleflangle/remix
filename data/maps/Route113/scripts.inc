@@ -47,17 +47,17 @@ Route113_EventScript_TrainerTipsRegisterKeyItems::
 	end
 
 Route113_EventScript_Jaylen::
-	trainerbattle_single TRAINER_JAYLEN, Route113_Text_JaylenIntro, Route113_Text_JaylenDefeat
+	trainerbattle_single TRAINER_JAYLEN, Route113_Text_JaylenIntro, Route113_Text_JaylenDefeat, forfeit_text=Route113_Text_JaylenForfeit
 	msgbox Route113_Text_JaylenPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route113_EventScript_Dillon::
-	trainerbattle_single TRAINER_DILLON, Route113_Text_DillonIntro, Route113_Text_DillonDefeat
+	trainerbattle_single TRAINER_DILLON, Route113_Text_DillonIntro, Route113_Text_DillonDefeat, forfeit_text=Route113_Text_DillonForfeit
 	msgbox Route113_Text_DillonPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route113_EventScript_Madeline::
-	trainerbattle_single TRAINER_MADELINE_1, Route113_Text_MadelineIntro, Route113_Text_MadelineDefeat, Route113_EventScript_RegisterMadeline
+	trainerbattle_single TRAINER_MADELINE_1, Route113_Text_MadelineIntro, Route113_Text_MadelineDefeat, Route113_EventScript_RegisterMadeline, forfeit_text=Route113_Text_MadelineForfeit, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route113_EventScript_RematchMadeline
 	msgbox Route113_Text_MadelinePostBattle, MSGBOX_DEFAULT
@@ -73,12 +73,12 @@ Route113_EventScript_RegisterMadeline::
 	end
 
 Route113_EventScript_RematchMadeline::
-	trainerbattle_rematch TRAINER_MADELINE_1, Route113_Text_MadelineRematchIntro, Route113_Text_MadelineRematchDefeat
+	trainerbattle_rematch TRAINER_MADELINE_1, Route113_Text_MadelineRematchIntro, Route113_Text_MadelineRematchDefeat, forfeit_text=Route113_Text_MadelineRematchForfeit
 	msgbox Route113_Text_MadelinePostRematch, MSGBOX_AUTOCLOSE
 	end
 
 Route113_EventScript_Lao::
-	trainerbattle_single TRAINER_LAO_1, Route113_Text_LaoIntro, Route113_Text_LaoDefeat, Route113_EventScript_RegisterLao
+	trainerbattle_single TRAINER_LAO_1, Route113_Text_LaoIntro, Route113_Text_LaoDefeat, Route113_EventScript_RegisterLao, payoff=PAYOFF_ALLOW
 	specialvar VAR_RESULT, ShouldTryRematchBattle
 	goto_if_eq VAR_RESULT, TRUE, Route113_EventScript_RematchLao
 	msgbox Route113_Text_LaoPostBattle, MSGBOX_DEFAULT
@@ -104,27 +104,27 @@ Route113_EventScript_Lung::
 	end
 
 Route113_EventScript_Tori::
-	trainerbattle_double TRAINER_TORI_AND_TIA, Route113_Text_ToriIntro, Route113_Text_ToriDefeat, Route113_Text_ToriNotEnoughMons
+	trainerbattle_double TRAINER_TORI_AND_TIA, Route113_Text_ToriIntro, Route113_Text_ToriDefeat, Route113_Text_ToriNotEnoughMons, forfeit_text=Route113_Text_ToriForfeit
 	msgbox Route113_Text_ToriPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route113_EventScript_Tia::
-	trainerbattle_double TRAINER_TORI_AND_TIA, Route113_Text_TiaIntro, Route113_Text_TiaDefeat, Route113_Text_TiaNotEnoughMons
+	trainerbattle_double TRAINER_TORI_AND_TIA, Route113_Text_TiaIntro, Route113_Text_TiaDefeat, Route113_Text_TiaNotEnoughMons, forfeit_text=Route113_Text_TiaForfeit
 	msgbox Route113_Text_TiaPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route113_EventScript_Sophie::
-	trainerbattle_single TRAINER_SOPHIE, Route113_Text_SophieIntro, Route113_Text_SophieDefeat
+	trainerbattle_single TRAINER_SOPHIE, Route113_Text_SophieIntro, Route113_Text_SophieDefeat, forfeit_text=Route113_Text_SophieForfeit
 	msgbox Route113_Text_SophiePostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route113_EventScript_Coby::
-	trainerbattle_single TRAINER_COBY, Route113_Text_CobyIntro, Route113_Text_CobyDefeat
+	trainerbattle_single TRAINER_COBY, Route113_Text_CobyIntro, Route113_Text_CobyDefeat, forfeit_text=Route113_Text_CobyForfeit
 	msgbox Route113_Text_CobyPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 Route113_EventScript_Lawrence::
-	trainerbattle_single TRAINER_LAWRENCE, Route113_Text_LawrenceIntro, Route113_Text_LawrenceDefeat
+	trainerbattle_single TRAINER_LAWRENCE, Route113_Text_LawrenceIntro, Route113_Text_LawrenceDefeat, forfeit_text=Route113_Text_LawrenceForfeit
 	msgbox Route113_Text_LawrencePostBattle, MSGBOX_AUTOCLOSE
 	end
 

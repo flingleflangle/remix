@@ -42,6 +42,10 @@ Route102_Text_AllenDefeated:
 	.string "I called you because I thought\n"
 	.string "I could beat you…$"
 
+Route102_Text_AllenForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route102_Text_AllenPostBattle:
 	.string "I haven't won once yet…\n"
 	.string "I wish I would win soon…$"
@@ -52,6 +56,10 @@ Route102_Text_RickIntro:
 
 Route102_Text_RickDefeated:
 	.string "Ow! Down and out!$"
+
+Route102_Text_RickForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route102_Text_RickPostBattle:
 	.string "If you lock eyes with a TRAINER,\n"
@@ -65,6 +73,10 @@ Route102_Text_TianaIntro:
 Route102_Text_TianaDefeated:
 	.string "I ended up furthering your career…$"
 
+Route102_Text_TianaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route102_Text_TianaPostBattle:
 	.string "To keep winning my way up, I see that\n"
 	.string "I have to catch more POKéMON.$"
@@ -75,6 +87,10 @@ Route103_Text_DaisyIntro:
 
 Route103_Text_DaisyDefeated:
 	.string "You weren't led astray by our aroma…$"
+
+Route103_Text_DaisyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route103_Text_DaisyPostBattle:
 	.string "Aromatherapy is a form of mental\n"
@@ -87,6 +103,10 @@ Route103_Text_AmyIntro:
 
 Route103_Text_AmyDefeated:
 	.string "AMY: Uh-oh, we lost.$"
+
+Route103_Text_AmyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route103_Text_AmyPostBattle:
 	.string "AMY: You have to think about all\n"
@@ -104,6 +124,10 @@ Route103_Text_LivIntro:
 
 Route103_Text_LivDefeated:
 	.string "LIV: Oh, we lost, big sister…$"
+
+Route103_Text_LivForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route103_Text_LivPostBattle:
 	.string "LIV: We work perfectly together,\n"
@@ -128,6 +152,10 @@ Route103_Text_AmyRematchDefeated:
 	.string "AMY: Aww, boo!\n"
 	.string "We couldn't win again…$"
 
+Route103_Text_AmyRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route103_Text_AmyRematchPostBattle:
 	.string "AMY: You have to think about all\n"
 	.string "kinds of things when you're battling\l"
@@ -145,6 +173,10 @@ Route103_Text_LivRematchIntro:
 Route103_Text_LivRematchDefeated:
 	.string "LIV: Awww, we lost again…\n"
 	.string "Big sister…$"
+
+Route103_Text_LivRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route103_Text_LivRematchPostBattle:
 	.string "LIV: We work perfectly together,\n"
@@ -165,6 +197,10 @@ Route103_Text_AndrewDefeated:
 	.string "Gah! Lost it!\n"
 	.string "I'm even more annoyed now!$"
 
+Route103_Text_AndrewForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route103_Text_AndrewPostBattle:
 	.string "Gah, I'm still boiling mad…\n"
 	.string "Grrrrr…$"
@@ -176,6 +212,10 @@ Route103_Text_MiguelIntro:
 Route103_Text_MiguelDefeated:
 	.string "Oh, my gosh!\n"
 	.string "My darling POKéMON!$"
+
+Route103_Text_MiguelForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route103_Text_MiguelPostBattle:
 	.string "My delightful POKéMON looks darling\n"
@@ -193,6 +233,10 @@ Route103_Text_MiguelRematchDefeated:
 	.string "Oh!\n"
 	.string "My darling POKéMON!$"
 
+Route103_Text_MiguelRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route103_Text_MiguelRematchPostBattle:
 	.string "The more I spend time with it,\n"
 	.string "the more adorable my POKéMON becomes.$"
@@ -203,6 +247,10 @@ Route103_Text_PeteIntro:
 
 Route103_Text_PeteDefeated:
 	.string "Oh, that's good going!$"
+
+Route103_Text_PeteForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route103_Text_PetePostBattle:
 	.string "Oh, I understand where you're coming\n"
@@ -216,6 +264,10 @@ Route103_Text_IsabelleIntro:
 
 Route103_Text_IsabelleDefeated:
 	.string "Groan…$"
+
+Route103_Text_IsabelleForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route103_Text_IsabellePostBattle:
 	.string "I'm a poor swimmer so I was practicing…\n"
@@ -239,6 +291,10 @@ Route103_Text_MarcosIntro:
 Route103_Text_MarcosDefeated:
 	.string "My one-man show is ruined…$"
 
+Route103_Text_MarcosForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route103_Text_MarcosPostBattle:
 	.string "I was playing my guitar where few\n"
 	.string "people were around, but a lot of fans\l"
@@ -251,6 +307,10 @@ Route104_Text_GinaIntro:
 
 Route104_Text_GinaDefeat:
 	.string "GINA: Losing upsets me!$"
+
+Route104_Text_GinaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route104_Text_GinaPostBattle:
 	.string "GINA: You are strong!\n"
@@ -269,6 +329,10 @@ Route104_Text_MiaIntro:
 Route104_Text_MiaDefeat:
 	.string "MIA: We battled together, but we\n"
 	.string "both lost…$"
+
+Route104_Text_MiaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route104_Text_MiaPostBattle:
 	.string "MIA: We will train our POKéMON more\n"
@@ -290,6 +354,10 @@ Route104_Text_IvanDefeat:
 	.string "I thought I wasn't too bad, if I may\n"
 	.string "say so, but I guess not… Bleah…$"
 
+Route104_Text_IvanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route104_Text_IvanPostBattle:
 	.string "I got too into fishing.\n"
 	.string "I forgot I had to raise my POKéMON…$"
@@ -301,6 +369,10 @@ Route104_Text_BillyIntro:
 Route104_Text_BillyDefeat:
 	.string "Waah! I got sand in my runners!\n"
 	.string "They're all gritty!$"
+
+Route104_Text_BillyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route104_Text_BillyPostBattle:
 	.string "I want to leave my footprints in\n"
@@ -314,6 +386,10 @@ Route104_Text_HaleyIntro:
 
 Route104_Text_HaleyDefeat:
 	.string "I shouldn't have battled…$"
+
+Route104_Text_HaleyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route104_Text_HaleyPostBattle:
 	.string "If you're faced with a decision and\n"
@@ -339,6 +415,10 @@ Route104_Text_HaleyRematchIntro:
 Route104_Text_HaleyRematchDefeat:
 	.string "Ohh…\n"
 	.string "I thought I could win…$"
+
+Route104_Text_HaleyRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route104_Text_HaleyPostRematch:
 	.string "I made the decision to battle, so\n"
@@ -388,6 +468,10 @@ Route104_Text_CindyIntro:
 Route104_Text_CindyDefeat:
 	.string "Oh, my!$"
 
+Route104_Text_CindyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route104_Text_CindyPostBattle:
 	.string "“Hello” is the beginning of “good-bye.”\n"
 	.string "I hope we meet again.$"
@@ -411,6 +495,10 @@ Route104_Text_CindyRematchDefeat:
 	.string "Oh, my…\n"
 	.string "I did the best that I could…$"
 
+Route104_Text_CindyRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route104_Text_CindyPostRematch:
 	.string "“Hello” is the beginning of “good-bye.”\n"
 	.string "I hope we meet again.$"
@@ -422,6 +510,10 @@ Route104_Text_DarianIntro:
 
 Route104_Text_DarianDefeat:
 	.string "What the…$"
+
+Route104_Text_DarianForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route104_Text_DarianPostBattle:
 	.string "Hey, MAGIKARP, you sure don't live up\n"
@@ -436,6 +528,10 @@ Route105_Text_FosterDefeated:
 	.string "I was thinking too much about that\n"
 	.string "rock, while my POKéMON remained weak…$"
 
+Route105_Text_FosterForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route105_Text_FosterPostBattle:
 	.string "I can spend hours and hours staring\n"
 	.string "at a nice rock without growing bored.$"
@@ -449,6 +545,10 @@ Route105_Text_LuisIntro:
 Route105_Text_LuisDefeated:
 	.string "Glub… Glub…$"
 
+Route105_Text_LuisForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route105_Text_LuisPostBattle:
 	.string "If you are drowning, the signal is to\n"
 	.string "wave one arm toward the beach.$"
@@ -461,6 +561,10 @@ Route105_Text_DominikDefeated:
 	.string "I lost…\n"
 	.string "Now I'm feeling blue…$"
 
+Route105_Text_DominikForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route105_Text_DominikPostBattle:
 	.string "Why is the sea blue?\p"
 	.string "I learned about that at the MUSEUM in\n"
@@ -472,6 +576,10 @@ Route105_Text_BeverlyIntro:
 
 Route105_Text_BeverlyDefeated:
 	.string "I'm floating…$"
+
+Route105_Text_BeverlyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route105_Text_PostBattle:
 	.string "Your body weight is reduced to just\n"
@@ -487,6 +595,10 @@ Route105_Text_ImaniIntro:
 Route105_Text_ImaniDefeated:
 	.string "I lost while I was lounging!$"
 
+Route105_Text_ImaniForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route105_Text_ImaniPostBattle:
 	.string "I want to be told I'm relaxing to be\n"
 	.string "with. Giggle.$"
@@ -498,6 +610,10 @@ Route105_Text_AndresIntro:
 Route105_Text_AndresDefeated:
 	.string "Yes…\n"
 	.string "I am no good at battling…$"
+
+Route105_Text_AndresForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route105_Text_AndresPostBattle:
 	.string "I'm sure there are many secrets to be\n"
@@ -516,6 +632,10 @@ Route105_Text_AndresRematchDefeated:
 	.string "Yes…\n"
 	.string "I didn't think I could win.$"
 
+Route105_Text_AndresRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route105_Text_AndresRematchPostBattle:
 	.string "I may be weak at battling, but my\n"
 	.string "drive to explore can't be bested.\p"
@@ -530,6 +650,10 @@ Route105_Text_JosueIntro:
 Route105_Text_JosueDefeated:
 	.string "I lost because I battled at sea.$"
 
+Route105_Text_JosueForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route105_Text_JosuePostBattle:
 	.string "Yeah, for me, the sky is a much better\n"
 	.string "match than the sea.$"
@@ -541,6 +665,10 @@ Route106_Text_ElliotIntro:
 Route106_Text_ElliotDefeated:
 	.string "Like in deep-sea fishing, I lost\n"
 	.string "spectacularly!$"
+
+Route106_Text_ElliotForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route106_Text_ElliotPostBattle:
 	.string "Fishing is the greatest whether it's\n"
@@ -558,6 +686,10 @@ Route106_Text_ElliotRematchIntro:
 Route106_Text_ElliotRematchDefeated:
 	.string "I lost again spectacularly!$"
 
+Route106_Text_ElliotRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route106_Text_ElliotRematchPostBattle:
 	.string "Win or lose, POKéMON are the greatest!\n"
 	.string "You agree with me, right?$"
@@ -572,6 +704,10 @@ Route106_Text_NedDefeated:
 	.string "I lost because I'm trying to not go\n"
 	.string "to the washroom…$"
 
+Route106_Text_NedForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route106_Text_NedPostBattle:
 	.string "Oh, no! I've got this feeling I'll hook\n"
 	.string "a big one!$"
@@ -583,6 +719,10 @@ Route106_Text_DouglasIntro:
 Route106_Text_DouglasDefeated:
 	.string "I give up!$"
 
+Route106_Text_DouglasForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route106_Text_DouglasPostBattle:
 	.string "I wouldn't lose in a swim race…$"
 
@@ -593,6 +733,10 @@ Route106_Text_KylaIntro:
 Route106_Text_KylaDefeated:
 	.string "Did you take it easy on me by any\n"
 	.string "chance?$"
+
+Route106_Text_KylaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route106_Text_KylaPostBattle:
 	.string "Drifting along with the waves…\n"
@@ -607,6 +751,10 @@ Route107_Text_DarrinDefeated:
 	.string "Ahaha, I lost…\n"
 	.string "I'll take a snooze, I think…$"
 
+Route107_Text_DarrinForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route107_Text_DarrinPostBattle:
 	.string "Floating and being rocked by\n"
 	.string "the waves--it's like sleeping in\l"
@@ -619,6 +767,10 @@ Route107_Text_TonyIntro:
 Route107_Text_TonyDefeated:
 	.string "I lost on my home field…\n"
 	.string "I'm in shock!$"
+
+Route107_Text_TonyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route107_Text_TonyPostBattle:
 	.string "I swim the seas with a heart full of\n"
@@ -639,6 +791,10 @@ Route107_Text_TonyRematchDefeated:
 	.string "My POKéMON has gotten stronger, but\n"
 	.string "I stayed weak as a TRAINER!$"
 
+Route107_Text_TonyRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route107_Text_TonyRematchPostBattle:
 	.string "What you learn in battle makes you\n"
 	.string "a stronger TRAINER.\l"
@@ -651,6 +807,10 @@ Route107_Text_DeniseIntro:
 Route107_Text_DeniseDefeated:
 	.string "I hate this!$"
 
+Route107_Text_DeniseForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route107_Text_DenisePostBattle:
 	.string "A weird saying is getting really\n"
 	.string "trendy at DEWFORD HALL.$"
@@ -661,6 +821,10 @@ Route107_Text_BethIntro:
 
 Route107_Text_BethDefeated:
 	.string "I wasn't good enough for you.$"
+
+Route107_Text_BethForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route107_Text_BethPostBattle:
 	.string "I think you're going to keep getting\n"
@@ -673,6 +837,10 @@ Route107_Text_LisaIntro:
 Route107_Text_LisaDefeated:
 	.string "LISA: Awesome.\n"
 	.string "You're in a different class of tough.$"
+
+Route107_Text_LisaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route107_Text_LisaPostBattle:
 	.string "LISA: Do you have any friends who\n"
@@ -691,6 +859,10 @@ Route107_Text_RayIntro:
 Route107_Text_RayDefeated:
 	.string "RAY: Wowee, you're at a higher level\n"
 	.string "than us!$"
+
+Route107_Text_RayForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route107_Text_RayPostBattle:
 	.string "RAY: My sister gave me my POKéMON.\n"
@@ -721,6 +893,10 @@ Route108_Text_JeromeDefeated:
 	.string "I won't be able to swim the seven seas\n"
 	.string "like this…$"
 
+Route108_Text_JeromeForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route108_Text_JeromePostBattle:
 	.string "Playing with marine POKéMON is one of\n"
 	.string "the pleasures of swimming!$"
@@ -733,6 +909,10 @@ Route108_Text_MatthewDefeated:
 	.string "I'm sinking!\n"
 	.string "Glub… Glub…$"
 
+Route108_Text_MatthewForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route108_Text_MatthewPostBattle:
 	.string "Some people even go inside that\n"
 	.string "ABANDONED SHIP.$"
@@ -743,6 +923,10 @@ Route108_Text_TaraIntro:
 
 Route108_Text_TaraDefeated:
 	.string "Oh, boo!$"
+
+Route108_Text_TaraForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route108_Text_TaraPostBattle:
 	.string "Even if it's a lie, I love being told\n"
@@ -757,6 +941,10 @@ Route108_Text_MissyDefeated:
 	.string "When I lose a battle, I get all\n"
 	.string "stressed out!$"
 
+Route108_Text_MissyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route108_Text_MissyPostBattle:
 	.string "Work off your stress by swimming!\n"
 	.string "It's so healthy!$"
@@ -768,6 +956,10 @@ Route108_Text_CoryIntro:
 Route108_Text_CoryDefeated:
 	.string "Waaah! I lost!\n"
 	.string "Waaah! Waaah!$"
+
+Route108_Text_CoryForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route108_Text_CoryPostBattle:
 	.string "Shouting is good for me!\n"
@@ -783,6 +975,10 @@ Route108_Text_CoryRematchIntro:
 Route108_Text_CoryRematchDefeated:
 	.string "Waaah! I lost again!\n"
 	.string "Waaah! Waaah!$"
+
+Route108_Text_CoryRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route108_Text_CoryRematchPostBattle:
 	.string "If you're faced with a challenge,\n"
@@ -807,6 +1003,10 @@ Route109_Text_DavidDefeated:
 	.string "Aiyah!\n"
 	.string "Flubbed out!$"
 
+Route109_Text_DavidForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_DavidPostBattle:
 	.string "Hiyah!\p"
 	.string "My sculpted abs have nothing to do\n"
@@ -819,6 +1019,10 @@ Route109_Text_AliceIntro:
 Route109_Text_AliceDefeated:
 	.string "Ouch, ouch, ouch!$"
 
+Route109_Text_AliceForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_AlicePostBattle:
 	.string "Cheeks are the most prone to burning!$"
 
@@ -828,6 +1032,10 @@ Route109_Text_HueyIntro:
 
 Route109_Text_HueyDefeated:
 	.string "You're the best!$"
+
+Route109_Text_HueyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route109_Text_HueyPostBattle:
 	.string "In the best port was the best\n"
@@ -841,6 +1049,10 @@ Route109_Text_EdmondDefeated:
 	.string "Urp… Ooooooohhhhhh…\n"
 	.string "Urrrrpppp…$"
 
+Route109_Text_EdmondForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_EdmondPostBattle:
 	.string "I'm usually stronger than this!\n"
 	.string "I'm just seasick as a dog!\p"
@@ -852,6 +1064,10 @@ Route109_Text_RickyIntro:
 
 Route109_Text_RickyDefeated:
 	.string "Groan…$"
+
+Route109_Text_RickyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route109_Text_RickyPostBattle:
 	.string "I'm getting famished… My inner tube\n"
@@ -869,6 +1085,10 @@ Route109_Text_RickyRematchDefeated:
 	.string "I lost…\n"
 	.string "It's because I'm hungry…$"
 
+Route109_Text_RickyRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_RickyRematchPostBattle:
 	.string "When you eat on a beach, everything\n"
 	.string "seems to taste a little better.$"
@@ -879,6 +1099,10 @@ Route109_Text_LolaIntro:
 
 Route109_Text_LolaDefeated:
 	.string "Mommy!$"
+
+Route109_Text_LolaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route109_Text_LolaPostBattle:
 	.string "If you look at the beach from the sky,\n"
@@ -895,6 +1119,10 @@ Route109_Text_LolaRematchIntro:
 Route109_Text_LolaRematchDefeated:
 	.string "Mommy!$"
 
+Route109_Text_LolaRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_LolaRematchPostBattle:
 	.string "If I have an inner tube, me and my\n"
 	.string "POKéMON's cuteness goes way up!$"
@@ -907,6 +1135,10 @@ Route109_Text_AustinaDefeated:
 	.string "Did I lose because I have an inner\n"
 	.string "tube?$"
 
+Route109_Text_AustinaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_AustinaPostBattle:
 	.string "My inner tube is a fashion item.\n"
 	.string "I can't be seen without it.$"
@@ -918,6 +1150,10 @@ Route109_Text_GwenIntro:
 Route109_Text_GwenDefeated:
 	.string "Oh, you're strong.$"
 
+Route109_Text_GwenForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_GwenPostBattle:
 	.string "How did you get to be so strong?$"
 
@@ -927,6 +1163,10 @@ Route109_Text_CarterIntro:
 
 Route109_Text_CarterDefeated:
 	.string "This dude just lost one…$"
+
+Route109_Text_CarterForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route109_Text_CarterPostBattle:
 	.string "This dude thinks you're a big one.\n"
@@ -939,6 +1179,10 @@ Route109_Text_PaulIntro:
 
 Route109_Text_PaulDefeated:
 	.string "PAUL: Well, I give up.$"
+
+Route109_Text_PaulForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route109_Text_PaulPostBattle:
 	.string "PAUL: Well, don't tell anyone that\n"
@@ -958,6 +1202,10 @@ Route109_Text_MelDefeated:
 	.string "MEL: We lost, and it's my fault!\n"
 	.string "PAUL will hate me!$"
 
+Route109_Text_MelForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_MelPostBattle:
 	.string "MEL: Um, PAUL, are you angry with me?\n"
 	.string "Please don't be angry.$"
@@ -975,6 +1223,10 @@ Route109_Text_ChandlerDefeated:
 	.string "Oh, oh!\n"
 	.string "Too bad!$"
 
+Route109_Text_ChandlerForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_ChandlerPostBattle:
 	.string "After I showed you my round inner\n"
 	.string "tube, too…$"
@@ -987,6 +1239,10 @@ Route109_Text_HaileyDefeated:
 	.string "I thought so!\n"
 	.string "I didn't think we could win.$"
 
+Route109_Text_HaileyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route109_Text_HaileyPostBattle:
 	.string "When I learn how to swim, I think\n"
 	.string "my POKéMON will become tougher.$"
@@ -997,6 +1253,10 @@ Route109_Text_ElijahIntro:
 
 Route109_Text_ElijahDefeated:
 	.string "I'm cool even in defeat, hey?$"
+
+Route109_Text_ElijahForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route109_Text_ElijahPostBattle:
 	.string "For a guy as macho as me, a port\n"
@@ -1153,6 +1413,10 @@ Route110_Text_DaleDefeated:
 	.string "I lost!\n"
 	.string "Drat!$"
 
+Route110_Text_DaleForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_Text_DalePostBattle:
 	.string "Fishing is all about concentration.\n"
 	.string "You have to focus on the floater.$"
@@ -1163,6 +1427,10 @@ Route110_Text_IsabelIntro:
 
 Route110_Text_IsabelDefeated:
 	.string "Oh, dear, this won't do.$"
+
+Route110_Text_IsabelForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_Text_IsabelPostBattle:
 	.string "Rather than battling, perhaps I should\n"
@@ -1181,6 +1449,10 @@ Route110_Text_IsabelRematchIntro:
 Route110_Text_IsabelRematchDefeated:
 	.string "Oh, dear, this won't do.$"
 
+Route110_Text_IsabelRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_Text_IsabelRematchPostBattle:
 	.string "I don't think that I could ever stop\n"
 	.string "from showing off my POKéMON.\p"
@@ -1192,6 +1464,10 @@ Route110_Text_TimmyIntro:
 
 Route110_Text_TimmyDefeated:
 	.string "Being cool isn't enough to win…$"
+
+Route110_Text_TimmyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_Text_TimmyPostBattle:
 	.string "It's hard to battle with POKéMON you\n"
@@ -1217,6 +1493,10 @@ Route110_Text_JosephIntro:
 Route110_Text_JosephDefeated:
 	.string "You got into the groove all right…$"
 
+Route110_Text_JosephForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route110_Text_JosephPostBattle:
 	.string "This isn't going to bring me down!\n"
 	.string "Losing has made me a better man!$"
@@ -1227,6 +1507,10 @@ Route110_Text_KalebIntro:
 
 Route110_Text_KalebDefeated:
 	.string "Have you no compassion or pity?$"
+
+Route110_Text_KalebForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route110_Text_KalebPostBattle:
 	.string "Okay, okay, you've done the best you\n"
@@ -1242,6 +1526,10 @@ Route111_Text_DrewDefeat:
 	.string "I couldn't see what was happening at\n"
 	.string "my sides because of the GO-GOGGLES.$"
 
+Route111_Text_DrewForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route111_Text_DrewPostBattle:
 	.string "The GO-GOGGLES make it possible to\n"
 	.string "get through sandstorms.\l"
@@ -1254,6 +1542,10 @@ Route111_Text_HeidiIntro:
 
 Route111_Text_HeidiDefeat:
 	.string "Ohhh! You're mean!$"
+
+Route111_Text_HeidiForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route111_Text_HeidiPostBattle:
 	.string "When you're battling in a sandstorm,\n"
@@ -1269,6 +1561,10 @@ Route111_Text_BeauIntro:
 Route111_Text_BeauDefeat:
 	.string "I can't win on spirit alone…$"
 
+Route111_Text_BeauForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route111_Text_BeauPostBattle:
 	.string "I'm going to be a real hero one day.\n"
 	.string "I'm going to work harder to make me\l"
@@ -1280,6 +1576,10 @@ Route111_Text_BeckyIntro:
 
 Route111_Text_BeckyDefeat:
 	.string "I came up short…$"
+
+Route111_Text_BeckyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route111_Text_BeckyPostBattle:
 	.string "If they can find fossils in the desert,\n"
@@ -1293,6 +1593,10 @@ Route111_Text_DustyIntro:
 Route111_Text_DustyDefeat:
 	.string "While I have searched for ruins,\n"
 	.string "I've not searched for strong POKéMON.$"
+
+Route111_Text_DustyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route111_Text_DustyPostBattle:
 	.string "For thirty years I have searched for\n"
@@ -1316,6 +1620,10 @@ Route111_Text_DustyRematchDefeat:
 	.string "I've found no ruins, nor have I found\n"
 	.string "any strong POKéMON…$"
 
+Route111_Text_DustyRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route111_Text_DustyPostRematch:
 	.string "For thirty years I have searched for\n"
 	.string "ancient ruins!\p"
@@ -1331,6 +1639,10 @@ Route111_Text_TravisIntro:
 Route111_Text_TravisDefeat:
 	.string "My POKéMON lost its pep…$"
 
+Route111_Text_TravisForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route111_Text_TravisPostBattle:
 	.string "When I see a TRAINER with a lot of pep,\n"
 	.string "I can't help looking.$"
@@ -1341,6 +1653,10 @@ Route111_Text_IreneIntro:
 
 Route111_Text_IreneDefeat:
 	.string "Oh, you're disgustingly good!$"
+
+Route111_Text_IreneForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route111_Text_IrenePostBattle:
 	.string "I'm thinking that I should go to\n"
@@ -1432,6 +1748,10 @@ Route111_Text_CeliaDefeat:
 	.string "Aww!\n"
 	.string "I really shouldn't have come!$"
 
+Route111_Text_CeliaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route111_Text_CeliaPostBattle:
 	.string "In a sandstorm like this, I can't set\n"
 	.string "the places for a picnic even with my\l"
@@ -1445,6 +1765,10 @@ Route111_Text_BryanDefeat:
 	.string "Oh! Your strength!\n"
 	.string "It is shrouded in mystery!$"
 
+Route111_Text_BryanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route111_Text_BryanPostBattle:
 	.string "This desert hoards mysteries in\n"
 	.string "its shifting sands!$"
@@ -1457,6 +1781,10 @@ Route111_Text_BrandenDefeat:
 	.string "Tch! I thought a sandwich would be\n"
 	.string "enough of a bribe…$"
 
+Route111_Text_BrandenForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route111_Text_BrandenPostBattle:
 	.string "My SANDSHREW loves eating\n"
 	.string "my sandwiches.$"
@@ -1467,6 +1795,10 @@ Route111_Text_TyronIntro:
 Route111_Text_TyronDefeat:
 	.string "Wait!\n"
 	.string "Did you get a good look at my POKéMON?$"
+
+Route111_Text_TyronForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route111_Text_TyronPostBattle:
 	.string "When having a battle, I get a kick out\n"
@@ -1482,6 +1814,10 @@ Route111_Text_CelinaDefeat:
 	.string "Oh… My…\n"
 	.string "That was too much excitement.$"
 
+Route111_Text_CelinaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route111_Text_CelinaPostBattle:
 	.string "My pulse is still racing.\n"
 	.string "You're one fabulous TRAINER.$"
@@ -1492,6 +1828,10 @@ Route111_Text_HaydenIntro:
 
 Route111_Text_HaydenDefeat:
 	.string "Groan…$"
+
+Route111_Text_HaydenForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route111_Text_HaydenPostBattle:
 	.string "My stomach is grumbling!\n"
@@ -1504,6 +1844,10 @@ Route111_Text_BiancaIntro:
 Route111_Text_BiancaDefeat:
 	.string "Ooh lala!\n"
 	.string "That's a lot to take!$"
+
+Route111_Text_BiancaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route111_Text_BiancaPostBattle:
 	.string "This road here…\n"
@@ -1519,6 +1863,10 @@ Route112_Text_BriceDefeat:
 	.string "I lost!\n"
 	.string "Hahahaha!$"
 
+Route112_Text_BriceForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route112_Text_BricePostBattle:
 	.string "Hahahahaha! Something flew up my nose!\n"
 	.string "Hahahaha-hatchoo!$"
@@ -1531,6 +1879,10 @@ Route112_Text_TrentIntro:
 
 Route112_Text_TrentDefeat:
 	.string "Ouch! My legs cramped up!$"
+
+Route112_Text_TrentForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route112_Text_TrentPostBattle:
 	.string "Try hiking, and I mean really\n"
@@ -1554,6 +1906,10 @@ Route112_Text_TrentRematchIntro:
 Route112_Text_TrentRematchDefeat:
 	.string "I got trumped in power?$"
 
+Route112_Text_TrentRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route112_Text_TrentRematchPostBattle:
 	.string "I hear there are some seriously tough\n"
 	.string "TRAINERS on top of MT. CHIMNEY.\p"
@@ -1567,6 +1923,10 @@ Route112_Text_LarryIntro:
 Route112_Text_LarryDefeat:
 	.string "Waaaah!$"
 
+Route112_Text_LarryForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route112_Text_LarryPostBattle:
 	.string "I'm not crying because I miss my mommy!\n"
 	.string "Snivel…$"
@@ -1578,6 +1938,10 @@ Route112_Text_CarolIntro:
 
 Route112_Text_CarolDefeat:
 	.string "Oh, you're so strong!$"
+
+Route112_Text_CarolForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route112_Text_CarolPostBattle:
 	.string "It doesn't matter if you're good or bad\n"
@@ -1591,6 +1955,10 @@ Route112_Text_BryantIntro:
 Route112_Text_BryantDefeat:
 	.string "What a bumpy ride that was!$"
 
+Route112_Text_BryantForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route112_Text_BryantPostBattle:
 	.string "I like the way you battle.\n"
 	.string "It has a certain flair to it.$"
@@ -1603,6 +1971,10 @@ Route112_Text_ShaylaIntro:
 Route112_Text_ShaylaDefeat:
 	.string "Oh, how strong you are!\n"
 	.string "You've given me quite a shock!$"
+
+Route112_Text_ShaylaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route112_Text_ShaylaPostBattle:
 	.string "Are you busy right now?\n"
@@ -1618,6 +1990,10 @@ Route113_Text_JaylenDefeat:
 	.string "Peeuuw!\n"
 	.string "That stinks!$"
 
+Route113_Text_JaylenForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route113_Text_JaylenPostBattle:
 	.string "The volcanic ash blocks the sun,\n"
 	.string "so it doesn't get very warm.\p"
@@ -1629,6 +2005,10 @@ Route113_Text_DillonIntro:
 
 Route113_Text_DillonDefeat:
 	.string "You're some kind of strong!$"
+
+Route113_Text_DillonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route113_Text_DillonPostBattle:
 	.string "Ouch! Owww! I can't see!\n"
@@ -1645,6 +2025,10 @@ Route113_Text_MadelineDefeat:
 	.string "Huff, huff…\n"
 	.string "I am exhausted…$"
 
+Route113_Text_MadelineForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route113_Text_MadelinePostBattle:
 	.string "You're very good at this.\n"
 	.string "I must say I'm impressed!$"
@@ -1659,6 +2043,10 @@ Route113_Text_MadelineRematchIntro:
 
 Route113_Text_MadelineRematchDefeat:
 	.string "Oh, how super!$"
+
+Route113_Text_MadelineRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route113_Text_MadelinePostRematch:
 	.string "You've remained very good at this.\n"
@@ -1713,6 +2101,10 @@ Route113_Text_ToriDefeat:
 	.string "TORI: We lost… It's boring, so I'm going\n"
 	.string "to get some more ashes.$"
 
+Route113_Text_ToriForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route113_Text_ToriPostBattle:
 	.string "TORI: How much ash do we have?\n"
 	.string "Enough for a WHITE FLUTE, I hope.$"
@@ -1729,6 +2121,10 @@ Route113_Text_TiaDefeat:
 	.string "TIA: We couldn't win… It's boring,\n"
 	.string "so I'm getting some more ashes.$"
 
+Route113_Text_TiaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route113_Text_TiaPostBattle:
 	.string "TIA: We have a lot of ashes!\n"
 	.string "I think enough for a WHITE FLUTE!$"
@@ -1744,6 +2140,10 @@ Route113_Text_CobyIntro:
 Route113_Text_CobyDefeat:
 	.string "A… What?$"
 
+Route113_Text_CobyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route113_Text_CobyPostBattle:
 	.string "I don't know what to say when I get\n"
 	.string "beaten so easily…$"
@@ -1755,6 +2155,10 @@ Route113_Text_SophieIntro:
 Route113_Text_SophieDefeat:
 	.string "This is a dream.\n"
 	.string "I'm sure of it…$"
+
+Route113_Text_SophieForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route113_Text_SophiePostBattle:
 	.string "Losing burns me up…\n"
@@ -1768,6 +2172,10 @@ Route113_Text_LawrenceIntro:
 Route113_Text_LawrenceDefeat:
 	.string "Ehehe.\n"
 	.string "We got beaten cleanly.$"
+
+Route113_Text_LawrenceForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route113_Text_LawrencePostBattle:
 	.string "I ought to hide under the ashes, too.$"
@@ -1796,6 +2204,10 @@ Route114_Text_LennyIntro:
 Route114_Text_LennyDefeat:
 	.string "Yodelayhihoo!$"
 
+Route114_Text_LennyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route114_Text_LennyPostBattle:
 	.string "When I was a wee tyke, I believed there\n"
 	.string "was someone copying me and shouting\l"
@@ -1807,6 +2219,10 @@ Route114_Text_LucasIntro:
 
 Route114_Text_LucasDefeat:
 	.string "The mountains are unforgiving…$"
+
+Route114_Text_LucasForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route114_Text_LucasPostBattle:
 	.string "In the winter, mountains turn deadly\n"
@@ -1821,6 +2237,10 @@ Route114_Text_ShaneIntro:
 Route114_Text_ShaneDefeat:
 	.string "Way too strong!$"
 
+Route114_Text_ShaneForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route114_Text_ShanePostBattle:
 	.string "I think it's great that I can go\n"
 	.string "camping with my POKéMON.$"
@@ -1831,6 +2251,10 @@ Route114_Text_NancyIntro:
 
 Route114_Text_NancyDefeat:
 	.string "Oh, no!$"
+
+Route114_Text_NancyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route114_Text_NancyPostBattle:
 	.string "I just had a tasty meal.\n"
@@ -1873,6 +2297,10 @@ Route114_Text_BernieIntro:
 Route114_Text_BernieDefeat:
 	.string "Thanks for dousing my fire!$"
 
+Route114_Text_BernieForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route114_Text_BerniePostBattle:
 	.string "You really do have to be careful with\n"
 	.string "any sort of fire in a forest.\p"
@@ -1891,6 +2319,10 @@ Route114_Text_BernieRematchDefeat:
 	.string "I got hosed down before I could\n"
 	.string "flare up, I guess.$"
 
+Route114_Text_BernieRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route114_Text_BerniePostRematch:
 	.string "You really do have to be careful with\n"
 	.string "any sort of fire in a forest.\p"
@@ -1904,6 +2336,10 @@ Route114_Text_ClaudeIntro:
 
 Route114_Text_ClaudeDefeat:
 	.string "If we were fishing, I would've won…$"
+
+Route114_Text_ClaudeForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route114_Text_ClaudePostBattle:
 	.string "I think I'll try my luck at landing\n"
@@ -1921,6 +2357,10 @@ Route114_Text_NolanDefeat:
 	.string "I like to battle, but that doesn't\n"
 	.string "mean I'm good at it…$"
 
+Route114_Text_NolanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route114_Text_NolanPostBattle:
 	.string "This time I'll do it!\p"
 	.string "I always think that, so I can't walk\n"
@@ -1933,6 +2373,10 @@ Route114_Text_TyraIntro:
 
 Route114_Text_TyraDefeat:
 	.string "TYRA: What an amazing battle style!$"
+
+Route114_Text_TyraForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route114_Text_TyraPostBattle:
 	.string "TYRA: I was teaching my junior IVY\n"
@@ -1948,6 +2392,10 @@ Route114_Text_IvyIntro:
 
 Route114_Text_IvyDefeat:
 	.string "IVY: What an amazing battle style!$"
+
+Route114_Text_IvyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route114_Text_IvyPostBattle:
 	.string "IVY: I started training POKéMON\n"
@@ -1966,6 +2414,10 @@ Route114_Text_KaiDefeat:
 	.string "What was that about?\n"
 	.string "Did mine lose in size?$"
 
+Route114_Text_KaiForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route114_Text_KaiPostBattle:
 	.string "Okay!\n"
 	.string "I'll just fish me a bigger one!$"
@@ -1976,6 +2428,10 @@ Route114_Text_CharlotteIntro:
 
 Route114_Text_CharlotteDefeat:
 	.string "That wasn't cute in the least!$"
+
+Route114_Text_CharlotteForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route114_Text_CharlottePostBattle:
 	.string "I don't want a POKéMON that's\n"
@@ -1990,6 +2446,10 @@ Route114_Text_AngelinaIntro:
 Route114_Text_AngelinaDefeat:
 	.string "Oh, I see.\n"
 	.string "That's good to know.$"
+
+Route114_Text_AngelinaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route114_Text_AngelinaPostBattle:
 	.string "Some POKéMON change so much when\n"
@@ -2178,6 +2638,10 @@ Route116_Text_ClarkDefeat:
 	.string "Gasp… Gasp…\n"
 	.string "Losing made me tired…$"
 
+Route116_Text_ClarkForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route116_Text_ClarkPostBattle:
 	.string "It's no big deal if there's no tunnel.\n"
 	.string "To a HIKER, mountains are roads!$"
@@ -2189,6 +2653,10 @@ Route116_Text_JoeyIntro:
 Route116_Text_JoeyDefeat:
 	.string "Ouch! A scrape!\n"
 	.string "I have to put on a bandage!$"
+
+Route116_Text_JoeyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route116_Text_JoeyPostBattle:
 	.string "Bandages are signs of toughness!\n"
@@ -2202,6 +2670,10 @@ Route116_Text_JoseDefeat:
 	.string "I lost!\n"
 	.string "I thought I had you!$"
 
+Route116_Text_JoseForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route116_Text_JosePostBattle:
 	.string "BUG POKéMON evolve quickly.\n"
 	.string "So they get strong quickly, too.$"
@@ -2212,6 +2684,10 @@ Route116_Text_JaniceIntro:
 
 Route116_Text_JaniceDefeat:
 	.string "You're a notch above me…$"
+
+Route116_Text_JaniceForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route116_Text_JanicePostBattle:
 	.string "POKéMON that possess cuteness and\n"
@@ -2225,6 +2701,10 @@ Route116_Text_JerryIntro:
 Route116_Text_JerryDefeat:
 	.string "I slacked off in school…\n"
 	.string "That's why I lost.$"
+
+Route116_Text_JerryForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route116_Text_JerryPostBattle:
 	.string "I'll have to redo some courses at\n"
@@ -2252,6 +2732,10 @@ Route116_Text_JerryRematchDefeat:
 	.string "Hunh?\n"
 	.string "I studied diligently.$"
 
+Route116_Text_JerryRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route116_Text_JerryPostRematch:
 	.string "I'll have to redo some courses at\n"
 	.string "the TRAINER'S SCHOOL.\l"
@@ -2263,6 +2747,10 @@ Route116_Text_KarenIntro:
 
 Route116_Text_KarenDefeat:
 	.string "I'm in shock--I lost?$"
+
+Route116_Text_KarenForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route116_Text_KarenPostBattle:
 	.string "Awww, I'll never become an elegant\n"
@@ -2284,6 +2772,10 @@ Route116_Text_KarenRematchDefeat:
 	.string "I'm in shock.\n"
 	.string "I lost again?$"
 
+Route116_Text_KarenRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route116_Text_KarenPostRematch:
 	.string "You've beaten ROXANNE?\n"
 	.string "I can't beat you, then. Not yet.$"
@@ -2295,6 +2787,10 @@ Route116_Text_SarahIntro:
 Route116_Text_SarahDefeat:
 	.string "Oh, my goodness.\n"
 	.string "This is a new experience for me.$"
+
+Route116_Text_SarahForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route116_Text_SarahPostBattle:
 	.string "My life of luxury affords me all that\n"
@@ -2323,6 +2819,10 @@ Route116_Text_DevanDefeat:
 	.string "Aiyiyi!\n"
 	.string "No contest at all!$"
 
+Route116_Text_DevanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route116_Text_DevanPostBattle:
 	.string "I should try different POKéMON\n"
 	.string "types, that's what I ought to do.$"
@@ -2334,6 +2834,10 @@ Route116_Text_JohnsonIntro:
 Route116_Text_JohnsonDefeat:
 	.string "That was fun even though I lost.$"
 
+Route116_Text_JohnsonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route116_Text_JohnsonPostBattle:
 	.string "Want to stay here and keep\n"
 	.string "me company?$"
@@ -2344,6 +2848,10 @@ Route117_Text_IsaacIntro:
 
 Route117_Text_IsaacDefeat:
 	.string "You've raised yours superbly…$"
+
+Route117_Text_IsaacForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route117_Text_IsaacPostBattle:
 	.string "POKéMON isn't all about power.\p"
@@ -2363,6 +2871,10 @@ Route117_Text_IsaacRematchDefeat:
 	.string "You know how to raise them properly.\n"
 	.string "You might have DAY CARE skills…$"
 
+Route117_Text_IsaacRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route117_Text_IsaacPostRematch:
 	.string "Your POKéMON are growing good!\n"
 	.string "You should enter them in CONTESTS.$"
@@ -2373,6 +2885,10 @@ Route117_Text_LydiaIntro:
 
 Route117_Text_LydiaDefeat:
 	.string "Yes, they are growing properly.$"
+
+Route117_Text_LydiaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route117_Text_LydiaPostBattle:
 	.string "Try raising POKéMON with more\n"
@@ -2388,6 +2904,10 @@ Route117_Text_LydiaRematchIntro:
 
 Route117_Text_LydiaRematchDefeat:
 	.string "They are growing admirably.$"
+
+Route117_Text_LydiaRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route117_Text_LydiaPostRematch:
 	.string "POKéMON seem to like different kinds\n"
@@ -2478,6 +2998,10 @@ Route117_Text_AnnaDefeat:
 	.string "ANNA: I'm with my pretty junior student\n"
 	.string "partner! Let me win!$"
 
+Route117_Text_AnnaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route117_Text_AnnaPostBattle:
 	.string "ANNA: Your POKéMON have some good\n"
 	.string "combinations.\p"
@@ -2499,6 +3023,10 @@ Route117_Text_MegDefeat:
 	.string "MEG: Oh, no!\n"
 	.string "I'm sorry, ANNA! I let you down…$"
 
+Route117_Text_MegForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route117_Text_MegPostBattle:
 	.string "MEG: I dragged ANNA down…\n"
 	.string "If I didn't, she would have won!$"
@@ -2515,6 +3043,10 @@ Route117_Text_AnnaRematchIntro:
 Route117_Text_AnnaRematchDefeat:
 	.string "ANNA: I couldn't get into the groove.$"
 
+Route117_Text_AnnaRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route117_Text_AnnaPostRematch:
 	.string "ANNA: Your POKéMON have some good\n"
 	.string "combinations.\p"
@@ -2530,6 +3062,10 @@ Route117_Text_MegRematchIntro:
 
 Route117_Text_MegRematchDefeat:
 	.string "MEG: Too strong!$"
+
+Route117_Text_MegRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route117_Text_MegPostRematch:
 	.string "MEG: I battled together with my\n"
@@ -2583,6 +3119,10 @@ Route118_Text_RoseDefeat:
 	.string "Oh, dear me.\n"
 	.string "I seem to have lost.$"
 
+Route118_Text_RoseForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route118_Text_RosePostBattle:
 	.string "Flowers, POKéMON…\n"
 	.string "I love whatever smells nice.\p"
@@ -2601,6 +3141,10 @@ Route118_Text_RoseRematchDefeat:
 	.string "The power of aroma…\n"
 	.string "It didn't seem to do much.$"
 
+Route118_Text_RoseRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route118_Text_RosePostRematch:
 	.string "If you use a sweet aroma properly,\n"
 	.string "POKéMON will be attracted by it.$"
@@ -2613,6 +3157,10 @@ Route118_Text_PerryDefeat:
 	.string "Urgh…\n"
 	.string "I crashed…$"
 
+Route118_Text_PerryForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route118_Text_PerryPostBattle:
 	.string "You've got great POKéMON.\n"
 	.string "I'll have to train mine better.$"
@@ -2623,6 +3171,10 @@ Route118_Text_ChesterIntro:
 
 Route118_Text_ChesterDefeat:
 	.string "They did take flight…$"
+
+Route118_Text_ChesterForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route118_Text_ChesterPostBattle:
 	.string "If they'd get stronger, they'd be able\n"
@@ -2635,6 +3187,10 @@ Route118_Text_BarnyIntro:
 Route118_Text_BarnyDefeat:
 	.string "I thought I was doing okay in my\n"
 	.string "training…$"
+
+Route118_Text_BarnyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route118_Text_BarnyPostBattle:
 	.string "I couldn't win by training POKéMON\n"
@@ -2649,6 +3205,10 @@ Route118_Text_WadeIntro:
 Route118_Text_WadeDefeat:
 	.string "I was beaten in heart?$"
 
+Route118_Text_WadeForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route118_Text_WadePostBattle:
 	.string "Come to think of it, fishing is a battle\n"
 	.string "between a FISHERMAN and a POKéMON.$"
@@ -2658,6 +3218,10 @@ Route118_Text_DaltonIntro:
 
 Route118_Text_DaltonDefeat:
 	.string "La-lalala…$"
+
+Route118_Text_DaltonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route118_Text_DaltonPostBattle:
 	.string "An electric guitar doesn't always\n"
@@ -2676,6 +3240,10 @@ Route118_Text_DaltonRematchIntro:
 Route118_Text_DaltonRematchDefeat:
 	.string "La-lalala…$"
 
+Route118_Text_DaltonRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route118_Text_DaltonPostRematch:
 	.string "When I play, my emotions should reach\n"
 	.string "you through my electric guitar…$"
@@ -2687,6 +3255,10 @@ Route118_Text_DeandreIntro:
 Route118_Text_DeandreDefeat:
 	.string "Come in, POKéMON! Are you okay?\n"
 	.string "POKéMON 1, 2, and 3?!$"
+
+Route118_Text_DeandreForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route118_Text_DeandrePostBattle:
 	.string "Isn't it cool that I have a POKéMON\n"
@@ -2736,6 +3308,10 @@ Route119_Text_DougIntro:
 Route119_Text_DougDefeat:
 	.string "Whoop, that was a great match!$"
 
+Route119_Text_DougForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route119_Text_DougPostBattle:
 	.string "We're the MIMIC CIRCLE!\n"
 	.string "I hope you enjoyed our performance.$"
@@ -2747,6 +3323,10 @@ Route119_Text_GregIntro:
 
 Route119_Text_GregDefeat:
 	.string "You're pretty strong!$"
+
+Route119_Text_GregForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route119_Text_GregPostBattle:
 	.string "Until you go away somewhere, we'll\n"
@@ -2760,6 +3340,10 @@ Route119_Text_KentIntro:
 Route119_Text_KentDefeat:
 	.string "I give up!$"
 
+Route119_Text_KentForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route119_Text_KentPostBattle:
 	.string "Won't you join our MIMIC CIRCLE?$"
 
@@ -2771,6 +3355,10 @@ Route119_Text_JacksonIntro:
 Route119_Text_JacksonDefeat:
 	.string "I didn't have enough POKéMON\n"
 	.string "know-how…$"
+
+Route119_Text_JacksonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route119_Text_JacksonPostBattle:
 	.string "To break away from civilization and\n"
@@ -2788,6 +3376,10 @@ Route119_Text_JacksonRematchIntro:
 Route119_Text_JacksonRematchDefeat:
 	.string "You've remained strong!$"
 
+Route119_Text_JacksonRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route119_Text_JacksonPostRematch:
 	.string "Believe in your POKéMON.\n"
 	.string "Believe in yourself.\p"
@@ -2801,6 +3393,10 @@ Route119_Text_CatherineIntro:
 Route119_Text_CatherineDefeat:
 	.string "Accidents happen when you're not\n"
 	.string "prepared!$"
+
+Route119_Text_CatherineForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route119_Text_CatherinePostBattle:
 	.string "You're traveling light but you have\n"
@@ -2821,6 +3417,10 @@ Route119_Text_CatherineRematchIntro:
 Route119_Text_CatherineRematchDefeat:
 	.string "I'm still missing something…$"
 
+Route119_Text_CatherineRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route119_Text_CatherinePostRematch:
 	.string "In the same way that you, as a TRAINER,\n"
 	.string "rely on your POKéMON, your POKéMON\l"
@@ -2834,6 +3434,10 @@ Route119_Text_HughIntro:
 Route119_Text_HughDefeat:
 	.string "Down and out!$"
 
+Route119_Text_HughForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route119_Text_HughPostBattle:
 	.string "My BIRD POKéMON made my dreams of\n"
 	.string "flying come true!$"
@@ -2844,6 +3448,10 @@ Route119_Text_PhilIntro:
 
 Route119_Text_PhilDefeat:
 	.string "We lacked potential…$"
+
+Route119_Text_PhilForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route119_Text_PhilPostBattle:
 	.string "Ever since I was a little kid, I always\n"
@@ -2895,6 +3503,10 @@ Route119_Text_ChrisDefeat:
 	.string "I don't have a clue about what it\n"
 	.string "takes to win.$"
 
+Route119_Text_ChrisForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route119_Text_ChrisPostBattle:
 	.string "Go for a SURF on my POKéMON…\p"
 	.string "Then fish off its back…\p"
@@ -2908,6 +3520,10 @@ Route119_Text_FabianIntro:
 Route119_Text_FabianDefeat:
 	.string "You showed me who's the boss!\n"
 	.string "We'll have to take the loss, oh, no!$"
+
+Route119_Text_FabianForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route119_Text_FabianPostBattle:
 	.string "Hit me with another power chord!\n"
@@ -2923,6 +3539,10 @@ Route119_Text_DaytonDefeat:
 	.string "You're pretty amazing!\n"
 	.string "Hohoho!$"
 
+Route119_Text_DaytonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route119_Text_DaytonPostBattle:
 	.string "Hohoho!\n"
 	.string "I'll try emulating the pep of kid\l"
@@ -2936,6 +3556,10 @@ Route119_Text_RachelDefeat:
 	.string "Oh, but…\n"
 	.string "That's not fair.$"
 
+Route119_Text_RachelForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route119_Text_RachelPostBattle:
 	.string "You're asking if my parasol is heavy?\n"
 	.string "Your BAG is filled with more junk than\l"
@@ -2947,6 +3571,10 @@ Route120_Text_ColinIntro:
 
 Route120_Text_ColinDefeat:
 	.string "You soared above me!$"
+
+Route120_Text_ColinForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route120_Text_ColinPostBattle:
 	.string "The move FLY is convenient,\n"
@@ -2960,6 +3588,10 @@ Route120_Text_RobertIntro:
 
 Route120_Text_RobertDefeat:
 	.string "Your POKéMON were stronger…$"
+
+Route120_Text_RobertForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route120_Text_RobertPostBattle:
 	.string "A POKéMON that grows steadily is one\n"
@@ -2976,6 +3608,10 @@ Route120_Text_RobertRematchIntro:
 Route120_Text_RobertRematchDefeat:
 	.string "Your POKéMON are seriously strong.$"
 
+Route120_Text_RobertRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route120_Text_RobertPostRematch:
 	.string "My POKéMON are growing stronger.\n"
 	.string "I have to grow stronger, too.$"
@@ -2987,6 +3623,10 @@ Route120_Text_LorenzoIntro:
 Route120_Text_LorenzoDefeat:
 	.string "With POKéMON that strong, you're in\n"
 	.string "no danger of needing rescue!$"
+
+Route120_Text_LorenzoForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route120_Text_LorenzoPostBattle:
 	.string "To travel wherever your heart desires\n"
@@ -3000,6 +3640,10 @@ Route120_Text_JennaIntro:
 
 Route120_Text_JennaDefeat:
 	.string "I'm totally fit, but…$"
+
+Route120_Text_JennaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route120_Text_JennaPostBattle:
 	.string "Fitness training is in my routine.\n"
@@ -3059,6 +3703,10 @@ Route120_Text_ChipIntro:
 Route120_Text_ChipDefeat:
 	.string "What a disgraceful setback…$"
 
+Route120_Text_ChipForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route120_Text_ChipPostBattle:
 	.string "That giant rock… I would like to\n"
 	.string "believe it may indeed contain ancient\l"
@@ -3072,6 +3720,10 @@ Route120_Text_ClarissaDefeat:
 	.string "A parasol can't ward off POKéMON\n"
 	.string "attacks…$"
 
+Route120_Text_ClarissaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route120_Text_ClarissaPostBattle:
 	.string "I don't think strong sunlight is good\n"
 	.string "for my POKéMON.\l"
@@ -3084,6 +3736,10 @@ Route120_Text_AngelicaIntro:
 
 Route120_Text_AngelicaDefeat:
 	.string "You've completely ruined my beauty…$"
+
+Route120_Text_AngelicaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route120_Text_AngelicaPostBattle:
 	.string "A parasol wouldn't suit you at all.\p"
@@ -3145,6 +3801,10 @@ Route121_Text_VanessaIntro:
 Route121_Text_VanessaDefeat:
 	.string "This isn't what I meant!$"
 
+Route121_Text_VanessaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route121_Text_VanessaPostBattle:
 	.string "I'm going to a CONTEST in LILYCOVE.\p"
 	.string "My POKéMON should have no problem\n"
@@ -3158,6 +3818,10 @@ Route121_Text_WalterIntro:
 
 Route121_Text_WalterDefeat:
 	.string "Ah, well played.$"
+
+Route121_Text_WalterForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route121_Text_WalterPostBattle:
 	.string "I would like to circle the globe once\n"
@@ -3175,6 +3839,10 @@ Route121_Text_WalterRematchIntro:
 
 Route121_Text_WalterRematchDefeat:
 	.string "Ah, well played.$"
+
+Route121_Text_WalterRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route121_Text_WalterPostRematch:
 	.string "Your POKéMON and you…\p"
@@ -3201,6 +3869,10 @@ Route121_Text_KateDefeat:
 	.string "KATE: I blew it in front of my junior\n"
 	.string "student partner…$"
 
+Route121_Text_KateForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route121_Text_KatePostBattle:
 	.string "KATE: When someone's relying on me,\n"
 	.string "I get this urge to look cool in front\l"
@@ -3218,6 +3890,10 @@ Route121_Text_JoyIntro:
 Route121_Text_JoyDefeat:
 	.string "JOY: Please forgive me, KATE!$"
 
+Route121_Text_JoyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route121_Text_JoyPostBattle:
 	.string "JOY: Ehehe, I'll have to train with KATE,\n"
 	.string "my senior student partner, again.$"
@@ -3234,6 +3910,10 @@ Route121_Text_JessicaDefeat:
 	.string "Oh, how dare you!\n"
 	.string "Don't take it so seriously!$"
 
+Route121_Text_JessicaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route121_Text_JessicaPostBattle:
 	.string "Maybe I'll go catch more POKéMON at\n"
 	.string "the SAFARI.$"
@@ -3249,6 +3929,10 @@ Route121_Text_JessicaRematchIntro:
 Route121_Text_JessicaRematchDefeat:
 	.string "Oh, how dare you!\n"
 	.string "You still won't take it easy!$"
+
+Route121_Text_JessicaRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route121_Text_JessicaPostRematch:
 	.string "Maybe I'll go catch more POKéMON at\n"
@@ -3309,6 +3993,10 @@ Route121_Text_MylesIntro:
 Route121_Text_MylesDefeat:
 	.string "Super awesome!$"
 
+Route121_Text_MylesForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route121_Text_MylesPostBattle:
 	.string "They're great, your POKéMON!\n"
 	.string "How do you raise them?$"
@@ -3320,6 +4008,10 @@ Route121_Text_PatIntro:
 Route121_Text_PatDefeat:
 	.string "Wow!\n"
 	.string "Spectacular!$"
+
+Route121_Text_PatForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route121_Text_PatPostBattle:
 	.string "I raise every POKéMON with the same\n"
@@ -3368,6 +4060,10 @@ Route123_Text_VioletIntro:
 Route123_Text_VioletDefeat:
 	.string "Oh…\n"
 	.string "I smell the bitter scent of misery…$"
+
+Route123_Text_VioletForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route123_Text_VioletPostBattle:
 	.string "The BERRY MASTER's garden is filled\n"
@@ -3437,6 +4133,10 @@ Route123_Text_MiuIntro:
 Route123_Text_MiuDefeat:
 	.string "MIU: Uh-oh, we lost.$"
 
+Route123_Text_MiuForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route123_Text_MiuPostBattle:
 	.string "MIU: TRAINER, your POKéMON are\n"
 	.string "strong because you are friends.$"
@@ -3451,6 +4151,10 @@ Route123_Text_YukiIntro:
 
 Route123_Text_YukiDefeat:
 	.string "YUKI: Uh-oh, we lost.$"
+
+Route123_Text_YukiForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route123_Text_YukiPostBattle:
 	.string "YUKI: Why are you so strong?\n"
@@ -3482,6 +4186,10 @@ Route123_Text_FernandoDefeat:
 	.string "Hey, hold it!\n"
 	.string "I was still playing the intro!$"
 
+Route123_Text_FernandoForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route123_Text_FernandoPostBattle:
 	.string "You're rock steady.\n"
 	.string "I'd like to write a tune about you.$"
@@ -3499,6 +4207,10 @@ Route123_Text_FernandoRematchDefeat:
 	.string "Hey, hold it!\n"
 	.string "I haven't even hit the chorus!$"
 
+Route123_Text_FernandoRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route123_Text_FernandoPostRematch:
 	.string "I thought you'd be so enthralled\n"
 	.string "by my tune, you'd lose.$"
@@ -3510,6 +4222,10 @@ Route123_Text_DavisIntro:
 Route123_Text_DavisDefeat:
 	.string "Waaaah!\n"
 	.string "You meanie!$"
+
+Route123_Text_DavisForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route123_Text_DavisPostBattle:
 	.string "Don't tell my brother I lost.\n"
@@ -3547,6 +4263,10 @@ Route123_Text_AlbertoIntro:
 
 Route123_Text_AlbertoDefeat:
 	.string "Even in defeat, BIRD POKéMON are cool!$"
+
+Route123_Text_AlbertoForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route123_Text_AlbertoPostBattle:
 	.string "I gather BIRD POKéMON feathers that\n"
@@ -3586,6 +4306,10 @@ Route123_Text_KayleyDefeat:
 	.string "You're better than me by about\n"
 	.string "five times!$"
 
+Route123_Text_KayleyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route123_Text_KayleyPostBattle:
 	.string "Using accessories effectively is\n"
 	.string "the secret behind fashion appeal.$"
@@ -3597,6 +4321,10 @@ Route124_Text_SpencerIntro:
 
 Route124_Text_SpencerDefeat:
 	.string "I lost my bearings in battle!$"
+
+Route124_Text_SpencerForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route124_Text_SpencerPostBattle:
 	.string "Many people lose their bearings at sea.\p"
@@ -3612,6 +4340,10 @@ Route124_Text_RolandDefeat:
 	.string "Oh!\n"
 	.string "I can't…$"
 
+Route124_Text_RolandForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route124_Text_RolandPostBattle:
 	.string "I'm getting chilled…\n"
 	.string "I've been in the water too long…\p"
@@ -3624,6 +4356,10 @@ Route124_Text_JennyIntro:
 Route124_Text_JennyDefeat:
 	.string "Oh, darn.\n"
 	.string "I've gone and lost.$"
+
+Route124_Text_JennyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route124_Text_JennyPostBattle:
 	.string "While swimming, I noticed that some\n"
@@ -3643,6 +4379,10 @@ Route124_Text_JennyRematchDefeat:
 	.string "That's strange…\n"
 	.string "I lost again…$"
 
+Route124_Text_JennyRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route124_Text_JennyPostRematch:
 	.string "This has nothing to do with anything,\n"
 	.string "but maybe I'll visit the TRICK HOUSE.$"
@@ -3654,6 +4394,10 @@ Route124_Text_GraceIntro:
 Route124_Text_GraceDefeat:
 	.string "I had no idea that you were\n"
 	.string "this strong!$"
+
+Route124_Text_GraceForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route124_Text_GracePostBattle:
 	.string "All the effort you put in must have\n"
@@ -3667,6 +4411,10 @@ Route124_Text_ChadIntro:
 Route124_Text_ChadDefeat:
 	.string "Glub, glub, glub…\n"
 	.string "I'm sinking…$"
+
+Route124_Text_ChadForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route124_Text_ChadPostBattle:
 	.string "I have it on good authority that\n"
@@ -3685,6 +4433,10 @@ Route124_Text_LilaDefeat:
 	.string "LILA: ROY! It's your fault we lost!\n"
 	.string "You're in for it later!$"
 
+Route124_Text_LilaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route124_Text_LilaPostBattle:
 	.string "LILA: Sigh…\p"
 	.string "If only it wasn't my little brother\n"
@@ -3701,6 +4453,10 @@ Route124_Text_RoyIntro:
 Route124_Text_RoyDefeat:
 	.string "ROY: Uh-oh…\n"
 	.string "My big sister will chew me out…$"
+
+Route124_Text_RoyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route124_Text_RoyPostBattle:
 	.string "ROY: My big sister is really scary\n"
@@ -3728,6 +4484,10 @@ Route124_Text_LilaRematchDefeat:
 	.string "It's your fault we lost again!\p"
 	.string "We're having a training session later!$"
 
+Route124_Text_LilaRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route124_Text_LilaPostRematch:
 	.string "LILA: Sigh…\p"
 	.string "If I had a nice boyfriend, we'd beat\n"
@@ -3744,6 +4504,10 @@ Route124_Text_RoyRematchIntro:
 Route124_Text_RoyRematchDefeat:
 	.string "ROY: Uh-oh…\n"
 	.string "My big sister will chew me out again.$"
+
+Route124_Text_RoyRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route124_Text_RoyPostRematch:
 	.string "ROY: My big sister is really scary\n"
@@ -3764,6 +4528,10 @@ Route124_Text_DeclanIntro:
 Route124_Text_DeclanDefeat:
 	.string "I'm feeling blue.\n"
 	.string "Blue as the sky…$"
+
+Route124_Text_DeclanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route124_Text_DeclanPostBattle:
 	.string "I should chat up lady SWIMMERS\n"
@@ -3788,6 +4556,10 @@ Route125_Text_NolenIntro:
 Route125_Text_NolenDefeat:
 	.string "I surrender!$"
 
+Route125_Text_NolenForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route125_Text_NolenPostBattle:
 	.string "Sound travels faster in water than\n"
 	.string "it does through air.$"
@@ -3798,6 +4570,10 @@ Route125_Text_StanIntro:
 
 Route125_Text_StanDefeat:
 	.string "I floundered…$"
+
+Route125_Text_StanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route125_Text_StanPostBattle:
 	.string "I was blown away by HORSEA's charm,\n"
@@ -3810,6 +4586,10 @@ Route125_Text_TanyaIntro:
 Route125_Text_TanyaDefeat:
 	.string "You're too much!$"
 
+Route125_Text_TanyaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route125_Text_TanyaPostBattle:
 	.string "Whew…\n"
 	.string "Which way is it to MOSSDEEP CITY?$"
@@ -3820,6 +4600,10 @@ Route125_Text_SharonIntro:
 
 Route125_Text_SharonDefeat:
 	.string "Lost it…$"
+
+Route125_Text_SharonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route125_Text_SharonPostBattle:
 	.string "Your power… You're the real deal.\n"
@@ -3832,6 +4616,10 @@ Route125_Text_ErnestIntro:
 Route125_Text_ErnestDefeat:
 	.string "Gwrroooar!\n"
 	.string "I couldn't win!$"
+
+Route125_Text_ErnestForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route125_Text_ErnestPostBattle:
 	.string "The tide ebbs and flows inside the\n"
@@ -3851,6 +4639,10 @@ Route125_Text_ErnestRematchDefeat:
 	.string "I couldn't win!\n"
 	.string "I flat out couldn't win!$"
 
+Route125_Text_ErnestRematchForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route125_Text_ErnestRematchPostBattle:
 	.string "The SHOAL CAVE…\p"
 	.string "There are places you can and can't\n"
@@ -3866,6 +4658,10 @@ Route125_Text_KimIntro:
 
 Route125_Text_KimDefeat:
 	.string "KIM: I thought we would win.$"
+
+Route125_Text_KimForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route125_Text_KimPostBattle:
 	.string "KIM: A funny old man lives in the\n"
@@ -3883,6 +4679,10 @@ Route125_Text_IrisIntro:
 Route125_Text_IrisDefeat:
 	.string "IRIS: Oh, we came sort of close.$"
 
+Route125_Text_IrisForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route125_Text_IrisPostBattle:
 	.string "IRIS: KIM, are we really going into\n"
 	.string "the SHOAL CAVE?\l"
@@ -3899,6 +4699,10 @@ Route125_Text_PresleyIntro:
 Route125_Text_PresleyDefeat:
 	.string "Okay.\n"
 	.string "I'll tell you why I'm here.$"
+
+Route125_Text_PresleyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route125_Text_PresleyPostBattle:
 	.string "I put a message in a bottle and put\n"
@@ -3928,6 +4732,10 @@ Route126_Text_BarryDefeat:
 	.string "I admit it!\n"
 	.string "You win!$"
 
+Route126_Text_BarryForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route126_Text_BarryPostBattle:
 	.string "Thanks to my daily swimming routine…\n"
 	.string "Look! Feast your eyes on this physique!$"
@@ -3938,6 +4746,10 @@ Route126_Text_DeanIntro:
 
 Route126_Text_DeanDefeat:
 	.string "I was done in?$"
+
+Route126_Text_DeanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route126_Text_DeanPostBattle:
 	.string "I can't find the entrance to\n"
@@ -3951,6 +4763,10 @@ Route126_Text_NikkiDefeat:
 	.string "My fantasy burst as if it were a bubble!\n"
 	.string "Blub, blub, blub…$"
 
+Route126_Text_NikkiForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route126_Text_NikkiPostBattle:
 	.string "You thrashed me… I want to\n"
 	.string "disappear in a wave of despair…$"
@@ -3961,6 +4777,10 @@ Route126_Text_BrendaIntro:
 
 Route126_Text_BrendaDefeat:
 	.string "Oh, noooooh!$"
+
+Route126_Text_BrendaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route126_Text_BrendaPostBattle:
 	.string "I love frolicking with POKéMON in\n"
@@ -4004,6 +4824,10 @@ Route126_Text_LeonardoDefeat:
 	.string "Sheesh, getting greedy didn't do\n"
 	.string "a thing for me.$"
 
+Route126_Text_LeonardoForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route126_Text_LeonardoPostBattle:
 	.string "If you practice at something,\n"
 	.string "you will get better at it.\p"
@@ -4028,6 +4852,10 @@ Route126_Text_SiennaIntro:
 
 Route126_Text_SiennaDefeat:
 	.string "You had more heart!$"
+
+Route126_Text_SiennaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route126_Text_SiennaPostBattle:
 	.string "I need to cool down now…\n"
@@ -4066,6 +4894,10 @@ Route127_Text_JonahDefeat:
 	.string "Though I have lost, my heart remains\n"
 	.string "calm…$"
 
+Route127_Text_JonahForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route127_Text_JonahPostBattle:
 	.string "It matters not that I catch nothing.\n"
 	.string "The line remains in the water…$"
@@ -4076,6 +4908,10 @@ Route127_Text_HenryIntro:
 
 Route127_Text_HenryDefeat:
 	.string "I can't keep up!$"
+
+Route127_Text_HenryForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route127_Text_HenryPostBattle:
 	.string "It'd be a handful if I hooked\n"
@@ -4089,6 +4925,10 @@ Route127_Text_RogerDefeat:
 	.string "No! My line's all tangled!\n"
 	.string "The party's over!$"
 
+Route127_Text_RogerForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route127_Text_RogerPostBattle:
 	.string "My fishing line's doing a dance!\n"
 	.string "The tangle tango! Hahaha, snarl!$"
@@ -4099,6 +4939,10 @@ Route127_Text_AidanIntro:
 
 Route127_Text_AidanDefeat:
 	.string "Whew… I give up.$"
+
+Route127_Text_AidanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route127_Text_AidanPostBattle:
 	.string "There're lots of diving spots in\n"
@@ -4235,6 +5079,10 @@ Route128_Text_WayneIntro:
 Route128_Text_WayneDefeat:
 	.string "I'm crestfallen!$"
 
+Route128_Text_WayneForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route128_Text_WaynePostBattle:
 	.string "Awww, phooey!\p"
 	.string "My POKéMON knows WATERFALL, but\n"
@@ -4247,6 +5095,10 @@ Route128_Text_HarrisonIntro:
 Route128_Text_HarrisonDefeat:
 	.string "Ouch!\n"
 	.string "I guess it was impossible to win.$"
+
+Route128_Text_HarrisonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route128_Text_HarrisonPostBattle:
 	.string "There are tough TRAINERS galore\n"
@@ -4261,6 +5113,10 @@ Route128_Text_CarleeIntro:
 Route128_Text_CarleeDefeat:
 	.string "I couldn't see very well because of\n"
 	.string "the sun's glare.$"
+
+Route128_Text_CarleeForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route128_Text_CarleePostBattle:
 	.string "I should go back soon.\n"
@@ -4300,6 +5156,10 @@ Route129_Text_ReedDefeat:
 	.string "Beat, I'm beaten.\n"
 	.string "That's it, done!$"
 
+Route129_Text_ReedForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route129_Text_ReedPostBattle:
 	.string "There's nothing for a loser.\n"
 	.string "Time for me to beat it home.$"
@@ -4311,6 +5171,10 @@ Route129_Text_TishaIntro:
 Route129_Text_TishaDefeat:
 	.string "Oh, my.\n"
 	.string "I wanted to relax a little more…$"
+
+Route129_Text_TishaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route129_Text_TishaPostBattle:
 	.string "Don't you hate making mistakes when\n"
@@ -4325,6 +5189,10 @@ Route129_Text_ClarenceIntro:
 Route129_Text_ClarenceDefeat:
 	.string "Winning sure isn't easy.$"
 
+Route129_Text_ClarenceForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route129_Text_ClarencePostBattle:
 	.string "You have your sights on the POKéMON\n"
 	.string "LEAGUE? Keep at it!$"
@@ -4336,6 +5204,10 @@ Route130_Text_RodneyIntro:
 
 Route130_Text_RodneyDefeat:
 	.string "This kid's awfully tough…$"
+
+Route130_Text_RodneyForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route130_Text_RodneyPostBattle:
 	.string "Your eyes have that look of someone\n"
@@ -4352,6 +5224,10 @@ Route130_Text_KatieDefeat:
 	.string "the world of POKéMON spans\l"
 	.string "depths beyond belief.$"
 
+Route130_Text_KatieForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route130_Text_KatiePostBattle:
 	.string "The world's children dream\n"
 	.string "of one day becoming\l"
@@ -4364,6 +5240,10 @@ Route130_Text_SantiagoIntro:
 Route130_Text_SantiagoDefeat:
 	.string "I needed to be a little less peaceful!$"
 
+Route130_Text_SantiagoForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route130_Text_SantiagoPostBattle:
 	.string "Swimming and battling like this…\n"
 	.string "I'm one happy guy…$"
@@ -4375,6 +5255,10 @@ Route131_Text_RichardIntro:
 Route131_Text_RichardDefeat:
 	.string "POKéMON raised by TRAINERS are\n"
 	.string "seriously tough…$"
+
+Route131_Text_RichardForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route131_Text_RichardPostBattle:
 	.string "Gasp… Gasp…\n"
@@ -4392,6 +5276,10 @@ Route131_Text_HermanIntro:
 Route131_Text_HermanDefeat:
 	.string "Bleah!$"
 
+Route131_Text_HermanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route131_Text_HermanPostBattle:
 	.string "Bored I am by the sea, but swim I must.\p"
 	.string "I'm a born swimmer!\n"
@@ -4404,6 +5292,10 @@ Route131_Text_SusieIntro:
 Route131_Text_SusieDefeat:
 	.string "You're tough in spite of the way\n"
 	.string "you look!$"
+
+Route131_Text_SusieForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route131_Text_SusiePostBattle:
 	.string "Did you see a guy over there who whines\n"
@@ -4418,6 +5310,10 @@ Route131_Text_KaraIntro:
 Route131_Text_KaraDefeat:
 	.string "I'm out of my depth!$"
 
+Route131_Text_KaraForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route131_Text_KaraPostBattle:
 	.string "Maybe it's not my bathing suit that\n"
 	.string "makes men look. It must be my beauty!$"
@@ -4429,6 +5325,10 @@ Route131_Text_ReliIntro:
 Route131_Text_ReliDefeat:
 	.string "RELI: We couldn't win even though we\n"
 	.string "worked together…$"
+
+Route131_Text_ReliForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route131_Text_ReliPostBattle:
 	.string "RELI: The people of PACIFIDLOG are\n"
@@ -4446,6 +5346,10 @@ Route131_Text_IanIntro:
 Route131_Text_IanDefeat:
 	.string "IAN: I did my best with my sis,\n"
 	.string "but we still couldn't win…$"
+
+Route131_Text_IanForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route131_Text_IanPostBattle:
 	.string "IAN: You know how PACIFIDLOG is\n"
@@ -4479,6 +5383,10 @@ Route131_Text_KevinIntro:
 Route131_Text_KevinDefeat:
 	.string "Oops!$"
 
+Route131_Text_KevinForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route131_Text_KevinPostBattle:
 	.string "Tch! …Oh, wait.\n"
 	.string "I'm not angry. Honestly!\p"
@@ -4493,6 +5401,10 @@ Route132_Text_GilbertIntro:
 Route132_Text_GilbertDefeat:
 	.string "I crave more power…$"
 
+Route132_Text_GilbertForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route132_Text_GilbertPostBattle:
 	.string "TRAINERS travel the fields and\n"
 	.string "mountains, so they must be fit, too.$"
@@ -4503,6 +5415,10 @@ Route132_Text_DanaIntro:
 
 Route132_Text_DanaDefeat:
 	.string "Oh, please, no!$"
+
+Route132_Text_DanaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route132_Text_DanaPostBattle:
 	.string "If I get swept away, I'll lose all my\n"
@@ -4515,6 +5431,10 @@ Route132_Text_RonaldIntro:
 Route132_Text_RonaldDefeat:
 	.string "Waah!\n"
 	.string "I sank in defeat!$"
+
+Route132_Text_RonaldForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route132_Text_RonaldPostBattle:
 	.string "I never battle when I know I'll win.\n"
@@ -4594,6 +5514,10 @@ Route133_Text_FranklinDefeat:
 	.string "Strong!\n"
 	.string "Too much so!$"
 
+Route133_Text_FranklinForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route133_Text_FranklinPostBattle:
 	.string "It's just my luck that a tough TRAINER\n"
 	.string "like you would drift here…\l"
@@ -4607,6 +5531,10 @@ Route133_Text_DebraIntro:
 Route133_Text_DebraDefeat:
 	.string "Another loss…$"
 
+Route133_Text_DebraForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route133_Text_DebraPostBattle:
 	.string "A life adrift…\n"
 	.string "I don't want it anymore!$"
@@ -4617,6 +5545,10 @@ Route133_Text_LindaIntro:
 
 Route133_Text_LindaDefeat:
 	.string "No! Please!$"
+
+Route133_Text_LindaForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route133_Text_LindaPostBattle:
 	.string "A strong child TRAINER…\n"
@@ -4642,6 +5574,10 @@ Route133_Text_BeckIntro:
 Route133_Text_BeckDefeat:
 	.string "You…\n"
 	.string "You're stunningly cool!$"
+
+Route133_Text_BeckForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route133_Text_BeckPostBattle:
 	.string "I'd like to go back to FORTREE,\n"
@@ -4677,6 +5613,10 @@ Route134_Text_JackIntro:
 Route134_Text_JackDefeat:
 	.string "Aiyeeeeh!$"
 
+Route134_Text_JackForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route134_Text_JackPostBattle:
 	.string "I think POKéMON enjoy the fast-running\n"
 	.string "currents around these parts.$"
@@ -4688,6 +5628,10 @@ Route134_Text_LaurelIntro:
 Route134_Text_LaurelDefeat:
 	.string "Oopsie!$"
 
+Route134_Text_LaurelForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
+
 Route134_Text_LaurelPostBattle:
 	.string "There's a collector who's after\n"
 	.string "the SCALES of LUVDISC.$"
@@ -4698,6 +5642,10 @@ Route134_Text_AlexIntro:
 
 Route134_Text_AlexDefeat:
 	.string "Tuckered out again…$"
+
+Route134_Text_AlexForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route134_Text_AlexPostBattle:
 	.string "My BIRD POKéMON get tired quickly after\n"
@@ -4735,6 +5683,10 @@ Route134_Text_KelvinIntro:
 Route134_Text_KelvinDefeat:
 	.string "Awawawawah!\n"
 	.string "Please, stop! Please!$"
+
+Route134_Text_KelvinForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route134_Text_KelvinPostBattle:
 	.string "If we can't SURF, how are we supposed\n"
@@ -4774,6 +5726,10 @@ Route134_Text_HudsonIntro:
 
 Route134_Text_HudsonDefeat:
 	.string "Now, that's something!$"
+
+Route134_Text_HudsonForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 Route134_Text_HudsonPostBattle:
 	.string "Our boat drifted out to sea.\p"

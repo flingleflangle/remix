@@ -2,12 +2,12 @@ SSTidalLowerDeck_MapScripts::
 	.byte 0
 
 SSTidalLowerDeck_EventScript_Phillip::
-	trainerbattle_single TRAINER_PHILLIP, SSTidalLowerDeck_Text_PhillipIntro, SSTidalLowerDeck_Text_PhillipDefeat
+	trainerbattle_single TRAINER_PHILLIP, SSTidalLowerDeck_Text_PhillipIntro, SSTidalLowerDeck_Text_PhillipDefeat, forfeit_text=SSTidalLowerDeck_Text_PhillipForfeit
 	msgbox SSTidalLowerDeck_Text_PhillipPostBattle, MSGBOX_AUTOCLOSE
 	end
 
 SSTidalLowerDeck_EventScript_Leonard::
-	trainerbattle_single TRAINER_LEONARD, SSTidalLowerDeck_Text_LeonardIntro, SSTidalLowerDeck_Text_LeonardDefeat
+	trainerbattle_single TRAINER_LEONARD, SSTidalLowerDeck_Text_LeonardIntro, SSTidalLowerDeck_Text_LeonardDefeat, forfeit_text=SSTidalLowerDeck_Text_LeonardForfeit
 	msgbox SSTidalLowerDeck_Text_LeonardPostBattle, MSGBOX_AUTOCLOSE
 	end
 
@@ -18,6 +18,10 @@ SSTidalLowerDeck_Text_PhillipIntro:
 
 SSTidalLowerDeck_Text_PhillipDefeat:
 	.string "Little bro, I lost!$"
+
+SSTidalLowerDeck_Text_PhillipForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 SSTidalLowerDeck_Text_PhillipPostBattle:
 	.string "We're the CLEANUP BROTHERS!\p"
@@ -31,6 +35,10 @@ SSTidalLowerDeck_Text_LeonardIntro:
 
 SSTidalLowerDeck_Text_LeonardDefeat:
 	.string "Big bro, I lost!$"
+
+SSTidalLowerDeck_Text_LeonardForfeit:
+	.string "Hah! Thanks for the cash!\n"
+	.string "Come back in ten years!$"
 
 SSTidalLowerDeck_Text_LeonardPostBattle:
 	.string "We're the CLEANUP BROTHERS!\p"
