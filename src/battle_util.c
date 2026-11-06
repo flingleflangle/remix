@@ -4565,10 +4565,12 @@ bool32 HasExMoveBonus(u16 move)
     return GetExMoveBonus(move) != NULL;
 }
 
-// Whether the move does something extra as an EX move: its own EX script, an upgrade, or a bonus
+// Whether the move does something extra as an EX move: its own EX script, an upgrade, or a bonus.
+// Skull Bash's EX effect is in its own script instead (a bigger Defense raise, see BattleScript_EffectSkullBash)
 bool32 HasExMoveEffect(u16 move)
 {
-    return IsExMove(move) || GetExMoveUpgrade(move) != MOVE_NONE || GetExMoveBonus(move) != NULL;
+    return IsExMove(move) || GetExMoveUpgrade(move) != MOVE_NONE || GetExMoveBonus(move) != NULL
+        || move == MOVE_SKULL_BASH;
 }
 
 // Whether a damaging move with no EX script, upgrade, or bonus can still be used as an EX move, just for the

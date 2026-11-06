@@ -304,7 +304,7 @@ static const struct SpeciesExMoves sSpeciesExMoves[NUM_SPECIES] =
     [SPECIES_MUDKIP]       = { .exMoves = { MOVE_WATER_GUN, MOVE_MUD_SPORT, MOVE_BIDE } }, // 310: 3 EX slots
     [SPECIES_MARSHTOMP]    = { .exMoves = { MOVE_MUD_SHOT, MOVE_MUD_SPORT } }, // 405: 2 EX slots
     [SPECIES_SWAMPERT]     = { .exMoves = { MOVE_MUDDY_WATER } }, // 535: 1 EX slot
-    [SPECIES_POOCHYENA]    = { .exMoves = { MOVE_ROAR, MOVE_CRUNCH, MOVE_HYPER_FANG } }, // 220: 3 EX slots
+    [SPECIES_POOCHYENA]    = { .exMoves = { MOVE_ROAR, MOVE_BITE, MOVE_HYPER_FANG } }, // 220: 3 EX slots
     [SPECIES_MIGHTYENA]    = { .exMoves = { MOVE_ROAR, MOVE_CRUNCH } }, // 420: 2 EX slots
     [SPECIES_ZIGZAGOON]    = { .exMoves = { MOVE_EXTREME_SPEED, MOVE_COVET, MOVE_HEADBUTT } }, // 240: 3 EX slots
     [SPECIES_LINOONE]      = { .exMoves = { MOVE_EXTREME_SPEED, MOVE_HEADBUTT } }, // 420: 2 EX slots

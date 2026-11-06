@@ -513,7 +513,6 @@ gExMoveBonuses::
 	exstatup MOVE_RAZOR_WIND, STAT_ATK, 1 @ On their charging turn
 	exstatup MOVE_SKY_ATTACK, STAT_ATK, 1
 	exstatup MOVE_SOLAR_BEAM, STAT_SPATK, 1 @ On its charging turn, or right before it fires in sunlight
-	exstatup MOVE_SKULL_BASH, STAT_DEF, 1 @ On its charging turn, on top of its own Defense raise
 	exheal MOVE_AROMATHERAPY, 2
 	exheal MOVE_CONVERSION_2, 4 @ 25%, as it has 30 PP
 	exheal MOVE_HAZE, 4 @ 25%, as it has 30 PP

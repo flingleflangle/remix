@@ -254,7 +254,7 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
         .baseAttack = +5,
         .types = { TYPE_NORMAL, TYPE_FIGHTING },
         .ability = ABILITY_VENDETTA,
-        //.unlockStat = MON_DATA_HP_EV,
+        .unlockStat = MON_DATA_HP_EV,
         .exMoves = sZangooseExMoves,
     },
 
@@ -265,7 +265,7 @@ const struct ExFormInfo gExFormInfo[NUM_SPECIES] =
         .baseSpDefense = +25,
         .types = { TYPE_POISON, TYPE_DARK },
         .ability = ABILITY_RUTHLESS,
-        //.unlockStat = MON_DATA_SPEED_EV,
+        .unlockStat = MON_DATA_SPEED_EV,
         .exMoves = sSeviperExMoves,
     },
 

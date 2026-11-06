@@ -3898,6 +3898,11 @@ BattleScript_EffectSkullBash::
 	setbyte sTWOTURN_STRINGID, B_MSG_TURN1_SKULL_BASH
 	call BattleScriptFirstChargingTurn
 	setstatchanger STAT_DEF, 1, FALSE
+	jumpifexmove BattleScript_SkullBashExDefUp
+	goto BattleScript_SkullBashDefUp
+BattleScript_SkullBashExDefUp:
+	setstatchanger STAT_DEF, 2, FALSE @ EX Skull Bash raises Defense by 2 instead
+BattleScript_SkullBashDefUp:
 	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_SkullBashEnd
 	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_SkullBashEnd
 	setgraphicalstatchangevalues
@@ -4663,6 +4668,8 @@ BattleScript_EffectCharge::
 	jumpifstat BS_ATTACKER, CMP_EQUAL, STAT_SPDEF, MAX_STAT_STAGE, BattleScript_MoveEnd
 BattleScript_ChargeSpDefUp::
 	setstatchanger STAT_SPDEF, 1, FALSE
+	statbuffchange MOVE_EFFECT_AFFECTS_USER | STAT_CHANGE_ALLOW_PTR, BattleScript_MoveEnd
+	jumpifbyte CMP_EQUAL, cMULTISTRING_CHOOSER, B_MSG_STAT_WONT_INCREASE, BattleScript_MoveEnd
 	setgraphicalstatchangevalues
 	playanimation BS_ATTACKER, B_ANIM_STATS_CHANGE, sB_ANIM_ARG1
 	printfromtable gStatUpStringIds

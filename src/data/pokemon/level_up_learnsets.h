@@ -2986,7 +2986,6 @@ static const u16 sFlaaffyLevelUpLearnset[] = {
 };
 
 static const u16 sAmpharosLevelUpLearnset[] = {
-    LEVEL_UP_MOVE( 0, MOVE_ASCENSION),
     LEVEL_UP_MOVE( 1, MOVE_TACKLE),
     LEVEL_UP_MOVE( 1, MOVE_GROWL),
     LEVEL_UP_MOVE( 1, MOVE_THUNDER_SHOCK),

@@ -4253,6 +4253,9 @@ static void Cmd_getexp(void)
                         gBattleMoveDamage += gExpShareExp;
                     if (holdEffect == HOLD_EFFECT_LUCKY_EGG)
                         gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
+                    // Repeat Ball passive: mons caught in one gain 1.2x exp
+                    if (GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_POKEBALL) == ITEM_REPEAT_BALL)
+                        gBattleMoveDamage = (gBattleMoveDamage * 120) / 100;
                     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
                         gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
 
