@@ -37,6 +37,7 @@ VerdanturfTown_BattleTentLobby_EventScript_QuitWithoutSaving::
 VerdanturfTown_BattleTentLobby_EventScript_WonChallenge::
 	lockall
 	msgbox VerdanturfTown_BattleTentLobby_Text_AchievedThreeWinStreak, MSGBOX_DEFAULT
+	call Common_EventScript_GiveBattleTentPrizeMoney
 	message VerdanturfTown_BattleTentLobby_Text_FeatWillBeRecorded
 	waitmessage
 	verdanturftent_setrandomprize

@@ -576,9 +576,7 @@ void SpawnLinkPartnerObjectEvent(void)
 
 static void LoadLinkPartnerObjectEventSpritePalette(u8 graphicsId, u8 localEventId, u8 paletteNum)
 {
-    u8 adjustedPaletteNum;
-    // Note: This temp var is necessary; paletteNum += 6 doesn't match.
-    adjustedPaletteNum = paletteNum + 6;
+    struct SpritePalette spritePalette = {NULL, 0x1150 + paletteNum}; // One tag per link partner
     if (graphicsId == OBJ_EVENT_GFX_LINK_RS_BRENDAN ||
         graphicsId == OBJ_EVENT_GFX_LINK_RS_MAY ||
         graphicsId == OBJ_EVENT_GFX_RIVAL_BRENDAN_NORMAL ||
@@ -589,23 +587,27 @@ static void LoadLinkPartnerObjectEventSpritePalette(u8 graphicsId, u8 localEvent
         {
             u8 spriteId = gObjectEvents[obj].spriteId;
             struct Sprite *sprite = &gSprites[spriteId];
-            sprite->oam.paletteNum = adjustedPaletteNum;
 
             switch (graphicsId)
             {
             case OBJ_EVENT_GFX_LINK_RS_BRENDAN:
-                LoadPalette(gObjectEventPal_RubySapphireBrendan, OBJ_PLTT_ID(adjustedPaletteNum), PLTT_SIZE_4BPP);
+                spritePalette.data = gObjectEventPal_RubySapphireBrendan;
                 break;
             case OBJ_EVENT_GFX_LINK_RS_MAY:
-                LoadPalette(gObjectEventPal_RubySapphireMay, OBJ_PLTT_ID(adjustedPaletteNum), PLTT_SIZE_4BPP);
+                spritePalette.data = gObjectEventPal_RubySapphireMay;
                 break;
             case OBJ_EVENT_GFX_RIVAL_BRENDAN_NORMAL:
-                LoadPalette(gObjectEventPal_Brendan, OBJ_PLTT_ID(adjustedPaletteNum), PLTT_SIZE_4BPP);
+                spritePalette.data = gObjectEventPal_Brendan;
                 break;
             case OBJ_EVENT_GFX_RIVAL_MAY_NORMAL:
-                LoadPalette(gObjectEventPal_May, OBJ_PLTT_ID(adjustedPaletteNum), PLTT_SIZE_4BPP);
+                spritePalette.data = gObjectEventPal_May;
                 break;
             }
+            FreeSpritePaletteByTag(spritePalette.tag);
+            LoadSpritePalette(&spritePalette);
+            sprite->oam.paletteNum = IndexOfSpritePaletteTag(spritePalette.tag);
+            UpdatePaletteGammaType(sprite->oam.paletteNum, GAMMA_ALT);
+            UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
         }
     }
 }

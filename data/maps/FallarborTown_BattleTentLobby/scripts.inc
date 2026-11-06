@@ -37,6 +37,7 @@ FallarborTown_BattleTentLobby_EventScript_QuitWithoutSaving::
 FallarborTown_BattleTentLobby_EventScript_WonChallenge::
 	lockall
 	msgbox FallarborTown_BattleTentLobby_Text_BeatThreeTrainers, MSGBOX_DEFAULT
+	call Common_EventScript_GiveBattleTentPrizeMoney
 	message FallarborTown_BattleTentLobby_Text_WaitWhileSaveGame
 	waitmessage
 	fallarbortent_setrandomprize

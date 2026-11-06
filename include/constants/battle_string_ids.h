@@ -462,8 +462,11 @@
 #define STRINGID_EXSTATSKNOCKEDAWAY         461
 #define STRINGID_EXGOTITOUTOFSYSTEM         462
 #define STRINGID_EXSEESITCOMING             463
+#define STRINGID_PLAYERLOSTTOENEMYTRAINER   464
+#define STRINGID_PLAYERPAIDPRIZEMONEY       465
+#define STRINGID_PLAYERWHITEOUT_NOMONEY     466
 
-#define BATTLESTRINGS_COUNT                 464
+#define BATTLESTRINGS_COUNT                 467
 
 // This is the string id that gBattleStringsTable starts with.
 // String ids before this (e.g. STRINGID_INTROMSG) are not in the table,

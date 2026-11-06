@@ -885,6 +885,32 @@ gText_PlayerWhitedOut::
 	.string "{PLAYER} is out of usable\n"
 	.string "POKéMON!\p{PLAYER} whited out!$"
 
+gText_PlayerWhitedOutLostMoney::
+	.string "{PLAYER} is out of usable\n"
+	.string "POKéMON!\p{PLAYER} panicked and lost\n"
+	.string "¥{STR_VAR_1}…\p… … … …\p{PLAYER} whited out!$"
+
+@ Fixed cash prizes for clearing a facility challenge, paid once per clear
+Common_EventScript_GiveBattleTentPrizeMoney::
+	addmoney 3000
+	playse SE_SHOP
+	msgbox gText_ReceivedBattleTentPrizeMoney, MSGBOX_DEFAULT
+	return
+
+Common_EventScript_GiveTrainerHillPrizeMoney::
+	addmoney 7000
+	playse SE_SHOP
+	msgbox gText_ReceivedTrainerHillPrizeMoney, MSGBOX_DEFAULT
+	return
+
+gText_ReceivedBattleTentPrizeMoney::
+	.string "{PLAYER} received ¥3000\n"
+	.string "in prize money!$"
+
+gText_ReceivedTrainerHillPrizeMoney::
+	.string "{PLAYER} received ¥7000\n"
+	.string "in prize money!$"
+
 gText_RegisteredTrainerinPokeNav::
 	.string "Registered {STR_VAR_1} {STR_VAR_2}\n"
 	.string "in the POKéNAV.$"

@@ -8,7 +8,8 @@ EventScript_FieldPoison::
 	end
 
 EventScript_FieldWhiteOut::
-	message gText_PlayerWhitedOut
+	special TakeFieldWhiteOutMoney
+	message gText_PlayerWhitedOutLostMoney
 	waitmessage
 	waitbuttonpress
 	special Script_FadeOutMapMusic

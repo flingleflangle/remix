@@ -18,6 +18,10 @@
 #include "constants/event_object_movement.h"
 #include "constants/field_effects.h"
 #include "constants/trainer_types.h"
+#include "field_weather.h"
+
+extern const struct SpritePalette sObjectEventSpritePalettes[];
+extern const struct SpritePalette gObjectEventPal_Npc1;
 
 // this file's functions
 static u8 CheckTrainer(u8 objectEventId);
@@ -754,7 +758,8 @@ u8 FldEff_HeartIcon(void)
         struct Sprite *sprite = &gSprites[spriteId];
 
         SetIconSpriteData(sprite, FLDEFF_HEART_ICON, 0);
-        sprite->oam.paletteNum = 2;
+        LoadObjectEventPalette(0x1103); // OBJ_EVENT_PAL_TAG_NPC_1
+        sprite->oam.paletteNum = IndexOfSpritePaletteTag(0x1103);
     }
 
     return 0;
@@ -786,6 +791,7 @@ u8 FldEff_XIcon(void)
 static void SetIconSpriteData(struct Sprite *sprite, u16 fldEffId, u8 spriteAnimNum)
 {
     sprite->oam.priority = 1;
+    sprite->oam.paletteNum = gSprites[gPlayerAvatar.spriteId].oam.paletteNum; // Icons use the player's palette, which is no longer always slot 0
     sprite->coordOffsetEnabled = 1;
 
     sprite->sLocalId = gFieldEffectArguments[0];

@@ -16,6 +16,7 @@
 #include "event_data.h"
 #include "event_scripts.h"
 #include "event_object_movement.h"
+#include "field_effect_helpers.h"
 #include "metatile_behavior.h"
 #include "string_util.h"
 #include "constants/field_effects.h"
@@ -1019,12 +1020,12 @@ void DoSecretBaseGlitterMatSparkle(void)
 
     SetSpritePosToOffsetMapCoords(&x, &y, 8, 4);
 
+    LoadFieldEffectPalette(FLDEFFOBJ_SPARKLE);
     spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SPARKLE], x, y, 0);
     if (spriteId != MAX_SPRITES)
     {
         gSprites[spriteId].coordOffsetEnabled = TRUE;
         gSprites[spriteId].oam.priority = 1;
-        gSprites[spriteId].oam.paletteNum = 5;
         gSprites[spriteId].callback = SpriteCB_GlitterMatSparkle;
         gSprites[spriteId].data[0] = 0;
     }

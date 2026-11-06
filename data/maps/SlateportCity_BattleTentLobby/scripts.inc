@@ -38,6 +38,7 @@ SlateportCity_BattleTentLobby_EventScript_WonChallenge::
 	lockall
 	message SlateportCity_BattleTentLobby_Text_WonThreeMatchesReturnMons
 	waitmessage
+	call Common_EventScript_GiveBattleTentPrizeMoney
 	slateporttent_setrandomprize
 	frontier_set FRONTIER_DATA_LVL_MODE, FRONTIER_LVL_50
 	slateporttent_save 0

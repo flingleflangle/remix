@@ -2,6 +2,7 @@
 #include "money.h"
 #include "graphics.h"
 #include "event_data.h"
+#include "battle_tower.h"
 #include "string_util.h"
 #include "text.h"
 #include "menu.h"
@@ -118,6 +119,39 @@ void RemoveMoney(u32 *moneyPtr, u32 toSub)
         toSet -= toSub;
 
     SetMoney(moneyPtr, toSet);
+}
+
+static const u16 sWhiteOutBadgeFlags[NUM_BADGES] =
+{
+    FLAG_BADGE01_GET, FLAG_BADGE02_GET, FLAG_BADGE03_GET, FLAG_BADGE04_GET,
+    FLAG_BADGE05_GET, FLAG_BADGE06_GET, FLAG_BADGE07_GET, FLAG_BADGE08_GET,
+};
+
+// Money lost per level of the party's highest-level Pokémon, by number of badges (FRLG/Gen 4 white-out)
+static const u8 sWhiteOutBadgeMoney[NUM_BADGES + 1] = { 8, 16, 24, 36, 48, 60, 80, 100, 120 };
+
+// Takes the white-out money (battle loss or field poison). Returns the amount actually lost.
+u32 TakeWhiteOutMoney(void)
+{
+    u32 i, money, badges = 0;
+    u32 balance = GetMoney(&gSaveBlock1Ptr->money);
+
+    for (i = 0; i < NUM_BADGES; i++)
+    {
+        if (FlagGet(sWhiteOutBadgeFlags[i]))
+            badges++;
+    }
+    money = sWhiteOutBadgeMoney[badges] * max(GetHighestLevelInPlayerParty(), 1);
+    if (money > balance)
+        money = balance; // Only report what the player actually had
+    RemoveMoney(&gSaveBlock1Ptr->money, money);
+    return money;
+}
+
+// Field poison white-out: takes the money and buffers the amount into STR_VAR_1
+void TakeFieldWhiteOutMoney(void)
+{
+    ConvertIntToDecimalStringN(gStringVar1, TakeWhiteOutMoney(), STR_CONV_MODE_LEFT_ALIGN, 6);
 }
 
 bool8 IsEnoughForCostInVar0x8005(void)

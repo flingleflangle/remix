@@ -456,14 +456,14 @@ static void CreateCeilingCrumbleSprites(void)
         // These sprites use color index 11 from the player's sprite palette. This probably wasn't intentional.
         // The palettes for Brendan and May have different shades of green at this index, so the color of these sprites changes
         // depending on the player's gender (and neither shade of green particularly fits a crumbling yellow/brown ceiling).
-        gSprites[spriteId].oam.paletteNum = PALSLOT_PLAYER;
+        gSprites[spriteId].oam.paletteNum = gSprites[gPlayerAvatar.spriteId].oam.paletteNum;
         gSprites[spriteId].sIndex = i;
     }
     for (i = 0; i < ARRAY_COUNT(sCeilingCrumblePositions); i++)
     {
         spriteId = CreateSprite(&sSpriteTemplate_CeilingCrumbleSmall, sCeilingCrumblePositions[i][0] + 115, sCeilingCrumblePositions[i][1] - 3, 8);
         gSprites[spriteId].oam.priority = 0;
-        gSprites[spriteId].oam.paletteNum = PALSLOT_PLAYER;
+        gSprites[spriteId].oam.paletteNum = gSprites[gPlayerAvatar.spriteId].oam.paletteNum;
         gSprites[spriteId].sIndex = i;
     }
 }
@@ -695,6 +695,8 @@ static void Task_FossilFallAndSink(u8 taskId)
         {
             struct SpriteTemplate fossilTemplate = sSpriteTemplate_FallingFossil;
             fossilTemplate.images = sFallingFossil->frameImage;
+            fossilTemplate.paletteTag = 0x1104; // OBJ_EVENT_PAL_TAG_NPC_2, vanilla's fixed slot 3
+            LoadObjectEventPalette(fossilTemplate.paletteTag);
             sFallingFossil->spriteId = CreateSprite(&fossilTemplate, 128, -16, 1);
             gSprites[sFallingFossil->spriteId].centerToCornerVecX = 0;
             gSprites[sFallingFossil->spriteId].data[0] = gSprites[sFallingFossil->spriteId].x;
