@@ -8,6 +8,7 @@
 #include "menu.h"
 #include "window.h"
 #include "pokenav.h"
+#include "overworld.h"
 #include "graphics.h"
 #include "sound.h"
 #include "gym_leader_rematch.h"
@@ -780,12 +781,19 @@ static u32 LoopedTask_OpenPokenavFeature(s32 state)
     switch (state)
     {
     case 0:
-        PrintHelpBarText(GetHelpBarTextId());
+        // The PC isn't a PokéNav feature: no help bar sliding up for it
+        if (!gSysPcFromPokenav)
+            PrintHelpBarText(GetHelpBarTextId());
         return LT_INC_AND_PAUSE;
     case 1:
         if (WaitForHelpBar())
             return LT_PAUSE;
-        SlideMenuHeaderUp();
+        if (!gSysPcFromPokenav)
+        {
+            // Blank the tilemap rows that scroll in above the description box as it slides down
+            FillBgTilemapBufferRect(1, 3, 0, 20, 32, 12, 1);
+            CopyBgTilemapBufferToVram(1);
+        }
         ResetBldCnt();
         StartOptionAnimations_Exit();
         switch (GetPokenavMenuType())
@@ -800,16 +808,28 @@ static u32 LoopedTask_OpenPokenavFeature(s32 state)
             HideMainOrSubMenuLeftHeader(POKENAV_GFX_MAIN_MENU, FALSE);
             break;
         }
-        PlaySE(SE_SELECT);
+        if (!gSysPcFromPokenav) // SE_PC_ON is already playing
+            PlaySE(SE_SELECT);
         return LT_INC_AND_PAUSE;
     case 2:
+        // Slide the description box off the bottom, then the help bar up in its place
+        if (gSysPcFromPokenav)
+            return LT_INC_AND_CONTINUE;
+        if (ChangeBgY(1, 384, BG_COORD_SUB) > -0x2000)
+            return LT_PAUSE;
+        ChangeBgY(1, -0x2000, BG_COORD_SET);
+        SlideMenuHeaderUp();
+        return LT_INC_AND_PAUSE;
+    case 3:
         if (AreMenuOptionSpritesMoving())
             return LT_PAUSE;
         if (AreLeftHeaderSpritesMoving())
             return LT_PAUSE;
+        if (!gSysPcFromPokenav && GetBgY(0) < 0x2000)
+            return LT_PAUSE;
         PokenavFadeScreen(POKENAV_FADE_TO_BLACK);
         return LT_INC_AND_PAUSE;
-    case 3:
+    case 4:
         if (IsPaletteFadeActive())
             return LT_PAUSE;
         break;
@@ -1350,7 +1370,8 @@ static void SetupPokenavMenuScanlineEffects(void)
     SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON);
     SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_ALL);
     SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WIN01_BG_ALL | WINOUT_WIN01_OBJ);
-    SetGpuRegBits(REG_OFFSET_WIN0V, DISPLAY_HEIGHT);
+    // Set, not OR: the Condition graph leaves its own top edge in WIN0V, which cut the glow off above it
+    SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(0, DISPLAY_HEIGHT));
     ScanlineEffect_Stop();
     SetMenuOptionGlow();
     ScanlineEffect_SetParams(sPokenavMainMenuScanlineEffectParams);

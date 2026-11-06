@@ -514,11 +514,16 @@ static void Task_Pokenav(u8 taskId)
             }
             else if (calledFromScript)
                 SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
+            else if (gSysPcFromPokenav)
+            {
+                // Hold the PC script until the field has faded back in, like any
+                // other script resumed from a menu
+                ScriptContext_SetupScript(EventScript_PokenavPC);
+                ScriptContext_Stop();
+                SetMainCallback2(CB2_ReturnToFieldContinueScript);
+            }
             else
-                if (gSysPcFromPokenav)
-                    SetMainCallback2(CB2_ReturnToField);
-                else
-                    SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
+                SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
         }
         break;
     }

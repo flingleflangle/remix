@@ -317,10 +317,18 @@ u32 PokenavMainMenuLoopedTaskIsActive(void)
 
 void ShutdownPokenav(void)
 {
-    if (!gPokenavCalledFollower) // the call's ringing instead
+    if (!gPokenavCalledFollower && !gSysPcFromPokenav) // the call's ringing / the PC's booting instead
         PlaySE(SE_POKENAV_OFF);
     ResetBldCnt_();
-    BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, RGB_BLACK);
+    if (gSysPcFromPokenav)
+    {
+        // The menu's palettes already faded out with the feature transition:
+        // fade just the rest, or they'd pop back in and fade a second time
+        struct Pokenav_MainMenu *menu = GetSubstructPtr(POKENAV_SUBSTRUCT_MAIN_MENU);
+        BeginNormalPaletteFade(PALETTES_ALL & ~menu->palettes, -1, 0, 16, RGB_BLACK);
+    }
+    else
+        BeginNormalPaletteFade(PALETTES_ALL, -1, 0, 16, RGB_BLACK);
 }
 
 bool32 WaitForPokenavShutdownFade(void)

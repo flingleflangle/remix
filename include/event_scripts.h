@@ -7,6 +7,7 @@ extern const u8 EventScript_StartTrainerApproach[];
 extern const u8 EventScript_FollowerCaughtHelpCatch[];
 extern const u8 EventScript_FollowerPartnerCaughtWildMon[];
 extern const u8 EventScript_FollowerPokenavCalled[];
+extern const u8 EventScript_PokenavPC[];
 extern const u8 EventScript_DoNoIntroTrainerBattle[];
 extern const u8 EventScript_TryDoDoubleTrainerBattle[];
 extern const u8 EventScript_TryDoNormalTrainerBattle[];

@@ -31,14 +31,12 @@ static u32 HandleConditionSearchMenuInput(struct Pokenav_Menu *);
 static u32 HandleConditionMenuInput(struct Pokenav_Menu *);
 static u32 HandleCantOpenRibbonsInput(struct Pokenav_Menu *);
 static u32 HandleCantAccessPCInput(struct Pokenav_Menu *);
-static void Task_WaitFadeAccessPC(u8);
+static u32 HandleAccessPCExit(struct Pokenav_Menu *);
 static u32 HandleMainMenuInputEndTutorial(struct Pokenav_Menu *);
 static u32 HandleMainMenuInputTutorial(struct Pokenav_Menu *);
 static u32 HandleMainMenuInput(struct Pokenav_Menu *);
 static u32 (*GetMainMenuInputHandler(void))(struct Pokenav_Menu *);
 static void SetMenuInputHandler(struct Pokenav_Menu *);
-
-extern const u8 EventScript_PCMainMenu[];
 
 // Number of entries - 1 for that menu type
 static const u8 sLastCursorPositions[] =
@@ -261,10 +259,12 @@ static u32 HandleMainMenuInput(struct Pokenav_Menu *menu)
         case POKENAV_MENUITEM_ACCESS_PC:
             if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType))
             {
+                // Slide out like the other features, then close; the PC script
+                // starts once the PokéNav has closed (pokenav.c)
                 gSysPcFromPokenav = TRUE;
-                // Reusing from debug menu to gracefully close PC when done.
-                CreateTask(Task_WaitFadeAccessPC, 0);
-                return POKENAV_MENU_FUNC_EXIT;
+                PlaySE(SE_PC_ON);
+                menu->callback = HandleAccessPCExit;
+                return POKENAV_MENU_FUNC_OPEN_FEATURE;
             }
             else
             {
@@ -282,6 +282,11 @@ static u32 HandleMainMenuInput(struct Pokenav_Menu *menu)
     return POKENAV_MENU_FUNC_NONE;
 }
 
+static u32 HandleAccessPCExit(struct Pokenav_Menu *menu)
+{
+    return POKENAV_MENU_FUNC_EXIT;
+}
+
 static u32 HandleCantAccessPCInput(struct Pokenav_Menu *menu)
 {
     if (UpdateMenuCursorPos(menu))
@@ -297,17 +302,6 @@ static u32 HandleCantAccessPCInput(struct Pokenav_Menu *menu)
     }
 
     return POKENAV_MENU_FUNC_NONE;
-}
-
-
-static void Task_WaitFadeAccessPC(u8 taskId)
-{
-    if (WaitForPokenavShutdownFade())
-    {
-        PlaySE(SE_PC_ON);
-        ScriptContext_SetupScript(EventScript_PCMainMenu);
-        DestroyTask(taskId);
-    }
 }
 
 // Force the player to select Match Call during the call Mr. Stone PokéNav tutorial

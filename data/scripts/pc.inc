@@ -7,6 +7,12 @@ EventScript_PC::
 	goto EventScript_PCMainMenu
 	end
 
+@ Remote access from the PokéNav: no PC on the map to switch on (SE_PC_ON played in the PokéNav)
+EventScript_PokenavPC::
+	lockall
+	goto EventScript_PCMainMenu
+	end
+
 EventScript_PCMainMenu::
 	message gText_WhichPCShouldBeAccessed
 	waitmessage
